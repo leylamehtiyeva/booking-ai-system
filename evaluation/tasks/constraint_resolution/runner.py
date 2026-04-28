@@ -39,7 +39,7 @@ ERRORS_PATH = (
 REQUEST_DELAY_SECONDS = 10.0
 MAX_RETRIES_PER_CASE = 1
 
-MAX_CASES: int | None = 3
+MAX_CASES: int | None = None
 
 
 def build_runtime_error_result(case: Any, error: Exception) -> dict[str, Any]:
@@ -92,15 +92,15 @@ async def run_case_with_retry(case: Any) -> dict[str, Any]:
 async def run_async() -> dict[str, Any]:
     cases = load_constraint_resolution_dataset(DATASET_PATH)
     
-    CASE_IDS = {"cr_012", "cr_017", "cr_032", "cr_037", "cr_045"}
+    # CASE_IDS = {"cr_012", "cr_017", "cr_032", "cr_037", "cr_045"}
 
-    cases = [
-        case for case in cases
-        if case.case_id in CASE_IDS
-    ]
+    # cases = [
+    #     case for case in cases
+    #     if case.case_id in CASE_IDS
+    # ]
 
-    # if MAX_CASES is not None:
-    #     cases = cases[:MAX_CASES]
+    if MAX_CASES is not None:
+        cases = cases[:MAX_CASES]
 
     results: list[dict[str, Any]] = []
     runtime_errors: list[dict[str, Any]] = []

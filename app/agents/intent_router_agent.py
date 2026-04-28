@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 from typing import Optional
-from app.config.llm import get_gemini_model_for_adk
 
 from google.adk.agents import Agent
 from google.adk.models.google_llm import Gemini
@@ -13,7 +12,7 @@ from app.schemas.constraints import UserConstraint
 from app.schemas.fields import Field
 from app.schemas.filters import SearchFilters
 from app.schemas.property_semantics import OccupancyType, PropertyType
-
+from app.config.llm import get_gemini_model
 
 class IntentRoute(BaseModel):
     city: Optional[str] = None
@@ -244,7 +243,7 @@ Return constraints containing:
         raise ValueError("Missing GEMINI_API_KEY/GOOGLE_API_KEY")
 
     llm = Gemini(
-        model=get_gemini_model_for_adk(),
+        model=get_gemini_model(),
         api_key=api_key,
     )
 

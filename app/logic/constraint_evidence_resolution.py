@@ -23,6 +23,39 @@ ResolverType = Literal["textual", "geo", "hybrid"]
 DecisionType = Literal["YES", "NO", "UNCERTAIN"]
 ResolutionStatus = Literal["matched", "failed", "uncertain"]
 
+SignalRelation = Literal[
+    "supports",
+    "contradicts",
+    "weakly_supports",
+    "weakly_contradicts",
+    "irrelevant",
+]
+
+SignalStrength = Literal["strong", "medium", "weak"]
+
+
+class EvidenceSignal(BaseModel):
+    relation: SignalRelation
+    strength: SignalStrength = "medium"
+    snippet: str = ""
+    source: str = "other"
+    path: str | None = None
+    explanation: str = ""
+
+
+class ConstraintEvidenceAnalysis(BaseModel):
+    signals: list[EvidenceSignal] = Field(default_factory=list)
+
+    has_direct_support: bool = False
+    has_direct_contradiction: bool = False
+    has_only_weak_or_indirect_evidence: bool = False
+    has_conflicting_evidence: bool = False
+    evidence_missing: bool = True
+    condition_or_extra_requirement_present: bool = False
+
+    reason: str = ""
+
+
 
 class ConstraintEvidence(BaseModel):
     snippet: str
@@ -65,6 +98,7 @@ class ConstraintResolutionResult(BaseModel):
     reason: str
 
     evidence: list[ConstraintEvidence] = Field(default_factory=list)
+    analysis: ConstraintEvidenceAnalysis | None = None
 
     source_stage: Literal["fallback"] = "fallback"
     structured_value_before: Literal["YES", "NO", "UNCERTAIN"] | None = None
@@ -131,50 +165,101 @@ def _source_from_path(path: str) -> str:
     return "other"
 
 
-def _has_explicit_negative(evidence: list[ConstraintEvidence]) -> bool:
-    negative_markers = (
-        "no ",
-        "not allowed",
-        "not available",
-        "unavailable",
-        "without ",
-        "does not have",
-        "is not provided",
-        "not provided",
-        "absent",
+def _has_explicit_negative(analysis: ConstraintEvidenceAnalysis) -> bool:
+    return any(
+        signal.relation == "contradicts" and signal.strength == "strong"
+        for signal in analysis.signals
+    ) or analysis.has_direct_contradiction
+    
+    
+    
+def _decide_from_analysis(analysis: ConstraintEvidenceAnalysis) -> DecisionType:
+    strong_support = any(
+        signal.relation == "supports" and signal.strength == "strong"
+        for signal in analysis.signals
     )
-    joined = " ".join((e.snippet or "").lower() for e in evidence)
-    return any(marker in joined for marker in negative_markers)
+
+    strong_contradiction = any(
+        signal.relation == "contradicts" and signal.strength == "strong"
+        for signal in analysis.signals
+    )
+
+    if strong_contradiction or analysis.has_direct_contradiction:
+        return "NO"
+
+    if (
+        strong_support
+        and analysis.has_direct_support
+        and not analysis.has_conflicting_evidence
+        and not analysis.condition_or_extra_requirement_present
+    ):
+        return "YES"
+
+    return "UNCERTAIN"
 
 
-def _normalize_result(raw: dict[str, Any], req: ConstraintResolutionRequest) -> ConstraintResolutionResult:
-    decision = str(raw.get("decision", "UNCERTAIN")).upper().strip()
-    if decision not in {"YES", "NO", "UNCERTAIN"}:
-        decision = "UNCERTAIN"
+def _normalize_result(
+    raw: dict[str, Any],
+    req: ConstraintResolutionRequest,
+) -> ConstraintResolutionResult:
+    signals = [
+        EvidenceSignal(
+            relation=str(signal.get("relation", "irrelevant")).strip(),
+            strength=str(signal.get("strength", "medium")).strip(),
+            snippet=str(signal.get("snippet", "")).strip(),
+            source=str(signal.get("source", "other")).strip() or "other",
+            path=signal.get("path"),
+            explanation=str(signal.get("explanation", "")).strip(),
+        )
+        for signal in raw.get("signals", [])
+        if isinstance(signal, dict)
+    ]
+
+    analysis = ConstraintEvidenceAnalysis(
+        signals=signals,
+        has_direct_support=bool(raw.get("has_direct_support", False)),
+        has_direct_contradiction=bool(raw.get("has_direct_contradiction", False)),
+        has_only_weak_or_indirect_evidence=bool(
+            raw.get("has_only_weak_or_indirect_evidence", False)
+        ),
+        has_conflicting_evidence=bool(raw.get("has_conflicting_evidence", False)),
+        evidence_missing=bool(raw.get("evidence_missing", not signals)),
+        condition_or_extra_requirement_present=bool(
+            raw.get("condition_or_extra_requirement_present", False)
+        ),
+        reason=str(raw.get("reason") or "").strip(),
+    )
+
+    decision = _decide_from_analysis(analysis)
 
     evidence = [
         ConstraintEvidence(
-            snippet=str(e.get("snippet", "")).strip(),
-            source=str(e.get("source", "other")).strip() or "other",
-            path=e.get("path"),
+            snippet=signal.snippet,
+            source=signal.source,
+            path=signal.path,
         )
-        for e in raw.get("evidence", [])
-        if isinstance(e, dict)
+        for signal in analysis.signals
+        if signal.relation in {"supports", "contradicts", "weakly_supports", "weakly_contradicts"}
+        and signal.snippet
     ]
 
-    explicit_negative = _has_explicit_negative(evidence)
+    explicit_negative = _has_explicit_negative(analysis)
 
-    if decision == "NO" and not explicit_negative:
-        decision = "UNCERTAIN"
-
-    reason = str(raw.get("reason") or "").strip()
+    reason = analysis.reason
     if not reason:
         if decision == "YES":
             reason = f"{req.normalized_text} is explicitly supported by listing text."
         elif decision == "NO":
-            reason = f"{req.normalized_text} is explicitly unavailable in the listing."
+            reason = f"{req.normalized_text} is explicitly contradicted by listing text."
         else:
             reason = f"{req.normalized_text} is not explicitly confirmed in the listing."
+
+    confidence = raw.get("confidence")
+    if confidence is not None:
+        try:
+            confidence = float(confidence)
+        except (TypeError, ValueError):
+            confidence = None
 
     return ConstraintResolutionResult(
         listing_id=req.listing_id,
@@ -185,9 +270,10 @@ def _normalize_result(raw: dict[str, Any], req: ConstraintResolutionRequest) -> 
         resolver_type=req.resolver_type,
         decision=decision,
         resolution_status=_decision_to_status(decision),
-        confidence=raw.get("confidence"),
+        confidence=confidence,
         reason=reason,
         evidence=evidence,
+        analysis=analysis,
         structured_value_before=req.structured_value,
         explicit_negative=explicit_negative,
     )
@@ -238,56 +324,63 @@ def _prepare_listing_evidence(
 
 def _build_system_prompt() -> str:
     return """
-You resolve whether a booking listing satisfies one user constraint using only the provided listing evidence.
+You analyze whether listing evidence supports, contradicts, or does not prove one user constraint.
+
+You are NOT the final decision maker.
+Do NOT return YES, NO, or UNCERTAIN.
+Your job is only to extract evidence signals.
 
 Return only valid JSON:
+
 {
-  "decision": "YES" | "NO" | "UNCERTAIN",
-  "confidence": 0.0,
-  "reason": "short factual explanation",
-  "evidence": [
+  "signals": [
     {
-      "snippet": "string",
+      "relation": "supports | contradicts | weakly_supports | weakly_contradicts | irrelevant",
+      "strength": "strong | medium | weak",
+      "snippet": "exact evidence text",
       "source": "facilities|room_facilities|policies|highlights|description|title|property_type|other",
-      "path": "string|null"
+      "path": "string|null",
+      "explanation": "why this evidence has this relation to the constraint"
     }
-  ]
+  ],
+  "has_direct_support": false,
+  "has_direct_contradiction": false,
+  "has_only_weak_or_indirect_evidence": false,
+  "has_conflicting_evidence": false,
+  "evidence_missing": true,
+  "condition_or_extra_requirement_present": false,
+  "confidence": 0.0,
+  "reason": "short factual explanation of the evidence analysis"
 }
 
-Core decision rules:
-- Return YES only when the evidence clearly confirms the constraint.
-- Return NO when the evidence clearly contradicts the constraint.
-- Return UNCERTAIN when the evidence is missing, vague, weak, conditional, or insufficient.
+Signal meanings:
+- supports: evidence directly confirms the constraint.
+- contradicts: evidence directly conflicts with the constraint.
+- weakly_supports: evidence may support the constraint, but is indirect, vague, partial, or not fully reliable.
+- weakly_contradicts: evidence may conflict with the constraint, but is indirect, vague, partial, or not fully reliable.
+- irrelevant: evidence is unrelated to the constraint.
 
-Important distinction:
-- Missing evidence -> UNCERTAIN.
-- Weak or partial evidence -> UNCERTAIN.
-- Conditional evidence -> UNCERTAIN unless the condition clearly makes the constraint unavailable for the user.
-- Explicit contradiction -> NO.
+Strength meanings:
+- strong: direct and explicit evidence.
+- medium: reasonably relevant but not fully explicit.
+- weak: vague, indirect, marketing-style, or incomplete evidence.
 
-What counts as contradiction:
-- The user asks for something to be free/included, but evidence says it is paid, costs extra, has a fee, or is not included.
-- The user asks for something to be allowed, but evidence says it is not allowed, prohibited, restricted, or forbidden.
-- The user asks for something to be available, but evidence says it is unavailable, absent, closed, not provided, or not available to guests.
-- The user asks for something private, but evidence says it is shared.
-- The user asks for something on-site/in the property, but evidence says it is only nearby, off-site, or public.
-- The user forbids something, but evidence says that thing is allowed or present.
-- A policy contradicts a facility/description claim; in conflicts, policies usually override marketing descriptions.
+General rules:
+- Use only the provided listing evidence.
+- Do not invent facts.
+- Do not infer from common sense if the listing does not say it.
+- Missing evidence is not contradiction.
+- Weak evidence is not direct support.
+- Conditional evidence should be marked with condition_or_extra_requirement_present=true.
+- Conflicting evidence should be marked with has_conflicting_evidence=true.
+- If no relevant evidence exists, return an empty signals list and evidence_missing=true.
 
-Do not return UNCERTAIN when the evidence explicitly contradicts the constraint.
+Contradiction principle:
+A contradiction exists when the evidence says the requested property is unavailable, disallowed, paid when the user asked for free/included, shared when the user asked for private, off-site when the user asked for on-site, or otherwise incompatible with the constraint.
 
-Conservatism rule:
-- Be conservative to avoid false YES.
-- Do not use conservatism to avoid NO when contradiction is explicit.
-
-Evidence rules:
-- Use only provided evidence.
-- Do not invent evidence.
-- Cite the exact snippet that supports the decision.
-- Prefer direct evidence from policies, facilities, room_facilities, or highlights.
-- Description/title can support a decision, but are weaker than policy/facility evidence.
+Do not make the final YES/NO/UNCERTAIN decision.
+Only return evidence signals.
 """.strip()
-
 
 def is_constraint_fallback_eligible(
     constraint: UserConstraint,
@@ -364,8 +457,6 @@ async def resolve_constraint_via_textual_evidence(
 
     system = _build_system_prompt()
     user_prompt = json.dumps(payload, ensure_ascii=False)
-    print("SYSTEM PROMPT USED:")
-    print(system)
 
     def _call_sync() -> ConstraintResolutionResult:
         client = _gemini_client()
@@ -393,10 +484,14 @@ async def resolve_constraint_via_textual_evidence(
         except json.JSONDecodeError:
             return _normalize_result(
                 {
-                    "status": "UNCERTAIN",
-                    "answer": "UNCERTAIN",
-                    "snippet": None,
-                    "source": "llm_fallback",
+                    "signals": [],
+                    "has_direct_support": False,
+                    "has_direct_contradiction": False,
+                    "has_only_weak_or_indirect_evidence": False,
+                    "has_conflicting_evidence": False,
+                    "evidence_missing": True,
+                    "condition_or_extra_requirement_present": False,
+                    "confidence": 0.0,
                     "reason": (
                         "LLM fallback returned invalid JSON. "
                         f"Raw response: {raw_text[:300]}"

@@ -23,7 +23,6 @@ from app.schemas.match import Ternary
 from app.logic.normalize_search_response import normalize_search_response
 from app.logic.request_resolution import resolve_required_search_context
 from app.logic.occupancy import evaluate_occupancy
-from app.config.llm import get_gemini_model_for_adk
 from app.config.llm import get_gemini_model
 from collections import Counter
 
@@ -719,7 +718,6 @@ def _build_fallback_policy(
         run_for_unresolved=True,
         run_for_structured_uncertain=True,
         max_constraints_per_listing=3,
-        model=get_gemini_model_for_adk(),
     )
 
 async def _apply_constraint_fallback_layer(
