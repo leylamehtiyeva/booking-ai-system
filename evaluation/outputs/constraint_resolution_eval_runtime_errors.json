@@ -1,1 +1,205 @@
-[]
+[
+  {
+    "case_id": "cr_060",
+    "case_type": "indirect_negative",
+    "difficulty": "medium",
+    "expected_decision": "UNCERTAIN",
+    "predicted_decision": "ERROR",
+    "decision_correct": false,
+    "expected_explicit_negative": false,
+    "predicted_explicit_negative": false,
+    "explicit_negative_correct": false,
+    "error_type": "ServerError",
+    "error_message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+    "constraint": {
+      "raw_text": "Kitchenette",
+      "normalized_text": "kitchenette",
+      "priority": "must",
+      "category": "kitchenette",
+      "mapping_status": "known",
+      "evidence_strategy": "textual",
+      "mapped_fields": [
+        "kitchenette_available"
+      ],
+      "structured_value": "YES"
+    },
+    "listing_evidence": [
+      {
+        "source": "room_facilities",
+        "text": "Microwave, Refrigerator",
+        "path": null
+      },
+      {
+        "source": "description",
+        "text": "Enjoy the convenience of a mini-fridge and microwave in your room.",
+        "path": null
+      }
+    ],
+    "raw_prediction": null
+  },
+  {
+    "case_id": "cr_070",
+    "case_type": "conflicting_evidence_policy_wins",
+    "difficulty": "hard",
+    "expected_decision": "NO",
+    "predicted_decision": "ERROR",
+    "decision_correct": false,
+    "expected_explicit_negative": true,
+    "predicted_explicit_negative": false,
+    "explicit_negative_correct": false,
+    "error_type": "ServerError",
+    "error_message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+    "constraint": {
+      "raw_text": "kitchenette",
+      "normalized_text": "kitchenette",
+      "priority": "must",
+      "category": "kitchenette",
+      "mapping_status": "known",
+      "evidence_strategy": "textual",
+      "mapped_fields": [
+        "kitchenette"
+      ],
+      "structured_value": "YES"
+    },
+    "listing_evidence": [
+      {
+        "source": "policies",
+        "text": "Cooking is not permitted in the rooms. Shared kitchen facilities are available on the ground floor.",
+        "path": null
+      }
+    ],
+    "raw_prediction": null
+  },
+  {
+    "case_id": "cr_076",
+    "case_type": "misleading_title",
+    "difficulty": "easy",
+    "expected_decision": "UNCERTAIN",
+    "predicted_decision": "ERROR",
+    "decision_correct": false,
+    "expected_explicit_negative": false,
+    "predicted_explicit_negative": false,
+    "explicit_negative_correct": false,
+    "error_type": "ServerError",
+    "error_message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+    "constraint": {
+      "raw_text": "free breakfast",
+      "normalized_text": "free_breakfast",
+      "priority": "must",
+      "category": "free_breakfast",
+      "mapping_status": "known",
+      "evidence_strategy": "textual",
+      "mapped_fields": [
+        "free_breakfast"
+      ],
+      "structured_value": "UNCERTAIN"
+    },
+    "listing_evidence": [
+      {
+        "source": "description",
+        "text": "Enjoy a continental breakfast to start your day.",
+        "path": null
+      }
+    ],
+    "raw_prediction": null
+  },
+  {
+    "case_id": "cr_106",
+    "case_type": "structured_uncertain_textual_no",
+    "difficulty": "easy",
+    "expected_decision": "NO",
+    "predicted_decision": "ERROR",
+    "decision_correct": false,
+    "expected_explicit_negative": true,
+    "predicted_explicit_negative": false,
+    "explicit_negative_correct": false,
+    "error_type": "ServerError",
+    "error_message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+    "constraint": {
+      "raw_text": "free wifi",
+      "normalized_text": "free_wifi",
+      "priority": "must",
+      "category": "internet",
+      "mapping_status": "known",
+      "evidence_strategy": "textual",
+      "mapped_fields": [
+        "wifi"
+      ],
+      "structured_value": "UNCERTAIN"
+    },
+    "listing_evidence": [
+      {
+        "source": "policies",
+        "text": "There is a charge for internet access.",
+        "path": null
+      }
+    ],
+    "raw_prediction": null
+  },
+  {
+    "case_id": "cr_111",
+    "case_type": "unknown_constraint_textual_resolution",
+    "difficulty": "easy",
+    "expected_decision": "YES",
+    "predicted_decision": "ERROR",
+    "decision_correct": false,
+    "expected_explicit_negative": false,
+    "predicted_explicit_negative": false,
+    "explicit_negative_correct": false,
+    "error_type": "ServerError",
+    "error_message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+    "constraint": {
+      "raw_text": "Free parking",
+      "normalized_text": "parking_free",
+      "priority": "must",
+      "category": "parking",
+      "mapping_status": "known",
+      "evidence_strategy": "textual",
+      "mapped_fields": [
+        "parking_free"
+      ],
+      "structured_value": "UNCERTAIN"
+    },
+    "listing_evidence": [
+      {
+        "source": "facilities",
+        "text": "Guests can enjoy free parking on site.",
+        "path": null
+      }
+    ],
+    "raw_prediction": null
+  },
+  {
+    "case_id": "cr_117",
+    "case_type": "unknown_constraint_textual_resolution",
+    "difficulty": "medium",
+    "expected_decision": "UNCERTAIN",
+    "predicted_decision": "ERROR",
+    "decision_correct": false,
+    "expected_explicit_negative": false,
+    "predicted_explicit_negative": false,
+    "explicit_negative_correct": false,
+    "error_type": "ServerError",
+    "error_message": "503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}",
+    "constraint": {
+      "raw_text": "Air Conditioning",
+      "normalized_text": "air_conditioning",
+      "priority": "must",
+      "category": "climate_control",
+      "mapping_status": "known",
+      "evidence_strategy": "textual",
+      "mapped_fields": [
+        "air_conditioning"
+      ],
+      "structured_value": "UNCERTAIN"
+    },
+    "listing_evidence": [
+      {
+        "source": "room_facilities",
+        "text": "Fan available in the room.",
+        "path": null
+      }
+    ],
+    "raw_prediction": null
+  }
+]

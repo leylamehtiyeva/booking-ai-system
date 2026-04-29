@@ -136,6 +136,7 @@ async def test_numeric_filters_are_applied_in_orchestrate(monkeypatch):
             ListingRaw(
                 id="small-1",
                 name="One-Bedroom Apartment",
+                city="Baku",
                 url="https://example.com/small-1",
                 description="Apartment in Baku, 45 sqm, private bathroom, kitchen.",
                 available_dates={"check_in": "2026-02-01", "check_out": "2026-03-31"},
@@ -149,6 +150,7 @@ async def test_numeric_filters_are_applied_in_orchestrate(monkeypatch):
             ),
             ListingRaw(
                 id="big-1",
+                city = "Baku",
                 name="Three-Bedroom Apartment",
                 url="https://example.com/big-1",
                 description="Apartment in Baku, 2196 feet², private bathroom, kitchen.",
@@ -216,6 +218,7 @@ async def test_price_filter_per_night_is_applied(monkeypatch):
             ListingRaw(
                 id="too-expensive",
                 name="Apartment STEL",
+                city="Baku",
                 url="https://example.com/baku-expensive",
                 description="Apartment in Baku city center.",
                 price=700.0,
@@ -226,6 +229,8 @@ async def test_price_filter_per_night_is_applied(monkeypatch):
             ListingRaw(
                 id="good-price",
                 name="Budget Apartment",
+                city="Baku",
+
                 url="https://example.com/baku-budget",
                 description="Budget apartment in Baku.",
                 price=300.0,
@@ -271,6 +276,7 @@ async def test_bathroom_filter_is_applied(monkeypatch):
             ListingRaw(
                 id="one-bathroom",
                 name="Apartment in Baku",
+                city="Baku",
                 url="https://example.com/baku-one-bathroom",
                 description="Nice apartment in Baku with 1 bathroom.",
                 rooms=[],
@@ -278,6 +284,7 @@ async def test_bathroom_filter_is_applied(monkeypatch):
             ListingRaw(
                 id="two-bathrooms",
                 name="Family apartment in Baku",
+                city="Baku",
                 url="https://example.com/baku-two-bathrooms",
                 description="Family apartment in Baku with 2 bathrooms.",
                 rooms=[],
@@ -316,6 +323,7 @@ async def test_property_type_filter_is_applied(monkeypatch):
             ListingRaw(
                 id="hotel-one",
                 name="Hotel in Baku",
+                city="Baku",
                 url="https://example.com/baku-hotel",
                 description="Nice hotel in Baku.",
                 rooms=[],
@@ -323,6 +331,7 @@ async def test_property_type_filter_is_applied(monkeypatch):
             ListingRaw(
                 id="apartment-one",
                 name="Apartment in Baku",
+                city="Baku",
                 url="https://example.com/baku-apartment",
                 description="Entire apartment in Baku with kitchen.",
                 rooms=[],
@@ -361,6 +370,7 @@ async def test_orchestrate_search_returns_normalized_response(monkeypatch):
             ListingRaw(
                 id=None,
                 name="Apartment in Baku",
+                city="Baku",
                 url="https://example.com/baku-apartment",
                 description="Apartment in Baku with private kitchen and private bathroom.",
                 price=300.0,
@@ -721,3 +731,92 @@ async def test_occupancy_filter_is_applied():
     )
 
     assert out["need_clarification"] is False
+    
+    
+@pytest.mark.asyncio
+async def test_city_filter_uses_only_city_field_not_description(monkeypatch):
+    async def fake_get_candidates(req, max_items, source):
+        return [
+            ListingRaw(
+                id="wrong-city-mentioned-in-description",
+                name="Nice Apartment",
+                city="Baku",
+                url="https://example.com/wrong-city",
+                description="Beautiful apartment in Hong Kong with WiFi.",
+                available_dates={"check_in": "2026-04-01", "check_out": "2026-04-30"},
+                rooms=[],
+            ),
+            ListingRaw(
+                id="correct-city",
+                name="Hong Kong Studio",
+                city="Hong Kong",
+                url="https://example.com/correct-city",
+                description="Simple studio with WiFi.",
+                available_dates={"check_in": "2026-04-01", "check_out": "2026-04-30"},
+                rooms=[],
+            ),
+        ]
+
+    monkeypatch.setattr(orchestrate_search_tool, "get_candidates", fake_get_candidates)
+
+    intent = {
+        "city": "Hong Kong",
+        "check_in": "2026-04-15",
+        "check_out": "2026-04-20",
+        "constraints": [],
+        "filters": {},
+        "property_types": [],
+        "occupancy_types": [],
+    }
+
+    out = await orchestrate_search_tool.orchestrate_search(
+        "studio in Hong Kong with WiFi",
+        intent,
+        source="fixtures",
+        max_items=10,
+        fallback_policy=FallbackPolicy(enabled=False),
+    )
+
+    assert out["need_clarification"] is False
+    assert len(out["results"]) == 1
+    assert out["results"][0]["result_id"] == "correct-city"
+    
+    
+    
+@pytest.mark.asyncio
+async def test_listing_without_city_is_not_eligible(monkeypatch):
+    async def fake_get_candidates(req, max_items, source):
+        return [
+            ListingRaw(
+                id="missing-city",
+                name="Hong Kong Studio",
+                city=None,
+                url="https://example.com/missing-city",
+                description="Studio in Hong Kong with WiFi.",
+                available_dates={"check_in": "2026-04-01", "check_out": "2026-04-30"},
+                rooms=[],
+            ),
+        ]
+
+    monkeypatch.setattr(orchestrate_search_tool, "get_candidates", fake_get_candidates)
+
+    intent = {
+        "city": "Hong Kong",
+        "check_in": "2026-04-15",
+        "check_out": "2026-04-20",
+        "constraints": [],
+        "filters": {},
+        "property_types": [],
+        "occupancy_types": [],
+    }
+
+    out = await orchestrate_search_tool.orchestrate_search(
+        "studio in Hong Kong",
+        intent,
+        source="fixtures",
+        max_items=10,
+        fallback_policy=FallbackPolicy(enabled=False),
+    )
+
+    assert out["need_clarification"] is True
+    assert out["results_count"] == 0

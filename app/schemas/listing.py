@@ -45,6 +45,7 @@ class ListingRaw(BaseModel):
     # Стабильный идентификатор: желательно иметь.
     # Если actor не даёт id — на PR#3 можно собрать hash(url) и писать сюда.
     id: Optional[str] = None
+    city: Optional[str] = None
 
     name: Optional[str] = None
     url: Optional[str] = None

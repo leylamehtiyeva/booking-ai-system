@@ -3,6 +3,7 @@
   {
     "id": "apt-large-good",
     "name": "Large Family Apartment",
+    "city": "Baku",
     "url": "https://example.com/apt-large-good",
     "price": 460,
     "currency": "USD",
@@ -28,6 +29,7 @@
   {
     "id": "apt-small",
     "name": "Compact Apartment",
+    "city": "Baku",
     "url": "https://example.com/apt-small",
     "price": 65,
     "currency": "USD",
@@ -52,6 +54,7 @@
   {
     "id": "apt-expensive",
     "name": "Premium Apartment",
+    "city": "Baku",
     "url": "https://example.com/apt-expensive",
     "price": 500,
     "currency": "USD",
@@ -79,6 +82,7 @@
   {
     "id": "hotel-large",
     "name": "Large Hotel Room",
+    "city": "Baku",
     "url": "https://example.com/hotel-large",
     "price": 70,
     "currency": "USD",

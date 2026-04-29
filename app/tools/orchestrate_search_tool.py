@@ -135,6 +135,26 @@ def _covers_dates(lst: ListingRaw, check_in: date, check_out: date) -> bool:
     return lst_in <= check_in and check_out <= lst_out
 
 
+def _normalize_city(value: Any) -> str | None:
+    if value is None:
+        return None
+
+    text = str(value).strip().casefold()
+    return text or None
+
+
+def _listing_city_matches(lst: ListingRaw, requested_city: str | None) -> bool:
+    requested = _normalize_city(requested_city)
+    if not requested:
+        return False
+
+    listing_city = _normalize_city(getattr(lst, "city", None))
+    if not listing_city:
+        return False
+
+    return listing_city == requested
+
+
 def _gemini_client() -> Client:
     api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if not api_key:
@@ -485,21 +505,10 @@ async def orchestrate_search(
             "questions": ["Apify retriever is not enabled yet. Using fixtures only for now."],
         }
 
-    # 2) Fixtures safety: fixtures могут не иметь поля city вообще.
-    # Тогда фильтруем по явному упоминанию города в name/description/url.
-    if source == "fixtures" and req.city:
-        city_norm = req.city.strip().lower()
-
-        def _fixture_mentions_city(lst: ListingRaw) -> bool:
-            chunks = [
-                getattr(lst, "name", "") or "",
-                getattr(lst, "description", "") or "",
-                getattr(lst, "url", "") or "",
-            ]
-            text = " ".join(chunks).lower()
-            return city_norm in text
-
-        listings = [lst for lst in listings if _fixture_mentions_city(lst)]
+    # 2) City is a hard search slot.
+    # Never infer city from name/description/url.
+    # If listing.city is missing, the listing is not eligible.
+    listings = [lst for lst in listings if _listing_city_matches(lst, req.city)]
 
     # 3) Dates safety (особенно для fixtures)
     listings = [lst for lst in listings if _covers_dates(lst, req.check_in, req.check_out)]
@@ -523,6 +532,10 @@ async def orchestrate_search(
         return {
             "need_clarification": True,
             "questions": ["Ничего не найдено по текущим условиям. Попробуй изменить требования."],
+            "request_summary": None,
+            "top_results": [],
+            "results": [],
+            "results_count": 0,
             "debug_notes": [
                 "No listings remained after initial city/date/occupancy filtering.",
                 f"city={req.city}, check_in={req.check_in}, check_out={req.check_out}",

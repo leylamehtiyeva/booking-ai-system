@@ -28,7 +28,7 @@ DATASET_PATH = (
 
 OUTPUT_PATH = (
     PROJECT_ROOT
-    / "evaluation/outputs/constraint_resolution_eval_report_ver2.json"
+    / "evaluation/outputs/constraint_resolution_eval_report_new_ver3.json"
 )
 
 ERRORS_PATH = (
