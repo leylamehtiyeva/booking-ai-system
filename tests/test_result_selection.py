@@ -171,9 +171,8 @@ def test_eligible_partial_when_must_constraint_is_uncertain():
     classified = classify_ranked_item(item)
 
     assert classified["eligibility_status"] == "eligible"
-    assert classified["match_tier"] == "partial"
-    assert "some requested constraints are not fully confirmed" in classified["selection_reasons"]
-
+    assert classified["match_tier"] == "weak"
+    assert "no required constraints are confirmed" in classified["selection_reasons"]
 
 def test_ineligible_when_required_constraint_failed():
     item = _base_item(
@@ -304,7 +303,7 @@ def test_occupancy_no_makes_ineligible():
     assert classified["match_tier"] == "weak"
 
 
-def test_property_yes_but_other_must_uncertain_results_in_partial():
+def test_property_yes_but_other_must_uncertain_results_in_weak():
     item = _base_item(
         matched_must_total=1,
         matched_must_count=0,
@@ -321,7 +320,7 @@ def test_property_yes_but_other_must_uncertain_results_in_partial():
     classified = classify_ranked_item(item)
 
     assert classified["eligibility_status"] == "eligible"
-    assert classified["match_tier"] == "partial"
+    assert classified["match_tier"] == "weak"
 
 
 def test_property_yes_but_explicit_negative_still_ineligible():

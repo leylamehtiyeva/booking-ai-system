@@ -9,12 +9,11 @@ from app.schemas.constraints import (
     EvidenceStrategy,
     UserConstraint,
 )
-from app.config.llm import get_gemini_model_for_adk
+
 
 from app.schemas.fields import Field
 from app.schemas.listing import ListingRaw, Room
 from app.schemas.match import FieldMatch, Ternary
-from app.config.llm import get_gemini_model_for_adk
 
 
 
@@ -77,15 +76,60 @@ def test_known_constraint_with_positive_structured_match_is_not_fallback_eligibl
     ) is False
 
 
-def test_normalize_result_downgrades_no_to_uncertain_without_explicit_negative():
+def test_decide_from_analysis_returns_no_for_strong_contradiction():
+    analysis = cer.ConstraintEvidenceAnalysis(
+        signals=[
+            cer.EvidenceSignal(
+                relation="contradicts",
+                strength="strong",
+                snippet="Parking costs $20 per day.",
+                source="policies",
+                path="policies[0].content",
+            )
+        ],
+        has_direct_contradiction=True,
+        evidence_missing=False,
+    )
+
+    assert cer._decide_from_analysis(analysis) == "NO"
+
+
+def test_decide_from_analysis_returns_yes_for_strong_support():
+    analysis = cer.ConstraintEvidenceAnalysis(
+        signals=[
+            cer.EvidenceSignal(
+                relation="supports",
+                strength="strong",
+                snippet="Free WiFi is available in all rooms.",
+                source="facilities",
+                path="listing.facilities[0]",
+            )
+        ],
+        has_direct_support=True,
+        evidence_missing=False,
+    )
+
+    assert cer._decide_from_analysis(analysis) == "YES"
+
+
+def test_decide_from_analysis_returns_uncertain_for_missing_evidence():
+    analysis = cer.ConstraintEvidenceAnalysis(
+        signals=[],
+        evidence_missing=True,
+    )
+
+    assert cer._decide_from_analysis(analysis) == "UNCERTAIN"
+
+
+def test_normalize_result_uses_signals_not_llm_decision():
     req = cer.ConstraintResolutionRequest(
         listing_id="listing-1",
         listing_title="Demo listing",
         constraint_id="c1",
-        raw_text="satellite TV",
-        normalized_text="satellite TV",
+        raw_text="free parking",
+        normalized_text="free parking",
         priority="must",
-        category="other",
+        category="amenity",
         mapping_status="unresolved",
         evidence_strategy="textual",
         mapped_fields=[],
@@ -93,31 +137,42 @@ def test_normalize_result_downgrades_no_to_uncertain_without_explicit_negative()
         resolver_type="textual",
         listing_evidence=[
             {
-                "source": "description",
-                "path": "listing.description",
-                "text": "Beautiful apartment with fast Wi-Fi and nice view.",
+                "source": "policies",
+                "path": "policies[0].content",
+                "text": "Parking costs $20 per day.",
             }
         ],
     )
 
     raw = {
-        "decision": "NO",
-        "confidence": 0.72,
-        "reason": "No explicit support was found.",
-        "evidence": [
+        "signals": [
             {
-                "snippet": "Beautiful apartment with fast Wi-Fi and nice view.",
-                "source": "description",
-                "path": "listing.description",
+                "relation": "contradicts",
+                "strength": "strong",
+                "snippet": "Parking costs $20 per day.",
+                "source": "policies",
+                "path": "policies[0].content",
+                "explanation": "Paid parking contradicts the requirement for free parking.",
             }
         ],
+        "has_direct_support": False,
+        "has_direct_contradiction": True,
+        "has_only_weak_or_indirect_evidence": False,
+        "has_conflicting_evidence": False,
+        "evidence_missing": False,
+        "condition_or_extra_requirement_present": False,
+        "confidence": 0.9,
+        "reason": "The listing says parking is paid.",
     }
 
     result = cer._normalize_result(raw, req)
 
-    assert result.decision == "UNCERTAIN"
-    assert result.resolution_status == "uncertain"
-    assert result.explicit_negative is False
+    assert result.decision == "NO"
+    assert result.resolution_status == "failed"
+    assert result.explicit_negative is True
+    assert result.analysis is not None
+    assert result.analysis.has_direct_contradiction is True
+    assert result.evidence[0].snippet == "Parking costs $20 per day."
 
 
 async def test_resolve_listing_constraints_with_fallback_returns_unified_results(monkeypatch):
@@ -155,7 +210,7 @@ async def test_resolve_listing_constraints_with_fallback_returns_unified_results
         evidence_strategy=EvidenceStrategy.STRUCTURED,
     )
 
-    async def _fake_resolve(req, *, model=get_gemini_model_for_adk()):
+    async def _fake_resolve(req, *, model=None):
         if req.normalized_text == "satellite TV":
             return cer.ConstraintResolutionResult(
                 listing_id=req.listing_id,
@@ -325,7 +380,7 @@ async def test_fallback_policy_limits_constraints_per_listing(monkeypatch):
 
     calls: list[str] = []
 
-    async def _fake_resolve(req, *, model=get_gemini_model_for_adk()):
+    async def _fake_resolve(req, *, model=None):
         calls.append(req.normalized_text)
         return cer.ConstraintResolutionResult(
             listing_id=req.listing_id,
