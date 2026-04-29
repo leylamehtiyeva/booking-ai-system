@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, Optional
-
+from app.observability.trace import RequestTrace
 from app.logic.intent_router import build_search_request_adk_async
 from app.logic.intent_update import update_search_state_async
 from app.logic.request_resolution import resolve_required_search_context
@@ -101,7 +101,7 @@ async def handle_user_message(
     user_message: str,
     previous_state: Optional[SearchRequest] = None,
     *,
-    source: str = "fixtures",
+    source: str = "fixtires",
     top_n: int = 5,
     fallback_policy: FallbackPolicy | None = None,
     max_items: int = MAX_ITEMS_HARD_CAP,
@@ -110,9 +110,11 @@ async def handle_user_message(
 ) -> Dict[str, Any]:
     route_debug: dict[str, Any] | None = None
     previous_state_json: dict[str, Any] | None = _build_state_payload(previous_state)
+    trace = RequestTrace()
 
     if previous_state is None:
-        state = await build_search_request_adk_async(user_message)
+        with trace.step("initial_intent_extraction"):
+            state = await build_search_request_adk_async(user_message)
         route_debug = {"route": "initial_search"}
         parsed_intent_debug = {
             "router": route_debug,
@@ -129,11 +131,12 @@ async def handle_user_message(
             ],
         }
     else:
-        route = await route_conversation_async(
-            user_message=user_message,
-            previous_state=previous_state,
-            latest_result_context=latest_result_context,
-        )
+        with trace.step("conversation_routing"):
+            route = await route_conversation_async(
+                user_message=user_message,
+                previous_state=previous_state,
+                latest_result_context=latest_result_context,
+            )
 
         route_debug = route.model_dump(exclude_none=True)
 
@@ -149,9 +152,11 @@ async def handle_user_message(
             )
 
         if route.route == "new_search":
-            state = await build_search_request_adk_async(user_message)
+            with trace.step("new_search_intent_extraction"):
+                state = await build_search_request_adk_async(user_message)
         elif route.route == "search_update":
-            state = await update_search_state_async(previous_state, user_message)
+            with trace.step("search_state_update"):
+                state = await update_search_state_async(previous_state, user_message)
         else:
             return {
                 "need_clarification": False,
@@ -204,10 +209,12 @@ async def handle_user_message(
         fallback_policy=fallback_policy,
         max_items=max_items,
         source=source,
+        trace=trace,
     )
 
     result["state"] = state_json
     result["parsed_intent"] = parsed_intent_debug
     result["search_request"] = state_json
+    result["telemetry"] = trace.summary()
 
     return result

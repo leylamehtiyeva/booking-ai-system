@@ -4,7 +4,7 @@ import asyncio
 import json
 import os
 from typing import Any, Literal
-
+from app.observability.trace import RequestTrace, LLMCallTrace
 from pydantic import BaseModel, Field
 from app.schemas.fallback_policy import FallbackPolicy
 
@@ -440,6 +440,7 @@ async def resolve_constraint_via_textual_evidence(
     req: ConstraintResolutionRequest,
     *,
     model: str = get_gemini_model(),
+    trace: RequestTrace | None = None,
 ) -> ConstraintResolutionResult:
     payload = {
         "constraint": {
@@ -475,6 +476,21 @@ async def resolve_constraint_via_textual_evidence(
                 temperature=0.1,
             ),
         )
+        
+        usage = getattr(resp, "usage_metadata", None)
+
+        if trace is not None:
+            trace.add_llm_call(
+                LLMCallTrace(
+                    step="constraint_textual_fallback",
+                    model=model,
+                    prompt_tokens=getattr(usage, "prompt_token_count", None),
+                    completion_tokens=getattr(usage, "candidates_token_count", None),
+                    total_tokens=getattr(usage, "total_token_count", None),
+                    estimated_cost_usd=None,
+                    success=True,
+                )
+            )
 
         raw_text = resp.text or ""
         raw_json = _extract_json(raw_text)
@@ -511,6 +527,7 @@ async def resolve_listing_constraints_with_fallback(
     constraints: list[UserConstraint],
     structured_matches_by_field: dict[CanonicalField, Any],
     policy: FallbackPolicy,
+    trace: RequestTrace | None = None,
 ) -> list[ConstraintResolutionResult]:
     if not policy.enabled:
         return []
@@ -544,6 +561,7 @@ async def resolve_listing_constraints_with_fallback(
         result = await resolve_constraint_via_textual_evidence(
             req,
             model=policy.model,
+            trace=trace,
         )
         results.append(result)
 

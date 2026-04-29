@@ -69,6 +69,23 @@ def render_messages() -> None:
                             language="json",
                         )
 
+                    telemetry = debug_data.get("telemetry")
+                    telemetry_log_info = debug_data.get("telemetry_log_info")
+
+                    if telemetry_log_info is not None:
+                        st.markdown("**Telemetry saved**")
+                        st.code(
+                            json.dumps(telemetry_log_info, ensure_ascii=False, indent=2, default=str),
+                            language="json",
+                        )
+
+                    if telemetry is not None:
+                        st.markdown("**Telemetry**")
+                        st.code(
+                            json.dumps(telemetry, ensure_ascii=False, indent=2, default=str),
+                            language="json",
+                        )
+
                         top_results = answer_payload.get("top_results") or []
                         if top_results:
                             st.markdown("**Selection summary by result**")

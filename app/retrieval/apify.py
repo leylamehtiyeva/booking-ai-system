@@ -19,17 +19,46 @@ def _iso(d: Any) -> str:
         return d.strip()
     raise ValueError(f"Invalid date value: {d!r}")
 
-def _property_type_query(req: SearchRequest) -> str:
+def _apify_property_type(req: SearchRequest) -> str | None:
+    """
+    Convert internal canonical property type into Apify Booking actor format.
+
+    Internal example:
+        apartment
+
+    Apify expects:
+        Apartments
+    """
     if not req.property_types:
-        return ""
+        return None
 
-    parts: list[str] = []
+    if len(req.property_types) > 1:
+        # MVP: Apify supports one propertyType value.
+        # We use only the first one for retrieval.
+        # The rest can still be handled later by internal filtering/matching.
+        pass
 
-    for pt in req.property_types:
-        value = pt.value if hasattr(pt, "value") else str(pt)
-        parts.append(value.replace("_", " "))
+    pt = req.property_types[0]
+    value = pt.value if hasattr(pt, "value") else str(pt)
 
-    return " ".join(parts).strip()
+    apify_property_types = {
+        "hotel": "Hotels",
+        "apartment": "Apartments",
+        "hostel": "Hostels",
+        "guest_house": "Guest houses",
+        "homestay": "Homestays",
+        "bed_and_breakfast": "Bed and breakfasts",
+        "holiday_home": "Holiday homes",
+        "villa": "Villas",
+        "resort": "Resorts",
+        "campsite": "Campsites",
+        "motel": "Motels",
+        "boat": "Boats",
+        "holiday_park": "Holiday parks",
+        "luxury_tent": "Luxury tents",
+    }
+
+    return apify_property_types.get(value)
 
 
 def _post_json_sync(url: str, payload: Dict[str, Any], timeout: int = 180) -> Any:
@@ -70,11 +99,8 @@ class ApifyRetriever:
 
 
         search_query = str(req.city).strip()
-
-        property_query = _property_type_query(req)
-        if property_query:
-            search_query = f"{search_query} {property_query}".strip()
-
+        property_type = _apify_property_type(req)
+        
 
         actor_input = {
             "search": search_query,
@@ -87,6 +113,9 @@ class ApifyRetriever:
             "children": children,
             "rooms": rooms,
         }
+        
+        if property_type:
+            actor_input["propertyType"] = property_type
 
         api_base = os.getenv("APIFY_BASE_URL", "https://api.apify.com")
         url = (
@@ -95,6 +124,7 @@ class ApifyRetriever:
         )
 
         try:
+            print("APIFY ACTOR INPUT:", json.dumps(actor_input, ensure_ascii=False, indent=2))
             items = await asyncio.to_thread(_post_json_sync, url, actor_input, 180)
         except HTTPError as e:
             body = ""
