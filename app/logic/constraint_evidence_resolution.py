@@ -7,7 +7,7 @@ from typing import Any, Literal
 from app.observability.trace import RequestTrace, LLMCallTrace
 from pydantic import BaseModel, Field
 from app.schemas.fallback_policy import FallbackPolicy
-
+from app.observability.llm_usage import record_llm_call_from_response
 from app.logic.listing_signals import collect_listing_signals
 from app.schemas.constraints import (
     ConstraintMappingStatus,
@@ -477,20 +477,13 @@ async def resolve_constraint_via_textual_evidence(
             ),
         )
         
-        usage = getattr(resp, "usage_metadata", None)
-
-        if trace is not None:
-            trace.add_llm_call(
-                LLMCallTrace(
-                    step="constraint_textual_fallback",
-                    model=model,
-                    prompt_tokens=getattr(usage, "prompt_token_count", None),
-                    completion_tokens=getattr(usage, "candidates_token_count", None),
-                    total_tokens=getattr(usage, "total_token_count", None),
-                    estimated_cost_usd=None,
-                    success=True,
-                )
-            )
+        record_llm_call_from_response(
+            trace=trace,
+            step="constraint_textual_fallback",
+            model=model,
+            response=resp,
+            success=True,
+        )
 
         raw_text = resp.text or ""
         raw_json = _extract_json(raw_text)

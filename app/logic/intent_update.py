@@ -6,6 +6,9 @@ import json
 import os
 import uuid
 from typing import Optional
+from app.config.llm import get_gemini_model
+from app.observability.trace import RequestTrace
+from app.observability.llm_usage import record_llm_call_estimated
 
 from google.adk.agents.run_config import RunConfig
 from google.adk.runners import Runner
@@ -106,6 +109,8 @@ RETURN EMPTY PATCH ONLY IF:
 async def route_intent_update_patch_async(
     previous_state: SearchRequest,
     user_message: str,
+    *,
+    trace: RequestTrace | None = None,
 ) -> SearchIntentPatch:
     _ensure_gemini_key()
     
@@ -126,6 +131,15 @@ async def route_intent_update_patch_async(
     cfg = RunConfig(response_modalities=["TEXT"])
 
     final_text: Optional[str] = None
+    record_llm_call_estimated(
+        trace=trace,
+        step="intent_update",
+        model=get_gemini_model(),
+        prompt_text=prompt,
+        response_text=final_text,
+        success=True,
+    )
+    
     async for ev in runner.run_async(
         user_id=USER_ID,
         session_id=session_id,
@@ -170,9 +184,14 @@ def _inherit_month_from_previous_state(
 async def update_search_state_async(
     previous_state: SearchRequest,
     user_message: str,
+    *,
+    trace: RequestTrace | None = None,
 ) -> SearchRequest:
-    patch = await route_intent_update_patch_async(previous_state, user_message)
-
+    patch = await route_intent_update_patch_async(
+        previous_state,
+        user_message,
+        trace=trace,
+    )
     print("\n=== INTENT UPDATE PATCH ===")
     print(patch.model_dump(exclude_none=True))
 

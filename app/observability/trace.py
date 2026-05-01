@@ -96,6 +96,16 @@ class RequestTrace:
                 "estimated_llm_usd": round(llm_cost, 6),
                 "estimated_external_usd": round(external_cost, 6),
             },
+            "scenario": {
+                "used_apify": any(c.provider == "apify" for c in self.external_calls),
+                "used_fallback": any(c.step == "constraint_textual_fallback" for c in self.llm_calls),
+                "used_intent_extraction": any(c.step in {"initial_intent_extraction", "new_search_intent_extraction"} for c in self.llm_calls),
+                "used_conversation_router": any(c.step == "conversation_routing" for c in self.llm_calls),
+                "used_intent_update": any(c.step == "intent_update" for c in self.llm_calls),
+                "used_intent_repair": any(c.step == "intent_repair" for c in self.llm_calls),
+                "llm_calls_count": len(self.llm_calls),
+                "external_calls_count": len(self.external_calls),
+            },
             "llm": {
                 "calls_count": len(self.llm_calls),
                 "calls": [call.__dict__ for call in self.llm_calls],

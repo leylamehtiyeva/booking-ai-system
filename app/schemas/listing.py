@@ -49,6 +49,7 @@ class ListingRaw(BaseModel):
 
     name: Optional[str] = None
     url: Optional[str] = None
+    
 
     # Цена/валюта
     price: Optional[float] = None

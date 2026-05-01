@@ -114,7 +114,11 @@ async def handle_user_message(
 
     if previous_state is None:
         with trace.step("initial_intent_extraction"):
-            state = await build_search_request_adk_async(user_message)
+            state = await build_search_request_adk_async(
+            user_message,
+            trace=trace,
+            step="initial_intent_extraction",
+        )
         route_debug = {"route": "initial_search"}
         parsed_intent_debug = {
             "router": route_debug,
@@ -136,6 +140,7 @@ async def handle_user_message(
                 user_message=user_message,
                 previous_state=previous_state,
                 latest_result_context=latest_result_context,
+                trace=trace,
             )
 
         route_debug = route.model_dump(exclude_none=True)
@@ -153,10 +158,18 @@ async def handle_user_message(
 
         if route.route == "new_search":
             with trace.step("new_search_intent_extraction"):
-                state = await build_search_request_adk_async(user_message)
+                state = await build_search_request_adk_async(
+                user_message,
+                trace=trace,
+                step="new_search_intent_extraction",
+            )
         elif route.route == "search_update":
             with trace.step("search_state_update"):
-                state = await update_search_state_async(previous_state, user_message)
+                state = await update_search_state_async(
+                previous_state,
+                user_message,
+                trace=trace,
+            )
         else:
             return {
                 "need_clarification": False,

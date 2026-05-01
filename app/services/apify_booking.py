@@ -40,9 +40,8 @@ class ApifyBookingService:
             "search": request.city,              # required
             "currency": request.currency or "USD",
             "language": "en-gb",
-            "maxItems": 10,                      # smoke default
+            "maxItems": 10,                     
             "adults": request.adults,
-            # Ограничители, чтобы smoke не уходил в бесконечную пагинацию
             "maxConcurrency": 1,
             "maxRequestsPerCrawl": 50,
         }

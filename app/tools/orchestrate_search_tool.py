@@ -143,6 +143,17 @@ def _normalize_city(value: Any) -> str | None:
     text = str(value).strip().casefold()
     return text or None
 
+def _should_apply_local_date_filter(source: Source) -> bool:
+    """
+    Local date filtering is valid for fixtures because fixtures store
+    availability as a broad available_dates range.
+
+    For Apify, dates are already sent to the Booking actor via checkIn/checkOut.
+    Re-applying fixture-style available_dates filtering can incorrectly remove
+    valid Apify results.
+    """
+    return source == "fixtures"
+
 
 def _listing_city_matches(lst: ListingRaw, requested_city: str | None) -> bool:
     requested = _normalize_city(requested_city)
@@ -397,7 +408,7 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
     must_constraints, nice_constraints, _ = _constraints_by_priority(req)
     structured_must_fields = _known_mapped_fields(must_constraints)
     structured_nice_fields = _known_mapped_fields(nice_constraints)
-
+    rejection_reasons = Counter()
     for lst in listings:
         report = match_listing_structured(lst, req)
         numeric_results = evaluate_numeric_filters(
@@ -416,12 +427,15 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
 
         # strict numeric filter
         if _fails_numeric_filters(numeric_results):
+            rejection_reasons["numeric_filters"] += 1
             continue
 
         if property_result is not None and property_result.value == Ternary.NO:
+            rejection_reasons["property_type"] += 1
             continue
 
         if occupancy_result is not None and occupancy_result.value == Ternary.NO:
+            rejection_reasons["occupancy_type"] += 1
             continue
 
         score, must_yes, must_total, why = _score_listing(
@@ -452,7 +466,7 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
                 "listing": lst,
             }
         )
-
+    print("STRUCTURED RANKING REJECTION REASONS:", dict(rejection_reasons))
     ranked.sort(key=lambda x: x["score"], reverse=True)
     return ranked
 
@@ -505,18 +519,41 @@ async def orchestrate_search(
     # 1) Retrieve candidates (Apify строго 1 раз / fixtures — просто читаем файл)
     try:
         with trace.step("retrieval", source=source, max_items=max_items):
-            listings = await get_candidates(req, max_items=max_items, source=source)
+            listings = await get_candidates(
+                req,
+                max_items=max_items,
+                source=source,
+                trace=trace,
+            )
     except NotImplementedError:
         return {
             "need_clarification": True,
             "questions": ["Apify retriever is not enabled yet. Using fixtures only for now."],
         }
 
-    with trace.step("city_filter", listings_count=len(listings)):
-        listings = [lst for lst in listings if _listing_city_matches(lst, req.city)]
+        with trace.step(
+            "city_filter",
+            listings_count=len(listings),
+            applied=(source == "fixtures"),
+            source=source,
+        ):
+            if source == "fixtures":
+                listings = [
+                    lst for lst in listings
+                    if _listing_city_matches(lst, req.city)
+                ]
 
-    with trace.step("date_filter", listings_count=len(listings)):
-        listings = [lst for lst in listings if _covers_dates(lst, req.check_in, req.check_out)]
+    with trace.step(
+        "date_filter",
+        listings_count=len(listings),
+        applied=_should_apply_local_date_filter(source),
+        source=source,
+    ):
+        if _should_apply_local_date_filter(source):
+            listings = [
+                lst for lst in listings
+                if _covers_dates(lst, req.check_in, req.check_out)
+            ]
 
     with trace.step("occupancy_filter", listings_count=len(listings)):
         occupancy_results = {
