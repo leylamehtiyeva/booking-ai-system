@@ -4,10 +4,10 @@ import asyncio
 import json
 import os
 from typing import Any, Literal
-
+from app.observability.trace import RequestTrace, LLMCallTrace
 from pydantic import BaseModel, Field
 from app.schemas.fallback_policy import FallbackPolicy
-
+from app.observability.llm_usage import record_llm_call_from_response
 from app.logic.listing_signals import collect_listing_signals
 from app.schemas.constraints import (
     ConstraintMappingStatus,
@@ -440,6 +440,7 @@ async def resolve_constraint_via_textual_evidence(
     req: ConstraintResolutionRequest,
     *,
     model: str = get_gemini_model(),
+    trace: RequestTrace | None = None,
 ) -> ConstraintResolutionResult:
     payload = {
         "constraint": {
@@ -474,6 +475,14 @@ async def resolve_constraint_via_textual_evidence(
                 system_instruction=system,
                 temperature=0.1,
             ),
+        )
+        
+        record_llm_call_from_response(
+            trace=trace,
+            step="constraint_textual_fallback",
+            model=model,
+            response=resp,
+            success=True,
         )
 
         raw_text = resp.text or ""
@@ -511,6 +520,7 @@ async def resolve_listing_constraints_with_fallback(
     constraints: list[UserConstraint],
     structured_matches_by_field: dict[CanonicalField, Any],
     policy: FallbackPolicy,
+    trace: RequestTrace | None = None,
 ) -> list[ConstraintResolutionResult]:
     if not policy.enabled:
         return []
@@ -544,6 +554,7 @@ async def resolve_listing_constraints_with_fallback(
         result = await resolve_constraint_via_textual_evidence(
             req,
             model=policy.model,
+            trace=trace,
         )
         results.append(result)
 

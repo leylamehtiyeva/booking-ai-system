@@ -4,7 +4,9 @@ import json
 import os
 import uuid
 from typing import Any, Optional
-
+from app.config.llm import get_gemini_model
+from app.observability.trace import RequestTrace
+from app.observability.llm_usage import record_llm_call_estimated
 from google.adk.agents.run_config import RunConfig
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
@@ -63,6 +65,7 @@ async def route_conversation_async(
     user_message: str,
     previous_state: SearchRequest | None,
     latest_result_context: dict[str, Any] | None = None,
+    trace: RequestTrace | None = None,
 ) -> ConversationRouteDecision:
     _ensure_gemini_key()
 
@@ -87,6 +90,15 @@ async def route_conversation_async(
     cfg = RunConfig(response_modalities=["TEXT"])
 
     final_text: Optional[str] = None
+    record_llm_call_estimated(
+        trace=trace,
+        step="conversation_routing",
+        model=get_gemini_model(),
+        prompt_text=prompt,
+        response_text=final_text,
+        success=bool(final_text),
+    )
+    
     async for ev in runner.run_async(
         user_id=USER_ID,
         session_id=session_id,

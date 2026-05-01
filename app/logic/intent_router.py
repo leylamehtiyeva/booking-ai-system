@@ -1,5 +1,7 @@
 from __future__ import annotations
-
+from app.config.llm import get_gemini_model
+from app.observability.trace import RequestTrace
+from app.observability.llm_usage import record_llm_call_estimated
 import asyncio
 import json
 import os
@@ -49,7 +51,12 @@ def _strip_json_fence(text: str) -> str:
 
 
 
-async def _route_intent_via_adk(user_text: str) -> IntentRoute:
+async def _route_intent_via_adk(
+    user_text: str,
+    *,
+    trace: RequestTrace | None = None,
+    step: str = "initial_intent_extraction",
+) -> IntentRoute:
     _ensure_gemini_key()
 
     max_retries = 3
@@ -89,6 +96,15 @@ async def _route_intent_via_adk(user_text: str) -> IntentRoute:
                 raise ValueError("ADK returned empty response text")
 
             clean = _strip_json_fence(final_text)
+            
+            record_llm_call_estimated(
+                trace=trace,
+                step=step,
+                model=get_gemini_model(),
+                prompt_text=user_text,
+                response_text=final_text,
+                success=True,
+            )
             payload = json.loads(clean)
 
             if payload.get("filters") is None:
@@ -121,17 +137,27 @@ async def _route_intent_via_adk(user_text: str) -> IntentRoute:
             raise
 
 
-async def route_intent_adk_async(user_text: str) -> IntentRoute:
+async def route_intent_adk_async(
+    user_text: str,
+    *,
+    trace: RequestTrace | None = None,
+    step: str = "initial_intent_extraction",
+) -> IntentRoute:
     print("ROUTE_INTENT_CALLED", user_text)
-    return await _route_intent_via_adk(user_text)
+    return await _route_intent_via_adk(user_text, trace=trace, step=step)
 
 
 def route_intent_adk(user_text: str) -> IntentRoute:
     return asyncio.run(route_intent_adk_async(user_text))
 
 
-async def build_search_request_adk_async(user_text: str) -> SearchRequest:
-    intent = await route_intent_adk_async(user_text)
+async def build_search_request_adk_async(
+    user_text: str,
+    *,
+    trace: RequestTrace | None = None,
+    step: str = "initial_intent_extraction",
+) -> SearchRequest:
+    intent = await route_intent_adk_async(user_text, trace=trace, step=step)
     intent = normalize_intent_dates(intent, user_text)
 
     print("\n=== PARSED INTENT ===")

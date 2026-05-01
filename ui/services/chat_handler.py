@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 from app.schemas.fallback_policy import FallbackPolicy
 import streamlit as st
+from app.observability.telemetry_logger import save_telemetry_record
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -35,11 +36,27 @@ def process_user_message(user_message: str) -> None:
             handle_user_message(
                 user_message=user_message,
                 previous_state=previous_state,
-                source="fixtures",
+                source="apify",
                 top_n=5,
                 fallback_policy=FallbackPolicy(enabled=True, top_k=5),
                 max_items=MAX_ITEMS_HARD_CAP,
             )
+        )
+        
+        telemetry_log_info = None
+
+    if result.get("telemetry"):
+        telemetry_log_info = save_telemetry_record(
+            telemetry=result["telemetry"],
+            user_message=user_message,
+            source="apify",
+            top_n=5,
+            max_items=MAX_ITEMS_HARD_CAP,
+            result_summary={
+                "need_clarification": result.get("need_clarification"),
+                "results_count": result.get("results_count"),
+                "questions": result.get("questions"),
+            },
         )
 
     assistant_answer, answer_payload = build_display_answer(result)
@@ -48,6 +65,8 @@ def process_user_message(user_message: str) -> None:
         "search_request": result.get("search_request"),
         "state_after": result.get("state"),
         "answer_payload": answer_payload,
+        "telemetry": result.get("telemetry"),
+        "telemetry_log_info": telemetry_log_info,
     }
 
     append_message("assistant", assistant_answer, debug_data=debug_data)

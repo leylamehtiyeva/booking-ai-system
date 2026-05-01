@@ -4,12 +4,42 @@ import asyncio
 import json
 import os
 from datetime import date
+
+from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List
 from urllib import request as urlrequest
 from urllib.error import HTTPError, URLError
 
 from app.schemas.listing import ListingRaw
 from app.schemas.query import SearchRequest
+import time
+
+from app.observability.trace import RequestTrace, ExternalCallTrace
+from app.observability.pricing import estimate_apify_cost_usd
+
+
+
+def _save_apify_debug_payload(actor_input: Dict[str, Any], items: Any) -> None:
+    debug_dir = Path("logs/apify_raw")
+    debug_dir.mkdir(parents=True, exist_ok=True)
+
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    payload = {
+        "timestamp": ts,
+        "actor_input": actor_input,
+        "items_count": len(items) if isinstance(items, list) else None,
+        "items": items,
+    }
+
+    path = debug_dir / f"apify_raw_{ts}.json"
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2, default=str),
+        encoding="utf-8",
+    )
+
+    print(f"APIFY RAW SAVED TO: {path}")
 
 
 def _iso(d: Any) -> str:
@@ -19,17 +49,43 @@ def _iso(d: Any) -> str:
         return d.strip()
     raise ValueError(f"Invalid date value: {d!r}")
 
-def _property_type_query(req: SearchRequest) -> str:
+def _apify_property_type(req: SearchRequest) -> str | None:
+    """
+    Convert internal canonical property type into Apify Booking actor format.
+
+    Internal:
+        apartment, hotel
+
+    Apify input expects:
+        Apartments, Hotels
+
+    Apify output may return:
+        apartment, hotel
+    """
     if not req.property_types:
-        return ""
+        return None
 
-    parts: list[str] = []
+    pt = req.property_types[0]
+    value = pt.value if hasattr(pt, "value") else str(pt)
 
-    for pt in req.property_types:
-        value = pt.value if hasattr(pt, "value") else str(pt)
-        parts.append(value.replace("_", " "))
+    apify_property_types = {
+        "hotel": "Hotels",
+        "apartment": "Apartments",
+        "hostel": "Hostels",
+        "guest_house": "Guest houses",
+        "homestay": "Homestays",
+        "bed_and_breakfast": "Bed and breakfasts",
+        "holiday_home": "Holiday homes",
+        "villa": "Villas",
+        "resort": "Resorts",
+        "campsite": "Campsites",
+        "motel": "Motels",
+        "boat": "Boats",
+        "holiday_park": "Holiday parks",
+        "luxury_tent": "Luxury tents",
+    }
 
-    return " ".join(parts).strip()
+    return apify_property_types.get(value)
 
 
 def _post_json_sync(url: str, payload: Dict[str, Any], timeout: int = 180) -> Any:
@@ -49,7 +105,12 @@ def _post_json_sync(url: str, payload: Dict[str, Any], timeout: int = 180) -> An
 
 
 class ApifyRetriever:
-    async def get_candidates(self, req: SearchRequest, max_items: int) -> List[ListingRaw]:
+    async def get_candidates(
+        self,
+        req: SearchRequest,
+        max_items: int,
+        trace: RequestTrace | None = None,
+        ) -> List[ListingRaw]:        
         token = os.getenv("APIFY_TOKEN")
         if not token:
             raise ValueError("Missing APIFY_TOKEN in environment")
@@ -70,11 +131,8 @@ class ApifyRetriever:
 
 
         search_query = str(req.city).strip()
-
-        property_query = _property_type_query(req)
-        if property_query:
-            search_query = f"{search_query} {property_query}".strip()
-
+        property_type = _apify_property_type(req)
+        
 
         actor_input = {
             "search": search_query,
@@ -87,6 +145,9 @@ class ApifyRetriever:
             "children": children,
             "rooms": rooms,
         }
+        
+        if property_type:
+            actor_input["propertyType"] = property_type
 
         api_base = os.getenv("APIFY_BASE_URL", "https://api.apify.com")
         url = (
@@ -95,7 +156,29 @@ class ApifyRetriever:
         )
 
         try:
+            print("APIFY ACTOR INPUT:", json.dumps(actor_input, ensure_ascii=False, indent=2))
+            started = time.perf_counter()
             items = await asyncio.to_thread(_post_json_sync, url, actor_input, 180)
+
+            latency_ms = round((time.perf_counter() - started) * 1000, 2)
+
+            if trace is not None:
+                trace.add_external_call(
+                    ExternalCallTrace(
+                        step="apify_booking_search",
+                        provider="apify",
+                        latency_ms=latency_ms,
+                        estimated_cost_usd=estimate_apify_cost_usd(run_count=1),
+                        success=True,
+                        metadata={
+                            "actor": actor,
+                            "max_items": max_items,
+                            "city": req.city,
+                            "check_in": _iso(req.check_in),
+                            "check_out": _iso(req.check_out),
+                        },
+                    )
+                )
         except HTTPError as e:
             body = ""
             try:
@@ -103,7 +186,6 @@ class ApifyRetriever:
             except Exception:
                 pass
 
-            # ✅ Debug what we sent (so 1 paid run gives full diagnosis)
             print("APIFY ACTOR INPUT:", json.dumps(actor_input, ensure_ascii=False, indent=2))
 
             raise RuntimeError(f"Apify HTTPError {e.code}: {body}") from e
@@ -111,6 +193,7 @@ class ApifyRetriever:
             print("APIFY ACTOR INPUT:", json.dumps(actor_input, ensure_ascii=False, indent=2))
             raise RuntimeError(f"Apify URLError: {e}") from e
 
+        _save_apify_debug_payload(actor_input, items)
         if not isinstance(items, list):
             raise RuntimeError(f"Unexpected Apify response type: {type(items)}")
 

@@ -3,6 +3,7 @@ from app.schemas.property_semantics import OccupancyType, PropertyType
 import asyncio
 import json
 import os
+from app.observability.trace import RequestTrace
 from datetime import date
 from typing import Any, Dict, List, Optional, Tuple
 from app.logic.result_selection import select_ranked_items
@@ -141,6 +142,17 @@ def _normalize_city(value: Any) -> str | None:
 
     text = str(value).strip().casefold()
     return text or None
+
+def _should_apply_local_date_filter(source: Source) -> bool:
+    """
+    Local date filtering is valid for fixtures because fixtures store
+    availability as a broad available_dates range.
+
+    For Apify, dates are already sent to the Booking actor via checkIn/checkOut.
+    Re-applying fixture-style available_dates filtering can incorrectly remove
+    valid Apify results.
+    """
+    return source == "fixtures"
 
 
 def _listing_city_matches(lst: ListingRaw, requested_city: str | None) -> bool:
@@ -396,7 +408,7 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
     must_constraints, nice_constraints, _ = _constraints_by_priority(req)
     structured_must_fields = _known_mapped_fields(must_constraints)
     structured_nice_fields = _known_mapped_fields(nice_constraints)
-
+    rejection_reasons = Counter()
     for lst in listings:
         report = match_listing_structured(lst, req)
         numeric_results = evaluate_numeric_filters(
@@ -415,12 +427,15 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
 
         # strict numeric filter
         if _fails_numeric_filters(numeric_results):
+            rejection_reasons["numeric_filters"] += 1
             continue
 
         if property_result is not None and property_result.value == Ternary.NO:
+            rejection_reasons["property_type"] += 1
             continue
 
         if occupancy_result is not None and occupancy_result.value == Ternary.NO:
+            rejection_reasons["occupancy_type"] += 1
             continue
 
         score, must_yes, must_total, why = _score_listing(
@@ -451,7 +466,7 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
                 "listing": lst,
             }
         )
-
+    print("STRUCTURED RANKING REJECTION REASONS:", dict(rejection_reasons))
     ranked.sort(key=lambda x: x["score"], reverse=True)
     return ranked
 
@@ -467,19 +482,23 @@ async def orchestrate_search(
     max_items: int = MAX_ITEMS_HARD_CAP,
     source: Source = "fixtures",
     fallback_policy: FallbackPolicy | None = None,
+    trace: RequestTrace | None = None,
 ) -> Dict[str, Any]:
     """High-level search orchestration tool (fixtures + apify)."""
+    if trace is None:
+        trace = RequestTrace()
     if max_items > MAX_ITEMS_HARD_CAP:
         return {
             "need_clarification": True,
             "questions": [f"Too many items requested ({max_items}). Please use <= {MAX_ITEMS_HARD_CAP}."],
         }
+        
+    with trace.step("validate_and_repair_intent"):    
+        intent_obj, dropped_requests = await _validate_and_repair_intent(intent, attempts=2)
 
-    intent_obj, dropped_requests = await _validate_and_repair_intent(intent, attempts=2)
 
-
-
-    resolved = resolve_required_search_context(intent_obj)
+    with trace.step("resolve_required_search_context"):
+        resolved = resolve_required_search_context(intent_obj)
 
     if resolved.need_clarification:
         return {
@@ -488,35 +507,68 @@ async def orchestrate_search(
             "dropped_requests": dropped_requests,
         }
 
-    req = _build_request(
-        user_text=user_text,
-        intent_obj=intent_obj,
-        city=resolved.city,
-        check_in=resolved.check_in,
-        check_out=resolved.check_out,
-    )
+    with trace.step("build_search_request"):
+        req = _build_request(
+            user_text=user_text,
+            intent_obj=intent_obj,
+            city=resolved.city,
+            check_in=resolved.check_in,
+            check_out=resolved.check_out,
+        )
 
     # 1) Retrieve candidates (Apify строго 1 раз / fixtures — просто читаем файл)
     try:
-        listings = await get_candidates(req, max_items=max_items, source=source)
+        with trace.step("retrieval", source=source, max_items=max_items):
+            listings = await get_candidates(
+                req,
+                max_items=max_items,
+                source=source,
+                trace=trace,
+            )
     except NotImplementedError:
         return {
             "need_clarification": True,
             "questions": ["Apify retriever is not enabled yet. Using fixtures only for now."],
         }
 
-    # 2) City is a hard search slot.
-    # Never infer city from name/description/url.
-    # If listing.city is missing, the listing is not eligible.
-    listings = [lst for lst in listings if _listing_city_matches(lst, req.city)]
+        with trace.step(
+            "city_filter",
+            listings_count=len(listings),
+            applied=(source == "fixtures"),
+            source=source,
+        ):
+            if source == "fixtures":
+                listings = [
+                    lst for lst in listings
+                    if _listing_city_matches(lst, req.city)
+                ]
 
-    # 3) Dates safety (особенно для fixtures)
-    listings = [lst for lst in listings if _covers_dates(lst, req.check_in, req.check_out)]
-        # 3.5) Occupancy safety
-    occupancy_results = {
-        getattr(lst, "id", None) or getattr(lst, "url", None) or str(i): evaluate_occupancy(lst, req)
-        for i, lst in enumerate(listings)
-    }
+    with trace.step(
+        "date_filter",
+        listings_count=len(listings),
+        applied=_should_apply_local_date_filter(source),
+        source=source,
+    ):
+        if _should_apply_local_date_filter(source):
+            listings = [
+                lst for lst in listings
+                if _covers_dates(lst, req.check_in, req.check_out)
+            ]
+
+    with trace.step("occupancy_filter", listings_count=len(listings)):
+        occupancy_results = {
+            getattr(lst, "id", None) or getattr(lst, "url", None) or str(i): evaluate_occupancy(lst, req)
+            for i, lst in enumerate(listings)
+        }
+
+        filtered_listings = []
+        for i, lst in enumerate(listings):
+            key = getattr(lst, "id", None) or getattr(lst, "url", None) or str(i)
+            occ = occupancy_results[key]
+            if occ.passed:
+                filtered_listings.append(lst)
+
+        listings = filtered_listings
 
     filtered_listings = []
     for i, lst in enumerate(listings):
@@ -545,32 +597,38 @@ async def orchestrate_search(
         }
 
     # 5) Structured ranking
-    ranked = _rank_structured(req, listings)
+    with trace.step("structured_ranking", listings_count=len(listings)):
+        ranked = _rank_structured(req, listings)
+    
+    
 
-    # 6) Unified constraint fallback layer on top-K
     # 6) Unified constraint fallback layer on top-K
     if fallback_policy is None:
         fallback_policy = _build_fallback_policy(fallback_top_k=5)
 
-    await _apply_constraint_fallback_layer(
-        req,
-        ranked,
-        policy=fallback_policy,
-    )
+    with trace.step("constraint_fallback_layer", ranked_count=len(ranked)):
+        await _apply_constraint_fallback_layer(
+            req,
+            ranked,
+            policy=fallback_policy,
+            trace=trace,
+        )
 
     # 7) Apply fallback-informed scoring
-    ranked = _apply_constraint_resolution_scoring(ranked)
+    with trace.step("fallback_scoring"):
+        ranked = _apply_constraint_resolution_scoring(ranked)
 
-    must_constraints, _, _ = _constraints_by_priority(req)
-    structured_must_fields = _known_mapped_fields(must_constraints)
+    with trace.step("post_fallback_structured_filtering", ranked_count=len(ranked)):
+        must_constraints, _, _ = _constraints_by_priority(req)
+        structured_must_fields = _known_mapped_fields(must_constraints)
 
-    ranked = [
-        it
-        for it in ranked
-        if not _fails_must(it["matches"], structured_must_fields)
-        and not _fails_numeric_filters(it.get("numeric_results"))
-    ]
-    ranked.sort(key=lambda x: x["score"], reverse=True)
+        ranked = [
+            it
+            for it in ranked
+            if not _fails_must(it["matches"], structured_must_fields)
+            and not _fails_numeric_filters(it.get("numeric_results"))
+        ]
+        ranked.sort(key=lambda x: x["score"], reverse=True)
     
     if not ranked:
         debug_notes = ["No listings remained after structured filtering."]
@@ -626,17 +684,20 @@ async def orchestrate_search(
             "dropped_requests": dropped_requests,
         }
 
-    selected = select_ranked_items(ranked, top_n=top_n)
+    with trace.step("final_selection", ranked_count=len(ranked), top_n=top_n):
+        selected = select_ranked_items(ranked, top_n=top_n)
 
-    normalized = normalize_search_response(
-        req,
-        selected,
-        top_n=top_n,
-        dropped_requests=dropped_requests,
-    )
+    with trace.step("normalize_response", selected_count=len(selected)):
+        normalized = normalize_search_response(
+            req,
+            selected,
+            top_n=top_n,
+            dropped_requests=dropped_requests,
+        )
 
-    payload = normalized.model_dump(mode="json", exclude_none=True)
-    payload["constraint_statuses"] = _build_constraint_statuses(selected[: max(0, top_n)])
+        payload = normalized.model_dump(mode="json", exclude_none=True)
+        payload["constraint_statuses"] = _build_constraint_statuses(selected[: max(0, top_n)])
+
     return payload
     
 def _format_match_why(field: Field, fm: Any) -> str:
@@ -738,6 +799,7 @@ async def _apply_constraint_fallback_layer(
     ranked: list[dict],
     *,
     policy: FallbackPolicy,
+    trace: RequestTrace | None = None,
 ) -> None:
     if not policy.enabled:
         for item in ranked:
@@ -757,6 +819,7 @@ async def _apply_constraint_fallback_layer(
             constraints=req.constraints or [],
             structured_matches_by_field=item.get("matches", {}),
             policy=policy,
+            trace=trace,
         )
 
         item["constraint_resolution_results"] = [
