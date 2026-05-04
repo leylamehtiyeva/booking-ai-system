@@ -1,7 +1,7 @@
 [project]
 name = "booking-ai-agent"
 version = "0.1.0"
-description = "Add your description here"
+description = "description = "Constraint-aware conversational booking assistant with deterministic decision-making and controlled LLM usage""
 readme = "README.md"
 requires-python = ">=3.11.8"
 dependencies = [
