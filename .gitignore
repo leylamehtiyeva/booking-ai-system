@@ -1,29 +1,46 @@
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Virtual env
+# Virtual environments
 .venv/
 venv/
+env/
 
-# MacOS
+# Environment variables
+.env
+.env.local
+
+# OS files
 .DS_Store
 __MACOSX/
 
-# Logs
+# Logs / telemetry
 logs/
 *.log
 
-# Env files
-.env
+# Local debug data
+data/debug_*.json
+data/*_raw.json
 
-# Pytest
-.pytest_cache/
+# Evaluation artifacts
+evaluation.zip
+evaluation/outputs/*.json
+evaluation/outputs/*.jsonl
+!evaluation/outputs/.gitkeep
 
-# Zip / temp
-*.zip
+# IDE
+.vscode/
+.idea/
 
-# Jupyter
-.ipynb_checkpoints/
+
+
+# Runtime logs / telemetry
+logs/**/*.json
+logs/**/*.jsonl
+logs/**/*.log
+!logs/.gitkeep
+!logs/README.md

@@ -115,6 +115,84 @@ Status: in progress
 
 
 
+
+## Project Structure
+
+```text
+app/
+├── agents/          # intent routing & updates (LLM)
+├── logic/           # deterministic decision logic
+├── retrieval/       # listings retrieval
+├── observability/   # latency & cost tracking
+├── schemas/         # data models
+├── services/        # external integrations
+├── tools/           # pipeline orchestration
+├── config/          # settings
+└── resources/       # reference data (e.g. fx rates)
+
+ui/
+└── streamlit_app.py # demo entry point
+
+evaluation/
+├── core/
+├── tasks/
+└── outputs/
+
+scripts/             # debug / smoke / experiments
+
+tests/
+fixtures/
+assets/
+logs/ 
+```
+
+
+
+## Tech Stack
+
+- Python  
+- asyncio  
+- Gemini API (LLM)  
+- Apify (retrieval)  
+- Pytest  
+- Streamlit  
+
+## Running Locally
+
+### 1. Install dependencies
+
+```bash
+uv sync
+```
+
+### 2. Setup environment
+
+```bash
+cp .env.example .env
+```
+
+Fill in your API keys in `.env`:
+
+```env
+GEMINI_API_KEY=...
+APIFY_TOKEN=...
+```
+
+### 3. Run demo (Streamlit UI)
+
+```bash
+uv run streamlit run ui/streamlit_app.py
+```
+
+### 4. Run tests
+
+```bash
+uv run pytest
+```
+
+
+
+
 ## Latency & Cost
 
 Typical request:
@@ -134,16 +212,6 @@ Insight:
 - expensive steps are isolated  
 - full telemetry is available  
 
-
-
-## Tech Stack
-
-- Python  
-- asyncio  
-- Gemini API (LLM)  
-- Apify (retrieval)  
-- Pytest  
-- Streamlit  
 
 
 
