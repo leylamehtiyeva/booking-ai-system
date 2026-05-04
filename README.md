@@ -1,12 +1,195 @@
 # Booking AI Agent
 
-LLM-based agent for accommodation search with structured amenity matching.
+Constraint-aware conversational booking assistant with deterministic decision-making and controlled LLM usage.
 
-## Current status
-Project is under active development.
-Current stage: data source integration and schema design.
 
-## Roadmap
-- Intent routing (user text → canonical fields)
-- Amenity matching (structured + LLM fallback)
-- Agent orchestration
+
+## Problem
+
+LLM-based systems are inherently non-deterministic and struggle to reliably enforce strict user requirements  
+(e.g., "must have WiFi", "no smoking", "under $100").
+
+In real-world applications:
+
+- constraints must be strictly respected  
+- decisions must be explainable  
+- failures must be controlled  
+
+
+
+## Architecture
+
+<p align="center">
+  <img src="assets/architecture.png" width="1000"/>
+</p>
+
+Constraint-centric conversational pipeline with deterministic decision layer.
+
+
+
+### Pipeline
+
+User Request  
+→ Intent State  
+→ Constraints (SoT)  
+→ Retrieval  
+→ Matching  
+→ Decision  
+→ Results  
+
+
+
+### Key principles
+
+- Constraints are the **source of truth**
+- Intent is maintained as a **multi-turn evolving state**
+- LLM is used only for **signal / evidence extraction**
+- Final decisions are **deterministic and auditable**
+
+
+
+### Matching layer
+
+- Structured → exact constraint checks  
+- LLM → fallback evidence extraction  
+
+Final decision is always made in the deterministic layer.
+
+
+
+## How it works
+
+1. User request is parsed into intent  
+2. Intent is updated across turns (multi-turn support)  
+3. Constraints are extracted and normalized  
+4. Listings are retrieved  
+5. Matching is performed:
+   - structured checks  
+   - textual rules  
+   - LLM fallback (only if needed)  
+6. Deterministic decision layer resolves:
+   - YES / NO / UNCERTAIN  
+7. Results are filtered, ranked, and returned with explanations  
+
+
+
+## Evaluation
+
+### Constraint Resolution (120 cases)
+
+- Accuracy: **0.86**  
+- YES F1: **0.87**  
+- NO F1: **0.91**  
+- UNCERTAIN F1: **0.79**
+
+Critical errors:
+
+- NO → YES: **0 cases**  
+- YES → NO: **0 cases**
+
+Insight:  
+System is safe (no constraint violations), but slightly conservative.
+
+
+
+### Ranking Layer
+
+- Exact match rate: **0.97**  
+- Top-1 accuracy: **0.98**  
+- Ineligible leak rate: **0.0**
+
+Insight:  
+Deterministic ranking is highly stable and reliable.
+
+
+
+### End-to-End
+
+- Scenarios:
+  - happy path  
+  - constraint blocking  
+  - no results  
+  - multi-turn updates  
+
+Status: in progress
+
+
+
+## Latency & Cost
+
+Typical request:
+
+- Retrieval (Apify): **40–80 sec**  
+- LLM fallback: **5–15 sec**  
+- Internal pipeline: **<5 sec**
+
+Cost:
+
+- LLM: low (few cents per request)  
+- Apify: ~0.0025 USD per call  
+
+Insight:
+
+- LLM usage is minimized  
+- expensive steps are isolated  
+- full telemetry is available  
+
+
+
+## Tech Stack
+
+- Python  
+- asyncio  
+- Gemini API (LLM)  
+- Apify (retrieval)  
+- Pytest  
+- Streamlit  
+
+
+
+## Example
+
+User:
+
+"Apartment in Barcelona, June 15–20, under $100, must have WiFi"
+
+System:
+
+- extracts constraints  
+- updates intent  
+- retrieves listings  
+- applies matching  
+- makes deterministic decision  
+- returns explainable results  
+
+
+
+## Positioning
+
+This project demonstrates a shift from:
+
+**Data Science → AI Engineering**
+
+Focus:
+
+- deterministic control over LLM systems  
+- reliability under uncertainty  
+- explainable decision pipelines  
+
+
+
+## Future Work
+
+- End-to-end evaluation completion  
+- Improve constraint extraction recall  
+- Query rewriting layer  
+- Natural language response layer (on top of deterministic core)  
+
+
+
+## Key idea
+
+LLM does not make decisions.  
+It provides signals.
+
+All final decisions are made by the system.

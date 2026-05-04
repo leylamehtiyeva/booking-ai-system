@@ -1,27 +1,29 @@
-# --- Python ---
+# Python
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
+*.pyd
 
-# --- Virtual environments ---
+# Virtual env
 .venv/
 venv/
-.env/
 
-# --- Environment / secrets ---
-.env
-.env.*
-*.key
-*.pem
-
-# --- Tooling ---
-.pytest_cache/
-.ruff_cache/
-
-# --- OS / IDE ---
+# MacOS
 .DS_Store
-.vscode/
-.idea/
+__MACOSX/
 
-# --- Logs ---
+# Logs
+logs/
 *.log
+
+# Env files
+.env
+
+# Pytest
+.pytest_cache/
+
+# Zip / temp
+*.zip
+
+# Jupyter
+.ipynb_checkpoints/
