@@ -164,20 +164,6 @@ System:
 
 
 
-## Positioning
-
-This project demonstrates a shift from:
-
-**Data Science → AI Engineering**
-
-Focus:
-
-- deterministic control over LLM systems  
-- reliability under uncertainty  
-- explainable decision pipelines  
-
-
-
 ## Future Work
 
 - End-to-end evaluation completion  
@@ -185,11 +171,3 @@ Focus:
 - Query rewriting layer  
 - Natural language response layer (on top of deterministic core)  
 
-
-
-## Key idea
-
-LLM does not make decisions.  
-It provides signals.
-
-All final decisions are made by the system.
