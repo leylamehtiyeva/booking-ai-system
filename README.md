@@ -1,4 +1,4 @@
-# Booking AI Agent
+# Booking AI System
 
 Constraint-aware conversational booking assistant with deterministic decision-making and controlled LLM usage.
 
