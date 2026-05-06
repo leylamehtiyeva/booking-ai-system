@@ -36,7 +36,7 @@ def process_user_message(user_message: str) -> None:
             handle_user_message(
                 user_message=user_message,
                 previous_state=previous_state,
-                source="apify",
+                source="fixtures",
                 top_n=5,
                 fallback_policy=FallbackPolicy(enabled=True, top_k=5),
                 max_items=MAX_ITEMS_HARD_CAP,
@@ -49,7 +49,7 @@ def process_user_message(user_message: str) -> None:
         telemetry_log_info = save_telemetry_record(
             telemetry=result["telemetry"],
             user_message=user_message,
-            source="apify",
+            source="fixtures",
             top_n=5,
             max_items=MAX_ITEMS_HARD_CAP,
             result_summary={

@@ -17,103 +17,72 @@ def test_build_user_answer_for_clarification():
 
 def test_build_user_answer_for_results():
     payload = {
-    "need_clarification": False,
-    "questions": [],
-    "request_summary": {
-        "city": "Baku",
-        "check_in": "2026-04-08",
-        "check_out": "2026-04-15",
-        "constraints": [
+        "need_clarification": False,
+        "questions": [],
+        "request_summary": {
+            "city": "Baku",
+            "check_in": "2026-04-08",
+            "check_out": "2026-04-15",
+            "constraints": [
+                {
+                    "raw_text": "kitchen",
+                    "normalized_text": "kitchen",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": ["kitchen"],
+                    "evidence_strategy": "structured",
+                }
+            ],
+            "property_types": ["apartment"],
+            "occupancy_types": [],
+            "filters": {},
+        },
+        "results_count": 1,
+        "top_results": [
             {
-                "raw_text": "kitchen",
-                "normalized_text": "kitchen",
-                "priority": "must",
-                "category": "amenity",
-                "mapping_status": "known",
-                "mapped_fields": ["kitchen"],
-                "evidence_strategy": "structured",
+                "result_id": "abc123",
+                "title": "Apartment STEL",
+                "url": "https://example.com/stel",
+                "score": 23.0,
+                "answer_explanation": {
+                    "status_label": "partially_confirmed_match",
+                    "status_text": "Partially confirmed match",
+                    "confirmed": [
+                        {
+                            "name": "kitchen",
+                            "label": "Kitchen",
+                            "reason": "Private kitchen",
+                        }
+                    ],
+                    "needs_confirmation": [
+                        {
+                            "name": "price_total",
+                            "label": "Budget",
+                            "reason": "PRICE: currency mismatch listing=USD, request=AZN",
+                        }
+                    ],
+                    "not_satisfied": [],
+                },
+                "price_summary": None,
             }
         ],
-        "property_types": ["apartment"],
-        "occupancy_types": [],
-        "filters": {},
-    },
-    "results_count": 1,
-    "top_results": [
-        {
-            "result_id": "abc123",
-            "title": "Apartment STEL",
-            "url": "https://example.com/stel",
-            "score": 23.0,
-            "matched_constraints": [
-                {
-                    "name": "kitchen",
-                    "status": "matched",
-                    "reason": "Private kitchen",
-                }
-            ],
-            "uncertain_constraints": [
-                {
-                    "name": "price_total",
-                    "status": "uncertain",
-                    "reason": "PRICE: currency mismatch listing=USD, request=AZN",
-                }
-            ],
-            "failed_constraints": [],
-            "matched_constraint_names": ["kitchen"],
-            "uncertain_constraint_names": ["price_total"],
-            "failed_constraint_names": [],
-            "key_facts": {
-                "property_type": "apartment",
-                "listing_currency": "USD",
-            },
-            "answer_explanation": {
-                "status_label": "partially_confirmed_match",
-                "status_text": "Partially confirmed match",
-                "decision_summary": "This option matches the core request, but some requested details are not fully confirmed.",
-                "confirmed": [
-                    {
-                        "name": "kitchen",
-                        "label": "Kitchen",
-                        "reason": "Private kitchen",
-                    }
-                ],
-                "needs_confirmation": [
-                    {
-                        "name": "price_total",
-                        "label": "Budget",
-                        "reason": "PRICE: currency mismatch listing=USD, request=AZN",
-                    }
-                ],
-                "not_satisfied": [],
-                "tradeoff_summary": "Trade-off: Kitchen is confirmed, but Budget still needs confirmation.",
-            },
-            "fit_summary": "Matches all required criteria.",
-            "why_match": ["Private kitchen"],
-            "tradeoffs": [],
-            "uncertain_points": ["PRICE: currency mismatch listing=USD, request=AZN"],
-            "price_summary": None,
-            "budget_summary": None,
-            "key_facts_summary": "type: apartment",
-            "why": [
-                "KITCHEN: Private kitchen",
-                "PRICE: currency mismatch listing=USD, request=AZN",
-            ],
-        }
-    ],
-    "debug_notes": [],
-}
+        "debug_notes": [],
+    }
 
     out = build_user_answer(payload)
 
-    assert "I found 1 relevant option(s) in Baku for 2026-04-08 to 2026-04-15." in out
+    assert "I found 1 option(s) that match your requirements in Baku for 2026-04-08 to 2026-04-15." in out
     assert "Apartment STEL" in out
-    assert "Status: Partially confirmed match" in out
-    assert "Summary: This option matches the core request, but some requested details are not fully confirmed." in out
-    assert "Confirmed:" in out
+    assert "Partially confirmed match" in out
+    assert "Matches:" in out
     assert "- Kitchen — Private kitchen" in out
-    assert "Needs confirmation:" in out
-    assert "- Budget — PRICE: currency mismatch listing=USD, request=AZN" in out
+    assert "Budget" not in out
+    assert "Summary:" not in out
+    assert "Confirmed:" not in out
+    assert "Why it matches:" not in out
+    assert "Ranking signals:" not in out
+
     assert "Link: https://example.com/stel" in out
 
 

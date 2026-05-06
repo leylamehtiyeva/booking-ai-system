@@ -2,6 +2,32 @@ from __future__ import annotations
 
 from typing import Any
 
+_MATCHES_EXCLUDED_LABELS = {"Budget", "Price", "Price per night"}
+_MATCHES_EXCLUDED_NAMES = {
+    "price_total",
+    "price_per_night",
+    "listing_price_total",
+    "listing_price_per_night_derived",
+}
+
+def _is_displayable_match(item: dict) -> bool:
+    label = item.get("label")
+    name = item.get("name")
+    return label not in _MATCHES_EXCLUDED_LABELS and name not in _MATCHES_EXCLUDED_NAMES
+
+def _format_status_line(status_label: str | None, status_text: str | None) -> str | None:
+    if not status_text:
+        return None
+
+    if status_label == "fully_confirmed_match":
+        return f"✅ {status_text}"
+    elif status_label == "partially_confirmed_match":
+        return f"⚠️ {status_text}"
+    elif status_label == "not_matched":
+        return f"❌ {status_text}"
+
+    return status_text
+
 
 def _format_bullets(items: list[str] | None, prefix: str = "- ") -> list[str]:
     out: list[str] = []
@@ -76,93 +102,65 @@ def _format_constraint_resolution_points(
 def _format_top_result(result: dict[str, Any], rank: int) -> str:
     title = result.get("title") or "Unknown option"
     url = result.get("url")
-    budget_summary = result.get("budget_summary")
-    key_facts_summary = result.get("key_facts_summary")
 
     explanation = result.get("answer_explanation") or {}
+    status_label = explanation.get("status_label")
     status_text = explanation.get("status_text")
-    decision_summary = explanation.get("decision_summary")
-    confirmed = explanation.get("confirmed") or []
-    needs_confirmation = explanation.get("needs_confirmation") or []
-    not_satisfied = explanation.get("not_satisfied") or []
-    tradeoff_summary = explanation.get("tradeoff_summary")
-    strengths_summary = explanation.get("strengths_summary")
+
+    confirmed = [
+        item
+        for item in (explanation.get("confirmed") or [])
+        if _is_displayable_match(item)
+    ]
+
+    needs_confirmation = [
+        item
+        for item in (explanation.get("needs_confirmation") or [])
+        if _is_displayable_match(item)
+    ]
+
+    not_satisfied = [
+        item
+        for item in (explanation.get("not_satisfied") or [])
+        if _is_displayable_match(item)
+    ]
 
     lines = [f"{rank}. {title}"]
 
-    if status_text:
-        lines.append(f"Status: {status_text}")
+    status_line = _format_status_line(status_label, status_text)
+    if status_line:
+        lines.append(status_line)
 
-    if decision_summary:
-        lines.append(f"Summary: {decision_summary}")
+    price_summary = result.get("price_summary")
+    if price_summary:
+        lines.append(f"Price: {price_summary}")
 
     if confirmed:
-        lines.append("Confirmed:")
+        lines.append("Matches:")
         lines.extend(_format_constraint_rows(confirmed))
 
     if needs_confirmation:
         lines.append("Needs confirmation:")
         lines.extend(_format_constraint_rows(needs_confirmation))
 
-    if strengths_summary:
-        lines.append(strengths_summary)
-
     if not_satisfied:
-        lines.append("Not satisfied:")
+        lines.append("Does not match:")
         lines.extend(_format_constraint_rows(not_satisfied))
-
-    if tradeoff_summary:
-        lines.append(tradeoff_summary)
-
-    standout_reason = result.get("standout_reason")
-    if standout_reason:
-        lines.append(f"Standout: {standout_reason}")
-
-    price_summary = result.get("price_summary")
-    if price_summary:
-        lines.append(f"Price: {price_summary}")
-
-    if budget_summary:
-        lines.append(f"Budget: {budget_summary}")
-
-    if key_facts_summary:
-        lines.append(f"Key facts: {key_facts_summary}")
-
-    why_match = result.get("why_match") or []
-    if why_match:
-        lines.append("Why it matches:")
-        lines.extend(_format_bullets(why_match))
-
-    tradeoffs = result.get("tradeoffs") or []
-    if tradeoffs:
-        lines.append("Trade-offs:")
-        lines.extend(_format_bullets(tradeoffs))
-
-    uncertain_points = result.get("uncertain_points") or []
-    if uncertain_points:
-        lines.append("Uncertain points:")
-        lines.extend(_format_bullets(uncertain_points))
 
     resolved_requested_details = _format_constraint_resolution_points(result)
     if resolved_requested_details:
-        lines.append("Other requested details:")
-        lines.extend(_format_bullets(resolved_requested_details))
-
-    unresolved_constraint_points = result.get("unresolved_constraint_points") or []
-    if unresolved_constraint_points:
-        lines.append("Still needs confirmation:")
-        lines.extend(_format_bullets(unresolved_constraint_points))
-
-    ranking_reasons = result.get("ranking_reasons") or []
-    if ranking_reasons:
-        lines.append("Ranking signals:")
-        lines.extend(_format_bullets([str(x) for x in ranking_reasons[:3]]))
+        existing_text = "\n".join(_format_constraint_rows(confirmed)).casefold()
+        extra_details = [
+            p for p in resolved_requested_details if p.casefold() not in existing_text
+        ]
+        if extra_details:
+            lines.append("Also confirmed:")
+            lines.extend(_format_bullets(extra_details))
 
     if url:
         lines.append(f"Link: {url}")
 
     return "\n".join(lines)
-
 
 def _get_request_context(payload: dict[str, Any]) -> dict[str, Any]:
     """
@@ -182,8 +180,10 @@ def _build_intro(payload: dict[str, Any]) -> str:
     shown_count = len(payload.get("top_results") or [])
 
     parts: list[str] = []
+
     if city:
         parts.append(f"in {city}")
+
     if check_in and check_out:
         parts.append(f"for {check_in} to {check_out}")
 
@@ -193,10 +193,11 @@ def _build_intro(payload: dict[str, Any]) -> str:
 
     if results_count > shown_count > 0:
         return (
-            f"I found {results_count} relevant option(s){tail}. "
+            f"I found {results_count} option(s) that match your requirements{tail}. "
             f"Here are the top {shown_count} matches."
         )
-    return f"I found {shown_count} relevant option(s){tail}."
+
+    return f"I found {shown_count} option(s) that match your requirements{tail}."
 
 
 def _build_refinement_hint(payload: dict[str, Any]) -> str:
