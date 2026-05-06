@@ -97,6 +97,123 @@ def _known_mapped_fields(constraints: list[Any]) -> list[Field]:
 
     return out
 
+def _constraint_key(c: Any) -> str:
+    constraint_id = getattr(c, "id", None)
+    if constraint_id:
+        return f"id:{constraint_id}"
+
+    normalized_text = str(getattr(c, "normalized_text", "") or "").strip().casefold()
+    if normalized_text:
+        return f"text:{normalized_text}"
+
+    raw_text = str(getattr(c, "raw_text", "") or "").strip().casefold()
+    return f"raw:{raw_text}"
+
+
+def _resolution_key(result: dict[str, Any]) -> str:
+    constraint_id = result.get("constraint_id")
+    if constraint_id:
+        return f"id:{constraint_id}"
+
+    normalized_text = str(result.get("normalized_text", "") or "").strip().casefold()
+    if normalized_text:
+        return f"text:{normalized_text}"
+
+    raw_text = str(result.get("raw_text", "") or "").strip().casefold()
+    return f"raw:{raw_text}"
+
+
+def _unresolved_must_textual_constraints(req: SearchRequest) -> list[Any]:
+    out: list[Any] = []
+
+    for c in req.constraints or []:
+        if _priority_value(getattr(c, "priority", None)) != "must":
+            continue
+
+        if _mapping_status_value(getattr(c, "mapping_status", None)) != "unresolved":
+            continue
+
+        evidence_strategy = getattr(c, "evidence_strategy", None)
+        evidence_strategy_value = getattr(evidence_strategy, "value", evidence_strategy)
+
+        if evidence_strategy_value not in {"textual", "none", None}:
+            continue
+
+        out.append(c)
+
+    return out
+
+
+def _make_uncertain_resolution_for_unresolved_must(
+    *,
+    constraint: Any,
+    item: dict[str, Any],
+) -> dict[str, Any]:
+    listing = item.get("listing")
+
+    return {
+        "listing_id": getattr(listing, "id", None),
+        "listing_title": getattr(listing, "name", None) or item.get("listing_name"),
+
+        "constraint_id": getattr(constraint, "id", None),
+        "raw_text": getattr(constraint, "raw_text", None) or getattr(constraint, "normalized_text", ""),
+        "normalized_text": getattr(constraint, "normalized_text", None) or getattr(constraint, "raw_text", ""),
+
+        "resolver_type": "textual",
+        "decision": "UNCERTAIN",
+        "resolution_status": "uncertain",
+        "confidence": 0.0,
+        "reason": "Required textual constraint was not resolved by structured matching or textual fallback.",
+
+        "evidence": [],
+        "source_stage": "coverage_normalization",
+        "structured_value_before": None,
+        "explicit_negative": False,
+
+        # Internal fields used before response normalization.
+        "priority": "must",
+        "mapping_status": "unresolved",
+        "evidence_strategy": "textual",
+    }
+
+
+def _ensure_unresolved_must_constraints_are_represented(
+    req: SearchRequest,
+    ranked: list[dict[str, Any]],
+) -> None:
+    """
+    Safety invariant:
+
+    Every MUST constraint from constraints[] must have a final decision signal
+    before final eligibility is computed.
+
+    Unresolved textual MUST constraints cannot silently disappear.
+    If fallback did not produce YES/NO/UNCERTAIN, we add synthetic UNCERTAIN.
+    """
+    unresolved_must_constraints = _unresolved_must_textual_constraints(req)
+
+    if not unresolved_must_constraints:
+        return
+
+    for item in ranked:
+        results = list(item.get("constraint_resolution_results") or [])
+        existing_keys = {_resolution_key(r) for r in results if isinstance(r, dict)}
+
+        for constraint in unresolved_must_constraints:
+            key = _constraint_key(constraint)
+
+            if key in existing_keys:
+                continue
+
+            results.append(
+                _make_uncertain_resolution_for_unresolved_must(
+                    constraint=constraint,
+                    item=item,
+                )
+            )
+
+        item["constraint_resolution_results"] = results
+
 def _parse_iso_date(x: Any) -> Optional[date]:
     if x is None:
         return None
@@ -613,6 +730,9 @@ async def orchestrate_search(
             policy=fallback_policy,
             trace=trace,
         )
+
+    with trace.step("constraint_coverage_normalization", ranked_count=len(ranked)):
+        _ensure_unresolved_must_constraints_are_represented(req, ranked)
 
     # 7) Apply fallback-informed scoring
     with trace.step("fallback_scoring"):

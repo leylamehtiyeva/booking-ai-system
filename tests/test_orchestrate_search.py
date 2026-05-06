@@ -820,3 +820,81 @@ async def test_listing_without_city_is_not_eligible(monkeypatch):
 
     assert out["need_clarification"] is True
     assert out["results_count"] == 0
+    
+    
+@pytest.mark.asyncio
+async def test_unresolved_must_textual_constraint_cannot_disappear_when_fallback_disabled():
+    intent = {
+        "city": "Baku",
+        "check_in": "2026-04-08",
+        "check_out": "2026-04-15",
+        "constraints": [
+            {
+                "raw_text": "kitchen",
+                "normalized_text": "kitchen",
+                "priority": "must",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": ["kitchen"],
+                "evidence_strategy": "structured",
+            },
+            {
+                "raw_text": "WiFi",
+                "normalized_text": "wifi",
+                "priority": "must",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": ["wifi"],
+                "evidence_strategy": "structured",
+            },
+            {
+                "raw_text": "seaview",
+                "normalized_text": "seaview",
+                "priority": "must",
+                "category": "location",
+                "mapping_status": "unresolved",
+                "mapped_fields": [],
+                "evidence_strategy": "textual",
+            },
+        ],
+        "property_types": ["apartment"],
+        "occupancy_types": [],
+        "filters": {},
+    }
+
+    out = await orchestrate_search(
+        "Apartment in Baku with kitchen, WiFi and seaview",
+        intent,
+        source="fixtures",
+        max_items=10,
+        fallback_policy=FallbackPolicy(enabled=False),
+    )
+
+    assert out["need_clarification"] is False
+    assert out["results"]
+
+    first = out["results"][0]
+
+    assert first["match_tier"] == "partial"
+    assert first["eligibility_status"] == "eligible"
+    assert "all required constraints are confirmed" not in first["selection_reasons"]
+    assert "some requested constraints are not fully confirmed" in first["selection_reasons"]
+
+    resolution_results = first["constraint_resolution_results"]
+
+    seaview = next(
+        r for r in resolution_results
+        if r["normalized_text"] == "seaview"
+    )
+
+    assert seaview["decision"] == "UNCERTAIN"
+    assert seaview["resolution_status"] == "uncertain"
+    assert seaview["source_stage"] == "coverage_normalization"
+
+    uncertain_names = [
+        c["name"]
+        for c in first["uncertain_requested_constraints"]
+    ]
+
+    assert "seaview" in uncertain_names
+    
