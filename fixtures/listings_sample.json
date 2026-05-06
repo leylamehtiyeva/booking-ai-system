@@ -131,14 +131,14 @@
       "name": "Sunny Central Apartment",
       "city": "Baku",
       "url": "https://example.com/baku-apt-1",
-      "price": 85,
+      "price": 200,
       "currency": "USD",
       "property_type": "apartment",
       "available_dates": {
         "check_in": "2026-04-01",
         "check_out": "2026-04-30"
       },
-      "description": "Cozy 45 sqm apartment right in the city center, a few steps from metro. Has a small kitchen corner and satellite TV. Quiet street but still central.",
+      "description": "Cozy 45 sqm apartment right in the city center, a few steps from metro. Has a small kitchen corner and satellite TV. Quiet street but still central. And also visitors mentioned that all apartment is very bright",
       "facilities": [
         {"name": "Private bathroom"},
         {"name": "Free WiFi"}

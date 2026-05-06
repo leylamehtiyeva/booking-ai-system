@@ -147,16 +147,6 @@ def _format_top_result(result: dict[str, Any], rank: int) -> str:
         lines.append("Does not match:")
         lines.extend(_format_constraint_rows(not_satisfied))
 
-    resolved_requested_details = _format_constraint_resolution_points(result)
-    if resolved_requested_details:
-        existing_text = "\n".join(_format_constraint_rows(confirmed)).casefold()
-        extra_details = [
-            p for p in resolved_requested_details if p.casefold() not in existing_text
-        ]
-        if extra_details:
-            lines.append("Also confirmed:")
-            lines.extend(_format_bullets(extra_details))
-
     if url:
         lines.append(f"Link: {url}")
 

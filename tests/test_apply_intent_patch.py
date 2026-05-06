@@ -141,3 +141,61 @@ def test_set_check_in_with_nights_recomputes_checkout():
 
     assert new_state.check_in == date(2026, 4, 8)
     assert new_state.check_out == date(2026, 4, 12)
+    
+    
+from app.schemas.constraints import (
+    ConstraintCategory,
+    ConstraintMappingStatus,
+    ConstraintPriority,
+    EvidenceStrategy,
+    UserConstraint,
+)
+
+
+def test_apply_patch_merges_duplicate_constraints_and_promotes_priority_to_must():
+    state = SearchRequest(
+        city="Baku",
+        constraints=[
+            UserConstraint(
+                id="2",
+                raw_text="bright rooms",
+                normalized_text="bright rooms",
+                priority=ConstraintPriority.NICE,
+                category=ConstraintCategory.LAYOUT,
+                mapping_status=ConstraintMappingStatus.UNRESOLVED,
+                mapped_fields=[],
+                evidence_strategy=EvidenceStrategy.TEXTUAL,
+            )
+        ],
+    )
+
+    patch = SearchIntentPatch(
+        add_constraints=[
+            UserConstraint(
+                id="2",
+                raw_text="bright rooms",
+                normalized_text="bright rooms",
+                priority=ConstraintPriority.MUST,
+                category=ConstraintCategory.LAYOUT,
+                mapping_status=ConstraintMappingStatus.KNOWN,
+                mapped_fields=[],
+                evidence_strategy=EvidenceStrategy.TEXTUAL,
+            )
+        ]
+    )
+
+    new_state = apply_intent_patch(state, patch)
+
+    bright_constraints = [
+        c for c in new_state.constraints
+        if c.normalized_text == "bright rooms"
+    ]
+
+    assert len(bright_constraints) == 1
+
+    bright = bright_constraints[0]
+
+    assert bright.priority == ConstraintPriority.MUST
+    assert bright.mapping_status == ConstraintMappingStatus.UNRESOLVED
+    assert bright.mapped_fields == []
+    assert bright.evidence_strategy == EvidenceStrategy.TEXTUAL

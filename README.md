@@ -2,6 +2,10 @@
 
 Constraint-aware conversational booking assistant with deterministic decision-making and controlled LLM usage.
 
+<p align="center">
+  <img src="assets/booking_ai_system_gif.gif" width="1000"/>
+</p>
+
 
 
 ## Problem

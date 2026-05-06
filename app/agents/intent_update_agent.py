@@ -63,6 +63,12 @@ CONSTRAINT PRIORITY:
 - ideally / preferably / nice to have / desirable -> priority="nice"
 - no / without / do not want / avoid -> priority="forbidden"
 
+IMPORTANT PRIORITY UPDATE RULE:
+- If the user repeats an existing constraint with stronger priority wording, this IS a state change.
+- Example: previous constraint has priority="nice", user says "I also need bright rooms" -> return add_constraints with the same normalized_text and priority="must".
+- Do NOT return an empty patch in this case.
+- The patch merge layer will deduplicate and promote the existing constraint.
+
 WHEN TO USE add_constraints:
 - for meaningful amenity / policy / location / layout / semantic requirements
 - both known and unresolved constraints are allowed
@@ -134,6 +140,12 @@ Return:
 User: "also I want a kettle"
 Return:
 {{"add_constraints":[{{"raw_text":"kettle","normalized_text":"kettle","priority":"must","category":"amenity","mapping_status":"known","mapped_fields":["kettle"],"evidence_strategy":"structured"}}]}}
+
+
+Previous state already has constraint normalized_text="bright rooms", priority="nice".
+User: "I also need bright rooms"
+Return:
+{{"add_constraints":[{{"raw_text":"bright rooms","normalized_text":"bright rooms","priority":"must","category":"layout","mapping_status":"unresolved","mapped_fields":[],"evidence_strategy":"textual"}}]}}
 
 User: "kitchen is no longer required"
 Return:

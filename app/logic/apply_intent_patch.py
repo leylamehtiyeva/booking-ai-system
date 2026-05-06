@@ -111,24 +111,116 @@ def _remove_constraints_by_text(
     return out
 
 
+def _priority_rank(priority: ConstraintPriority) -> int:
+    if priority == ConstraintPriority.FORBIDDEN:
+        return 3
+    if priority == ConstraintPriority.MUST:
+        return 2
+    if priority == ConstraintPriority.NICE:
+        return 1
+    return 0
+
+
+def _semantic_constraint_key(c: UserConstraint) -> tuple[str, str]:
+    """
+    Deduplicate by user-facing semantic meaning, not by technical resolution state.
+
+    Example:
+    - bright rooms / nice / unresolved
+    - bright rooms / must / unresolved
+
+    should be one constraint, not two.
+    """
+    return (
+        c.normalized_text.strip().casefold(),
+        c.category.value,
+    )
+
+
+def _normalize_constraint_consistency(c: UserConstraint) -> UserConstraint:
+    """
+    Safety normalization.
+
+    mapping_status='known' without mapped_fields is invalid for structured matching.
+    Such constraints should stay semantic/textual, not pretend to be structured.
+    """
+    if (
+        c.mapping_status == ConstraintMappingStatus.KNOWN
+        and not c.mapped_fields
+    ):
+        return c.model_copy(
+            update={
+                "mapping_status": ConstraintMappingStatus.UNRESOLVED,
+                "evidence_strategy": EvidenceStrategy.TEXTUAL,
+            }
+        )
+
+    return c
+
+
+def _merge_duplicate_constraint(
+    current: UserConstraint,
+    incoming: UserConstraint,
+) -> UserConstraint:
+    """
+    Merge duplicate semantic constraints.
+
+    Rules:
+    - stronger priority wins: forbidden > must > nice
+    - newer raw wording can be preserved
+    - known mapped constraint wins only if it actually has mapped_fields
+    - otherwise unresolved/textual remains the honest representation
+    """
+    current = _normalize_constraint_consistency(current)
+    incoming = _normalize_constraint_consistency(incoming)
+
+    priority = (
+        incoming.priority
+        if _priority_rank(incoming.priority) >= _priority_rank(current.priority)
+        else current.priority
+    )
+
+    if incoming.mapping_status == ConstraintMappingStatus.KNOWN and incoming.mapped_fields:
+        mapping_status = incoming.mapping_status
+        mapped_fields = incoming.mapped_fields
+        evidence_strategy = incoming.evidence_strategy
+    elif current.mapping_status == ConstraintMappingStatus.KNOWN and current.mapped_fields:
+        mapping_status = current.mapping_status
+        mapped_fields = current.mapped_fields
+        evidence_strategy = current.evidence_strategy
+    else:
+        mapping_status = ConstraintMappingStatus.UNRESOLVED
+        mapped_fields = []
+        evidence_strategy = EvidenceStrategy.TEXTUAL
+
+    return current.model_copy(
+        update={
+            "raw_text": incoming.raw_text or current.raw_text,
+            "normalized_text": incoming.normalized_text or current.normalized_text,
+            "priority": priority,
+            "mapping_status": mapping_status,
+            "mapped_fields": mapped_fields,
+            "evidence_strategy": evidence_strategy,
+        }
+    )
+
+
 def _dedupe_constraints(constraints: list[UserConstraint]) -> list[UserConstraint]:
-    seen: set[tuple] = set()
-    out: list[UserConstraint] = []
+    by_key: dict[tuple[str, str], UserConstraint] = {}
+    order: list[tuple[str, str]] = []
 
     for c in constraints:
-        key = (
-            c.priority.value,
-            c.normalized_text.casefold(),
-            tuple(field.value for field in c.mapped_fields),
-            c.mapping_status.value,
-        )
-        if key in seen:
+        c = _normalize_constraint_consistency(c)
+        key = _semantic_constraint_key(c)
+
+        if key not in by_key:
+            by_key[key] = c
+            order.append(key)
             continue
-        seen.add(key)
-        out.append(c)
 
-    return out
+        by_key[key] = _merge_duplicate_constraint(by_key[key], c)
 
+    return [by_key[key] for key in order]
 
 
 
