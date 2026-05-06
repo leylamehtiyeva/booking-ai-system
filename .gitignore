@@ -39,8 +39,6 @@ evaluation/outputs/*.jsonl
 
 
 # Runtime logs / telemetry
-logs/**/*.json
-logs/**/*.jsonl
-logs/**/*.log
+logs/*
 !logs/.gitkeep
 !logs/README.md
