@@ -145,8 +145,6 @@ async def handle_user_message(
 
         route_debug = route.model_dump(exclude_none=True)
 
-        print("\n=== CONVERSATION ROUTE ===")
-        print(route_debug)
 
         if route.route == "listing_question":
             return await _answer_listing_question(
@@ -201,8 +199,6 @@ async def handle_user_message(
 
     state_json = _build_orchestrate_intent_payload(state)
 
-    print("\n=== UPDATED STATE ===")
-    print(state_json)
 
     resolved = resolve_required_search_context(state)
 

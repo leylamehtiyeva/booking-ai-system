@@ -192,8 +192,7 @@ async def update_search_state_async(
         user_message,
         trace=trace,
     )
-    print("\n=== INTENT UPDATE PATCH ===")
-    print(patch.model_dump(exclude_none=True))
+
 
     normalized_check_in, normalized_check_out = normalize_patch_dates(
         set_check_in=patch.set_check_in,

@@ -56,10 +56,7 @@ def record_llm_call_estimated(
     error: str | None = None,
 ) -> None:
     
-    print("RECORD LLM CALL CALLED", step, model, trace)
-
     if trace is None:
-        print("TRACE IS NONE IN LLM USAGE")
         return
 
     prompt_tokens = estimate_tokens_from_text(prompt_text)
@@ -69,7 +66,6 @@ def record_llm_call_estimated(
         if prompt_tokens is not None and completion_tokens is not None
         else None
     )
-    print("AFTER ADD LLM:", len(trace.llm_calls))
     trace.add_llm_call(
         LLMCallTrace(
             step=step,
@@ -86,4 +82,3 @@ def record_llm_call_estimated(
             error=error,
         )
     )
-    print("AFTER ADD LLM:", len(trace.llm_calls))

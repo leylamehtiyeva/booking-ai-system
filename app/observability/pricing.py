@@ -69,5 +69,4 @@ def estimate_llm_cost_usd(
 
 def estimate_apify_cost_usd(*, run_count: int = 1) -> float:
     value = os.getenv("APIFY_BOOKING_COST_PER_RUN_USD")
-    print("APIFY_BOOKING_COST_PER_RUN_USD =", value)
     return run_count * float(value or "0.0")

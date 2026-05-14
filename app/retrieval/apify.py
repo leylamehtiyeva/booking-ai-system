@@ -10,13 +10,14 @@ from pathlib import Path
 from typing import Any, Dict, List
 from urllib import request as urlrequest
 from urllib.error import HTTPError, URLError
-
+import logging
 from app.schemas.listing import ListingRaw
 from app.schemas.query import SearchRequest
 import time
-
 from app.observability.trace import RequestTrace, ExternalCallTrace
 from app.observability.pricing import estimate_apify_cost_usd
+logger = logging.getLogger(__name__)
+
 
 
 
@@ -39,7 +40,7 @@ def _save_apify_debug_payload(actor_input: Dict[str, Any], items: Any) -> None:
         encoding="utf-8",
     )
 
-    print(f"APIFY RAW SAVED TO: {path}")
+    logger.debug("Apify raw payload saved to %s", path)
 
 
 def _iso(d: Any) -> str:
@@ -156,7 +157,6 @@ class ApifyRetriever:
         )
 
         try:
-            print("APIFY ACTOR INPUT:", json.dumps(actor_input, ensure_ascii=False, indent=2))
             started = time.perf_counter()
             items = await asyncio.to_thread(_post_json_sync, url, actor_input, 180)
 
@@ -186,11 +186,8 @@ class ApifyRetriever:
             except Exception:
                 pass
 
-            print("APIFY ACTOR INPUT:", json.dumps(actor_input, ensure_ascii=False, indent=2))
-
             raise RuntimeError(f"Apify HTTPError {e.code}: {body}") from e
         except URLError as e:
-            print("APIFY ACTOR INPUT:", json.dumps(actor_input, ensure_ascii=False, indent=2))
             raise RuntimeError(f"Apify URLError: {e}") from e
 
         _save_apify_debug_payload(actor_input, items)

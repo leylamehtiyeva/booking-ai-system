@@ -41,12 +41,3 @@ def get_gemini_fallback_models() -> List[str]:
         for m in raw.split(",")
         if m.strip()
     ]
-
-
-def debug_print_llm_config() -> None:
-    """
-    Debug helper to verify which models are used.
-    """
-    print("=== LLM CONFIG ===")
-    print("Primary model:", get_gemini_model())
-    print("Fallback models:", get_gemini_fallback_models())

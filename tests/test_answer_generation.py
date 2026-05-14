@@ -102,7 +102,7 @@ def test_build_user_answer_for_multiple_questions():
     assert "Какие даты заезда и выезда?" in out
 
 
-def test_build_user_answer_shows_constraint_resolution_details():
+def test_build_user_answer_omits_raw_constraint_resolution_details():
     payload = {
         "need_clarification": False,
         "questions": [],
@@ -161,10 +161,11 @@ def test_build_user_answer_shows_constraint_resolution_details():
     out = build_user_answer(payload)
 
     assert "Compact Apartment" in out
-    assert "satellite tv" in out.lower()
+    assert "satellite tv" not in out.lower()
+    assert "match your requirements" in out.lower()
 
 
-def test_build_user_answer_can_show_constraint_resolution_alongside_ranking():
+def test_build_user_answer_uses_clean_summary_without_internal_ranking_details():
     payload = {
         "need_clarification": False,
         "questions": [],
@@ -225,4 +226,6 @@ def test_build_user_answer_can_show_constraint_resolution_alongside_ranking():
     out = build_user_answer(payload)
 
     assert "Compact Apartment" in out
-    assert "satellite tv" in out.lower()
+    assert "satellite tv" not in out.lower()
+    assert "ranking" not in out.lower()
+    assert "standout" not in out.lower()

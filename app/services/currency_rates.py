@@ -166,21 +166,14 @@ def _fetch_latest_snapshot() -> FxSnapshot:
 
 
 def get_fx_snapshot() -> FxSnapshot | None:
-    print("FX DEBUG: get_fx_snapshot called")
-    print("FX DEBUG: cache path =", _cache_path().resolve())
     cached = _load_cached_snapshot()
-    print("FX DEBUG: cached exists =", cached is not None)
 
     if cached and _snapshot_is_fresh(cached):
-        print("FX DEBUG: cached base =", cached.base)
-        print("FX DEBUG: cached rates count =", len(cached.rates))
-        print("FX DEBUG: cached fresh =", _snapshot_is_fresh(cached))
         return cached
 
     try:
         fresh = _fetch_latest_snapshot()
     except Exception as e:
-        print("FX DEBUG: fetch failed:", repr(e))
         if cached:
             return FxSnapshot(
                 base=cached.base,
