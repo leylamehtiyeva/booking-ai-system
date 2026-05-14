@@ -1,6 +1,5 @@
 import pytest
 from datetime import date
-
 from app.agents.intent_router_agent import IntentRoute
 from app.logic.request_resolution import resolve_required_search_context
 from app.tools.orchestrate_search_tool import orchestrate_search, _salvage_only_enum_keys
@@ -131,7 +130,7 @@ def test_salvage_preserves_filters():
 
 @pytest.mark.asyncio
 async def test_numeric_filters_are_applied_in_orchestrate(monkeypatch):
-    async def fake_get_candidates(req, max_items, source):
+    async def fake_get_candidates(req, max_items, source, trace=None):
         return [
             ListingRaw(
                 id="small-1",
@@ -213,7 +212,7 @@ async def test_numeric_filters_are_applied_in_orchestrate(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_price_filter_per_night_is_applied(monkeypatch):
-    async def fake_get_candidates(req, max_items, source):
+    async def fake_get_candidates(req, max_items, source, trace=None):
         return [
             ListingRaw(
                 id="too-expensive",
@@ -271,7 +270,7 @@ async def test_price_filter_per_night_is_applied(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_bathroom_filter_is_applied(monkeypatch):
-    async def fake_get_candidates(req, max_items, source):
+    async def fake_get_candidates(req, max_items, source, trace=None):
         return [
             ListingRaw(
                 id="one-bathroom",
@@ -318,7 +317,7 @@ async def test_bathroom_filter_is_applied(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_property_type_filter_is_applied(monkeypatch):
-    async def fake_get_candidates(req, max_items, source):
+    async def fake_get_candidates(req, max_items, source, trace=None):
         return [
             ListingRaw(
                 id="hotel-one",
@@ -365,7 +364,7 @@ async def test_property_type_filter_is_applied(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_orchestrate_search_returns_normalized_response(monkeypatch):
-    async def fake_get_candidates(req, max_items, source):
+    async def fake_get_candidates(req, max_items, source, trace=None):
         return [
             ListingRaw(
                 id=None,
@@ -735,7 +734,7 @@ async def test_occupancy_filter_is_applied():
     
 @pytest.mark.asyncio
 async def test_city_filter_uses_only_city_field_not_description(monkeypatch):
-    async def fake_get_candidates(req, max_items, source):
+    async def fake_get_candidates(req, max_items, source, trace=None):
         return [
             ListingRaw(
                 id="wrong-city-mentioned-in-description",
@@ -785,7 +784,7 @@ async def test_city_filter_uses_only_city_field_not_description(monkeypatch):
     
 @pytest.mark.asyncio
 async def test_listing_without_city_is_not_eligible(monkeypatch):
-    async def fake_get_candidates(req, max_items, source):
+    async def fake_get_candidates(req, max_items, source, trace=None):
         return [
             ListingRaw(
                 id="missing-city",

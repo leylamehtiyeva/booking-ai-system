@@ -56,7 +56,7 @@ def test_build_search_request_uses_constraints_as_source_of_truth(monkeypatch):
         ],
     )
 
-    async def fake_route_intent_adk_async(user_text: str):
+    async def fake_route_intent_adk_async(user_text: str, trace=None, step=None,):
         return parsed_intent
 
     monkeypatch.setattr(

@@ -40,7 +40,7 @@ def beds_constraint():
 
 @pytest.mark.asyncio
 async def test_conversation_flow_first_turn_builds_state_and_searches(monkeypatch):
-    async def _fake_build_search_request(user_message: str) -> SearchRequest:
+    async def _fake_build_search_request(user_message: str, trace=None, step=None) -> SearchRequest:
         return SearchRequest(
     city="Baku",
     check_in=date(2026, 4, 20),
@@ -85,7 +85,7 @@ async def test_conversation_flow_followup_updates_existing_state(monkeypatch):
     async def _fake_route(**kwargs):
         return ConversationRouteDecision(route="search_update")
 
-    async def _fake_update(prev_state, msg):
+    async def _fake_update(prev_state, msg, trace=None):
         return SearchRequest(
             city=prev_state.city,
             check_in=prev_state.check_in,
@@ -143,7 +143,7 @@ async def test_conversation_flow_new_search_rebuilds_state(monkeypatch):
     async def _fake_route(**kwargs):
         return ConversationRouteDecision(route="new_search")
 
-    async def _fake_build(msg):
+    async def _fake_build(msg, trace=None, step=None):
         return SearchRequest(city="Paris", constraints=[])
 
     async def _fake_orchestrate(**kwargs):

@@ -210,7 +210,7 @@ async def test_resolve_listing_constraints_with_fallback_returns_unified_results
         evidence_strategy=EvidenceStrategy.STRUCTURED,
     )
 
-    async def _fake_resolve(req, *, model=None):
+    async def _fake_resolve(req, *, model=None, trace=None):
         if req.normalized_text == "satellite TV":
             return cer.ConstraintResolutionResult(
                 listing_id=req.listing_id,
@@ -380,7 +380,7 @@ async def test_fallback_policy_limits_constraints_per_listing(monkeypatch):
 
     calls: list[str] = []
 
-    async def _fake_resolve(req, *, model=None):
+    async def _fake_resolve(req, *, model=None, trace=None):
         calls.append(req.normalized_text)
         return cer.ConstraintResolutionResult(
             listing_id=req.listing_id,

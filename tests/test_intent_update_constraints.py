@@ -76,7 +76,7 @@ async def test_update_search_state_async_preserves_constraint_centric_state(monk
         ],
     )
 
-    async def fake_route_intent_update_patch_async(previous_state, user_message):
+    async def fake_route_intent_update_patch_async(previous_state, user_message, trace=None):
         return SearchIntentPatch(
             add_constraints=[
                 UserConstraint(

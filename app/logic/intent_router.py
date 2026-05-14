@@ -143,7 +143,6 @@ async def route_intent_adk_async(
     trace: RequestTrace | None = None,
     step: str = "initial_intent_extraction",
 ) -> IntentRoute:
-    print("ROUTE_INTENT_CALLED", user_text)
     return await _route_intent_via_adk(user_text, trace=trace, step=step)
 
 
@@ -160,8 +159,6 @@ async def build_search_request_adk_async(
     intent = await route_intent_adk_async(user_text, trace=trace, step=step)
     intent = normalize_intent_dates(intent, user_text)
 
-    print("\n=== PARSED INTENT ===")
-    print(intent.model_dump())
 
     resolved = resolve_required_search_context(intent)
     clean_filters = _clean_filters(intent.filters)
@@ -178,8 +175,7 @@ async def build_search_request_adk_async(
     occupancy_types=intent.occupancy_types or None,
     constraints=intent.constraints,
 )
-    print("\n=== SEARCH REQUEST ===")
-    print(req.model_dump(mode="json", exclude_none=True))
+
     return req
 
 

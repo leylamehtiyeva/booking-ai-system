@@ -21,9 +21,6 @@ async def main():
         print("USER QUERY:", q)
 
         intent = await route_intent_adk_async(q)
-        print("\n=== PARSED INTENT ===")
-        print(json.dumps(intent.model_dump(mode="json", exclude_none=True), indent=2, ensure_ascii=False))
-
         req = await build_search_request_adk_async(q)
         print("\nFINAL REQUEST JSON:")
         print(json.dumps(req.model_dump(mode="json", exclude_none=True), indent=2, ensure_ascii=False))

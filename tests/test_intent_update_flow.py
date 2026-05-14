@@ -17,7 +17,7 @@ from app.schemas.query import SearchFilters, SearchRequest
 
 @pytest.mark.asyncio
 async def test_update_search_state_adds_constraint_and_updates_filter(monkeypatch):
-    async def _fake_patch(previous_state, user_message):
+    async def _fake_patch(previous_state, user_message, trace=None):
         return SearchIntentPatch(
             add_constraints=[
                 UserConstraint(

@@ -583,7 +583,6 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
                 "listing": lst,
             }
         )
-    print("STRUCTURED RANKING REJECTION REASONS:", dict(rejection_reasons))
     ranked.sort(key=lambda x: x["score"], reverse=True)
     return ranked
 
@@ -648,17 +647,17 @@ async def orchestrate_search(
             "questions": ["Apify retriever is not enabled yet. Using fixtures only for now."],
         }
 
-        with trace.step(
-            "city_filter",
-            listings_count=len(listings),
-            applied=(source == "fixtures"),
-            source=source,
-        ):
-            if source == "fixtures":
-                listings = [
-                    lst for lst in listings
-                    if _listing_city_matches(lst, req.city)
-                ]
+    with trace.step(
+        "city_filter",
+        listings_count=len(listings),
+        applied=(source == "fixtures"),
+        source=source,
+    ):
+        if source == "fixtures":
+            listings = [
+                lst for lst in listings
+                if _listing_city_matches(lst, req.city)
+            ]
 
     with trace.step(
         "date_filter",
