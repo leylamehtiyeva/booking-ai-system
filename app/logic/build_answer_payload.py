@@ -414,7 +414,7 @@ def _build_standout_reason(
     requested_lookup = _build_requested_constraint_lookup(active_intent)
     candidates: list[tuple[int, str]] = []
 
-    # 1) Explicit matched MUST constraints from final normalized matched buckets.
+    # explicit matched MUST constraints from final normalized matched buckets
     for item in matched_details or []:
         name = item.get("name")
         reason = item.get("reason")
@@ -440,7 +440,7 @@ def _build_standout_reason(
                 if candidate:
                     candidates.append(candidate)
 
-    # 2) Strong structured positives: budget / ranking reasons.
+    # strong structured positives budget / ranking reasons
     if budget_status == "within_budget" and budget_summary:
         candidate = _candidate(95, budget_summary)
         if candidate:
@@ -468,7 +468,7 @@ def _build_standout_reason(
         if candidate:
             candidates.append(candidate)
 
-    # 3) Positive fallback confirmations only.
+    # positive fallback confirmations only
     for item in constraint_resolution_results or []:
         if isinstance(item, dict):
             decision = item.get("decision")
@@ -489,7 +489,7 @@ def _build_standout_reason(
                 if candidate:
                     candidates.append(candidate)
 
-    # 4) Generic positive matched reasons.
+    # generic positive matched reasons
     for line in why_match or []:
         if not line or _is_uncertain_reason(line):
             continue
@@ -501,7 +501,7 @@ def _build_standout_reason(
         candidates.sort(key=lambda x: x[0], reverse=True)
         return candidates[0][1]
 
-    # 5) Only if nothing better exists, allow uncertain reason.
+    # only if nothing better exists, allow uncertain reason.
     for line in uncertain_points or []:
         candidate = _candidate(10, line)
         if candidate:
@@ -687,19 +687,6 @@ def build_answer_payload(
 
         unresolved_constraint_points = _pick_reason_lines(uncertain_details, limit=4)
 
-        # For future user answer 
-        # standout_reason = _build_standout_reason(
-        #     matched_details=matched_details,
-        #     uncertain_details=uncertain_details,
-        #     constraint_resolution_results=constraint_resolution_results,
-        #     why_match=why_match,
-        #     tradeoffs=tradeoffs,
-        #     uncertain_points=uncertain_points,
-        #     ranking_reasons=ranking_reasons,
-        #     budget_summary=budget_summary,
-        #     budget_status=budget_status,
-        #     active_intent=request_summary,
-        # )
         standout_reason = None
 
         top_results.append(

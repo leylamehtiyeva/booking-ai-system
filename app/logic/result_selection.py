@@ -15,11 +15,7 @@ def summarize_selection_signals(item: dict[str, Any]) -> dict[str, int]:
     must_matched = int(item.get("matched_must_count", 0))
     must_failed = 0
     must_uncertain = 0
-
-    matched_names = {
-        str(c.get("name") if isinstance(c, dict) else getattr(c, "name", "")).strip().casefold()
-        for c in matched_constraints
-    }
+    
     uncertain_names = {
         str(c.get("name") if isinstance(c, dict) else getattr(c, "name", "")).strip().casefold()
         for c in uncertain_constraints
@@ -207,12 +203,12 @@ def select_ranked_items(items: list[dict[str, Any]], top_n: int) -> list[dict[st
     strong = [x for x in classified if is_eligible(x) and x.get("match_tier") == "strong"]
     partial = [x for x in classified if is_eligible(x) and x.get("match_tier") == "partial"]
 
-    # 🔥 ВАЖНО: weak только безопасные
+    
     weak = [
         x for x in classified
         if is_eligible(x)
         and x.get("match_tier") == "weak"
-        and not x.get("blocking_reasons")  # ← ключевой фикс
+        and not x.get("blocking_reasons") 
     ]
 
     def sort_by_score(items):

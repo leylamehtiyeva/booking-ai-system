@@ -10,19 +10,16 @@ USER_TEXT = (
 )
 
 async def main():
-    # 1) LLM: user_text -> intent (canonical fields)
     intent_obj = await route_intent_adk_async(USER_TEXT)
-
-    # В orchestrate_search мы передаём dict (как будто это output intent-router step)
     intent = intent_obj.model_dump()
 
-    # 2) Full pipeline: Apify (1 call) + structured + fallback
+    # full pipeline apify  + structured + fallback
     out = await orchestrate_search(
         user_text=USER_TEXT,
         intent=intent,
         source="apify",
-        max_items=7,        # ✅ экономия: 5 кандидатов
-        top_n=2,            # ✅ показываем 2
+        max_items=7,       
+        top_n=2,            
         fallback_policy=FallbackPolicy(enabled=True, top_k=2),
     )
 

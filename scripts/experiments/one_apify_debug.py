@@ -29,26 +29,21 @@ async def main():
     if not listings:
         return
 
-    # Печатаем ключи первого объекта, чтобы понять где URL
     first = listings[0]
-    d = first.model_dump()  # ListingRaw pydantic
+    d = first.model_dump() 
     print("TOP-LEVEL KEYS:", sorted(d.keys()))
 
-    # Часто url может лежать не в url, а в других полях — покажем кандидаты на ссылку
     url_like_keys = [k for k in d.keys() if "url" in k.lower() or "link" in k.lower() or "booking" in k.lower()]
     print("URL-LIKE KEYS:", url_like_keys)
 
-    # И покажем их значения
     for k in url_like_keys:
         print(f"{k} = {d.get(k)}")
 
-    # На всякий случай: краткий вывод первых 3
     print("\nFIRST 3 NAMES + URL FIELD:")
     for i, lst in enumerate(listings[:3], start=1):
         dd = lst.model_dump()
         print(f"{i}. name={dd.get('name')}")
         print(f"   url={dd.get('url')}")
-        # если есть альтернативные:
         for k in ["bookingUrl", "booking_url", "link", "href", "landingPageUrl"]:
             if k in dd:
                 print(f"   {k}={dd.get(k)}")

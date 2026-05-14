@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, timedelta
 
-from app.agents.intent_router_agent import IntentRoute
 
 
 @dataclass

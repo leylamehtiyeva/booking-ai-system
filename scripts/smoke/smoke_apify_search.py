@@ -16,7 +16,7 @@ def main() -> None:
         check_in=date.today() + timedelta(days=14),
         check_out=date.today() + timedelta(days=17),
         adults=2,
-        must_have_fields=[],  # в PR#3 это поле пока не используется сервисом
+        must_have_fields=[], 
     )
 
     svc = ApifyBookingService()

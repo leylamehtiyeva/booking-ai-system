@@ -6,7 +6,6 @@ from typing import Any, List, Optional, Tuple
 from app.schemas.filters import SearchFilters
 from app.schemas.listing import ListingRaw
 from app.schemas.match import Evidence, EvidenceSource, Ternary
-from app.schemas.filters import PriceConstraint, SearchFilters
 from app.services.currency_rates import convert_amount_to_usd
 
 
@@ -92,7 +91,6 @@ def _collect_text_candidates(listing: ListingRaw) -> List[Tuple[str, str]]:
 def _parse_bedroom_mentions(text: str) -> List[int]:
     found: List[int] = []
 
-    # "3-bedroom", "3 bedrooms", "three bedroom", "three-bedroom"
     for m in re.finditer(
         r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)[-\s]+bedroom(?:s)?\b",
         text,
@@ -100,8 +98,6 @@ def _parse_bedroom_mentions(text: str) -> List[int]:
         n = _word_to_number(m.group(1))
         if n is not None:
             found.append(n)
-
-    # "3 bed apartment" — более слабый сигнал, но можно поддержать
     for m in re.finditer(
         r"\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\s+bed\b",
         text,

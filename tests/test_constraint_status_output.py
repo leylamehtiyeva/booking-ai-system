@@ -2,7 +2,6 @@ import pytest
 
 from app.logic.constraint_evidence_resolution import ConstraintResolutionResult
 from app.tools.orchestrate_search_tool import orchestrate_search
-from app.tools.orchestrate_search_tool import FallbackPolicy
 
 
 @pytest.mark.asyncio

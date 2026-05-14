@@ -32,11 +32,10 @@ def estimate_tokens_from_text(text: str | None) -> int:
 
 
 def _resolve_model_pricing(model: str) -> dict | None:
-    # точное совпадение
     if model in MODEL_PRICES_USD_PER_1M:
         return MODEL_PRICES_USD_PER_1M[model]
 
-    # fallback по префиксу (важно для версий моделей)
+    # fallback 
     for key, value in MODEL_PRICES_USD_PER_1M.items():
         if model.startswith(key):
             return value

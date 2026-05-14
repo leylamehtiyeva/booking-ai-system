@@ -1,14 +1,11 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
-
-from app.schemas.fields import Field
-
-
-from dataclasses import dataclass
 from typing import Dict, Tuple
 
 from app.schemas.fields import Field
+
+
+
 
 @dataclass(frozen=True)
 class FieldRule:

@@ -1,12 +1,11 @@
 from __future__ import annotations
-
+import requests
 import json
 import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
-from urllib import request as urlrequest
 
 
 
@@ -47,8 +46,6 @@ def _cache_ttl_days() -> int:
 def _api_url() -> str:
     return os.getenv("FX_API_URL", _DEFAULT_FX_API_URL)
 
-
-import requests
 
 
 def _read_json_from_url(url: str, timeout: int = 20) -> dict[str, Any] | list[dict[str, Any]]:
@@ -173,7 +170,7 @@ def get_fx_snapshot() -> FxSnapshot | None:
 
     try:
         fresh = _fetch_latest_snapshot()
-    except Exception as e:
+    except Exception:
         if cached:
             return FxSnapshot(
                 base=cached.base,

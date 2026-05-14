@@ -103,7 +103,7 @@ def main():
         encoding="utf-8",
     )
 
-    print(f"\nFOUND TARGET HOTEL.")
+    print("\nFOUND TARGET HOTEL.")
     print(f"Saved target JSON to: {target_path}")
     print("name:", target.get("name"))
     print("type:", target.get("type"))

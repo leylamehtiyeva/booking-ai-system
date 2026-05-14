@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Optional
+from typing import Any, Iterable, List
 
 from app.schemas.listing import ListingRaw
 from typing import Sequence
@@ -13,7 +13,6 @@ def split_into_sentences(text: str) -> list[str]:
     if not text:
         return []
 
-    # грубое, но полезное разбиение
     parts = re.split(r'(?<=[.!?])\s+', text)
     return [p.strip() for p in parts if p.strip()]
 
@@ -134,7 +133,6 @@ def collect_listing_signals(listing: ListingRaw) -> List[ListingSignal]:
         if getattr(room, "name", None):
             _add_signal(signals, f"rooms[{i}].name", room.name)
 
-        # extra="allow" means these may exist even if not declared in schema
         room_type = getattr(room, "roomType", None)
         if room_type:
             _add_signal(signals, f"rooms[{i}].roomType", room_type)

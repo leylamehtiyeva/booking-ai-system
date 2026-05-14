@@ -6,7 +6,6 @@ from app.logic.intent_router import build_search_request_adk_async
 async def run_single_case(user_message: str):
     request = await build_search_request_adk_async(user_message)
 
-    # 👉 превращаем в простой JSON
     result = {
         "city": request.city,
         "check_in": request.check_in.isoformat() if request.check_in else None,
@@ -36,7 +35,6 @@ async def run_single_case(user_message: str):
     
 async def main():
     raw_cases = [
-    # 🔹 БАЗОВЫЕ (known must)
     "I want an apartment in Baku from April 20 to April 26 with a kitchen",
 ]
 
