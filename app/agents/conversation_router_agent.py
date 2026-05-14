@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-import json
 import os
 
 from google.adk.agents import Agent
 from google.adk.models.google_llm import Gemini
 from app.config.llm import get_gemini_model
-from app.schemas.conversation_route import ConversationRouteDecision
 
 
 def build_conversation_router_agent() -> Agent:

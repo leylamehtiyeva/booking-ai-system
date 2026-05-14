@@ -1,7 +1,6 @@
 from datetime import date
 
 from app.logic.apply_intent_patch import apply_intent_patch
-from app.schemas.fields import Field
 from app.schemas.filters import PriceConstraint, SearchFilters
 from app.schemas.intent_patch import SearchIntentPatch
 from app.schemas.query import SearchRequest
@@ -68,9 +67,6 @@ def test_clear_city_sets_city_to_none():
     assert new_state.city is None
     
     
-from app.logic.apply_intent_patch import apply_intent_patch
-from app.schemas.intent_patch import SearchIntentPatch
-from app.schemas.query import SearchRequest
 
 
 def test_apply_patch_updates_adults_children_and_rooms():

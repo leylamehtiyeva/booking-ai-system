@@ -20,7 +20,6 @@ from app.schemas.listing import ListingRaw
 from app.schemas.match import Ternary
 from app.schemas.query import SearchRequest
 from app.logic.property_semantics import match_occupancy_types, match_property_types
-from app.schemas.match import Ternary
 from app.logic.normalize_search_response import normalize_search_response
 from app.logic.request_resolution import resolve_required_search_context
 from app.logic.occupancy import evaluate_occupancy
@@ -524,7 +523,6 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
 
     must_constraints, nice_constraints, _ = _constraints_by_priority(req)
     structured_must_fields = _known_mapped_fields(must_constraints)
-    structured_nice_fields = _known_mapped_fields(nice_constraints)
     rejection_reasons = Counter()
     for lst in listings:
         report = match_listing_structured(lst, req)
@@ -537,8 +535,7 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
         property_result = match_property_types(lst, req.property_types)
         occupancy_result = match_occupancy_types(lst, req.occupancy_types)
 
-        # strict structured must filter: only for canonical MUST constraints
-        # that are known + mapped to structured fields
+        # Apply strict filtering only to mapped canonical MUST constraints
         if _fails_must(report.matches, structured_must_fields):
             continue
 
@@ -632,7 +629,7 @@ async def orchestrate_search(
             check_out=resolved.check_out,
         )
 
-    # 1) Retrieve candidates (Apify строго 1 раз / fixtures — просто читаем файл)
+    # Retrieve candidates
     try:
         with trace.step("retrieval", source=source, max_items=max_items):
             listings = await get_candidates(
@@ -695,7 +692,7 @@ async def orchestrate_search(
 
     listings = filtered_listings
 
-    # 4) No candidates after initial filters
+    # if no candidates after initial filters
     if not listings:
         return {
             "need_clarification": True,
@@ -712,13 +709,11 @@ async def orchestrate_search(
             "dropped_requests": dropped_requests,
         }
 
-    # 5) Structured ranking
+    # Structured ranking
     with trace.step("structured_ranking", listings_count=len(listings)):
         ranked = _rank_structured(req, listings)
     
-    
-
-    # 6) Unified constraint fallback layer on top-K
+    # Fallback constraint resolution
     if fallback_policy is None:
         fallback_policy = _build_fallback_policy(fallback_top_k=5)
 
@@ -733,7 +728,7 @@ async def orchestrate_search(
     with trace.step("constraint_coverage_normalization", ranked_count=len(ranked)):
         _ensure_unresolved_must_constraints_are_represented(req, ranked)
 
-    # 7) Apply fallback-informed scoring
+    # Final scoring
     with trace.step("fallback_scoring"):
         ranked = _apply_constraint_resolution_scoring(ranked)
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Iterable, Any
+from typing import Any
 
 
 def load_jsonl(path: str | Path) -> list[dict[str, Any]]:

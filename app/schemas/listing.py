@@ -1,4 +1,3 @@
-# app/schemas/listing.py
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
@@ -16,9 +15,6 @@ class RoomOption(BaseModel):
     name: Optional[str] = None
     price: Optional[float] = None
     currency: Optional[str] = None
-
-    # Все прочие поля (refundability, cancellation policy, etc.) попадут в extra
-
 
 class Room(BaseModel):
     """
@@ -42,34 +38,22 @@ class ListingRaw(BaseModel):
     """
     model_config = ConfigDict(extra="allow")
 
-    # Стабильный идентификатор: желательно иметь.
-    # Если actor не даёт id — на PR#3 можно собрать hash(url) и писать сюда.
     id: Optional[str] = None
     city: Optional[str] = None
 
     name: Optional[str] = None
     url: Optional[str] = None
     
-
-    # Цена/валюта
     price: Optional[float] = None
     currency: Optional[str] = None
 
-    # Качество
-    rating: Optional[float] = None  # guest rating (например 8.7)
-    stars: Optional[int] = None     # star rating (например 4)
+    rating: Optional[float] = None  
+    stars: Optional[int] = None     
 
-    # Тип жилья (apartment/hotel/hostel...)
+    # apartment/hotel/hostel
     property_type: Optional[str] = None
 
-    # Текст
     description: Optional[str] = None
-
-    # Facilities на уровне объекта (иногда есть)
     facilities: List[Any] = Field(default_factory=list)
-
-    # Rooms
     rooms: List[Room] = Field(default_factory=list)
-
-    # На будущее: можно хранить “сырой” блок
     raw: Optional[Dict[str, Any]] = None

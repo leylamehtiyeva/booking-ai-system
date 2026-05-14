@@ -1,7 +1,6 @@
 import streamlit as st
 
 from ui.services.chat_handler import process_user_message
-from ui.state import get_messages
 
 
 def render_input_area() -> None:

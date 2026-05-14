@@ -4,7 +4,6 @@ import asyncio
 import json
 from app.schemas.fallback_policy import FallbackPolicy
 from app.logic.answer_generation import build_user_answer
-from app.logic.answer_generation_llm import generate_user_answer_with_llm
 from app.logic.build_answer_payload import build_answer_payload
 from app.logic.intent_router import route_intent_adk_async
 from app.schemas.search_response import NormalizedSearchResponse

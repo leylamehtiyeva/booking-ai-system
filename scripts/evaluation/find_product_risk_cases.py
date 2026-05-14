@@ -25,25 +25,25 @@ def classify_case_risk(case: dict) -> list[str]:
     ce = case["constraint_extraction"]
     risks = []
 
-    # 1. Any missed constraints
+    # Any missed constraints
     for missed in ce["missed_constraints"]:
         risks.append(f"missed_constraint::{missed}")
 
-    # 2. Exact-set mismatch in multi-constraint case
+    # Exact set mismatch in multi-constraint case
     if ce["gold_count"] >= 2 and not ce["exact_constraint_set_match"]:
         risks.append("multi_constraint_set_mismatch")
 
-    # 3. Check matched rows for dangerous priority drift
+    # Check matched rows for dangerous priority drift
     for row in case["matched_rows"]:
         gold_p = row["gold_priority"]
         pred_p = row["pred_priority"]
         name = row["normalized_text"]
 
-        # must -> nice
+        # must - nice
         if gold_p == "must" and pred_p == "nice":
             risks.append(f"must_downgraded_to_nice::{name}")
 
-        # forbidden -> nice or must
+        # forbidden - nice or must
         if gold_p == "forbidden" and pred_p in {"nice", "must"}:
             risks.append(f"forbidden_weakened::{name}")
 

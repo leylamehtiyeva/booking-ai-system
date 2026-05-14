@@ -6,7 +6,6 @@ import asyncio
 import json
 import os
 import uuid
-from datetime import date
 from typing import Optional
 
 from google.adk.agents.run_config import RunConfig
@@ -19,8 +18,6 @@ from app.logic.date_normalization import normalize_intent_dates
 from app.logic.request_resolution import resolve_required_search_context
 from app.schemas.query import SearchRequest
 
-import asyncio
-from google.genai.errors import ClientError
 
 
 APP_NAME = "booking-ai-agent"

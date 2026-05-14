@@ -1,14 +1,10 @@
 from __future__ import annotations
-
 import json
 import os
 from typing import Optional
-from dotenv import load_dotenv
-load_dotenv()
 from google.adk.agents import Agent
 from google.adk.models.google_llm import Gemini
 from pydantic import BaseModel, Field as PydanticField, field_validator
-
 from app.schemas.constraints import UserConstraint
 from app.schemas.fields import Field
 from app.schemas.filters import SearchFilters

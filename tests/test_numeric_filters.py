@@ -10,7 +10,6 @@ from app.logic.numeric_filters import (
 )
 from datetime import date
 from app.schemas.filters import PriceConstraint, SearchFilters
-from app.schemas.filters import SearchFilters
 from app.schemas.listing import ListingRaw, Room
 from app.schemas.match import Ternary
 

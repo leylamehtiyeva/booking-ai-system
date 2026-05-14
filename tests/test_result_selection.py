@@ -112,7 +112,6 @@ def test_select_ranked_items_prefers_strong_matches_before_partial():
     
     
 from app.logic.property_semantics import SemanticMatchResult
-from app.logic.result_selection import classify_ranked_item, select_ranked_items
 from app.schemas.match import Ternary
 
 

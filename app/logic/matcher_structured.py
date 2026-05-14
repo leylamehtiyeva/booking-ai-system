@@ -1,18 +1,14 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Any, List, Tuple
-
 from app.schemas.fields import Field
 from app.schemas.listing import ListingRaw
 from app.schemas.match import Evidence, EvidenceSource, FieldMatch, MatchReport, Ternary
 from app.schemas.query import SearchRequest
-
 from app.logic.field_rules import FIELD_RULES
-from app.logic.listing_signals import collect_listing_signals, find_best_signal_match
+from app.logic.listing_signals import collect_listing_signals, find_best_negative_signal_match, find_best_signal_match
 
 
-from app.schemas.fields import Field
 
 
 def _priority_value(priority) -> str:
@@ -148,7 +144,6 @@ def match_field_in_facilities(
                     ],
                 )
 
-    # ✅ KEY FIX: rule exists but nothing found -> NO (not UNCERTAIN)
     return FieldMatch(value=Ternary.NO, confidence=0.7, evidence=[])
 
 
@@ -177,11 +172,6 @@ def match_listing_structured(listing: ListingRaw, request: SearchRequest) -> Mat
         hard_fail_fields=hard_fail,
     )
 
-from app.logic.listing_signals import (
-    collect_listing_signals,
-    find_best_negative_signal_match,
-    find_best_signal_match,
-)
 
 def _match_field_via_rules(listing: ListingRaw, field: Field) -> FieldMatch:
     signals = collect_listing_signals(listing)

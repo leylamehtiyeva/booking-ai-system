@@ -3,9 +3,7 @@ from __future__ import annotations
 from datetime import timedelta
 
 from app.logic.request_resolution import parse_iso_date
-from app.logic.request_resolution import parse_iso_date
 from app.schemas.constraints import (
-    ConstraintCategory,
     ConstraintMappingStatus,
     ConstraintPriority,
     EvidenceStrategy,
@@ -280,7 +278,6 @@ def apply_intent_patch(state: SearchRequest, patch: SearchIntentPatch) -> Search
         else:
             data.check_out = None
 
-    # ---- NEW SOURCE-OF-TRUTH PATCHING OVER CONSTRAINTS ----
     constraints = list(data.constraints or [])
 
     # direct removals from new patch API

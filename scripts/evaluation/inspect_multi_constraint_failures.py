@@ -43,7 +43,6 @@ def main():
     report = load_report()
     cases = report["cases"]
 
-    # Только multi-constraint кейсы с ошибками
     bad_multi_cases = []
     for c in cases:
         ce = c["constraint_extraction"]

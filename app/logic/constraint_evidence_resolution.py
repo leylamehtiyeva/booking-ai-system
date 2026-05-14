@@ -4,7 +4,7 @@ import asyncio
 import json
 import os
 from typing import Any, Literal
-from app.observability.trace import RequestTrace, LLMCallTrace
+from app.observability.trace import RequestTrace
 from pydantic import BaseModel, Field
 from app.schemas.fallback_policy import FallbackPolicy
 from app.observability.llm_usage import record_llm_call_from_response
@@ -12,12 +12,14 @@ from app.logic.listing_signals import collect_listing_signals
 from app.schemas.constraints import (
     ConstraintMappingStatus,
     ConstraintPriority,
-    EvidenceStrategy,
     UserConstraint,
 )
 from app.schemas.fields import Field as CanonicalField
 from app.schemas.listing import ListingRaw
 from app.schemas.match import Ternary
+from app.config.llm import get_gemini_model
+
+
 
 ResolverType = Literal["textual", "geo", "hybrid"]
 DecisionType = Literal["YES", "NO", "UNCERTAIN"]
@@ -433,7 +435,6 @@ def build_resolution_request(
         resolver_type="textual",
         listing_evidence=_prepare_listing_evidence(listing),
     )
-from app.config.llm import get_gemini_model
 
 
 async def resolve_constraint_via_textual_evidence(

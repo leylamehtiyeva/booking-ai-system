@@ -1,13 +1,12 @@
 from __future__ import annotations
-
 import asyncio
 import json
 import os
 from typing import Any
 import re
 from app.logic.answer_generation import build_user_answer
+from app.config.llm import get_gemini_model
 
-import re
 
 
 def _cleanup_llm_answer(text: str) -> str:
@@ -177,8 +176,6 @@ STYLE:
 - not salesy
 - no JSON
 """.strip()
-
-from app.config.llm import get_gemini_model
 
 async def generate_user_answer_with_llm(
     payload: dict[str, Any],

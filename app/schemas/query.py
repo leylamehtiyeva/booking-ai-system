@@ -1,10 +1,9 @@
 from datetime import date
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field as PydanticField, model_validator
 
 from app.schemas.constraints import UserConstraint
-from app.schemas.fields import Field
 from app.schemas.filters import SearchFilters
 from app.schemas.property_semantics import OccupancyType, PropertyType
 
