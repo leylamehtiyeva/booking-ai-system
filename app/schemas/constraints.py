@@ -1,10 +1,7 @@
 from __future__ import annotations
-
 from enum import Enum
 from uuid import uuid4
-
 from pydantic import BaseModel, Field as PydanticField
-
 from app.schemas.fields import Field
 
 
@@ -40,11 +37,8 @@ class UserConstraint(BaseModel):
     id: str = PydanticField(default_factory=lambda: str(uuid4()))
     raw_text: str
     normalized_text: str
-
     priority: ConstraintPriority
     category: ConstraintCategory = ConstraintCategory.OTHER
-
     mapping_status: ConstraintMappingStatus = ConstraintMappingStatus.UNRESOLVED
     mapped_fields: list[Field] = PydanticField(default_factory=list)
-
     evidence_strategy: EvidenceStrategy = EvidenceStrategy.NONE

@@ -24,7 +24,7 @@ class SearchIntentPatch(BaseModel):
     set_rooms: Optional[int] = None
 
 
-    # --- constraints (canonical source-of-truth patch layer) ---
+    # --- constraints (canonical source of truth patch layer) ---
     add_constraints: List[UserConstraint] = PydanticField(default_factory=list)
     remove_constraint_texts: List[str] = PydanticField(default_factory=list)
 
@@ -32,7 +32,7 @@ class SearchIntentPatch(BaseModel):
     set_filters: Optional[SearchFilters] = None
     clear_filters: bool = False
 
-    # --- property / occupancy ---
+    # --- property or occupancy ---
     add_property_types: List[PropertyType] = PydanticField(default_factory=list)
     remove_property_types: List[PropertyType] = PydanticField(default_factory=list)
 

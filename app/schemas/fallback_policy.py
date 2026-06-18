@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from app.config.llm import get_gemini_model
 
 class FallbackPolicy(BaseModel):
-    enabled: bool = True
+    enabled: bool = True 
     top_k: int = 5
     must_only: bool = True
 

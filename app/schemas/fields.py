@@ -7,7 +7,7 @@ class Field(str, Enum):
     This is a CLOSED set. LLM is allowed to choose ONLY from this list.
     """
 
-    # --- Cooking / Kitchen ---
+    # --- Cooking or Kitchen ---
     KITCHEN = "kitchen"
     KITCHENETTE = "kitchenette"
     STOVE_OR_HOB = "stove_or_hob"
@@ -27,7 +27,7 @@ class Field(str, Enum):
     HAIR_DRYER = "hair_dryer"
     TOILETRIES = "toiletries"
 
-    # --- Comfort / Living ---
+    # --- Comfort or Living ---
     WIFI = "wifi"
     AIR_CONDITIONING = "air_conditioning"
     HEATING = "heating"
@@ -42,8 +42,6 @@ class Field(str, Enum):
     NON_SMOKING = "non_smoking"
     FREE_CANCELLATION = "free_cancellation"
     PAY_AT_PROPERTY = "pay_at_property"
-    
-
     PET_FRIENDLY = "pet_friendly"
     SMOKING_ALLOWED = "smoking_allowed"
     PARTIES_ALLOWED = "parties_allowed"

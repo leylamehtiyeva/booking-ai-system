@@ -1,59 +1,70 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
 class RoomOption(BaseModel):
     """
-    Room option = конкретная опция внутри комнаты (например, тариф/план):
-    refundable, breakfast, pay-now/pay-at-property и т.д.
-    В MVP мы храним гибко и не пытаемся нормализовать всё сразу.
+    Represents a specific booking option available for a room.
+
+    Examples include refundable rates, breakfast-included options,
+    or other offer-level variations returned by the provider.
     """
+
     model_config = ConfigDict(extra="allow")
 
-    name: Optional[str] = None
-    price: Optional[float] = None
-    currency: Optional[str] = None
+    name: str | None = None
+    price: float | None = None
+    currency: str | None = None
+
 
 class Room(BaseModel):
     """
-    Room = единица размещения (комната/апартаменты как room entity у Booking).
-    Главное для structured matching: facilities.
+    Represents a room-level accommodation entity returned by the provider.
+
+    This model keeps room-specific attributes such as the room name,
+    available facilities, and booking options. Room facilities are important
+    for structured constraint matching because some user requirements may be
+    satisfied at the room level rather than at the listing level.
     """
+
     model_config = ConfigDict(extra="allow")
 
-    name: Optional[str] = None
-    facilities: List[Any] = Field(default_factory=list)
-    options: List[RoomOption] = Field(default_factory=list)
+    name: str | None = None
+    facilities: list[Any] = Field(default_factory=list)
+    options: list[RoomOption] = Field(default_factory=list)
 
 
 class ListingRaw(BaseModel):
     """
-    ListingRaw = минимальный контракт под то, что реально приходит из Apify/Booking actor.
+    Represents the raw listing contract received from the external provider.
 
-    Важно:
-    - делаем extra="allow", чтобы не падать, если actor добавит новые поля,
-      и чтобы мы могли сохранять "сырьё" для отладки / расширения.
+    The model intentionally defines only the fields used by the current
+    pipeline while allowing additional provider-specific fields to be preserved.
+    This makes the ingestion layer more robust to schema changes and keeps
+    the original payload available for debugging, enrichment, and future
+    feature extraction.
     """
+
     model_config = ConfigDict(extra="allow")
 
-    id: Optional[str] = None
-    city: Optional[str] = None
+    id: str | None = None
+    city: str | None = None
 
-    name: Optional[str] = None
-    url: Optional[str] = None
-    
-    price: Optional[float] = None
-    currency: Optional[str] = None
+    name: str | None = None
+    url: str | None = None
 
-    rating: Optional[float] = None  
-    stars: Optional[int] = None     
+    price: float | None = None
+    currency: str | None = None
 
-    # apartment/hotel/hostel
-    property_type: Optional[str] = None
+    rating: float | None = None
+    stars: int | None = None
 
-    description: Optional[str] = None
-    facilities: List[Any] = Field(default_factory=list)
-    rooms: List[Room] = Field(default_factory=list)
-    raw: Optional[Dict[str, Any]] = None
+    property_type: str | None = None
+
+    description: str | None = None
+    facilities: list[Any] = Field(default_factory=list)
+    rooms: list[Room] = Field(default_factory=list)
+    raw: dict[str, Any] | None = None

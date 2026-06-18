@@ -10,8 +10,8 @@ class PriceConstraint(BaseModel):
     User-side budget constraint.
 
     scope:
-    - per_night   -> e.g. "50 USD per night"
-    - total_stay  -> e.g. "500 AZN total"
+    - per_night   
+    - total_stay 
     """
     min_amount: float | None = None
     max_amount: float | None = None

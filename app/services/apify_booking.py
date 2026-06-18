@@ -12,11 +12,6 @@ from app.schemas.listing import ListingRaw
 class ApifyBookingService:
     """
     Apify Booking service using ApifyClient SDK.
-
-    Why:
-    - Booking actors are slow/heavy (browser automation).
-    - ApifyClient.actor(...).call() handles async run + waiting internally,
-      so we don't hit httpx sync timeouts.
     """
 
     def __init__(

@@ -20,7 +20,6 @@ class PropertyType(str, Enum):
     CAMPSITE = "campsite"
     COUNTRY_HOUSE = "country_house"
     LOVE_HOTEL = "love_hotel"
-
     HOUSE = "house"
     APARTHOTEL = "aparthotel"
     GUESTHOUSE = "guesthouse"
