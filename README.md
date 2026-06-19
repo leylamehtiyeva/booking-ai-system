@@ -118,6 +118,42 @@ Deterministic ranking is highly stable and reliable.
 Status: in progress
 
 
+## Observability
+
+Every request generates a structured telemetry trace that captures the execution of the pipeline.
+
+Each trace includes:
+
+* trace ID
+* total request latency
+* latency for every pipeline step
+* LLM calls
+* token usage
+* estimated cost
+* external API calls
+* fallback usage
+* execution scenario
+
+
+### Telemetry Dashboard
+
+The project includes a Streamlit dashboard for inspecting telemetry logs.
+
+The dashboard provides:
+
+* request overview
+* latency distribution
+* P50 / P95 / P99 latency
+* latency by pipeline step
+* slowest requests
+* trace viewer
+* LLM usage and token statistics
+* estimated request cost
+* fallback / router / Apify usage
+* raw telemetry explorer
+
+This makes it easy to identify performance bottlenecks, inspect individual traces, and monitor system behavior during development.
+
 
 
 ## Project Structure
@@ -127,7 +163,7 @@ app/
 ├── agents/          # intent routing & updates (LLM)
 ├── logic/           # deterministic decision logic
 ├── retrieval/       # listings retrieval
-├── observability/   # latency & cost tracking
+├── observability/   # telemetry collection (latency, cost, traces)
 ├── schemas/         # data models
 ├── services/        # external integrations
 ├── tools/           # pipeline orchestration
@@ -136,6 +172,9 @@ app/
 
 ui/
 └── streamlit_app.py # demo entry point
+
+dashboards/
+└── telemetry_dashboard.py # telemetry visualization
 
 evaluation/
 ├── core/
@@ -147,7 +186,6 @@ scripts/             # debug / smoke / experiments
 tests/
 fixtures/
 assets/
-logs/ 
 ```
 
 
