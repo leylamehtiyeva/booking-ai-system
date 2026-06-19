@@ -108,6 +108,7 @@ async def handle_user_message(
     shown_listing: dict[str, Any] | None = None,
     latest_result_context: dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
+    
     route_debug: dict[str, Any] | None = None
     previous_state_json: dict[str, Any] | None = _build_state_payload(previous_state)
     trace = RequestTrace()

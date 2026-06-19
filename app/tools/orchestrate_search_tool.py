@@ -597,7 +597,9 @@ async def orchestrate_search(
     fallback_policy: FallbackPolicy | None = None,
     trace: RequestTrace | None = None,
 ) -> Dict[str, Any]:
-    """High-level search orchestration tool (fixtures + apify)."""
+    """Search orchestration tool 
+    """
+    
     if trace is None:
         trace = RequestTrace()
     if max_items > MAX_ITEMS_HARD_CAP:

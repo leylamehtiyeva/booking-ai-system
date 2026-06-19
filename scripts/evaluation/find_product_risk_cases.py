@@ -25,7 +25,6 @@ def classify_case_risk(case: dict) -> list[str]:
     ce = case["constraint_extraction"]
     risks = []
 
-    # Any missed constraints
     for missed in ce["missed_constraints"]:
         risks.append(f"missed_constraint::{missed}")
 
