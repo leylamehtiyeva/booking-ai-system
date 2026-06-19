@@ -226,7 +226,12 @@ APIFY_TOKEN=...
 uv run streamlit run ui/streamlit_app.py
 ```
 
-### 4. Run tests
+### 4. Run telemetry dashboard
+```bash
+uv run streamlit run dashboards/telemetry_dashboard.py
+```
+
+### 5. Run tests
 
 ```bash
 uv run pytest
