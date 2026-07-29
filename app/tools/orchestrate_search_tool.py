@@ -698,7 +698,7 @@ async def orchestrate_search(
     if not listings:
         return {
             "need_clarification": True,
-            "questions": ["Ничего не найдено по текущим условиям. Попробуй изменить требования."],
+            "questions": ["Nothing found. Try changing your requirements."],
             "request_summary": None,
             "top_results": [],
             "results": [],
@@ -794,7 +794,7 @@ async def orchestrate_search(
 
         return {
             "need_clarification": True,
-            "questions": ["Ничего не найдено по текущим условиям. Попробуй изменить требования."],
+            "questions": ["Nothing found. Try changing your requirements."],
             "debug_notes": debug_notes,
             "active_intent": req.model_dump(mode="json", exclude_none=True),
             "dropped_requests": dropped_requests,
