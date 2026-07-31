@@ -7,9 +7,7 @@ from google.adk.models.google_llm import Gemini
 from app.config.llm import get_gemini_model
 
 
-def build_conversation_router_agent() -> Agent:
-    instruction = """
-You are a conversation router for a booking assistant.
+CONVERSATION_ROUTER_INSTRUCTION = """You are a conversation router for a booking assistant.
 
 Return ONLY JSON in this exact format:
 
@@ -104,6 +102,8 @@ Decision priority:
 Return ONLY JSON.
 """.strip()
 
+
+def build_conversation_router_agent() -> Agent:
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
         raise ValueError("Missing GEMINI_API_KEY/GOOGLE_API_KEY")
@@ -116,5 +116,5 @@ Return ONLY JSON.
     return Agent(
         name="conversation_router",
         model=llm,
-        instruction=instruction,
+        instruction=CONVERSATION_ROUTER_INSTRUCTION,
     )

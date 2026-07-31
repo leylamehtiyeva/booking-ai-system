@@ -1,17 +1,22 @@
 from datetime import date
+from types import SimpleNamespace
+from unittest import result
+from unittest.mock import AsyncMock
 
 import pytest
 
-from app.schemas.fields import Field
-from app.schemas.query import SearchRequest
+from app.logic import conversation_flow
+from app.logic.conversation_router import ConversationRoutingError
 from app.schemas.constraints import (
-    UserConstraint,
-    ConstraintPriority,
     ConstraintCategory,
     ConstraintMappingStatus,
+    ConstraintPriority,
     EvidenceStrategy,
+    UserConstraint,
 )
 from app.schemas.conversation_route import ConversationRouteDecision
+from app.schemas.fields import Field
+from app.schemas.query import SearchRequest
 
 
 def kitchen_constraint():
@@ -134,6 +139,8 @@ async def test_conversation_flow_listing_question_does_not_mutate_state(monkeypa
 
     assert out["response_type"] == "listing_question"
     assert out["state"]["constraints"]
+    assert "telemetry" in out
+    assert out["telemetry"] is not None
 
 
 @pytest.mark.asyncio
@@ -178,6 +185,8 @@ async def test_conversation_flow_other_route_returns_previous_state(monkeypatch)
 
     assert out["response_type"] == "other"
     assert out["state"]["constraints"]
+    assert "telemetry" in out
+    assert out["telemetry"] is not None
     
     
 from unittest.mock import AsyncMock
@@ -235,6 +244,60 @@ async def test_routing_failure_does_not_change_search_state(
     assert result["response_type"] == "routing_unavailable"
     assert result["state"] == expected_state
     assert result["search_request"] == expected_state
+    assert "telemetry" in result
+    assert result["telemetry"] is not None
 
     update_mock.assert_not_awaited()
+    search_mock.assert_not_awaited()
+    
+    
+@pytest.mark.asyncio
+async def test_conversation_flow_clarification_contains_telemetry(
+    monkeypatch,
+):
+    async def _fake_build_search_request(
+        user_message: str,
+        trace=None,
+        step=None,
+    ) -> SearchRequest:
+        return SearchRequest(
+            city=None,
+            constraints=[kitchen_constraint()],
+        )
+
+    def _fake_resolve_required_search_context(state):
+        return SimpleNamespace(
+            need_clarification=True,
+            questions=["Which city should I search in?"],
+        )
+
+    search_mock = AsyncMock()
+
+    monkeypatch.setattr(
+        conversation_flow,
+        "build_search_request_adk_async",
+        _fake_build_search_request,
+    )
+    monkeypatch.setattr(
+        conversation_flow,
+        "resolve_required_search_context",
+        _fake_resolve_required_search_context,
+    )
+    monkeypatch.setattr(
+        conversation_flow,
+        "orchestrate_search",
+        search_mock,
+    )
+
+    result = await conversation_flow.handle_user_message(
+        user_message="Find me an apartment with a kitchen",
+    )
+
+    assert result["need_clarification"] is True
+    assert result["questions"] == [
+        "Which city should I search in?"
+    ]
+    assert "telemetry" in result
+    assert result["telemetry"] is not None
+
     search_mock.assert_not_awaited()

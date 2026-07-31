@@ -30,6 +30,18 @@ def _build_state_payload(state: SearchRequest | None) -> dict[str, Any] | None:
     return state.model_dump(mode="json", exclude_none=True)
 
 
+def _finalize_response(
+    response: Dict[str, Any],
+    *,
+    trace: RequestTrace,
+) -> Dict[str, Any]:
+    """
+    Attach request telemetry to every normal application response.
+    """
+    response["telemetry"] = trace.summary()
+    return response
+
+
 async def _answer_listing_question(
     *,
     user_message: str,
@@ -159,34 +171,43 @@ async def handle_user_message(
                 },
             )
 
-            return {
-                "need_clarification": False,
-                "response_type": "routing_unavailable",
-                "answer": (
-                    "I couldn't process that message right now. "
-                    "Your current search has not been changed. Please try again."
-                ),
-                "state": previous_state_json,
-                "parsed_intent": {
-                    "router": {
-                        "status": "failed",
+            return _finalize_response(
+                {
+                    "need_clarification": False,
+                    "response_type": "routing_unavailable",
+                    "answer": (
+                        "I couldn't process that message right now. "
+                        "Your current search has not been changed. "
+                        "Please try again."
+                    ),
+                    "state": previous_state_json,
+                    "parsed_intent": {
+                        "router": {
+                            "status": "failed",
+                        },
+                        "user_message": user_message,
+                        "previous_state": previous_state_json,
                     },
-                    "user_message": user_message,
-                    "previous_state": previous_state_json,
+                    "search_request": previous_state_json,
                 },
-                "search_request": previous_state_json,
-            }
+                trace=trace,
+            )
 
         route_debug = route.model_dump(exclude_none=True)
 
 
         if route.route == "listing_question":
-            return await _answer_listing_question(
-                user_message=user_message,
-                shown_listing=shown_listing,
-                previous_state=previous_state,
-                route_debug=route_debug,
+            response = await _answer_listing_question(
+            user_message=user_message,
+            shown_listing=shown_listing,
+            previous_state=previous_state,
+            route_debug=route_debug,
             )
+
+            return _finalize_response(
+                response,
+                trace=trace,
+                )
 
         if route.route == "new_search":
             with trace.step("new_search_intent_extraction"):
@@ -203,18 +224,24 @@ async def handle_user_message(
                 trace=trace,
             )
         else:
-            return {
-                "need_clarification": False,
-                "response_type": "other",
-                "answer": "I can help with a new search, updating the current search, or answering questions about a shown listing.",
-                "state": previous_state_json,
-                "parsed_intent": {
-                    "router": route_debug,
-                    "user_message": user_message,
-                    "previous_state": previous_state_json,
+            return _finalize_response(
+                {
+                    "need_clarification": False,
+                    "response_type": "other",
+                    "answer": (
+                        "I can help with a new search, updating the current "
+                        "search, or answering questions about a shown listing."
+                    ),
+                    "state": previous_state_json,
+                    "parsed_intent": {
+                        "router": route_debug,
+                        "user_message": user_message,
+                        "previous_state": previous_state_json,
+                    },
+                    "search_request": previous_state_json,
                 },
-                "search_request": previous_state_json,
-            }
+                trace=trace,
+            )
 
         parsed_intent_debug = {
             "router": route_debug,
@@ -237,13 +264,16 @@ async def handle_user_message(
     resolved = resolve_required_search_context(state)
 
     if resolved.need_clarification:
-        return {
-            "need_clarification": True,
-            "questions": resolved.questions,
-            "state": state_json,
-            "parsed_intent": parsed_intent_debug,
-            "search_request": state_json,
-        }
+        return _finalize_response(
+                {
+                    "need_clarification": True,
+                    "questions": resolved.questions,
+                    "state": state_json,
+                    "parsed_intent": parsed_intent_debug,
+                    "search_request": state_json,
+                },
+                trace=trace,
+            )
 
     result = await orchestrate_search(
         user_text=user_message,
@@ -258,6 +288,7 @@ async def handle_user_message(
     result["state"] = state_json
     result["parsed_intent"] = parsed_intent_debug
     result["search_request"] = state_json
-    result["telemetry"] = trace.summary()
-
-    return result
+    return _finalize_response(
+        result,
+        trace=trace,
+    )

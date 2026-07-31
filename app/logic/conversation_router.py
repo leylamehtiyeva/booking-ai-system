@@ -16,9 +16,16 @@ from app.agents.conversation_router_agent import build_conversation_router_agent
 from app.schemas.conversation_route import ConversationRouteDecision
 from app.schemas.query import SearchRequest
 from collections.abc import AsyncIterator
+import logging
+from app.agents.conversation_router_agent import (
+    CONVERSATION_ROUTER_INSTRUCTION,
+    build_conversation_router_agent,
+)
 
 APP_NAME = "booking-ai-agent"
 USER_ID = "local-user"
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -133,6 +140,42 @@ Latest user message:
 """.strip()
 
 
+def _record_router_llm_call(
+    *,
+    trace: RequestTrace | None,
+    model: str,
+    prompt: str,
+    response_text: str | None,
+    success: bool,
+    error: str | None,
+) -> None:
+    """
+    Record one completed router LLM attempt.
+
+    Telemetry failure must not change the business result
+    or hide the original routing error.
+    """
+    estimated_input_text = (
+        f"System instruction:\n{CONVERSATION_ROUTER_INSTRUCTION}\n\n"
+        f"User input:\n{prompt}"
+    )
+
+    try:
+        record_llm_call_estimated(
+            trace=trace,
+            step="conversation_routing",
+            model=model,
+            prompt_text=estimated_input_text,
+            response_text=response_text,
+            success=success,
+            error=error,
+        )
+    except Exception:
+        logger.exception(
+            "Failed to record conversation router telemetry"
+        )
+
+
 async def route_conversation_async(
     *,
     user_message: str,
@@ -144,9 +187,14 @@ async def route_conversation_async(
 
     agent = build_conversation_router_agent()
     session_service = InMemorySessionService()
-    runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
+    runner = Runner(
+        agent=agent,
+        app_name=APP_NAME,
+        session_service=session_service,
+    )
 
     session_id = f"conversation-router-{uuid.uuid4().hex[:8]}"
+
     await session_service.create_session(
         app_name=APP_NAME,
         user_id=USER_ID,
@@ -159,19 +207,18 @@ async def route_conversation_async(
         latest_result_context=latest_result_context,
     )
 
-    msg = Content(role="user", parts=[Part.from_text(text=prompt)])
+    msg = Content(
+        role="user",
+        parts=[Part.from_text(text=prompt)],
+    )
     cfg = RunConfig(response_modalities=["TEXT"])
 
-    final_text: Optional[str] = None
-    record_llm_call_estimated(
-        trace=trace,
-        step="conversation_routing",
-        model=get_gemini_model(),
-        prompt_text=prompt,
-        response_text=final_text,
-        success=bool(final_text),
-    )
-    
+    model_name = get_gemini_model()
+
+    final_text: str | None = None
+    routing_success = False
+    routing_error_code: str | None = None
+
     try:
         events = runner.run_async(
             user_id=USER_ID,
@@ -182,22 +229,52 @@ async def route_conversation_async(
 
         final_text = await _collect_final_response_text(events)
 
+        if not final_text:
+            routing_error_code = "empty_response"
+
+            raise ConversationRoutingError(
+                code=routing_error_code,
+            )
+
+        clean = _strip_json_fence(final_text)
+
+        try:
+            decision = (
+                ConversationRouteDecision.model_validate_json(
+                    clean
+                )
+            )
+        except Exception as exc:
+            routing_error_code = "invalid_response"
+
+            raise ConversationRoutingError(
+                code=routing_error_code,
+                internal_detail=clean[:500],
+            ) from exc
+
+        routing_success = True
+
+        return decision
+
+    except ConversationRoutingError as exc:
+        if routing_error_code is None:
+            routing_error_code = exc.code
+
+        raise
+
     except Exception as exc:
+        routing_error_code = "provider_error"
+
         raise ConversationRoutingError(
-            code="provider_error",
+            code=routing_error_code,
         ) from exc
 
-    if not final_text:
-        raise ConversationRoutingError(
-            code="empty_response",
+    finally:
+        _record_router_llm_call(
+            trace=trace,
+            model=model_name,
+            prompt=prompt,
+            response_text=final_text,
+            success=routing_success,
+            error=routing_error_code,
         )
-
-    clean = _strip_json_fence(final_text)
-
-    try:
-        return ConversationRouteDecision.model_validate_json(clean)
-    except Exception as exc:
-        raise ConversationRoutingError(
-            code="invalid_response",
-            internal_detail=clean[:500],
-        ) from exc
