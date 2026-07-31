@@ -15,6 +15,7 @@ from google.genai.types import Content, Part
 from app.agents.conversation_router_agent import build_conversation_router_agent
 from app.schemas.conversation_route import ConversationRouteDecision
 from app.schemas.query import SearchRequest
+from collections.abc import AsyncIterator
 
 APP_NAME = "booking-ai-agent"
 USER_ID = "local-user"
@@ -39,6 +40,57 @@ class ConversationRoutingError(RuntimeError):
         super().__init__(f"Conversation routing failed: {code}")
         self.code = code
         self.internal_detail = internal_detail
+
+def _extract_event_text(event: Any) -> str | None:
+    """
+    Extract textual parts from one ADK event.
+
+    Parts inside one event belong to the same content object,
+    so they may be joined together.
+    """
+    content = getattr(event, "content", None)
+
+    if content is None:
+        return None
+
+    parts = getattr(content, "parts", None)
+
+    if not parts:
+        return None
+
+    text_parts: list[str] = []
+
+    for part in parts:
+        text = getattr(part, "text", None)
+
+        if isinstance(text, str) and text:
+            text_parts.append(text)
+
+    if not text_parts:
+        return None
+
+    return "".join(text_parts)
+
+
+async def _collect_final_response_text(
+    events: AsyncIterator[Any],
+) -> str | None:
+    """
+    Consume the whole ADK event stream and keep only
+    non-empty final response text.
+    """
+    final_text: str | None = None
+
+    async for event in events:
+        if not event.is_final_response():
+            continue
+
+        event_text = _extract_event_text(event)
+
+        if event_text:
+            final_text = event_text
+
+    return final_text
 
 
 def _ensure_gemini_key() -> None:
@@ -121,20 +173,14 @@ async def route_conversation_async(
     )
     
     try:
-        async for ev in runner.run_async(
+        events = runner.run_async(
             user_id=USER_ID,
             session_id=session_id,
             new_message=msg,
             run_config=cfg,
-        ):
-            content = getattr(ev, "content", None)
+        )
 
-            if content and getattr(content, "parts", None):
-                for part in content.parts:
-                    text = getattr(part, "text", None)
-
-                    if text:
-                        final_text = (final_text or "") + text
+        final_text = await _collect_final_response_text(events)
 
     except Exception as exc:
         raise ConversationRoutingError(
