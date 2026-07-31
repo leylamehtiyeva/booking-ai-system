@@ -5,7 +5,6 @@ from app.observability.trace import RequestTrace
 from app.logic.intent_router import build_search_request_adk_async
 from app.logic.intent_update import update_search_state_async
 from app.logic.request_resolution import resolve_required_search_context
-from app.logic.conversation_router import route_conversation_async
 from app.logic.listing_signals import collect_listing_signals
 from app.schemas.query import SearchRequest
 from app.tools.orchestrate_search_tool import orchestrate_search
@@ -15,7 +14,14 @@ from app.logic.constraint_evidence_resolution import (
 )
 from app.schemas.fallback_policy import FallbackPolicy
 from app.config.settings import MAX_ITEMS_HARD_CAP
+from app.logic.conversation_router import (
+    ConversationRoutingError,
+    route_conversation_async,
+)
+import logging
 
+
+logger = logging.getLogger(__name__)
 
 
 def _build_state_payload(state: SearchRequest | None) -> dict[str, Any] | None:
@@ -136,13 +142,40 @@ async def handle_user_message(
             ],
         }
     else:
-        with trace.step("conversation_routing"):
-            route = await route_conversation_async(
-                user_message=user_message,
-                previous_state=previous_state,
-                latest_result_context=latest_result_context,
-                trace=trace,
+        try:
+            with trace.step("conversation_routing"):
+                route = await route_conversation_async(
+                    user_message=user_message,
+                    previous_state=previous_state,
+                    latest_result_context=latest_result_context,
+                    trace=trace,
+                )
+
+        except ConversationRoutingError as exc:
+            logger.exception(
+                "Conversation routing failed",
+                extra={
+                    "routing_error_code": exc.code,
+                },
             )
+
+            return {
+                "need_clarification": False,
+                "response_type": "routing_unavailable",
+                "answer": (
+                    "I couldn't process that message right now. "
+                    "Your current search has not been changed. Please try again."
+                ),
+                "state": previous_state_json,
+                "parsed_intent": {
+                    "router": {
+                        "status": "failed",
+                    },
+                    "user_message": user_message,
+                    "previous_state": previous_state_json,
+                },
+                "search_request": previous_state_json,
+            }
 
         route_debug = route.model_dump(exclude_none=True)
 

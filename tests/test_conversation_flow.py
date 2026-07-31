@@ -178,3 +178,63 @@ async def test_conversation_flow_other_route_returns_previous_state(monkeypatch)
 
     assert out["response_type"] == "other"
     assert out["state"]["constraints"]
+    
+    
+from unittest.mock import AsyncMock
+
+import pytest
+
+from app.logic import conversation_flow
+from app.logic.conversation_router import ConversationRoutingError
+
+
+@pytest.mark.asyncio
+async def test_routing_failure_does_not_change_search_state(
+    monkeypatch,
+):
+
+    previous_state = SearchRequest(
+        city="Baku",
+        constraints=[beds_constraint()],
+    )
+
+    route_mock = AsyncMock(
+        side_effect=ConversationRoutingError(
+            code="invalid_response",
+        )
+    )
+    update_mock = AsyncMock()
+    search_mock = AsyncMock()
+
+    monkeypatch.setattr(
+        conversation_flow,
+        "route_conversation_async",
+        route_mock,
+    )
+    monkeypatch.setattr(
+        conversation_flow,
+        "update_search_state_async",
+        update_mock,
+    )
+    monkeypatch.setattr(
+        conversation_flow,
+        "orchestrate_search",
+        search_mock,
+    )
+
+    result = await conversation_flow.handle_user_message(
+        user_message="Does this hotel allow pets?",
+        previous_state=previous_state,
+    )
+
+    expected_state = previous_state.model_dump(
+        mode="json",
+        exclude_none=True,
+    )
+
+    assert result["response_type"] == "routing_unavailable"
+    assert result["state"] == expected_state
+    assert result["search_request"] == expected_state
+
+    update_mock.assert_not_awaited()
+    search_mock.assert_not_awaited()

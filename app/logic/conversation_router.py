@@ -20,6 +20,27 @@ APP_NAME = "booking-ai-agent"
 USER_ID = "local-user"
 
 
+
+class ConversationRoutingError(RuntimeError):
+    """
+    Raised when the conversation router cannot produce
+    a valid domain routing decision.
+
+    This is an infrastructure/runtime failure,
+    not a user intent.
+    """
+
+    def __init__(
+        self,
+        code: str,
+        *,
+        internal_detail: str | None = None,
+    ) -> None:
+        super().__init__(f"Conversation routing failed: {code}")
+        self.code = code
+        self.internal_detail = internal_detail
+
+
 def _ensure_gemini_key() -> None:
     if not os.getenv("GEMINI_API_KEY") and os.getenv("GOOGLE_API_KEY"):
         os.environ["GEMINI_API_KEY"] = os.environ["GOOGLE_API_KEY"]
@@ -99,31 +120,38 @@ async def route_conversation_async(
         success=bool(final_text),
     )
     
-    async for ev in runner.run_async(
-        user_id=USER_ID,
-        session_id=session_id,
-        new_message=msg,
-        run_config=cfg,
-    ):
-        content = getattr(ev, "content", None)
-        if content and getattr(content, "parts", None):
-            for p in content.parts:
-                t = getattr(p, "text", None)
-                if t:
-                    final_text = (final_text or "") + t
+    try:
+        async for ev in runner.run_async(
+            user_id=USER_ID,
+            session_id=session_id,
+            new_message=msg,
+            run_config=cfg,
+        ):
+            content = getattr(ev, "content", None)
+
+            if content and getattr(content, "parts", None):
+                for part in content.parts:
+                    text = getattr(part, "text", None)
+
+                    if text:
+                        final_text = (final_text or "") + text
+
+    except Exception as exc:
+        raise ConversationRoutingError(
+            code="provider_error",
+        ) from exc
 
     if not final_text:
-        return ConversationRouteDecision(
-            route="search_update",
-            reason="fallback: empty router response",
+        raise ConversationRoutingError(
+            code="empty_response",
         )
 
     clean = _strip_json_fence(final_text)
 
     try:
         return ConversationRouteDecision.model_validate_json(clean)
-    except Exception:
-        return ConversationRouteDecision(
-            route="search_update",
-            reason=f"fallback: invalid router output: {clean[:200]}",
-        )
+    except Exception as exc:
+        raise ConversationRoutingError(
+            code="invalid_response",
+            internal_detail=clean[:500],
+        ) from exc
