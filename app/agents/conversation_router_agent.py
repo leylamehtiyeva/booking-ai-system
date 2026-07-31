@@ -41,10 +41,6 @@ This includes:
   - same location
   - same place
   - same destination
-  - те же даты
-  - тот же город
-  - в том же городе
-  - на те же даты
   - those dates
   - same dates and city
 
