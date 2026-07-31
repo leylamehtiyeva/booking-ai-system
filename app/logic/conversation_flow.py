@@ -101,7 +101,7 @@ async def handle_user_message(
     user_message: str,
     previous_state: Optional[SearchRequest] = None,
     *,
-    source: str = "fixtires",
+    source: str = "fixtures",
     top_n: int = 5,
     fallback_policy: FallbackPolicy | None = None,
     max_items: int = MAX_ITEMS_HARD_CAP,
