@@ -13,3 +13,24 @@ FX_API_URL = os.getenv("FX_API_URL", "https://api.frankfurter.dev/v2/rates?base=
 CONVERSATION_ROUTER_TIMEOUT_SECONDS = float(
     os.getenv("CONVERSATION_ROUTER_TIMEOUT_SECONDS", "15")
 )
+
+
+CONVERSATION_ROUTER_MAX_ATTEMPTS = max(
+    1,
+    int(
+        os.getenv(
+            "CONVERSATION_ROUTER_MAX_ATTEMPTS",
+            "2",
+        )
+    ),
+)
+
+CONVERSATION_ROUTER_RETRY_DELAY_SECONDS = max(
+    0.0,
+    float(
+        os.getenv(
+            "CONVERSATION_ROUTER_RETRY_DELAY_SECONDS",
+            "0.5",
+        )
+    ),
+)

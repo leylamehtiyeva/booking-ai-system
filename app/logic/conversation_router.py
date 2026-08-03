@@ -13,6 +13,8 @@ from google.adk.sessions import InMemorySessionService
 from google.genai.types import Content, Part
 import asyncio
 from app.config.settings import (
+    CONVERSATION_ROUTER_MAX_ATTEMPTS,
+    CONVERSATION_ROUTER_RETRY_DELAY_SECONDS,
     CONVERSATION_ROUTER_TIMEOUT_SECONDS,
 )
 from google.genai.errors import APIError
@@ -28,6 +30,12 @@ from app.agents.conversation_router_agent import (
 
 APP_NAME = "booking-ai-agent"
 USER_ID = "local-user"
+RETRYABLE_ROUTER_ERROR_CODES = frozenset(
+    {
+        "rate_limited",
+        "provider_unavailable",
+    }
+)
 
 logger = logging.getLogger(__name__)
 
@@ -195,45 +203,16 @@ def _record_router_llm_call(
         )
 
 
-async def route_conversation_async(
+async def _run_router_attempt(
     *,
-    user_message: str,
-    previous_state: SearchRequest | None,
-    latest_result_context: dict[str, Any] | None = None,
-    trace: RequestTrace | None = None,
+    runner: Runner,
+    session_id: str,
+    message: Content,
+    run_config: RunConfig,
+    prompt: str,
+    model_name: str,
+    trace: RequestTrace | None,
 ) -> ConversationRouteDecision:
-    _ensure_gemini_key()
-
-    agent = build_conversation_router_agent()
-    session_service = InMemorySessionService()
-    runner = Runner(
-        agent=agent,
-        app_name=APP_NAME,
-        session_service=session_service,
-    )
-
-    session_id = f"conversation-router-{uuid.uuid4().hex[:8]}"
-
-    await session_service.create_session(
-        app_name=APP_NAME,
-        user_id=USER_ID,
-        session_id=session_id,
-    )
-
-    prompt = _build_router_prompt(
-        user_message=user_message,
-        previous_state=previous_state,
-        latest_result_context=latest_result_context,
-    )
-
-    msg = Content(
-        role="user",
-        parts=[Part.from_text(text=prompt)],
-    )
-    cfg = RunConfig(response_modalities=["TEXT"])
-
-    model_name = get_gemini_model()
-
     final_text: str | None = None
     routing_success = False
     routing_error_code: str | None = None
@@ -242,23 +221,16 @@ async def route_conversation_async(
         events = runner.run_async(
             user_id=USER_ID,
             session_id=session_id,
-            new_message=msg,
-            run_config=cfg,
+            new_message=message,
+            run_config=run_config,
         )
 
-        try:
-            async with asyncio.timeout(
-                CONVERSATION_ROUTER_TIMEOUT_SECONDS
-            ):
-                final_text = await _collect_final_response_text(
-                    events
-                )
-        except TimeoutError as exc:
-            routing_error_code = "timeout"
-
-            raise ConversationRoutingError(
-                code=routing_error_code,
-            ) from exc
+        async with asyncio.timeout(
+            CONVERSATION_ROUTER_TIMEOUT_SECONDS
+        ):
+            final_text = await _collect_final_response_text(
+                events
+            )
 
         if not final_text:
             routing_error_code = "empty_response"
@@ -286,11 +258,12 @@ async def route_conversation_async(
         routing_success = True
         return decision
 
-    except ConversationRoutingError as exc:
-        if routing_error_code is None:
-            routing_error_code = exc.code
+    except TimeoutError as exc:
+        routing_error_code = "timeout"
 
-        raise
+        raise ConversationRoutingError(
+            code=routing_error_code,
+        ) from exc
 
     except APIError as exc:
         routing_error_code = _classify_api_error(exc)
@@ -298,6 +271,12 @@ async def route_conversation_async(
         raise ConversationRoutingError(
             code=routing_error_code,
         ) from exc
+
+    except ConversationRoutingError as exc:
+        if routing_error_code is None:
+            routing_error_code = exc.code
+
+        raise
 
     except Exception:
         routing_error_code = "unexpected_error"
@@ -312,3 +291,91 @@ async def route_conversation_async(
             success=routing_success,
             error=routing_error_code,
         )
+
+async def route_conversation_async(
+    *,
+    user_message: str,
+    previous_state: SearchRequest | None,
+    latest_result_context: dict[str, Any] | None = None,
+    trace: RequestTrace | None = None,
+) -> ConversationRouteDecision:
+    _ensure_gemini_key()
+
+    agent = build_conversation_router_agent()
+    session_service = InMemorySessionService()
+    runner = Runner(
+        agent=agent,
+        app_name=APP_NAME,
+        session_service=session_service,
+    )
+
+    prompt = _build_router_prompt(
+        user_message=user_message,
+        previous_state=previous_state,
+        latest_result_context=latest_result_context,
+    )
+
+    message = Content(
+        role="user",
+        parts=[Part.from_text(text=prompt)],
+    )
+    run_config = RunConfig(
+        response_modalities=["TEXT"],
+    )
+    model_name = get_gemini_model()
+
+    for attempt in range(
+        1,
+        CONVERSATION_ROUTER_MAX_ATTEMPTS + 1,
+    ):
+        session_id = (
+            f"conversation-router-"
+            f"{uuid.uuid4().hex[:8]}"
+        )
+
+        await session_service.create_session(
+            app_name=APP_NAME,
+            user_id=USER_ID,
+            session_id=session_id,
+        )
+
+        try:
+            return await _run_router_attempt(
+                runner=runner,
+                session_id=session_id,
+                message=message,
+                run_config=run_config,
+                prompt=prompt,
+                model_name=model_name,
+                trace=trace,
+            )
+
+        except ConversationRoutingError as exc:
+            attempts_exhausted = (
+                attempt
+                >= CONVERSATION_ROUTER_MAX_ATTEMPTS
+            )
+            error_is_retryable = (
+                exc.code
+                in RETRYABLE_ROUTER_ERROR_CODES
+            )
+
+            if attempts_exhausted or not error_is_retryable:
+                raise
+
+            logger.warning(
+                "Retrying conversation router after %s "
+                "(attempt %s/%s)",
+                exc.code,
+                attempt,
+                CONVERSATION_ROUTER_MAX_ATTEMPTS,
+            )
+
+            await asyncio.sleep(
+                CONVERSATION_ROUTER_RETRY_DELAY_SECONDS
+            )
+
+    raise RuntimeError(
+        "Conversation router attempts exhausted "
+        "without a result"
+    )

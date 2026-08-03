@@ -388,6 +388,17 @@ async def test_router_classifies_api_error(
     monkeypatch,
 ):
     record_mock = Mock()
+    
+    monkeypatch.setattr(
+    conversation_router,
+    "CONVERSATION_ROUTER_MAX_ATTEMPTS",
+    1,
+)
+    monkeypatch.setattr(
+    conversation_router,
+    "CONVERSATION_ROUTER_RETRY_DELAY_SECONDS",
+    0,
+)
 
     monkeypatch.setattr(
         conversation_router,
@@ -525,3 +536,232 @@ async def test_router_does_not_mask_unexpected_error(
 
     assert recorded["success"] is False
     assert recorded["error"] == "unexpected_error"
+    
+    
+class RetryThenSuccessRunner:
+    def __init__(
+        self,
+        *,
+        agent,
+        app_name,
+        session_service,
+    ):
+        self.run_calls = 0
+
+    async def _api_error_stream(self):
+        if False:
+            yield None
+
+        raise FakeAPIError(500)
+
+    def run_async(self, **kwargs):
+        self.run_calls += 1
+
+        if self.run_calls == 1:
+            return self._api_error_stream()
+
+        return _event_stream(
+            FakeEvent(
+                text_parts=[
+                    '{"route":"other",',
+                    '"reason":"greeting"}',
+                ],
+                is_final=True,
+            )
+        )
+        
+        
+@pytest.mark.asyncio
+async def test_router_retries_retryable_api_error_once(
+    monkeypatch,
+):
+    record_mock = Mock()
+
+    runner = RetryThenSuccessRunner(
+        agent=object(),
+        app_name="test",
+        session_service=object(),
+    )
+
+    monkeypatch.setattr(
+        conversation_router,
+        "_ensure_gemini_key",
+        lambda: None,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "build_conversation_router_agent",
+        lambda: object(),
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "InMemorySessionService",
+        FakeSessionService,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "Runner",
+        lambda **kwargs: runner,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "APIError",
+        FakeAPIError,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "get_gemini_model",
+        lambda: "test-model",
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "record_llm_call_estimated",
+        record_mock,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "CONVERSATION_ROUTER_MAX_ATTEMPTS",
+        2,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "CONVERSATION_ROUTER_RETRY_DELAY_SECONDS",
+        0,
+    )
+
+    trace = RequestTrace()
+
+    decision = await (
+        conversation_router.route_conversation_async(
+            user_message="hello",
+            previous_state=None,
+            trace=trace,
+        )
+    )
+
+    assert decision.route == "other"
+    assert runner.run_calls == 2
+
+    assert record_mock.call_count == 2
+
+    first_attempt = record_mock.call_args_list[
+        0
+    ].kwargs
+    second_attempt = record_mock.call_args_list[
+        1
+    ].kwargs
+
+    assert first_attempt["success"] is False
+    assert (
+        first_attempt["error"]
+        == "provider_unavailable"
+    )
+
+    assert second_attempt["success"] is True
+    assert second_attempt["error"] is None
+    
+    
+class AuthenticationErrorRunner:
+    def __init__(
+        self,
+        *,
+        agent,
+        app_name,
+        session_service,
+    ):
+        self.run_calls = 0
+
+    async def _error_stream(self):
+        if False:
+            yield None
+
+        raise FakeAPIError(401)
+
+    def run_async(self, **kwargs):
+        self.run_calls += 1
+        return self._error_stream()
+    
+    
+@pytest.mark.asyncio
+async def test_router_does_not_retry_authentication_error(
+    monkeypatch,
+):
+    record_mock = Mock()
+
+    runner = AuthenticationErrorRunner(
+        agent=object(),
+        app_name="test",
+        session_service=object(),
+    )
+
+    monkeypatch.setattr(
+        conversation_router,
+        "_ensure_gemini_key",
+        lambda: None,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "build_conversation_router_agent",
+        lambda: object(),
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "InMemorySessionService",
+        FakeSessionService,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "Runner",
+        lambda **kwargs: runner,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "APIError",
+        FakeAPIError,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "get_gemini_model",
+        lambda: "test-model",
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "record_llm_call_estimated",
+        record_mock,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "CONVERSATION_ROUTER_MAX_ATTEMPTS",
+        2,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "CONVERSATION_ROUTER_RETRY_DELAY_SECONDS",
+        0,
+    )
+
+    trace = RequestTrace()
+
+    with pytest.raises(
+        ConversationRoutingError
+    ) as exc_info:
+        await conversation_router.route_conversation_async(
+            user_message="hello",
+            previous_state=None,
+            trace=trace,
+        )
+
+    assert (
+        exc_info.value.code
+        == "authentication_error"
+    )
+    assert runner.run_calls == 1
+    assert record_mock.call_count == 1
+
+    recorded = record_mock.call_args.kwargs
+
+    assert recorded["success"] is False
+    assert (
+        recorded["error"]
+        == "authentication_error"
+    )
