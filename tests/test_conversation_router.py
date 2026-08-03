@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 import pytest
 from unittest.mock import Mock
-
+import asyncio
 from app.logic import conversation_router
 from app.observability.trace import RequestTrace
 
@@ -264,3 +264,92 @@ async def test_router_records_invalid_response_failure(
     assert recorded["success"] is False
     assert recorded["error"] == "invalid_response"
     assert recorded["response_text"] == "not valid json"
+    
+    
+    
+class SlowRunner:
+    def __init__(
+        self,
+        *,
+        agent,
+        app_name,
+        session_service,
+    ):
+        pass
+
+    async def _slow_event_stream(self):
+        await asyncio.sleep(1)
+
+        yield FakeEvent(
+            text_parts=[
+                '{"route":"other","reason":"late"}',
+            ],
+            is_final=True,
+        )
+
+    def run_async(self, **kwargs):
+        return self._slow_event_stream()
+    
+    
+@pytest.mark.asyncio
+async def test_router_timeout_is_recorded_as_failure(
+    monkeypatch,
+):
+    record_mock = Mock()
+
+    monkeypatch.setattr(
+        conversation_router,
+        "_ensure_gemini_key",
+        lambda: None,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "build_conversation_router_agent",
+        lambda: object(),
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "InMemorySessionService",
+        FakeSessionService,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "Runner",
+        SlowRunner,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "get_gemini_model",
+        lambda: "test-model",
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "record_llm_call_estimated",
+        record_mock,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "CONVERSATION_ROUTER_TIMEOUT_SECONDS",
+        0.01,
+    )
+
+    trace = RequestTrace()
+
+    with pytest.raises(
+        ConversationRoutingError
+    ) as exc_info:
+        await conversation_router.route_conversation_async(
+            user_message="hello",
+            previous_state=None,
+            trace=trace,
+        )
+
+    assert exc_info.value.code == "timeout"
+
+    record_mock.assert_called_once()
+
+    recorded = record_mock.call_args.kwargs
+
+    assert recorded["success"] is False
+    assert recorded["error"] == "timeout"
+    assert recorded["response_text"] is None

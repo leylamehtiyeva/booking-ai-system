@@ -11,6 +11,10 @@ from google.adk.agents.run_config import RunConfig
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai.types import Content, Part
+import asyncio
+from app.config.settings import (
+    CONVERSATION_ROUTER_TIMEOUT_SECONDS,
+)
 
 from app.agents.conversation_router_agent import build_conversation_router_agent
 from app.schemas.conversation_route import ConversationRouteDecision
@@ -227,7 +231,19 @@ async def route_conversation_async(
             run_config=cfg,
         )
 
-        final_text = await _collect_final_response_text(events)
+        try:
+            async with asyncio.timeout(
+                CONVERSATION_ROUTER_TIMEOUT_SECONDS
+            ):
+                final_text = await _collect_final_response_text(
+                    events
+                )
+        except TimeoutError as exc:
+            routing_error_code = "timeout"
+
+            raise ConversationRoutingError(
+                code=routing_error_code,
+            ) from exc
 
         if not final_text:
             routing_error_code = "empty_response"
@@ -253,7 +269,6 @@ async def route_conversation_async(
             ) from exc
 
         routing_success = True
-
         return decision
 
     except ConversationRoutingError as exc:
