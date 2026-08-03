@@ -15,7 +15,7 @@ import asyncio
 from app.config.settings import (
     CONVERSATION_ROUTER_TIMEOUT_SECONDS,
 )
-
+from google.genai.errors import APIError
 from app.agents.conversation_router_agent import build_conversation_router_agent
 from app.schemas.conversation_route import ConversationRouteDecision
 from app.schemas.query import SearchRequest
@@ -51,6 +51,21 @@ class ConversationRoutingError(RuntimeError):
         super().__init__(f"Conversation routing failed: {code}")
         self.code = code
         self.internal_detail = internal_detail
+        
+        
+def _classify_api_error(exc: APIError) -> str:
+    code = getattr(exc, "code", None)
+
+    if code == 429:
+        return "rate_limited"
+
+    if code in {401, 403}:
+        return "authentication_error"
+
+    if isinstance(code, int) and 500 <= code < 600:
+        return "provider_unavailable"
+
+    return "provider_error"
 
 def _extract_event_text(event: Any) -> str | None:
     """
@@ -277,12 +292,16 @@ async def route_conversation_async(
 
         raise
 
-    except Exception as exc:
-        routing_error_code = "provider_error"
+    except APIError as exc:
+        routing_error_code = _classify_api_error(exc)
 
         raise ConversationRoutingError(
             code=routing_error_code,
         ) from exc
+
+    except Exception:
+        routing_error_code = "unexpected_error"
+        raise
 
     finally:
         _record_router_llm_call(

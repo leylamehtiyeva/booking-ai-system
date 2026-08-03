@@ -17,6 +17,11 @@ from app.logic.conversation_router import (
 )
 
 
+class FakeAPIError(Exception):
+    def __init__(self, code: int):
+        super().__init__(f"API error: {code}")
+        self.code = code
+
 class FakeEvent:
     def __init__(
         self,
@@ -353,3 +358,170 @@ async def test_router_timeout_is_recorded_as_failure(
     assert recorded["success"] is False
     assert recorded["error"] == "timeout"
     assert recorded["response_text"] is None
+    
+    
+    
+    
+class APIErrorRunner:
+    def __init__(
+        self,
+        *,
+        agent,
+        app_name,
+        session_service,
+    ):
+        pass
+
+    async def _failing_event_stream(self):
+        if False:
+            yield None
+
+        raise FakeAPIError(429)
+
+    def run_async(self, **kwargs):
+        return self._failing_event_stream()
+    
+    
+    
+@pytest.mark.asyncio
+async def test_router_classifies_api_error(
+    monkeypatch,
+):
+    record_mock = Mock()
+
+    monkeypatch.setattr(
+        conversation_router,
+        "_ensure_gemini_key",
+        lambda: None,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "build_conversation_router_agent",
+        lambda: object(),
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "InMemorySessionService",
+        FakeSessionService,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "Runner",
+        APIErrorRunner,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "APIError",
+        FakeAPIError,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "get_gemini_model",
+        lambda: "test-model",
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "record_llm_call_estimated",
+        record_mock,
+    )
+
+    trace = RequestTrace()
+
+    with pytest.raises(
+        ConversationRoutingError
+    ) as exc_info:
+        await conversation_router.route_conversation_async(
+            user_message="hello",
+            previous_state=None,
+            trace=trace,
+        )
+
+    assert exc_info.value.code == "rate_limited"
+
+    record_mock.assert_called_once()
+
+    recorded = record_mock.call_args.kwargs
+
+    assert recorded["success"] is False
+    assert recorded["error"] == "rate_limited"
+    assert recorded["response_text"] is None
+    
+    
+class UnexpectedErrorRunner:
+    def __init__(
+        self,
+        *,
+        agent,
+        app_name,
+        session_service,
+    ):
+        pass
+
+    def run_async(self, **kwargs):
+        return object()
+    
+    
+    
+@pytest.mark.asyncio
+async def test_router_does_not_mask_unexpected_error(
+    monkeypatch,
+):
+    record_mock = Mock()
+
+    async def _broken_collector(events):
+        raise AttributeError("broken event processing")
+
+    monkeypatch.setattr(
+        conversation_router,
+        "_ensure_gemini_key",
+        lambda: None,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "build_conversation_router_agent",
+        lambda: object(),
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "InMemorySessionService",
+        FakeSessionService,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "Runner",
+        UnexpectedErrorRunner,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "_collect_final_response_text",
+        _broken_collector,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "get_gemini_model",
+        lambda: "test-model",
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "record_llm_call_estimated",
+        record_mock,
+    )
+
+    trace = RequestTrace()
+
+    with pytest.raises(
+        AttributeError,
+        match="broken event processing",
+    ):
+        await conversation_router.route_conversation_async(
+            user_message="hello",
+            previous_state=None,
+            trace=trace,
+        )
+
+    record_mock.assert_called_once()
+
+    recorded = record_mock.call_args.kwargs
+
+    assert recorded["success"] is False
+    assert recorded["error"] == "unexpected_error"
