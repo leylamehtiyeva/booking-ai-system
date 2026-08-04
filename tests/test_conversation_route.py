@@ -4,7 +4,6 @@ from pydantic import ValidationError
 from app.schemas.conversation_route import (
     ConversationAction,
     ConversationActionDecision,
-    ConversationRouteDecision,
     RouterInput,
 )
 from app.schemas.query import SearchRequest
@@ -70,10 +69,3 @@ def test_action_decision_requires_reason():
             action="start_search",
         )
 
-
-def test_legacy_route_decision_still_works():
-    decision = ConversationRouteDecision(
-        route="search_update",
-    )
-
-    assert decision.route == "search_update"

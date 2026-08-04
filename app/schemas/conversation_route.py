@@ -1,10 +1,7 @@
 from __future__ import annotations
-
 from enum import Enum
-from typing import Any, Literal
-
+from typing import Any
 from pydantic import BaseModel
-
 from app.schemas.query import SearchRequest
 
 
@@ -25,18 +22,3 @@ class ConversationActionDecision(BaseModel):
     action: ConversationAction
     reason: str
 
-
-# Temporary legacy contract.
-# It will be removed after router and conversation flow
-# are migrated to ConversationActionDecision.
-ConversationRouteType = Literal[
-    "search_update",
-    "listing_question",
-    "new_search",
-    "other",
-]
-
-
-class ConversationRouteDecision(BaseModel):
-    route: ConversationRouteType
-    reason: str | None = None

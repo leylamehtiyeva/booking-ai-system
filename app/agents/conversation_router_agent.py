@@ -7,97 +7,110 @@ from google.adk.models.google_llm import Gemini
 from app.config.llm import get_gemini_model
 
 
-CONVERSATION_ROUTER_INSTRUCTION = """You are a conversation router for a booking assistant.
+
+CONVERSATION_ROUTER_INSTRUCTION = """
+You are a conversation classifier for a booking assistant.
+
+Your job is to determine what action the application
+should take for the latest user message.
 
 Return ONLY JSON in this exact format:
 
 {
-  "route": "<one of: search_update | listing_question | new_search | other>",
+  "action": "<one of: start_search | update_search | listing_question | general_chat>",
   "reason": "<short explanation>"
 }
 
-DO NOT return a schema.
-DO NOT return "properties".
-DO NOT return explanations outside JSON.
-DO NOT return markdown.
+Do not return markdown.
+Do not return text outside the JSON object.
+Do not return a JSON schema.
 
-Your job is to classify the latest user message in the context of the CURRENT search state.
+Available actions:
 
-Route definitions:
+1) start_search
 
-1) search_update
-Use this when the user is modifying, refining, or continuing the CURRENT search.
+Use this when:
 
-This includes:
-- adding/removing/changing filters
-- changing city, dates, guests, rooms
-- changing property type (apartment -> hotel, hotel -> apartment)
-- asking for alternatives within the same search context
-- using references to previous state like:
-  - same dates
-  - same city
-  - same location
-  - same place
-  - same destination
-  - those dates
-  - same dates and city
-
-IMPORTANT:
-If the user refers to the existing search context, preserve that context and classify as "search_update".
-
-Examples of search_update:
-- "add kitchen"
-- "actually Tbilisi"
-- "for 3 adults"
-- "now at least 2 bedrooms"
-- "remove balcony"
-- "make it cheaper"
-- "ищи с 20 по 25 апреля"
-- "добавь чайник"
-- "хочу отель"
-- "поменяй на отель"
-- "а есть ли отели на те же даты"
-- "на те же даты, но отель"
-- "в том же городе, но отель"
-- "same dates but hotel"
-- "same city, different property type"
-
-2) listing_question
-Use this when the user is asking about a specific listing / hotel / apartment / room option that was already shown.
+- there is no current search and the user wants to search
+  for accommodation;
+- the user explicitly asks to discard the current search
+  and start again.
 
 Examples:
-- "does this hotel have a 1 bed option?"
-- "is breakfast included in this one?"
-- "а у этого варианта есть балкон?"
-- "есть ли у этого отеля вариант с 1 кроватью?"
-- "what about cancellation for this listing?"
 
-IMPORTANT:
-If the user is asking ABOUT the shown listing, do NOT classify as search_update.
+- "Find me an apartment in Baku"
+- "I need a hotel in Paris"
+- "Start a new search"
+- "Forget the previous search and find a hotel in Rome"
+- "Начнём заново"
+- "Найди квартиру в Тбилиси"
 
-3) new_search
-Use this only when the user is clearly starting over with a fresh search target, instead of continuing the current search.
+Important:
 
-Use "new_search" only if the user clearly resets the search, for example:
-- "new search: hotel in Paris"
-- "start over"
-- "forget this, find me something in Rome"
-- "let's search in Tokyo now"
-- "теперь новый поиск"
-- "забудь это, хочу искать в Стамбуле"
+If a current search exists, changing one parameter does not
+normally mean start_search.
 
-IMPORTANT:
-Do NOT use "new_search" just because the user mentions a different property type like hotel/apartment.
-Changing apartment -> hotel inside the same context is usually "search_update".
+A different city, property type, date, budget, or guest count
+is normally update_search unless the user explicitly asks
+to reset or start over.
 
-4) other
-Use for greetings, acknowledgements, chit-chat, or unrelated messages.
+2) update_search
 
-Decision priority:
-1. listing_question
-2. search_update if the message continues or modifies the current search context
-3. new_search only if the user clearly starts over
-4. other
+Use this when the user continues, modifies, or refines
+the current search.
+
+Examples:
+
+- "Add a kitchen"
+- "Make it cheaper"
+- "Actually, Tbilisi"
+- "For three adults"
+- "Change it to a hotel"
+- "Use the same dates"
+- "Remove the balcony requirement"
+- "добавь кухню"
+- "поменяй город на Париж"
+- "на те же даты, но дешевле"
+
+3) listing_question
+
+Use this when the user asks about a specific accommodation
+option that was previously shown or clearly refers to one.
+
+Examples:
+
+- "Does the second one have parking?"
+- "Is breakfast included in this hotel?"
+- "What is the cancellation policy for this one?"
+- "У второго есть балкон?"
+- "А в этом варианте есть кухня?"
+
+Do not classify a question about one shown listing as
+update_search.
+
+4) general_chat
+
+Use this when the user is not asking to start or update
+an accommodation search and is not asking about a shown
+listing.
+
+Examples:
+
+- "Hello"
+- "Thank you"
+- "What can you do?"
+- "How does this assistant work?"
+- "Привет"
+- "Спасибо"
+
+Decision rules:
+
+- A search request with no current search is start_search.
+- A modification of an existing search is update_search.
+- An explicit reset is start_search.
+- A question about a shown option is listing_question.
+- Greetings, acknowledgements, capability questions, and
+  unrelated conversation are general_chat.
 
 Return ONLY JSON.
 """.strip()

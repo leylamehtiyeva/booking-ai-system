@@ -7,13 +7,14 @@ import asyncio
 from app.logic import conversation_router
 from app.observability.trace import RequestTrace
 
-from app.logic.conversation_router import (
-    _collect_final_response_text,
-)
 
 from app.logic.conversation_router import (
     ConversationRoutingError,
     _collect_final_response_text,
+)
+from app.schemas.conversation_route import (
+    ConversationAction,
+    RouterInput,
 )
 
 
@@ -52,7 +53,7 @@ async def _event_stream(
 async def test_collect_final_response_ignores_partial_events():
     partial_event = FakeEvent(
         text_parts=[
-            '{"route":"search_update",',
+            '{"action":"update_search",',
             '"reason":"partial"}',
         ],
         is_final=False,
@@ -60,7 +61,7 @@ async def test_collect_final_response_ignores_partial_events():
 
     final_event = FakeEvent(
         text_parts=[
-            '{"route":"other",',
+            '{"action":"general_chat",'
             '"reason":"greeting"}',
         ],
         is_final=True,
@@ -74,9 +75,9 @@ async def test_collect_final_response_ignores_partial_events():
     )
 
     assert result == (
-        '{"route":"other",'
-        '"reason":"greeting"}'
-    )
+    '{"action":"general_chat",'
+    '"reason":"greeting"}'
+)
     
     
 @pytest.mark.asyncio
@@ -122,7 +123,7 @@ class FakeRunner:
         return _event_stream(
             FakeEvent(
                 text_parts=[
-                    '{"route":"other",',
+                    '{"action":"general_chat",',
                     '"reason":"greeting"}',
                 ],
                 is_final=True,
@@ -170,12 +171,16 @@ async def test_router_records_successful_llm_call_once(
     trace = RequestTrace()
 
     decision = await conversation_router.route_conversation_async(
+    router_input=RouterInput(
         user_message="hello",
-        previous_state=None,
-        trace=trace,
-    )
+    ),
+    trace=trace,
+)
 
-    assert decision.route == "other"
+    assert (
+    decision.action
+    == ConversationAction.GENERAL_CHAT
+)
 
     record_mock.assert_called_once()
 
@@ -186,10 +191,13 @@ async def test_router_records_successful_llm_call_once(
     assert recorded["success"] is True
     assert recorded["error"] is None
     assert recorded["response_text"] == (
-        '{"route":"other",'
-        '"reason":"greeting"}'
-    )
-    assert "You are a conversation router" in recorded["prompt_text"]
+    '{"action":"general_chat",'
+    '"reason":"greeting"}'
+)
+    assert (
+    "You are a conversation classifier"
+    in recorded["prompt_text"]
+)
     assert "Latest user message:" in recorded["prompt_text"]
     
     
@@ -255,10 +263,11 @@ async def test_router_records_invalid_response_failure(
 
     with pytest.raises(ConversationRoutingError) as exc_info:
         await conversation_router.route_conversation_async(
-            user_message="hello",
-            previous_state=None,
-            trace=trace,
-        )
+    router_input=RouterInput(
+        user_message="hello",
+    ),
+    trace=trace,
+)
 
     assert exc_info.value.code == "invalid_response"
 
@@ -344,10 +353,11 @@ async def test_router_timeout_is_recorded_as_failure(
         ConversationRoutingError
     ) as exc_info:
         await conversation_router.route_conversation_async(
-            user_message="hello",
-            previous_state=None,
-            trace=trace,
-        )
+    router_input=RouterInput(
+        user_message="hello",
+    ),
+    trace=trace,
+)
 
     assert exc_info.value.code == "timeout"
 
@@ -442,10 +452,11 @@ async def test_router_classifies_api_error(
         ConversationRoutingError
     ) as exc_info:
         await conversation_router.route_conversation_async(
-            user_message="hello",
-            previous_state=None,
-            trace=trace,
-        )
+    router_input=RouterInput(
+        user_message="hello",
+    ),
+    trace=trace,
+)
 
     assert exc_info.value.code == "rate_limited"
 
@@ -525,10 +536,11 @@ async def test_router_does_not_mask_unexpected_error(
         match="broken event processing",
     ):
         await conversation_router.route_conversation_async(
-            user_message="hello",
-            previous_state=None,
-            trace=trace,
-        )
+    router_input=RouterInput(
+        user_message="hello",
+    ),
+    trace=trace,
+)
 
     record_mock.assert_called_once()
 
@@ -563,7 +575,7 @@ class RetryThenSuccessRunner:
         return _event_stream(
             FakeEvent(
                 text_parts=[
-                    '{"route":"other",',
+                    '{"action":"general_chat",',
                     '"reason":"greeting"}',
                 ],
                 is_final=True,
@@ -631,15 +643,17 @@ async def test_router_retries_retryable_api_error_once(
 
     trace = RequestTrace()
 
-    decision = await (
-        conversation_router.route_conversation_async(
+    decision = await conversation_router.route_conversation_async(
+        router_input=RouterInput(
             user_message="hello",
-            previous_state=None,
-            trace=trace,
-        )
+        ),
+        trace=trace,
     )
 
-    assert decision.route == "other"
+    assert (
+        decision.action
+        == ConversationAction.GENERAL_CHAT
+    )
     assert runner.run_calls == 2
 
     assert record_mock.call_count == 2
@@ -746,10 +760,11 @@ async def test_router_does_not_retry_authentication_error(
         ConversationRoutingError
     ) as exc_info:
         await conversation_router.route_conversation_async(
-            user_message="hello",
-            previous_state=None,
-            trace=trace,
-        )
+    router_input=RouterInput(
+        user_message="hello",
+    ),
+    trace=trace,
+)
 
     assert (
         exc_info.value.code

@@ -1,9 +1,12 @@
 from __future__ import annotations
-
+from app.schemas.conversation_route import (
+    ConversationAction,
+    RouterInput,
+)
 import json
 import os
 import uuid
-from typing import Any, Optional
+from typing import Any
 from app.config.llm import get_gemini_model
 from app.observability.trace import RequestTrace
 from app.observability.llm_usage import record_llm_call_estimated
@@ -18,15 +21,17 @@ from app.config.settings import (
     CONVERSATION_ROUTER_TIMEOUT_SECONDS,
 )
 from google.genai.errors import APIError
-from app.agents.conversation_router_agent import build_conversation_router_agent
-from app.schemas.conversation_route import ConversationRouteDecision
-from app.schemas.query import SearchRequest
+from app.schemas.conversation_route import (
+    ConversationActionDecision,
+    RouterInput,
+)
 from collections.abc import AsyncIterator
 import logging
 from app.agents.conversation_router_agent import (
     CONVERSATION_ROUTER_INSTRUCTION,
     build_conversation_router_agent,
 )
+
 
 APP_NAME = "booking-ai-agent"
 USER_ID = "local-user"
@@ -143,27 +148,38 @@ def _strip_json_fence(text: str) -> str:
 
 def _build_router_prompt(
     *,
-    user_message: str,
-    previous_state: SearchRequest | None,
-    latest_result_context: dict[str, Any] | None = None,
+    router_input: RouterInput,
 ) -> str:
+    current_search = router_input.current_search
+
     state_json = (
-        json.dumps(previous_state.model_dump(mode="json", exclude_none=True), ensure_ascii=False, indent=2)
-        if previous_state is not None
+        json.dumps(
+            current_search.model_dump(
+                mode="json",
+                exclude_none=True,
+            ),
+            ensure_ascii=False,
+            indent=2,
+        )
+        if current_search is not None
         else "null"
     )
 
-    result_json = json.dumps(latest_result_context or {}, ensure_ascii=False, indent=2)
+    result_json = json.dumps(
+        router_input.latest_result_context or {},
+        ensure_ascii=False,
+        indent=2,
+    )
 
     return f"""
-Current search state:
+Current search:
 {state_json}
 
 Latest shown result context:
 {result_json}
 
 Latest user message:
-{user_message}
+{router_input.user_message}
 """.strip()
 
 
@@ -179,8 +195,6 @@ def _record_router_llm_call(
     """
     Record one completed router LLM attempt.
 
-    Telemetry failure must not change the business result
-    or hide the original routing error.
     """
     estimated_input_text = (
         f"System instruction:\n{CONVERSATION_ROUTER_INSTRUCTION}\n\n"
@@ -212,7 +226,7 @@ async def _run_router_attempt(
     prompt: str,
     model_name: str,
     trace: RequestTrace | None,
-) -> ConversationRouteDecision:
+) -> ConversationActionDecision:
     final_text: str | None = None
     routing_success = False
     routing_error_code: str | None = None
@@ -243,7 +257,7 @@ async def _run_router_attempt(
 
         try:
             decision = (
-                ConversationRouteDecision.model_validate_json(
+                ConversationActionDecision.model_validate_json(
                     clean
                 )
             )
@@ -294,11 +308,9 @@ async def _run_router_attempt(
 
 async def route_conversation_async(
     *,
-    user_message: str,
-    previous_state: SearchRequest | None,
-    latest_result_context: dict[str, Any] | None = None,
+    router_input: RouterInput,
     trace: RequestTrace | None = None,
-) -> ConversationRouteDecision:
+) -> ConversationActionDecision:
     _ensure_gemini_key()
 
     agent = build_conversation_router_agent()
@@ -310,9 +322,7 @@ async def route_conversation_async(
     )
 
     prompt = _build_router_prompt(
-        user_message=user_message,
-        previous_state=previous_state,
-        latest_result_context=latest_result_context,
+        router_input=router_input,
     )
 
     message = Content(
