@@ -4,6 +4,7 @@ import os
 
 from google.adk.models.base_llm import BaseLlm
 from google.adk.models.google_llm import Gemini
+from google.adk.models.lite_llm import LiteLlm
 
 from app.config.llm import (
     AdkModelAdapter,
@@ -21,11 +22,15 @@ class LlmModelConfigurationError(ValueError):
 
 def _require_api_key(
     config: LlmModelConfig,
-) -> None:
-    if not os.getenv(config.api_key_env):
+) -> str:
+    api_key = os.getenv(config.api_key_env)
+
+    if not api_key:
         raise LlmModelConfigurationError(
             f"Missing API key environment variable: {config.api_key_env}"
         )
+
+    return api_key
 
 
 def _build_gemini_model(
@@ -33,7 +38,8 @@ def _build_gemini_model(
 ) -> BaseLlm:
     if config.provider != LlmProvider.GOOGLE:
         raise LlmModelConfigurationError(
-            "The Gemini ADK adapter requires provider='google'."
+            "The Gemini ADK adapter requires "
+            "provider='google'."
         )
 
     if config.api_key_env not in {
@@ -47,29 +53,43 @@ def _build_gemini_model(
 
     if config.api_base is not None:
         raise LlmModelConfigurationError(
-            "api_base is not supported by the Gemini ADK adapter."
+            "api_base is not supported by "
+            "the Gemini ADK adapter."
         )
 
-    # In google-adk 1.21.0 Gemini does not expose
-    # an api_key field. The underlying google-genai
-    # Client reads GOOGLE_API_KEY or GEMINI_API_KEY
-    # from the process environment.
+    _require_api_key(config)
+
     return Gemini(
         model=config.model,
+    )
+
+
+def _build_litellm_model(
+    config: LlmModelConfig,
+) -> BaseLlm:
+    api_key = _require_api_key(config)
+
+    model_kwargs: dict[str, str] = {
+        "model": config.model,
+        "api_key": api_key,
+    }
+
+    if config.api_base is not None:
+        model_kwargs["api_base"] = config.api_base
+
+    return LiteLlm(
+        **model_kwargs,
     )
 
 
 def build_adk_model(
     config: LlmModelConfig,
 ) -> BaseLlm:
-    """
-    Build an ADK-compatible model from
-    a validated profile.
-    """
-    _require_api_key(config)
-
     if config.adapter == AdkModelAdapter.GEMINI:
         return _build_gemini_model(config)
+
+    if config.adapter == AdkModelAdapter.LITELLM:
+        return _build_litellm_model(config)
 
     raise LlmModelConfigurationError(
         f"Unsupported ADK model adapter: {config.adapter.value}"

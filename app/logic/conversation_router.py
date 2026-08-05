@@ -17,6 +17,7 @@ from app.config.settings import (
     CONVERSATION_ROUTER_MAX_ATTEMPTS,
     CONVERSATION_ROUTER_RETRY_DELAY_SECONDS,
     CONVERSATION_ROUTER_TIMEOUT_SECONDS,
+    ROUTER_LLM_PROFILE,
 )
 from google.genai.errors import APIError
 from app.schemas.conversation_route import (
@@ -45,7 +46,6 @@ RETRYABLE_ROUTER_ERROR_CODES = frozenset(
 logger = logging.getLogger(__name__)
 
 
-
 class ConversationRoutingError(RuntimeError):
     """
     Raised when the conversation router cannot produce
@@ -64,8 +64,8 @@ class ConversationRoutingError(RuntimeError):
         super().__init__(f"Conversation routing failed: {code}")
         self.code = code
         self.internal_detail = internal_detail
-        
-        
+
+
 def _classify_api_error(exc: APIError) -> str:
     code = getattr(exc, "code", None)
 
@@ -79,6 +79,7 @@ def _classify_api_error(exc: APIError) -> str:
         return "provider_unavailable"
 
     return "provider_error"
+
 
 def _extract_event_text(event: Any) -> str | None:
     """
@@ -132,12 +133,15 @@ async def _collect_final_response_text(
     return final_text
 
 
-
 def _strip_json_fence(text: str) -> str:
     t = text.strip()
     if t.startswith("```"):
         lines = t.splitlines()
-        if len(lines) >= 3 and lines[0].startswith("```") and lines[-1].startswith("```"):
+        if (
+            len(lines) >= 3
+            and lines[0].startswith("```")
+            and lines[-1].startswith("```")
+        ):
             t = "\n".join(lines[1:-1]).strip()
     return t
 
@@ -208,9 +212,7 @@ def _record_router_llm_call(
             error=error,
         )
     except Exception:
-        logger.exception(
-            "Failed to record conversation router telemetry"
-        )
+        logger.exception("Failed to record conversation router telemetry")
 
 
 async def _run_router_attempt(
@@ -235,12 +237,8 @@ async def _run_router_attempt(
             run_config=run_config,
         )
 
-        async with asyncio.timeout(
-            CONVERSATION_ROUTER_TIMEOUT_SECONDS
-        ):
-            final_text = await _collect_final_response_text(
-                events
-            )
+        async with asyncio.timeout(CONVERSATION_ROUTER_TIMEOUT_SECONDS):
+            final_text = await _collect_final_response_text(events)
 
         if not final_text:
             routing_error_code = "empty_response"
@@ -252,11 +250,7 @@ async def _run_router_attempt(
         clean = _strip_json_fence(final_text)
 
         try:
-            decision = (
-                ConversationActionDecision.model_validate_json(
-                    clean
-                )
-            )
+            decision = ConversationActionDecision.model_validate_json(clean)
         except Exception as exc:
             routing_error_code = "invalid_response"
 
@@ -302,12 +296,15 @@ async def _run_router_attempt(
             error=routing_error_code,
         )
 
+
 async def route_conversation_async(
     *,
     router_input: RouterInput,
     trace: RequestTrace | None = None,
 ) -> ConversationActionDecision:
-    model_profile = get_llm_profile()
+    model_profile = get_llm_profile(
+        ROUTER_LLM_PROFILE,
+    )
     model = build_adk_model(model_profile)
 
     agent = build_conversation_router_agent(
@@ -338,10 +335,7 @@ async def route_conversation_async(
         1,
         CONVERSATION_ROUTER_MAX_ATTEMPTS + 1,
     ):
-        session_id = (
-            f"conversation-router-"
-            f"{uuid.uuid4().hex[:8]}"
-        )
+        session_id = f"conversation-router-{uuid.uuid4().hex[:8]}"
 
         await session_service.create_session(
             app_name=APP_NAME,
@@ -361,31 +355,19 @@ async def route_conversation_async(
             )
 
         except ConversationRoutingError as exc:
-            attempts_exhausted = (
-                attempt
-                >= CONVERSATION_ROUTER_MAX_ATTEMPTS
-            )
-            error_is_retryable = (
-                exc.code
-                in RETRYABLE_ROUTER_ERROR_CODES
-            )
+            attempts_exhausted = attempt >= CONVERSATION_ROUTER_MAX_ATTEMPTS
+            error_is_retryable = exc.code in RETRYABLE_ROUTER_ERROR_CODES
 
             if attempts_exhausted or not error_is_retryable:
                 raise
 
             logger.warning(
-                "Retrying conversation router after %s "
-                "(attempt %s/%s)",
+                "Retrying conversation router after %s (attempt %s/%s)",
                 exc.code,
                 attempt,
                 CONVERSATION_ROUTER_MAX_ATTEMPTS,
             )
 
-            await asyncio.sleep(
-                CONVERSATION_ROUTER_RETRY_DELAY_SECONDS
-            )
+            await asyncio.sleep(CONVERSATION_ROUTER_RETRY_DELAY_SECONDS)
 
-    raise RuntimeError(
-        "Conversation router attempts exhausted "
-        "without a result"
-    )
+    raise RuntimeError("Conversation router attempts exhausted without a result")

@@ -7,6 +7,7 @@ from app.config.llm import (
     LlmModelConfig,
     LlmProvider,
     get_llm_profile,
+    GROQ_GPT_OSS_20B_PROFILE_NAME,
 )
 from app.llm import model_factory
 from app.llm.model_factory import (
@@ -97,27 +98,40 @@ def test_build_adk_model_rejects_missing_api_key(
         build_adk_model(config)
 
 
-def test_build_adk_model_rejects_unsupported_adapter(
+def test_build_adk_model_creates_litellm_adapter(
     monkeypatch,
 ):
     monkeypatch.setenv(
-        "OPENROUTER_API_KEY",
-        "test-key",
+        "GROQ_API_KEY",
+        "test-groq-key",
+    )
+
+    litellm_model = object()
+    litellm_constructor = Mock(
+        return_value=litellm_model,
+    )
+
+    monkeypatch.setattr(
+        model_factory,
+        "LiteLlm",
+        litellm_constructor,
     )
 
     config = LlmModelConfig(
-        provider=LlmProvider.OPENROUTER,
+        provider=LlmProvider.GROQ,
         adapter=AdkModelAdapter.LITELLM,
-        model="openrouter/example-model:free",
-        api_key_env="OPENROUTER_API_KEY",
-        api_base="https://openrouter.ai/api/v1",
+        model="groq/openai/gpt-oss-20b",
+        api_key_env="GROQ_API_KEY",
     )
 
-    with pytest.raises(
-        LlmModelConfigurationError,
-        match="Unsupported ADK model adapter: litellm",
-    ):
-        build_adk_model(config)
+    result = build_adk_model(config)
+
+    assert result is litellm_model
+
+    litellm_constructor.assert_called_once_with(
+        model="groq/openai/gpt-oss-20b",
+        api_key="test-groq-key",
+    )
 
 
 def test_build_adk_model_rejects_custom_gemini_key_name(
@@ -140,3 +154,13 @@ def test_build_adk_model_rejects_custom_gemini_key_name(
         match="GOOGLE_API_KEY or GEMINI_API_KEY",
     ):
         build_adk_model(config)
+
+
+def test_get_llm_profile_returns_groq_profile():
+    profile = get_llm_profile(GROQ_GPT_OSS_20B_PROFILE_NAME)
+
+    assert profile.provider == LlmProvider.GROQ
+    assert profile.adapter == AdkModelAdapter.LITELLM
+    assert profile.model == ("groq/openai/gpt-oss-20b")
+    assert profile.api_key_env == "GROQ_API_KEY"
+    assert profile.api_base is None

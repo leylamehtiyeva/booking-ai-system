@@ -9,6 +9,9 @@ from pydantic import BaseModel, ConfigDict, Field
 DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
 DEFAULT_LLM_PROFILE_NAME = "gemini_default"
 
+DEFAULT_GROQ_MODEL = "groq/openai/gpt-oss-20b"
+GROQ_GPT_OSS_20B_PROFILE_NAME = "groq_gpt_oss_20b"
+
 
 class LlmProvider(str, Enum):
     """
@@ -84,6 +87,12 @@ def get_llm_profile(
             adapter=AdkModelAdapter.GEMINI,
             model=get_gemini_model(),
             api_key_env="GOOGLE_API_KEY",
+        ),
+        GROQ_GPT_OSS_20B_PROFILE_NAME: LlmModelConfig(
+            provider=LlmProvider.GROQ,
+            adapter=AdkModelAdapter.LITELLM,
+            model=DEFAULT_GROQ_MODEL,
+            api_key_env="GROQ_API_KEY",
         ),
     }
 

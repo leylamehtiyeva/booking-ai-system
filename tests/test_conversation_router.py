@@ -25,6 +25,9 @@ def _patch_router_model_layer(
     )
     adk_model = object()
 
+    get_profile_mock = Mock(
+        return_value=profile,
+    )
     build_model_mock = Mock(
         return_value=adk_model,
     )
@@ -34,8 +37,13 @@ def _patch_router_model_layer(
 
     monkeypatch.setattr(
         conversation_router,
+        "ROUTER_LLM_PROFILE",
+        "test-profile",
+    )
+    monkeypatch.setattr(
+        conversation_router,
         "get_llm_profile",
-        lambda: profile,
+        get_profile_mock,
     )
     monkeypatch.setattr(
         conversation_router,
@@ -51,6 +59,7 @@ def _patch_router_model_layer(
     return (
         profile,
         adk_model,
+        get_profile_mock,
         build_model_mock,
         build_agent_mock,
     )
@@ -170,13 +179,14 @@ async def test_router_records_successful_llm_call_once(
     record_mock = Mock()
 
     (
-        profile,
-        adk_model,
-        build_model_mock,
-        build_agent_mock,
+    profile,
+    adk_model,
+    get_profile_mock,
+    build_model_mock,
+    build_agent_mock,
     ) = _patch_router_model_layer(
         monkeypatch,
-    )
+    ) 
 
     monkeypatch.setattr(
         conversation_router,
@@ -204,6 +214,10 @@ async def test_router_records_successful_llm_call_once(
     )
 
     assert decision.action == ConversationAction.GENERAL_CHAT
+
+    get_profile_mock.assert_called_once_with(
+        "test-profile",
+    )
 
     build_model_mock.assert_called_once_with(
         profile,
