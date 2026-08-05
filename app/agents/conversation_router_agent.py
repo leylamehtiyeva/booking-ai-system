@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-import os
-
 from google.adk.agents import Agent
-from google.adk.models.google_llm import Gemini
-from app.config.llm import get_gemini_model
+from google.adk.models.base_llm import BaseLlm
+
 
 
 
@@ -116,18 +114,12 @@ Return ONLY JSON.
 """.strip()
 
 
-def build_conversation_router_agent() -> Agent:
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        raise ValueError("Missing GEMINI_API_KEY/GOOGLE_API_KEY")
-
-    llm = Gemini(
-        model=get_gemini_model(),
-        api_key=api_key,
-    )
-
+def build_conversation_router_agent(
+    *,
+    model: BaseLlm,
+) -> Agent:
     return Agent(
         name="conversation_router",
-        model=llm,
+        model=model,
         instruction=CONVERSATION_ROUTER_INSTRUCTION,
     )

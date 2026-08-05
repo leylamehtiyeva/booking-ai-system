@@ -4,10 +4,8 @@ from app.schemas.conversation_route import (
     RouterInput,
 )
 import json
-import os
 import uuid
 from typing import Any
-from app.config.llm import get_gemini_model
 from app.observability.trace import RequestTrace
 from app.observability.llm_usage import record_llm_call_estimated
 from google.adk.agents.run_config import RunConfig
@@ -31,6 +29,8 @@ from app.agents.conversation_router_agent import (
     CONVERSATION_ROUTER_INSTRUCTION,
     build_conversation_router_agent,
 )
+from app.config.llm import get_llm_profile
+from app.llm.model_factory import build_adk_model
 
 
 APP_NAME = "booking-ai-agent"
@@ -131,10 +131,6 @@ async def _collect_final_response_text(
 
     return final_text
 
-
-def _ensure_gemini_key() -> None:
-    if not os.getenv("GEMINI_API_KEY") and os.getenv("GOOGLE_API_KEY"):
-        os.environ["GEMINI_API_KEY"] = os.environ["GOOGLE_API_KEY"]
 
 
 def _strip_json_fence(text: str) -> str:
@@ -311,9 +307,13 @@ async def route_conversation_async(
     router_input: RouterInput,
     trace: RequestTrace | None = None,
 ) -> ConversationActionDecision:
-    _ensure_gemini_key()
+    model_profile = get_llm_profile()
+    model = build_adk_model(model_profile)
 
-    agent = build_conversation_router_agent()
+    agent = build_conversation_router_agent(
+        model=model,
+    )
+
     session_service = InMemorySessionService()
     runner = Runner(
         agent=agent,
@@ -332,7 +332,7 @@ async def route_conversation_async(
     run_config = RunConfig(
         response_modalities=["TEXT"],
     )
-    model_name = get_gemini_model()
+    model_name = model_profile.model
 
     for attempt in range(
         1,

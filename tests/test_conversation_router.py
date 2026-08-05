@@ -1,27 +1,66 @@
+import asyncio
 from collections.abc import AsyncIterator
 from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
-from unittest.mock import Mock
-import asyncio
+
 from app.logic import conversation_router
-from app.observability.trace import RequestTrace
-
-
 from app.logic.conversation_router import (
     ConversationRoutingError,
     _collect_final_response_text,
 )
+from app.observability.trace import RequestTrace
 from app.schemas.conversation_route import (
     ConversationAction,
     RouterInput,
 )
 
 
+def _patch_router_model_layer(
+    monkeypatch,
+):
+    profile = SimpleNamespace(
+        model="test-model",
+    )
+    adk_model = object()
+
+    build_model_mock = Mock(
+        return_value=adk_model,
+    )
+    build_agent_mock = Mock(
+        return_value=object(),
+    )
+
+    monkeypatch.setattr(
+        conversation_router,
+        "get_llm_profile",
+        lambda: profile,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "build_adk_model",
+        build_model_mock,
+    )
+    monkeypatch.setattr(
+        conversation_router,
+        "build_conversation_router_agent",
+        build_agent_mock,
+    )
+
+    return (
+        profile,
+        adk_model,
+        build_model_mock,
+        build_agent_mock,
+    )
+
+
 class FakeAPIError(Exception):
     def __init__(self, code: int):
         super().__init__(f"API error: {code}")
         self.code = code
+
 
 class FakeEvent:
     def __init__(
@@ -31,10 +70,7 @@ class FakeEvent:
         is_final: bool,
     ) -> None:
         self.content = SimpleNamespace(
-            parts=[
-                SimpleNamespace(text=text)
-                for text in text_parts
-            ]
+            parts=[SimpleNamespace(text=text) for text in text_parts]
         )
         self._is_final = is_final
 
@@ -61,8 +97,7 @@ async def test_collect_final_response_ignores_partial_events():
 
     final_event = FakeEvent(
         text_parts=[
-            '{"action":"general_chat",'
-            '"reason":"greeting"}',
+            '{"action":"general_chat","reason":"greeting"}',
         ],
         is_final=True,
     )
@@ -74,17 +109,14 @@ async def test_collect_final_response_ignores_partial_events():
         )
     )
 
-    assert result == (
-    '{"action":"general_chat",'
-    '"reason":"greeting"}'
-)
-    
-    
+    assert result == ('{"action":"general_chat","reason":"greeting"}')
+
+
 @pytest.mark.asyncio
 async def test_collect_final_response_returns_none_without_final_text():
     partial_event = FakeEvent(
         text_parts=[
-            '{"route":"search_update"}',
+            '{"action":"update_search","reason":"partial"}',
         ],
         is_final=False,
     )
@@ -102,8 +134,8 @@ async def test_collect_final_response_returns_none_without_final_text():
     )
 
     assert result is None
-    
-    
+
+
 class FakeSessionService:
     async def create_session(self, **kwargs):
         return None
@@ -137,16 +169,15 @@ async def test_router_records_successful_llm_call_once(
 ):
     record_mock = Mock()
 
-    monkeypatch.setattr(
-        conversation_router,
-        "_ensure_gemini_key",
-        lambda: None,
+    (
+        profile,
+        adk_model,
+        build_model_mock,
+        build_agent_mock,
+    ) = _patch_router_model_layer(
+        monkeypatch,
     )
-    monkeypatch.setattr(
-        conversation_router,
-        "build_conversation_router_agent",
-        lambda: object(),
-    )
+
     monkeypatch.setattr(
         conversation_router,
         "InMemorySessionService",
@@ -159,11 +190,6 @@ async def test_router_records_successful_llm_call_once(
     )
     monkeypatch.setattr(
         conversation_router,
-        "get_gemini_model",
-        lambda: "test-model",
-    )
-    monkeypatch.setattr(
-        conversation_router,
         "record_llm_call_estimated",
         record_mock,
     )
@@ -171,16 +197,20 @@ async def test_router_records_successful_llm_call_once(
     trace = RequestTrace()
 
     decision = await conversation_router.route_conversation_async(
-    router_input=RouterInput(
-        user_message="hello",
-    ),
-    trace=trace,
-)
+        router_input=RouterInput(
+            user_message="hello",
+        ),
+        trace=trace,
+    )
 
-    assert (
-    decision.action
-    == ConversationAction.GENERAL_CHAT
-)
+    assert decision.action == ConversationAction.GENERAL_CHAT
+
+    build_model_mock.assert_called_once_with(
+        profile,
+    )
+    build_agent_mock.assert_called_once_with(
+        model=adk_model,
+    )
 
     record_mock.assert_called_once()
 
@@ -191,17 +221,12 @@ async def test_router_records_successful_llm_call_once(
     assert recorded["success"] is True
     assert recorded["error"] is None
     assert recorded["response_text"] == (
-    '{"action":"general_chat",'
-    '"reason":"greeting"}'
-)
-    assert (
-    "You are a conversation classifier"
-    in recorded["prompt_text"]
-)
+        '{"action":"general_chat","reason":"greeting"}'
+    )
+    assert "You are a conversation classifier" in recorded["prompt_text"]
     assert "Latest user message:" in recorded["prompt_text"]
-    
-    
-    
+
+
 class InvalidResponseRunner:
     def __init__(
         self,
@@ -219,8 +244,7 @@ class InvalidResponseRunner:
                 is_final=True,
             )
         )
-        
-        
+
 
 @pytest.mark.asyncio
 async def test_router_records_invalid_response_failure(
@@ -228,16 +252,6 @@ async def test_router_records_invalid_response_failure(
 ):
     record_mock = Mock()
 
-    monkeypatch.setattr(
-        conversation_router,
-        "_ensure_gemini_key",
-        lambda: None,
-    )
-    monkeypatch.setattr(
-        conversation_router,
-        "build_conversation_router_agent",
-        lambda: object(),
-    )
     monkeypatch.setattr(
         conversation_router,
         "InMemorySessionService",
@@ -248,10 +262,8 @@ async def test_router_records_invalid_response_failure(
         "Runner",
         InvalidResponseRunner,
     )
-    monkeypatch.setattr(
-        conversation_router,
-        "get_gemini_model",
-        lambda: "test-model",
+    _patch_router_model_layer(
+        monkeypatch,
     )
     monkeypatch.setattr(
         conversation_router,
@@ -263,11 +275,11 @@ async def test_router_records_invalid_response_failure(
 
     with pytest.raises(ConversationRoutingError) as exc_info:
         await conversation_router.route_conversation_async(
-    router_input=RouterInput(
-        user_message="hello",
-    ),
-    trace=trace,
-)
+            router_input=RouterInput(
+                user_message="hello",
+            ),
+            trace=trace,
+        )
 
     assert exc_info.value.code == "invalid_response"
 
@@ -278,9 +290,8 @@ async def test_router_records_invalid_response_failure(
     assert recorded["success"] is False
     assert recorded["error"] == "invalid_response"
     assert recorded["response_text"] == "not valid json"
-    
-    
-    
+
+
 class SlowRunner:
     def __init__(
         self,
@@ -296,31 +307,21 @@ class SlowRunner:
 
         yield FakeEvent(
             text_parts=[
-                '{"route":"other","reason":"late"}',
+                '{"action":"general_chat","reason":"late"}',
             ],
             is_final=True,
         )
 
     def run_async(self, **kwargs):
         return self._slow_event_stream()
-    
-    
+
+
 @pytest.mark.asyncio
 async def test_router_timeout_is_recorded_as_failure(
     monkeypatch,
 ):
     record_mock = Mock()
 
-    monkeypatch.setattr(
-        conversation_router,
-        "_ensure_gemini_key",
-        lambda: None,
-    )
-    monkeypatch.setattr(
-        conversation_router,
-        "build_conversation_router_agent",
-        lambda: object(),
-    )
     monkeypatch.setattr(
         conversation_router,
         "InMemorySessionService",
@@ -331,10 +332,8 @@ async def test_router_timeout_is_recorded_as_failure(
         "Runner",
         SlowRunner,
     )
-    monkeypatch.setattr(
-        conversation_router,
-        "get_gemini_model",
-        lambda: "test-model",
+    _patch_router_model_layer(
+        monkeypatch,
     )
     monkeypatch.setattr(
         conversation_router,
@@ -349,15 +348,13 @@ async def test_router_timeout_is_recorded_as_failure(
 
     trace = RequestTrace()
 
-    with pytest.raises(
-        ConversationRoutingError
-    ) as exc_info:
+    with pytest.raises(ConversationRoutingError) as exc_info:
         await conversation_router.route_conversation_async(
-    router_input=RouterInput(
-        user_message="hello",
-    ),
-    trace=trace,
-)
+            router_input=RouterInput(
+                user_message="hello",
+            ),
+            trace=trace,
+        )
 
     assert exc_info.value.code == "timeout"
 
@@ -368,10 +365,8 @@ async def test_router_timeout_is_recorded_as_failure(
     assert recorded["success"] is False
     assert recorded["error"] == "timeout"
     assert recorded["response_text"] is None
-    
-    
-    
-    
+
+
 class APIErrorRunner:
     def __init__(
         self,
@@ -390,36 +385,25 @@ class APIErrorRunner:
 
     def run_async(self, **kwargs):
         return self._failing_event_stream()
-    
-    
-    
+
+
 @pytest.mark.asyncio
 async def test_router_classifies_api_error(
     monkeypatch,
 ):
     record_mock = Mock()
-    
-    monkeypatch.setattr(
-    conversation_router,
-    "CONVERSATION_ROUTER_MAX_ATTEMPTS",
-    1,
-)
-    monkeypatch.setattr(
-    conversation_router,
-    "CONVERSATION_ROUTER_RETRY_DELAY_SECONDS",
-    0,
-)
 
     monkeypatch.setattr(
         conversation_router,
-        "_ensure_gemini_key",
-        lambda: None,
+        "CONVERSATION_ROUTER_MAX_ATTEMPTS",
+        1,
     )
     monkeypatch.setattr(
         conversation_router,
-        "build_conversation_router_agent",
-        lambda: object(),
+        "CONVERSATION_ROUTER_RETRY_DELAY_SECONDS",
+        0,
     )
+
     monkeypatch.setattr(
         conversation_router,
         "InMemorySessionService",
@@ -435,10 +419,8 @@ async def test_router_classifies_api_error(
         "APIError",
         FakeAPIError,
     )
-    monkeypatch.setattr(
-        conversation_router,
-        "get_gemini_model",
-        lambda: "test-model",
+    _patch_router_model_layer(
+        monkeypatch,
     )
     monkeypatch.setattr(
         conversation_router,
@@ -448,15 +430,13 @@ async def test_router_classifies_api_error(
 
     trace = RequestTrace()
 
-    with pytest.raises(
-        ConversationRoutingError
-    ) as exc_info:
+    with pytest.raises(ConversationRoutingError) as exc_info:
         await conversation_router.route_conversation_async(
-    router_input=RouterInput(
-        user_message="hello",
-    ),
-    trace=trace,
-)
+            router_input=RouterInput(
+                user_message="hello",
+            ),
+            trace=trace,
+        )
 
     assert exc_info.value.code == "rate_limited"
 
@@ -467,8 +447,8 @@ async def test_router_classifies_api_error(
     assert recorded["success"] is False
     assert recorded["error"] == "rate_limited"
     assert recorded["response_text"] is None
-    
-    
+
+
 class UnexpectedErrorRunner:
     def __init__(
         self,
@@ -481,9 +461,8 @@ class UnexpectedErrorRunner:
 
     def run_async(self, **kwargs):
         return object()
-    
-    
-    
+
+
 @pytest.mark.asyncio
 async def test_router_does_not_mask_unexpected_error(
     monkeypatch,
@@ -493,16 +472,6 @@ async def test_router_does_not_mask_unexpected_error(
     async def _broken_collector(events):
         raise AttributeError("broken event processing")
 
-    monkeypatch.setattr(
-        conversation_router,
-        "_ensure_gemini_key",
-        lambda: None,
-    )
-    monkeypatch.setattr(
-        conversation_router,
-        "build_conversation_router_agent",
-        lambda: object(),
-    )
     monkeypatch.setattr(
         conversation_router,
         "InMemorySessionService",
@@ -518,10 +487,8 @@ async def test_router_does_not_mask_unexpected_error(
         "_collect_final_response_text",
         _broken_collector,
     )
-    monkeypatch.setattr(
-        conversation_router,
-        "get_gemini_model",
-        lambda: "test-model",
+    _patch_router_model_layer(
+        monkeypatch,
     )
     monkeypatch.setattr(
         conversation_router,
@@ -536,11 +503,11 @@ async def test_router_does_not_mask_unexpected_error(
         match="broken event processing",
     ):
         await conversation_router.route_conversation_async(
-    router_input=RouterInput(
-        user_message="hello",
-    ),
-    trace=trace,
-)
+            router_input=RouterInput(
+                user_message="hello",
+            ),
+            trace=trace,
+        )
 
     record_mock.assert_called_once()
 
@@ -548,8 +515,8 @@ async def test_router_does_not_mask_unexpected_error(
 
     assert recorded["success"] is False
     assert recorded["error"] == "unexpected_error"
-    
-    
+
+
 class RetryThenSuccessRunner:
     def __init__(
         self,
@@ -581,8 +548,8 @@ class RetryThenSuccessRunner:
                 is_final=True,
             )
         )
-        
-        
+
+
 @pytest.mark.asyncio
 async def test_router_retries_retryable_api_error_once(
     monkeypatch,
@@ -595,16 +562,6 @@ async def test_router_retries_retryable_api_error_once(
         session_service=object(),
     )
 
-    monkeypatch.setattr(
-        conversation_router,
-        "_ensure_gemini_key",
-        lambda: None,
-    )
-    monkeypatch.setattr(
-        conversation_router,
-        "build_conversation_router_agent",
-        lambda: object(),
-    )
     monkeypatch.setattr(
         conversation_router,
         "InMemorySessionService",
@@ -620,10 +577,8 @@ async def test_router_retries_retryable_api_error_once(
         "APIError",
         FakeAPIError,
     )
-    monkeypatch.setattr(
-        conversation_router,
-        "get_gemini_model",
-        lambda: "test-model",
+    _patch_router_model_layer(
+        monkeypatch,
     )
     monkeypatch.setattr(
         conversation_router,
@@ -650,31 +605,21 @@ async def test_router_retries_retryable_api_error_once(
         trace=trace,
     )
 
-    assert (
-        decision.action
-        == ConversationAction.GENERAL_CHAT
-    )
+    assert decision.action == ConversationAction.GENERAL_CHAT
     assert runner.run_calls == 2
 
     assert record_mock.call_count == 2
 
-    first_attempt = record_mock.call_args_list[
-        0
-    ].kwargs
-    second_attempt = record_mock.call_args_list[
-        1
-    ].kwargs
+    first_attempt = record_mock.call_args_list[0].kwargs
+    second_attempt = record_mock.call_args_list[1].kwargs
 
     assert first_attempt["success"] is False
-    assert (
-        first_attempt["error"]
-        == "provider_unavailable"
-    )
+    assert first_attempt["error"] == "provider_unavailable"
 
     assert second_attempt["success"] is True
     assert second_attempt["error"] is None
-    
-    
+
+
 class AuthenticationErrorRunner:
     def __init__(
         self,
@@ -694,8 +639,8 @@ class AuthenticationErrorRunner:
     def run_async(self, **kwargs):
         self.run_calls += 1
         return self._error_stream()
-    
-    
+
+
 @pytest.mark.asyncio
 async def test_router_does_not_retry_authentication_error(
     monkeypatch,
@@ -708,16 +653,6 @@ async def test_router_does_not_retry_authentication_error(
         session_service=object(),
     )
 
-    monkeypatch.setattr(
-        conversation_router,
-        "_ensure_gemini_key",
-        lambda: None,
-    )
-    monkeypatch.setattr(
-        conversation_router,
-        "build_conversation_router_agent",
-        lambda: object(),
-    )
     monkeypatch.setattr(
         conversation_router,
         "InMemorySessionService",
@@ -733,10 +668,8 @@ async def test_router_does_not_retry_authentication_error(
         "APIError",
         FakeAPIError,
     )
-    monkeypatch.setattr(
-        conversation_router,
-        "get_gemini_model",
-        lambda: "test-model",
+    _patch_router_model_layer(
+        monkeypatch,
     )
     monkeypatch.setattr(
         conversation_router,
@@ -756,27 +689,19 @@ async def test_router_does_not_retry_authentication_error(
 
     trace = RequestTrace()
 
-    with pytest.raises(
-        ConversationRoutingError
-    ) as exc_info:
+    with pytest.raises(ConversationRoutingError) as exc_info:
         await conversation_router.route_conversation_async(
-    router_input=RouterInput(
-        user_message="hello",
-    ),
-    trace=trace,
-)
+            router_input=RouterInput(
+                user_message="hello",
+            ),
+            trace=trace,
+        )
 
-    assert (
-        exc_info.value.code
-        == "authentication_error"
-    )
+    assert exc_info.value.code == "authentication_error"
     assert runner.run_calls == 1
     assert record_mock.call_count == 1
 
     recorded = record_mock.call_args.kwargs
 
     assert recorded["success"] is False
-    assert (
-        recorded["error"]
-        == "authentication_error"
-    )
+    assert recorded["error"] == "authentication_error"
