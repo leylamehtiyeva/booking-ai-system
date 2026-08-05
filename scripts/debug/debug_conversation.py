@@ -2,10 +2,18 @@ from __future__ import annotations
 
 import asyncio
 import json
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(PROJECT_ROOT / ".env")
+
 
 from app.logic.conversation_flow import handle_user_message
-from app.schemas.query import SearchRequest
 from app.schemas.fallback_policy import FallbackPolicy
+from app.schemas.query import SearchRequest
 
 
 def _print_block(title: str, payload):
@@ -57,7 +65,9 @@ async def main():
         state_payload = result.get("state")
         if state_payload:
             state = SearchRequest.model_validate(state_payload)
-            _print_block("CURRENT STATE", state.model_dump(mode="json", exclude_none=True))
+            _print_block(
+                "CURRENT STATE", state.model_dump(mode="json", exclude_none=True)
+            )
 
 
 if __name__ == "__main__":
