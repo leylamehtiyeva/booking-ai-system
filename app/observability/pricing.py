@@ -5,16 +5,60 @@ import os
 
 MODEL_PRICES_USD_PER_1M = {
     "gemini-2.0-flash": {
-        "input": float(os.getenv("PRICE_GEMINI_2_0_FLASH_INPUT_PER_1M", "0.10")),
-        "output": float(os.getenv("PRICE_GEMINI_2_0_FLASH_OUTPUT_PER_1M", "0.40")),
+        "input": float(
+            os.getenv(
+                "PRICE_GEMINI_2_0_FLASH_INPUT_PER_1M",
+                "0.10",
+            )
+        ),
+        "output": float(
+            os.getenv(
+                "PRICE_GEMINI_2_0_FLASH_OUTPUT_PER_1M",
+                "0.40",
+            )
+        ),
     },
     "gemini-2.5-flash": {
-        "input": float(os.getenv("PRICE_GEMINI_2_5_FLASH_INPUT_PER_1M", "0.30")),
-        "output": float(os.getenv("PRICE_GEMINI_2_5_FLASH_OUTPUT_PER_1M", "2.50")),
+        "input": float(
+            os.getenv(
+                "PRICE_GEMINI_2_5_FLASH_INPUT_PER_1M",
+                "0.30",
+            )
+        ),
+        "output": float(
+            os.getenv(
+                "PRICE_GEMINI_2_5_FLASH_OUTPUT_PER_1M",
+                "2.50",
+            )
+        ),
     },
     "gemini-2.5-flash-lite": {
-        "input": float(os.getenv("PRICE_GEMINI_2_5_FLASH_LITE_INPUT_PER_1M", "0.10")),
-        "output": float(os.getenv("PRICE_GEMINI_2_5_FLASH_LITE_OUTPUT_PER_1M", "0.40")),
+        "input": float(
+            os.getenv(
+                "PRICE_GEMINI_2_5_FLASH_LITE_INPUT_PER_1M",
+                "0.10",
+            )
+        ),
+        "output": float(
+            os.getenv(
+                "PRICE_GEMINI_2_5_FLASH_LITE_OUTPUT_PER_1M",
+                "0.40",
+            )
+        ),
+    },
+    "groq/openai/gpt-oss-20b": {
+        "input": float(
+            os.getenv(
+                "PRICE_GROQ_GPT_OSS_20B_INPUT_PER_1M",
+                "0.075",
+            )
+        ),
+        "output": float(
+            os.getenv(
+                "PRICE_GROQ_GPT_OSS_20B_OUTPUT_PER_1M",
+                "0.30",
+            )
+        ),
     },
 }
 

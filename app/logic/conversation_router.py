@@ -3,6 +3,7 @@ from app.schemas.conversation_route import (
     ConversationAction,
     RouterInput,
 )
+import litellm
 import json
 import uuid
 from typing import Any
@@ -65,6 +66,15 @@ class ConversationRoutingError(RuntimeError):
         self.code = code
         self.internal_detail = internal_detail
 
+
+def _classify_litellm_error(exc: Exception) -> str:
+    if isinstance(exc, litellm.RateLimitError):
+        return "rate_limited"
+
+    if isinstance(exc, litellm.AuthenticationError):
+        return "authentication_error"
+
+    return "provider_error"
 
 def _classify_api_error(exc: APIError) -> str:
     code = getattr(exc, "code", None)
@@ -268,6 +278,17 @@ async def _run_router_attempt(
         raise ConversationRoutingError(
             code=routing_error_code,
         ) from exc
+        
+    except (
+        litellm.RateLimitError,
+        litellm.AuthenticationError,
+        litellm.APIError,
+    ) as exc:
+        routing_error_code = _classify_litellm_error(exc)
+
+        raise ConversationRoutingError(
+            code=routing_error_code,
+        ) from exc
 
     except APIError as exc:
         routing_error_code = _classify_api_error(exc)
@@ -301,9 +322,10 @@ async def route_conversation_async(
     *,
     router_input: RouterInput,
     trace: RequestTrace | None = None,
+    llm_profile_name: str | None = None,
 ) -> ConversationActionDecision:
     model_profile = get_llm_profile(
-        ROUTER_LLM_PROFILE,
+        llm_profile_name or ROUTER_LLM_PROFILE,
     )
     model = build_adk_model(model_profile)
 
