@@ -133,11 +133,13 @@ async def handle_user_message(
     max_items: int = MAX_ITEMS_HARD_CAP,
     shown_listing: dict[str, Any] | None = None,
     latest_result_context: dict[str, Any] | None = None,
+    trace: RequestTrace | None = None,
 ) -> Dict[str, Any]:
     previous_state_json = _build_state_payload(
         previous_state
     )
-    trace = RequestTrace()
+    if trace is None:
+        trace = RequestTrace()
 
     router_input = RouterInput(
         user_message=user_message,

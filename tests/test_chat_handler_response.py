@@ -4,6 +4,10 @@ from ui.services.chat_handler import (
     build_recent_conversation_messages,
 )
 
+from app.logic.conversation_response_llm import (
+    ConversationResponseGenerationResult,
+)
+
 
 def test_general_chat_uses_conversation_response_layer():
     result = {
@@ -212,16 +216,34 @@ def test_process_user_message_passes_previous_history_to_response_input(
         lambda: None,
     )
 
+    async def fake_handle_user_message(**kwargs):
+        return result
+
+    async def fake_generate_conversation_response_with_llm(
+        response_input,
+        *,
+        trace=None,
+    ):
+        return ConversationResponseGenerationResult(
+            text="Generated answer",
+            source="llm",
+        )
+
+    def fake_run_async(awaitable):
+        import asyncio
+
+        return asyncio.run(awaitable)
+
     monkeypatch.setattr(
         chat_handler,
         "handle_user_message",
-        lambda **kwargs: object(),
+        fake_handle_user_message,
     )
 
     monkeypatch.setattr(
         chat_handler,
         "run_async",
-        lambda _: result,
+        fake_run_async,
     )
 
     monkeypatch.setattr(
@@ -248,14 +270,24 @@ def test_process_user_message_passes_previous_history_to_response_input(
 
     monkeypatch.setattr(
         chat_handler,
-        "generate_deterministic_conversation_response",
-        lambda _: "Generated answer",
+        "generate_conversation_response_with_llm",
+        fake_generate_conversation_response_with_llm,
     )
 
     monkeypatch.setattr(
         chat_handler,
         "build_display_answer",
         lambda _: ("ignored", None),
+    )
+
+    monkeypatch.setattr(
+        chat_handler,
+        "save_telemetry_record",
+        lambda **kwargs: {
+            "log_file": "fake.jsonl",
+            "attempt_number": 1,
+            "timestamp": "2026-01-01T00:00:00+00:00",
+        },
     )
 
     monkeypatch.setattr(

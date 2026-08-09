@@ -31,6 +31,14 @@ from app.schemas.conversation_response import (
 from dataclasses import dataclass
 from typing import Literal
 
+from contextlib import nullcontext
+
+from app.observability.llm_usage import (
+    record_llm_call_estimated,
+    record_llm_call_from_response,
+)
+from app.observability.trace import RequestTrace
+
 
 APP_NAME = "booking-ai-agent"
 USER_ID = "local-user"
@@ -67,12 +75,16 @@ def _extract_event_text(event: Any) -> str | None:
 
     return "".join(text_parts)
 
-async def _collect_final_response_text(
+async def _collect_final_response(
     events: AsyncIterator[Any],
-) -> str | None:
+) -> tuple[str | None, Any | None]:
     final_text: str | None = None
+    usage_event: Any | None = None
 
     async for event in events:
+        if getattr(event, "usage_metadata", None) is not None:
+            usage_event = event
+
         if not event.is_final_response():
             continue
 
@@ -81,7 +93,7 @@ async def _collect_final_response_text(
         if event_text:
             final_text = event_text
 
-    return final_text
+    return final_text, usage_event
 
 
 def _build_llm_payload(
@@ -203,103 +215,145 @@ async def generate_conversation_response_with_llm(
     response_input: ConversationResponseInput,
     *,
     llm_profile_name: str | None = None,
+    trace: RequestTrace | None = None,
 ) -> ConversationResponseGenerationResult:
-    """
-    Generate a natural conversational response.
-
-    Any LLM/runtime failure falls back to the deterministic
-    response generator. Domain state is never changed here.
-    """
     deterministic_fallback = (
         generate_deterministic_conversation_response(
             response_input
         )
     )
 
-    try:
-        model_profile = get_llm_profile(
-            llm_profile_name
-            or CONVERSATION_RESPONSE_LLM_PROFILE
-        )
+    prompt = _build_llm_prompt(response_input)
 
-        model = build_adk_model(
-            model_profile
-        )
+    model_name = (
+        llm_profile_name
+        or CONVERSATION_RESPONSE_LLM_PROFILE
+    )
 
-        agent = build_conversation_response_agent(
-            model=model
-        )
+    usage_event: Any | None = None
+    response_text: str | None = None
 
-        session_service = InMemorySessionService()
+    step_context = (
+        trace.step("conversation_response_generation")
+        if trace is not None
+        else nullcontext()
+    )
 
-        runner = Runner(
-            agent=agent,
-            app_name=APP_NAME,
-            session_service=session_service,
-        )
+    with step_context:
+        try:
+            model_profile = get_llm_profile(
+                llm_profile_name
+                or CONVERSATION_RESPONSE_LLM_PROFILE
+            )
 
-        session_id = (
-            "conversation-response-"
-            f"{uuid.uuid4().hex[:8]}"
-        )
+            model_name = model_profile.model
 
-        await session_service.create_session(
-            app_name=APP_NAME,
-            user_id=USER_ID,
-            session_id=session_id,
-        )
+            model = build_adk_model(model_profile)
 
-        prompt = _build_llm_prompt(
-            response_input
-        )
+            agent = build_conversation_response_agent(
+                model=model
+            )
 
-        message = Content(
-            role="user",
-            parts=[
-                Part.from_text(
-                    text=prompt
+            session_service = InMemorySessionService()
+
+            runner = Runner(
+                agent=agent,
+                app_name=APP_NAME,
+                session_service=session_service,
+            )
+
+            session_id = (
+                "conversation-response-"
+                f"{uuid.uuid4().hex[:8]}"
+            )
+
+            await session_service.create_session(
+                app_name=APP_NAME,
+                user_id=USER_ID,
+                session_id=session_id,
+            )
+
+            message = Content(
+                role="user",
+                parts=[
+                    Part.from_text(text=prompt)
+                ],
+            )
+
+            run_config = RunConfig(
+                response_modalities=["TEXT"],
+            )
+
+            events = runner.run_async(
+                user_id=USER_ID,
+                session_id=session_id,
+                new_message=message,
+                run_config=run_config,
+            )
+
+            async with asyncio.timeout(
+                CONVERSATION_RESPONSE_TIMEOUT_SECONDS
+            ):
+                response_text, usage_event = (
+                    await _collect_final_response(events)
                 )
-            ],
-        )
 
-        run_config = RunConfig(
-            response_modalities=["TEXT"],
-        )
-
-        events = runner.run_async(
-            user_id=USER_ID,
-            session_id=session_id,
-            new_message=message,
-            run_config=run_config,
-        )
-
-        async with asyncio.timeout(
-            CONVERSATION_RESPONSE_TIMEOUT_SECONDS
-        ):
-            text = await _collect_final_response_text(
-                events
+            response_text = (
+                response_text.strip()
+                if response_text
+                else None
             )
 
-        if not text:
+            if not response_text:
+                record_llm_call_estimated(
+                    trace=trace,
+                    step="conversation_response_generation",
+                    model=model_name,
+                    prompt_text=prompt,
+                    response_text=None,
+                    success=False,
+                    error="empty_response",
+                )
+
+                return ConversationResponseGenerationResult(
+                    text=deterministic_fallback,
+                    source="deterministic_fallback",
+                )
+
+            if usage_event is not None:
+                record_llm_call_from_response(
+                    trace=trace,
+                    step="conversation_response_generation",
+                    model=model_name,
+                    response=usage_event,
+                    success=True,
+                )
+            else:
+                record_llm_call_estimated(
+                    trace=trace,
+                    step="conversation_response_generation",
+                    model=model_name,
+                    prompt_text=prompt,
+                    response_text=response_text,
+                    success=True,
+                )
+
             return ConversationResponseGenerationResult(
-                text=deterministic_fallback,
-                source="deterministic_fallback",
+                text=response_text,
+                source="llm",
             )
 
-        text = text.strip()
-
-        if not text:
-            return ConversationResponseGenerationResult(
-                text=deterministic_fallback,
-                source="deterministic_fallback",
+        except Exception as exc:
+            record_llm_call_estimated(
+                trace=trace,
+                step="conversation_response_generation",
+                model=model_name,
+                prompt_text=prompt,
+                response_text=response_text,
+                success=False,
+                error=str(exc),
             )
 
-        return ConversationResponseGenerationResult(
-            text=text,
-            source="llm",
-        )
-
-    except Exception:
             return ConversationResponseGenerationResult(
                 text=deterministic_fallback,
                 source="deterministic_fallback",
