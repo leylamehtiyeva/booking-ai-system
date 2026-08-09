@@ -15,6 +15,9 @@ from app.logic.conversation_response_adapter import (
 from app.logic.conversation_response_generator import (
     generate_deterministic_conversation_response,
 )
+from app.logic.conversation_response_llm import (
+    generate_conversation_response_with_llm,
+)
 from app.schemas.conversation_route import ConversationAction
 from app.schemas.query import SearchRequest
 
@@ -150,6 +153,8 @@ def process_user_message(user_message: str) -> None:
         ConversationAction.GENERAL_CHAT.value,
     }
 
+    response_source = "direct"
+
     if use_conversation_response_layer:
         response_input = build_conversation_response_input(
             user_message=user_message,
@@ -157,12 +162,16 @@ def process_user_message(user_message: str) -> None:
             recent_messages=recent_messages,
         )
 
-        assistant_answer = generate_deterministic_conversation_response(
-            response_input
+        generation_result = run_async(
+            generate_conversation_response_with_llm(
+                response_input
+            )
         )
 
-        # Keep the existing payload for debug/observability.
-        # It is not used to generate the assistant response here.
+        assistant_answer = generation_result.text
+        response_source = generation_result.source
+
+        # Existing payload is still kept only for debug/observability.
         _, answer_payload = build_display_answer(result)
 
     else:
@@ -172,6 +181,7 @@ def process_user_message(user_message: str) -> None:
         "search_request": result.get("search_request"),
         "state_after": result.get("state"),
         "answer_payload": answer_payload,
+        "conversation_response_source": response_source,
         "telemetry": result.get("telemetry"),
         "telemetry_log_info": telemetry_log_info,
     }
