@@ -38,10 +38,14 @@ def _finalize_response(
     response: Dict[str, Any],
     *,
     trace: RequestTrace,
+    action: ConversationAction | None = None,
 ) -> Dict[str, Any]:
     """
-    Attach request telemetry to every normal application response.
+    Attach request-level metadata to the application response.
     """
+    if action is not None:
+        response["conversation_action"] = action.value
+
     response["telemetry"] = trace.summary()
     return response
 
@@ -217,6 +221,7 @@ async def handle_user_message(
         return _finalize_response(
             response,
             trace=trace,
+            action=effective_action,
         )
 
     if (
@@ -241,6 +246,7 @@ async def handle_user_message(
                 "search_request": previous_state_json,
             },
             trace=trace,
+            action=effective_action,
         )
 
     if (
@@ -318,6 +324,7 @@ async def handle_user_message(
                 "search_request": state_json,
             },
             trace=trace,
+            action=effective_action,
         )
 
     result = await orchestrate_search(
@@ -337,4 +344,5 @@ async def handle_user_message(
     return _finalize_response(
         result,
         trace=trace,
+        action=effective_action,
     )
