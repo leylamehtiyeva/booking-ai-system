@@ -16,6 +16,16 @@ from app.schemas.conversation_route import (
     RouterInput,
 )
 
+from app.agents import (
+    conversation_router_agent as router_agent_module,
+)
+
+from app.schemas.conversation_route import (
+    ConversationAction,
+    ConversationActionDecision,
+    RouterInput,
+)
+
 
 def _patch_router_model_layer(
     monkeypatch,
@@ -719,3 +729,37 @@ async def test_router_does_not_retry_authentication_error(
 
     assert recorded["success"] is False
     assert recorded["error"] == "authentication_error"
+    
+    
+def test_conversation_router_agent_uses_output_schema(
+    monkeypatch,
+):
+    agent_mock = Mock(
+        return_value=object(),
+    )
+
+    monkeypatch.setattr(
+        router_agent_module,
+        "Agent",
+        agent_mock,
+    )
+
+    model = object()
+
+    result = (
+        router_agent_module
+        .build_conversation_router_agent(
+            model=model,
+        )
+    )
+
+    assert result is agent_mock.return_value
+
+    kwargs = agent_mock.call_args.kwargs
+
+    assert kwargs["name"] == "conversation_router"
+    assert kwargs["model"] is model
+    assert (
+        kwargs["output_schema"]
+        is ConversationActionDecision
+    )
