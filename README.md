@@ -1,139 +1,247 @@
 # Booking AI System
 
-Constraint-aware conversational booking assistant with deterministic decision-making and controlled LLM usage.
+Constraint-aware booking assistant with multi-turn search state, conversation routing, deterministic eligibility decisions, and controlled LLM usage.
 
 <p align="center">
   <img src="assets/booking_ai_system_gif.gif" width="1000"/>
 </p>
 
-
-
 ## Problem
 
-LLM-based systems are inherently non-deterministic and struggle to reliably enforce strict user requirements  
-(e.g., "must have WiFi", "no smoking", "under $100").
+LLM-based systems are inherently non-deterministic and can struggle to reliably enforce strict user requirements
+(e.g. "must have WiFi", "no smoking", "under $100").
 
-In real-world applications:
+In a booking assistant:
 
-- constraints must be strictly respected  
-- decisions must be explainable  
-- failures must be controlled  
-
-
+* hard constraints must be respected
+* search state must remain consistent across turns
+* decisions should be explainable
+* LLM failures must not silently corrupt application state
+* expensive or probabilistic components should be isolated and measurable
 
 ## Architecture
 
-<p align="center">
-  <img src="assets/architecture.png" width="1000"/>
-</p>
+The system separates conversational routing, structured search state, probabilistic evidence extraction, and deterministic domain decisions.
 
-Constraint-centric conversational pipeline with deterministic decision layer.
+### High-level flow
 
+```text
+User Message
+    ↓
+Conversation Router
+    ↓
+Action Dispatch
+    ├── start_search
+    │      ↓
+    │   SearchRequest extraction
+    │      ↓
+    │   Search pipeline
+    │
+    ├── update_search
+    │      ↓
+    │   Existing SearchRequest update
+    │      ↓
+    │   Search pipeline
+    │
+    ├── listing_question
+    │      ↓
+    │   Listing Q&A path
+    │
+    └── general_chat
+           ↓
+       Non-search response
+```
 
+For search actions:
 
-### Pipeline
-
-User Request  
-→ Intent State  
-→ Constraints (SoT)  
-→ Retrieval  
-→ Matching  
-→ Decision  
-→ Results  
-
-
+```text
+SearchRequest
+    ↓
+Constraints
+    ↓
+Retrieval
+    ↓
+Matching
+    ↓
+Deterministic Eligibility Decision
+    ↓
+Ranking
+    ↓
+Results
+```
 
 ### Key principles
 
-- Constraints are the **source of truth**
-- Intent is maintained as a **multi-turn evolving state**
-- LLM is used only for **signal / evidence extraction**
-- Final decisions are **deterministic and auditable**
-
-
+* `SearchRequest` is the canonical source of truth for the active search state
+* Constraints are the source of truth for semantic user requirements
+* LLMs are used for narrow tasks such as routing, intent extraction/update, and textual evidence resolution
+* Python controls application flow and state transitions
+* Final listing eligibility decisions are deterministic and auditable
+* LLM failures are handled separately from domain state updates
+* LLM components are evaluated independently before being used in the pipeline
 
 ### Matching layer
 
-- Structured → exact constraint checks  
-- LLM → fallback evidence extraction  
+Matching combines deterministic checks with controlled LLM fallback:
 
-Final decision is always made in the deterministic layer.
+* structured listing data → exact deterministic checks
+* textual evidence → rules when possible
+* unresolved textual evidence → LLM fallback
 
+The LLM may extract or classify evidence, but the final eligibility decision remains in the deterministic layer.
 
+## How It Works
 
-## How it works
+1. Every user message is classified by the Conversation Router as:
 
-1. User request is parsed into intent  
-2. Intent is updated across turns (multi-turn support)  
-3. Constraints are extracted and normalized  
-4. Listings are retrieved  
-5. Matching is performed:
-   - structured checks  
-   - textual rules  
-   - LLM fallback (only if needed)  
-6. Deterministic decision layer resolves:
-   - YES / NO / UNCERTAIN  
-7. Results are filtered, ranked, and returned with explanations  
+   * `start_search`
+   * `update_search`
+   * `listing_question`
+   * `general_chat`
 
+2. Search actions create or update a structured `SearchRequest`
 
+3. Required search context is validated and missing information is requested when needed
+
+4. User requirements are extracted and normalized into constraints
+
+5. Listings are retrieved
+
+6. Matching is performed using:
+
+   * structured checks
+   * textual rules
+   * LLM fallback only when evidence cannot be resolved deterministically
+
+7. The deterministic decision layer resolves listing eligibility:
+
+   * YES
+   * NO
+   * UNCERTAIN
+
+8. Eligible listings are filtered and ranked
+
+9. Structured results and explanations are returned to the UI
 
 ## Evaluation
 
+The system is evaluated at multiple independent layers rather than relying only on end-to-end metrics.
+
+### Constraint Extraction (166 cases)
+
+Evaluates whether user requirements are correctly extracted and represented as structured constraints.
+
+* Precision: **0.78**
+* Recall: **0.79**
+* F1: **0.79**
+* Exact constraint set match: **0.80**
+* Exact full-case match: **0.66**
+* Priority accuracy on matched constraints: **0.92**
+* Category accuracy on matched constraints: **0.93**
+
+**Insight:**
+Constraint detection is generally reliable, while mixed-priority and multi-constraint requests remain the main source of extraction errors.
+
 ### Constraint Resolution (120 cases)
 
-- Accuracy: **0.86**  
-- YES F1: **0.87**  
-- NO F1: **0.91**  
-- UNCERTAIN F1: **0.79**
+Evaluates the final YES / NO / UNCERTAIN decision for individual constraints based on available listing evidence.
 
-Critical errors:
+* Valid evaluated cases: **114 / 120**
+* Runtime errors: **6**
+* Accuracy on valid cases: **0.86**
+* YES F1: **0.88**
+* NO F1: **0.92**
+* UNCERTAIN F1: **0.79**
 
-- NO → YES: **0 cases**  
-- YES → NO: **0 cases**
+Critical errors observed in the valid evaluated set:
 
-Insight:  
-System is safe (no constraint violations), but slightly conservative.
+* NO → YES: **0 cases**
+* YES → NO: **0 cases**
 
+**Insight:**
+No critical NO → YES or YES → NO errors were observed in the evaluated cases. Most remaining errors involve uncertainty handling rather than direct decision reversals.
 
+### Conversation Router (70 cases)
 
-### Ranking Layer
+Evaluates classification of each user turn into:
 
-- Exact match rate: **0.97**  
-- Top-1 accuracy: **0.98**  
-- Ineligible leak rate: **0.0**
+* `start_search`
+* `update_search`
+* `listing_question`
+* `general_chat`
 
-Insight:  
-Deterministic ranking is highly stable and reliable.
+Each case was executed three times per model to measure both correctness and consistency.
 
+Baseline benchmark before the final routing-boundary prompt fixes:
 
+**Gemini 2.5 Flash Lite**
 
-### End-to-End
+* Accuracy: **0.986**
+* Macro F1: **0.984**
+* Majority-vote accuracy: **0.986**
+* Consistency: **1.00**
+* Median latency: **~1009 ms**
 
-- Scenarios:
-  - happy path  
-  - constraint blocking  
-  - no results  
-  - multi-turn updates  
+**Groq GPT-OSS 20B**
 
-Status: in progress
+* Accuracy: **0.976**
+* Macro F1: **0.973**
+* Majority-vote accuracy: **0.971**
+* Consistency: **0.957**
+* Median latency: **~548 ms**
 
+Groq provided slightly lower routing accuracy but substantially lower latency and estimated cost, and is currently used as the preferred router model.
+
+After the final routing-boundary prompt changes and structured-output integration, the four previously failing regression cases were rerun three times each on Groq:
+
+* **12 / 12 predictions correct**
+
+A new full 70-case benchmark has not yet been recorded for the updated prompt.
+
+**Insight:**
+A lower-cost task-specific model can be sufficient for routing when the action space and output contract are tightly constrained and evaluated independently.
+
+### Ranking Selection (103 cases)
+
+Evaluates deterministic selection and ordering after listing eligibility has already been established.
+
+* Exact ranking match rate: **0.97**
+* Selected-set match rate: **1.00**
+* Top-1 accuracy: **0.98**
+* Ineligible leak rate: **0.00**
+* Tier violation rate: **0.019**
+
+**Insight:**
+The deterministic ranking layer is highly stable and did not leak ineligible listings in the evaluation set.
+
+### End-to-End (50 cases)
+
+End-to-end evaluation covers the complete pipeline from user query to final listing selection.
+
+The current dataset contains positive, negative, and uncertain scenarios.
+
+**Status: under revision**
+
+An initial evaluation run exists, but its ground truth is not considered reliable enough to use as a project-quality benchmark.
+
+The dataset and evaluation contract are being revised before end-to-end metrics are treated as authoritative.
 
 ## Observability
 
-Every request generates a structured telemetry trace that captures the execution of the pipeline.
+Every request generates a structured telemetry trace that captures execution across the pipeline.
 
 Each trace includes:
 
 * trace ID
 * total request latency
-* latency for every pipeline step
+* latency for individual pipeline steps
 * LLM calls
 * token usage
-* estimated cost
+* estimated LLM cost
 * external API calls
 * fallback usage
+* router usage
 * execution scenario
-
 
 ### Telemetry Dashboard
 
@@ -152,52 +260,57 @@ The dashboard provides:
 * fallback / router / Apify usage
 * raw telemetry explorer
 
-This makes it easy to identify performance bottlenecks, inspect individual traces, and monitor system behavior during development.
-
-
+This makes it possible to inspect individual traces, identify performance bottlenecks, and monitor LLM and external-service usage during development.
 
 ## Project Structure
 
 ```text
 app/
-├── agents/          # intent routing & updates (LLM)
-├── logic/           # deterministic decision logic
-├── retrieval/       # listings retrieval
-├── observability/   # telemetry collection (latency, cost, traces)
-├── schemas/         # data models
+├── agents/          # task-specific LLM agents
+├── config/          # application settings and LLM profiles
+├── llm/             # provider-independent LLM model construction
+├── logic/           # application and deterministic domain logic
+├── observability/   # telemetry, latency, cost, and traces
+├── retrieval/       # listing retrieval
+├── schemas/         # typed application and domain contracts
 ├── services/        # external integrations
-├── tools/           # pipeline orchestration
-├── config/          # settings
-└── resources/       # reference data (e.g. fx rates)
+├── tools/           # search pipeline orchestration
+└── resources/       # reference data
 
 ui/
-└── streamlit_app.py # demo entry point
+├── components/
+├── services/
+├── state.py
+└── streamlit_app.py
 
 dashboards/
-└── telemetry_dashboard.py # telemetry visualization
+└── telemetry_dashboard.py
 
 evaluation/
 ├── core/
+├── datasets/
 ├── tasks/
 └── outputs/
 
-scripts/             # debug / smoke / experiments
-
+scripts/
 tests/
 fixtures/
 assets/
 ```
 
-
-
 ## Tech Stack
 
-- Python  
-- asyncio  
-- Gemini API (LLM)  
-- Apify (retrieval)  
-- Pytest  
-- Streamlit  
+* Python 3.11+
+* Pydantic
+* asyncio
+* Google ADK
+* LiteLLM
+* Gemini API
+* Groq API
+* Apify
+* Streamlit
+* Pytest
+* uv
 
 ## Running Locally
 
@@ -207,26 +320,39 @@ assets/
 uv sync
 ```
 
-### 2. Setup environment
+### 2. Configure environment
+
+Copy the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-Fill in your API keys in `.env`:
+Configure the LLM providers used by the application:
 
 ```env
-GEMINI_API_KEY=...
-APIFY_TOKEN=...
+GOOGLE_API_KEY=...
+GROQ_API_KEY=...
 ```
 
-### 3. Run demo (Streamlit UI)
+The Conversation Router can use the Groq profile:
+
+```env
+ROUTER_LLM_PROFILE=groq_gpt_oss_20b
+```
+
+The current Streamlit development/demo flow uses local fixture listings.
+
+Live retrieval through Apify additionally requires the corresponding Apify credentials and actor configuration.
+
+### 3. Run the Streamlit demo
 
 ```bash
 uv run streamlit run ui/streamlit_app.py
 ```
 
-### 4. Run telemetry dashboard
+### 4. Run the telemetry dashboard
+
 ```bash
 uv run streamlit run dashboards/telemetry_dashboard.py
 ```
@@ -237,52 +363,65 @@ uv run streamlit run dashboards/telemetry_dashboard.py
 uv run pytest
 ```
 
-
-
-
 ## Latency & Cost
 
-Typical request:
+Performance and cost are tracked per request through structured telemetry.
 
-- Retrieval (Apify): **40–80 sec**  
-- LLM fallback: **5–15 sec**  
-- Internal pipeline: **<5 sec**
+Observed characteristics:
 
-Cost:
+* local fixture retrieval is used for fast and predictable development flows
+* live Apify retrieval is the main external latency bottleneck and can take tens of seconds
+* Groq router median latency in the baseline router evaluation was **~548 ms**
+* LLM fallback is invoked only when deterministic or textual rules cannot resolve a constraint
+* external retrieval and LLM usage are measured separately
 
-- LLM: low (few cents per request)  
-- Apify: ~0.0025 USD per call  
+Costs depend on:
 
-Insight:
+* selected LLM provider and model
+* number of LLM calls
+* whether fallback reasoning is required
+* retrieval source
 
-- LLM usage is minimized  
-- expensive steps are isolated  
-- full telemetry is available  
-
-
-
+Estimated cost is recorded per trace instead of relying on a single fixed per-request estimate.
 
 ## Example
 
 User:
 
-"Apartment in Barcelona, June 15–20, under $100, must have WiFi"
+> "Apartment in Barcelona, June 15–20, under $100, must have WiFi"
 
 System:
 
-- extracts constraints  
-- updates intent  
-- retrieves listings  
-- applies matching  
-- makes deterministic decision  
-- returns explainable results  
+```text
+Conversation Router
+→ start_search
+→ SearchRequest extraction
+→ constraint extraction
+→ listing retrieval
+→ matching
+→ deterministic eligibility decisions
+→ ranking
+→ results
+```
 
+A follow-up such as:
 
+> "Make it cheaper"
+
+is routed as `update_search`, allowing the existing structured search state to be updated instead of rebuilding the request from scratch.
+
+## Current Development Focus
+
+The current system already separates conversational intent routing from the search and matching pipeline.
+
+The next major step is to add a natural-language conversational response layer on top of the controlled domain flow, so the assistant can maintain a natural multi-turn interaction without giving the response-generating LLM control over search state or domain decisions.
 
 ## Future Work
 
-- End-to-end evaluation completion  
-- Improve constraint extraction recall  
-- Query rewriting layer  
-- Natural language response layer (on top of deterministic core)  
-
+* Build the conversational response layer on top of the controlled domain pipeline
+* Add explicit conversation and result state for natural multi-turn interactions
+* Design reliable listing-reference resolution for follow-up questions
+* Rebuild and validate the end-to-end evaluation ground truth
+* Improve constraint extraction on mixed-priority and multi-constraint requests
+* Evaluate lower-cost models for additional LLM tasks
+* Prepare a public deployment for external user testing
