@@ -7,6 +7,19 @@ from typing import Any
 from app.schemas.fallback_policy import FallbackPolicy
 import streamlit as st
 from app.observability.telemetry_logger import save_telemetry_record
+from app.logic.conversation_flow import handle_user_message
+from app.schemas.conversation_response import ConversationMessage
+from app.logic.conversation_response_adapter import (
+    build_conversation_response_input,
+)
+from app.logic.conversation_response_generator import (
+    generate_deterministic_conversation_response,
+)
+from app.schemas.conversation_route import ConversationAction
+from app.schemas.query import SearchRequest
+
+from ui.formatters import build_display_answer
+from ui.state import append_message, get_search_state, set_search_state, get_messages
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -22,8 +35,78 @@ from ui.state import append_message, get_search_state, set_search_state
 def run_async(coro: Any) -> Any:
     return asyncio.run(coro)
 
+def build_recent_conversation_messages(
+    messages: list[dict[str, Any]],
+    *,
+    limit: int = 8,
+) -> list[ConversationMessage]:
+    """
+    Convert Streamlit UI messages into the small conversation-history
+    contract used by the response layer.
+
+    Debug data and other UI-specific fields are intentionally excluded.
+    """
+    if limit <= 0:
+        return []
+
+    visible_messages: list[ConversationMessage] = []
+
+    for message in messages:
+        role = message.get("role")
+        content = message.get("content")
+
+        if role not in {"user", "assistant"}:
+            continue
+
+        if not isinstance(content, str) or not content.strip():
+            continue
+
+        visible_messages.append(
+            ConversationMessage(
+                role=role,
+                content=content,
+            )
+        )
+
+    return visible_messages[-limit:]
+
+def build_assistant_response(
+    *,
+    user_message: str,
+    result: dict[str, Any],
+    recent_messages: list[ConversationMessage] | None = None,
+) -> tuple[str, dict[str, Any] | None]:
+    conversation_action = result.get("conversation_action")
+
+    use_conversation_response_layer = conversation_action in {
+        ConversationAction.START_SEARCH.value,
+        ConversationAction.UPDATE_SEARCH.value,
+        ConversationAction.GENERAL_CHAT.value,
+    }
+
+    if not use_conversation_response_layer:
+        return build_display_answer(result)
+
+    response_input = build_conversation_response_input(
+    user_message=user_message,
+    result=result,
+    recent_messages=recent_messages,
+)
+
+    assistant_answer = generate_deterministic_conversation_response(
+        response_input
+    )
+
+    # Preserve the existing answer payload for debug/observability.
+    _, answer_payload = build_display_answer(result)
+
+    return assistant_answer, answer_payload
 
 def process_user_message(user_message: str) -> None:
+    recent_messages = build_recent_conversation_messages(
+        get_messages()
+    )
+
     append_message("user", user_message)
 
     previous_state = None
@@ -59,7 +142,31 @@ def process_user_message(user_message: str) -> None:
             },
         )
 
-    assistant_answer, answer_payload = build_display_answer(result)
+    conversation_action = result.get("conversation_action")
+
+    use_conversation_response_layer = conversation_action in {
+        ConversationAction.START_SEARCH.value,
+        ConversationAction.UPDATE_SEARCH.value,
+        ConversationAction.GENERAL_CHAT.value,
+    }
+
+    if use_conversation_response_layer:
+        response_input = build_conversation_response_input(
+            user_message=user_message,
+            result=result,
+            recent_messages=recent_messages,
+        )
+
+        assistant_answer = generate_deterministic_conversation_response(
+            response_input
+        )
+
+        # Keep the existing payload for debug/observability.
+        # It is not used to generate the assistant response here.
+        _, answer_payload = build_display_answer(result)
+
+    else:
+        assistant_answer, answer_payload = build_display_answer(result)
     debug_data = {
         "parsed_intent": result.get("parsed_intent"),
         "search_request": result.get("search_request"),
