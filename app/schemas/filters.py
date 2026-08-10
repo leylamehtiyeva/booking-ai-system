@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel
-
+from pydantic import BaseModel, Field, model_validator
 
 class PriceConstraint(BaseModel):
     """
@@ -34,3 +33,14 @@ class SearchFilters(BaseModel):
     bathrooms_max: float | None = None
 
     price: PriceConstraint | None = None
+    
+    @model_validator(mode="after")
+    def normalize_empty_price(self):
+        if (
+            self.price is not None
+            and self.price.min_amount is None
+            and self.price.max_amount is None
+        ):
+            self.price = None
+
+        return self

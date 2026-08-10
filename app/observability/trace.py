@@ -99,7 +99,24 @@ class RequestTrace:
             "scenario": {
                 "used_apify": any(c.provider == "apify" for c in self.external_calls),
                 "used_fallback": any(c.step == "constraint_textual_fallback" for c in self.llm_calls),
-                "used_intent_extraction": any(c.step in {"initial_intent_extraction", "new_search_intent_extraction"} for c in self.llm_calls),
+                "used_intent_extraction": any(
+                        c.step in {
+                            "initial_intent_extraction",
+                            "new_search_intent_extraction",
+                            "search_intent_extraction",
+                        }
+                        for c in self.llm_calls
+                    ),
+                
+                "used_conversation_response": any(
+                    c.step == "conversation_response_generation"
+                    for c in self.llm_calls
+                ),
+                "used_conversation_response_fallback": any(
+                    c.step == "conversation_response_generation"
+                    and not c.success
+                    for c in self.llm_calls
+                ),
                 "used_conversation_router": any(c.step == "conversation_routing" for c in self.llm_calls),
                 "used_intent_update": any(c.step == "intent_update" for c in self.llm_calls),
                 "used_intent_repair": any(c.step == "intent_repair" for c in self.llm_calls),
