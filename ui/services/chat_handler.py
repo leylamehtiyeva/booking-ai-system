@@ -33,6 +33,7 @@ from app.schemas.query import SearchRequest
 
 from ui.formatters import build_display_answer
 from ui.state import append_message, get_search_state, set_search_state
+from ui.formatters import build_result_links
 
 
 def run_async(coro: Any) -> Any:
@@ -174,8 +175,16 @@ def process_user_message(user_message: str) -> None:
         assistant_answer = generation_result.text
         response_source = generation_result.source
 
-        # Keep the existing payload only for debug/observability.
         _, answer_payload = build_display_answer(result)
+
+        result_links = build_result_links(
+            answer_payload
+        )
+
+        if result_links:
+            assistant_answer = (
+                f"{assistant_answer}\n\n{result_links}"
+            )
 
     else:
         assistant_answer, answer_payload = (

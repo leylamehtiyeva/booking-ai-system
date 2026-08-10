@@ -577,6 +577,14 @@ def match_price_filters(
 ) -> NumericMatchResult | None:
     if filters is None or filters.price is None:
         return None
+    
+    price_filter = filters.price
+
+    if (
+        price_filter.min_amount is None
+        and price_filter.max_amount is None
+    ):
+        return None
 
     price_filter = filters.price
     evidence = evidence or []
