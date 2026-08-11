@@ -151,9 +151,16 @@ class ApifyRetriever:
             actor_input["propertyType"] = property_type
 
         api_base = os.getenv("APIFY_BASE_URL", "https://api.apify.com")
+        omit_fields = "images,roomImages,breadcrumbs,categoryReviews"
+
         url = (
             f"{api_base}/v2/acts/{actor}/run-sync-get-dataset-items"
-            f"?token={token}&format=json&clean=true&timeout=180&maxItems={int(max_items)}"
+            f"?token={token}"
+            f"&format=json"
+            f"&clean=true"
+            f"&timeout=180"
+            f"&maxItems={int(max_items)}"
+            f"&omit={omit_fields}"
         )
 
         try:
