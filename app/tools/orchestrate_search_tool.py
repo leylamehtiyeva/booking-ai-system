@@ -593,19 +593,32 @@ async def orchestrate_search(
     intent: Dict[str, Any],
     top_n: int = MAX_ITEMS_HARD_CAP,
     max_items: int = MAX_ITEMS_HARD_CAP,
+    result_limit: int | None = None,
+    candidate_pool_size: int | None = None,
     source: Source = "fixtures",
     fallback_policy: FallbackPolicy | None = None,
     trace: RequestTrace | None = None,
 ) -> Dict[str, Any]:
     """Search orchestration tool 
     """
+    if result_limit is None:
+        result_limit = top_n
+
+    if candidate_pool_size is None:
+        candidate_pool_size = max_items
+        
+    if candidate_pool_size <= 0:
+        raise ValueError("candidate_pool_size must be > 0")
+
+    if result_limit <= 0:
+        raise ValueError("result_limit must be > 0")
     
     if trace is None:
         trace = RequestTrace()
-    if max_items > MAX_ITEMS_HARD_CAP:
+    if candidate_pool_size > MAX_ITEMS_HARD_CAP:
         return {
             "need_clarification": True,
-            "questions": [f"Too many items requested ({max_items}). Please use <= {MAX_ITEMS_HARD_CAP}."],
+            "questions": [f"Too many items requested ({candidate_pool_size}). Please use <= {MAX_ITEMS_HARD_CAP}."],
         }
         
     with trace.step("validate_and_repair_intent"):    
@@ -633,10 +646,10 @@ async def orchestrate_search(
 
     # Retrieve candidates
     try:
-        with trace.step("retrieval", source=source, max_items=max_items):
+        with trace.step("retrieval", source=source, candidate_pool_size=candidate_pool_size):
             listings = await get_candidates(
                 req,
-                max_items=max_items,
+                max_items=candidate_pool_size,
                 source=source,
                 trace=trace,
             )
@@ -800,19 +813,19 @@ async def orchestrate_search(
             "dropped_requests": dropped_requests,
         }
 
-    with trace.step("final_selection", ranked_count=len(ranked), top_n=top_n):
-        selected = select_ranked_items(ranked, top_n=top_n)
+    with trace.step("final_selection", ranked_count=len(ranked), top_n=result_limit):
+        selected = select_ranked_items(ranked, top_n=result_limit)
 
     with trace.step("normalize_response", selected_count=len(selected)):
         normalized = normalize_search_response(
             req,
             selected,
-            top_n=top_n,
+            top_n=result_limit,
             dropped_requests=dropped_requests,
         )
 
         payload = normalized.model_dump(mode="json", exclude_none=True)
-        payload["constraint_statuses"] = _build_constraint_statuses(selected[: max(0, top_n)])
+        payload["constraint_statuses"] = _build_constraint_statuses(selected[: max(0, result_limit)])
 
     return payload
     
