@@ -599,34 +599,39 @@ async def orchestrate_search(
     fallback_policy: FallbackPolicy | None = None,
     trace: RequestTrace | None = None,
 ) -> Dict[str, Any]:
-    """Search orchestration tool 
     """
+    Backward-compatible wrapper for legacy callers.
+
+    Converts legacy intent input into the canonical SearchRequest,
+    then delegates actual search execution to
+    orchestrate_search_request().
+    """
+
     if result_limit is None:
         result_limit = top_n
 
     if candidate_pool_size is None:
         candidate_pool_size = max_items
-        
-    if candidate_pool_size <= 0:
-        raise ValueError("candidate_pool_size must be > 0")
 
-    if result_limit <= 0:
-        raise ValueError("result_limit must be > 0")
-    
     if trace is None:
         trace = RequestTrace()
-    if candidate_pool_size > MAX_ITEMS_HARD_CAP:
-        return {
-            "need_clarification": True,
-            "questions": [f"Too many items requested ({candidate_pool_size}). Please use <= {MAX_ITEMS_HARD_CAP}."],
-        }
-        
-    with trace.step("validate_and_repair_intent"):    
-        intent_obj, dropped_requests = await _validate_and_repair_intent(intent, attempts=2)
 
+    with trace.step(
+        "validate_and_repair_intent"
+    ):
+        intent_obj, dropped_requests = (
+            await _validate_and_repair_intent(
+                intent,
+                attempts=2,
+            )
+        )
 
-    with trace.step("resolve_required_search_context"):
-        resolved = resolve_required_search_context(intent_obj)
+    with trace.step(
+        "resolve_required_search_context"
+    ):
+        resolved = resolve_required_search_context(
+            intent_obj
+        )
 
     if resolved.need_clarification:
         return {
@@ -644,190 +649,15 @@ async def orchestrate_search(
             check_out=resolved.check_out,
         )
 
-    # Retrieve candidates
-    try:
-        with trace.step("retrieval", source=source, candidate_pool_size=candidate_pool_size):
-            listings = await get_candidates(
-                req,
-                max_items=candidate_pool_size,
-                source=source,
-                trace=trace,
-            )
-    except NotImplementedError:
-        return {
-            "need_clarification": True,
-            "questions": ["Apify retriever is not enabled yet. Using fixtures only for now."],
-        }
-
-    with trace.step(
-        "city_filter",
-        listings_count=len(listings),
-        applied=(source == "fixtures"),
+    return await orchestrate_search_request(
+        req,
+        result_limit=result_limit,
+        candidate_pool_size=candidate_pool_size,
         source=source,
-    ):
-        if source == "fixtures":
-            listings = [
-                lst for lst in listings
-                if _listing_city_matches(lst, req.city)
-            ]
-
-    with trace.step(
-        "date_filter",
-        listings_count=len(listings),
-        applied=_should_apply_local_date_filter(source),
-        source=source,
-    ):
-        if _should_apply_local_date_filter(source):
-            listings = [
-                lst for lst in listings
-                if _covers_dates(lst, req.check_in, req.check_out)
-            ]
-
-    with trace.step("occupancy_filter", listings_count=len(listings)):
-        occupancy_results = {
-            getattr(lst, "id", None) or getattr(lst, "url", None) or str(i): evaluate_occupancy(lst, req)
-            for i, lst in enumerate(listings)
-        }
-
-        filtered_listings = []
-        for i, lst in enumerate(listings):
-            key = getattr(lst, "id", None) or getattr(lst, "url", None) or str(i)
-            occ = occupancy_results[key]
-            if occ.passed:
-                filtered_listings.append(lst)
-
-        listings = filtered_listings
-
-    filtered_listings = []
-    for i, lst in enumerate(listings):
-        key = getattr(lst, "id", None) or getattr(lst, "url", None) or str(i)
-        occ = occupancy_results[key]
-        if occ.passed:
-            filtered_listings.append(lst)
-
-    listings = filtered_listings
-
-    # if no candidates after initial filters
-    if not listings:
-        return {
-            "need_clarification": True,
-            "questions": ["Nothing found. Try changing your requirements."],
-            "request_summary": None,
-            "top_results": [],
-            "results": [],
-            "results_count": 0,
-            "debug_notes": [
-                "No listings remained after initial city/date/occupancy filtering.",
-                f"city={req.city}, check_in={req.check_in}, check_out={req.check_out}",
-            ],
-            "active_intent": req.model_dump(mode="json", exclude_none=True),
-            "dropped_requests": dropped_requests,
-        }
-
-    # Structured ranking
-    with trace.step("structured_ranking", listings_count=len(listings)):
-        ranked = _rank_structured(req, listings)
-    
-    # Fallback constraint resolution
-    if fallback_policy is None:
-        fallback_policy = _build_fallback_policy(fallback_top_k=5)
-
-    with trace.step("constraint_fallback_layer", ranked_count=len(ranked)):
-        await _apply_constraint_fallback_layer(
-            req,
-            ranked,
-            policy=fallback_policy,
-            trace=trace,
-        )
-
-    with trace.step("constraint_coverage_normalization", ranked_count=len(ranked)):
-        _ensure_unresolved_must_constraints_are_represented(req, ranked)
-
-    # Final scoring
-    with trace.step("fallback_scoring"):
-        ranked = _apply_constraint_resolution_scoring(ranked)
-
-    with trace.step("post_fallback_structured_filtering", ranked_count=len(ranked)):
-        must_constraints, _, _ = _constraints_by_priority(req)
-        structured_must_fields = _known_mapped_fields(must_constraints)
-
-        ranked = [
-            it
-            for it in ranked
-            if not _fails_must(it["matches"], structured_must_fields)
-            and not _fails_numeric_filters(it.get("numeric_results"))
-        ]
-        ranked.sort(key=lambda x: x["score"], reverse=True)
-    
-    if not ranked:
-        debug_notes = ["No listings remained after structured filtering."]
-
-        # --- PRICE ---
-        price = req.filters.price if req.filters else None
-        if price and price.max_amount is not None:
-            debug_notes.append(
-                f"Active price filter: max {price.max_amount} {price.currency or 'USD'} {price.scope or ''}".strip()
-            )
-
-        # --- BEDROOMS ---
-        if req.filters and req.filters.bedrooms_min is not None:
-            debug_notes.append(f"Active bedrooms filter: min {req.filters.bedrooms_min}")
-
-        # --- AREA ---
-        if req.filters and req.filters.area_sqm_min is not None:
-            debug_notes.append(f"Active area filter: min {req.filters.area_sqm_min} sqm")
-
-
-        # --- PROPERTY TYPE ---
-        if req.property_types:
-            debug_notes.append(
-                "Active property types: " + ", ".join(pt.value for pt in req.property_types)
-            )
-
-        # --- CONSTRAINTS (source of truth) ---
-        must_constraints = [
-            c.normalized_text
-            for c in (req.constraints or [])
-            if getattr(c, "priority", None) == "must"
-        ]
-        if must_constraints:
-            debug_notes.append(
-                "Active must constraints: " + ", ".join(must_constraints)
-            )
-
-        nice_constraints = [
-            c.normalized_text
-            for c in (req.constraints or [])
-            if getattr(c, "priority", None) == "nice"
-        ]
-        if nice_constraints:
-            debug_notes.append(
-                "Optional constraints: " + ", ".join(nice_constraints)
-            )
-
-        return {
-            "need_clarification": True,
-            "questions": ["Nothing found. Try changing your requirements."],
-            "debug_notes": debug_notes,
-            "active_intent": req.model_dump(mode="json", exclude_none=True),
-            "dropped_requests": dropped_requests,
-        }
-
-    with trace.step("final_selection", ranked_count=len(ranked), top_n=result_limit):
-        selected = select_ranked_items(ranked, top_n=result_limit)
-
-    with trace.step("normalize_response", selected_count=len(selected)):
-        normalized = normalize_search_response(
-            req,
-            selected,
-            top_n=result_limit,
-            dropped_requests=dropped_requests,
-        )
-
-        payload = normalized.model_dump(mode="json", exclude_none=True)
-        payload["constraint_statuses"] = _build_constraint_statuses(selected[: max(0, result_limit)])
-
-    return payload
+        fallback_policy=fallback_policy,
+        trace=trace,
+        dropped_requests=dropped_requests,
+    )
     
 def _format_match_why(field: Field, fm: Any) -> str:
     if fm is None:
@@ -1026,3 +856,403 @@ def _build_constraint_statuses(ranked_items: list[dict]) -> list[dict]:
             statuses.append(result)
 
     return statuses
+
+
+
+async def orchestrate_search_request(
+    req: SearchRequest,
+    *,
+    result_limit: int = MAX_ITEMS_HARD_CAP,
+    candidate_pool_size: int = MAX_ITEMS_HARD_CAP,
+    source: Source = "fixtures",
+    fallback_policy: FallbackPolicy | None = None,
+    trace: RequestTrace | None = None,
+    dropped_requests: list[str] | None = None,
+) -> Dict[str, Any]:
+    """
+    Execute accommodation search for an already validated canonical SearchRequest.
+
+    This function is the core search orchestrator.
+    It does not parse, repair, or rebuild user intent.
+    """
+
+    if candidate_pool_size <= 0:
+        raise ValueError("candidate_pool_size must be > 0")
+
+    if result_limit <= 0:
+        raise ValueError("result_limit must be > 0")
+
+    if candidate_pool_size > MAX_ITEMS_HARD_CAP:
+        return {
+            "need_clarification": True,
+            "questions": [
+                f"Too many items requested ({candidate_pool_size}). "
+                f"Please use <= {MAX_ITEMS_HARD_CAP}."
+            ],
+        }
+
+    if trace is None:
+        trace = RequestTrace()
+
+    if dropped_requests is None:
+        dropped_requests = []
+
+    if (
+        not req.city
+        or req.check_in is None
+        or req.check_out is None
+    ):
+        raise ValueError(
+            "orchestrate_search_request requires "
+            "city, check_in and check_out"
+        )
+
+    # Retrieve candidates
+    try:
+        with trace.step(
+            "retrieval",
+            source=source,
+            candidate_pool_size=candidate_pool_size,
+        ):
+            listings = await get_candidates(
+                req,
+                max_items=candidate_pool_size,
+                source=source,
+                trace=trace,
+            )
+    except NotImplementedError:
+        return {
+            "need_clarification": True,
+            "questions": [
+                "Apify retriever is not enabled yet. "
+                "Using fixtures only for now."
+            ],
+        }
+
+    with trace.step(
+        "city_filter",
+        listings_count=len(listings),
+        applied=(source == "fixtures"),
+        source=source,
+    ):
+        if source == "fixtures":
+            listings = [
+                lst
+                for lst in listings
+                if _listing_city_matches(lst, req.city)
+            ]
+
+    with trace.step(
+        "date_filter",
+        listings_count=len(listings),
+        applied=_should_apply_local_date_filter(source),
+        source=source,
+    ):
+        if _should_apply_local_date_filter(source):
+            listings = [
+                lst
+                for lst in listings
+                if _covers_dates(
+                    lst,
+                    req.check_in,
+                    req.check_out,
+                )
+            ]
+
+    with trace.step(
+        "occupancy_filter",
+        listings_count=len(listings),
+    ):
+        occupancy_results = {
+            (
+                getattr(lst, "id", None)
+                or getattr(lst, "url", None)
+                or str(i)
+            ): evaluate_occupancy(lst, req)
+            for i, lst in enumerate(listings)
+        }
+
+        filtered_listings = []
+
+        for i, lst in enumerate(listings):
+            key = (
+                getattr(lst, "id", None)
+                or getattr(lst, "url", None)
+                or str(i)
+            )
+
+            occ = occupancy_results[key]
+
+            if occ.passed:
+                filtered_listings.append(lst)
+
+        listings = filtered_listings
+
+    # NOTE:
+    # This duplicate occupancy filtering already exists in the current code.
+    # We intentionally keep it during this refactor so that behavior does not change.
+    # We will remove it in a separate cleanup step.
+    filtered_listings = []
+
+    for i, lst in enumerate(listings):
+        key = (
+            getattr(lst, "id", None)
+            or getattr(lst, "url", None)
+            or str(i)
+        )
+
+        occ = occupancy_results[key]
+
+        if occ.passed:
+            filtered_listings.append(lst)
+
+    listings = filtered_listings
+
+    # If no candidates after initial filters
+    if not listings:
+        return {
+            "need_clarification": True,
+            "questions": [
+                "Nothing found. Try changing your requirements."
+            ],
+            "request_summary": None,
+            "top_results": [],
+            "results": [],
+            "results_count": 0,
+            "debug_notes": [
+                (
+                    "No listings remained after initial "
+                    "city/date/occupancy filtering."
+                ),
+                (
+                    f"city={req.city}, "
+                    f"check_in={req.check_in}, "
+                    f"check_out={req.check_out}"
+                ),
+            ],
+            "active_intent": req.model_dump(
+                mode="json",
+                exclude_none=True,
+            ),
+            "dropped_requests": dropped_requests,
+        }
+
+    # Structured ranking
+    with trace.step(
+        "structured_ranking",
+        listings_count=len(listings),
+    ):
+        ranked = _rank_structured(
+            req,
+            listings,
+        )
+
+    # Fallback constraint resolution
+    if fallback_policy is None:
+        fallback_policy = _build_fallback_policy(
+            fallback_top_k=5
+        )
+
+    with trace.step(
+        "constraint_fallback_layer",
+        ranked_count=len(ranked),
+    ):
+        await _apply_constraint_fallback_layer(
+            req,
+            ranked,
+            policy=fallback_policy,
+            trace=trace,
+        )
+
+    with trace.step(
+        "constraint_coverage_normalization",
+        ranked_count=len(ranked),
+    ):
+        _ensure_unresolved_must_constraints_are_represented(
+            req,
+            ranked,
+        )
+
+    # Final scoring
+    with trace.step("fallback_scoring"):
+        ranked = _apply_constraint_resolution_scoring(
+            ranked
+        )
+
+    with trace.step(
+        "post_fallback_structured_filtering",
+        ranked_count=len(ranked),
+    ):
+        must_constraints, _, _ = _constraints_by_priority(
+            req
+        )
+
+        structured_must_fields = _known_mapped_fields(
+            must_constraints
+        )
+
+        ranked = [
+            item
+            for item in ranked
+            if not _fails_must(
+                item["matches"],
+                structured_must_fields,
+            )
+            and not _fails_numeric_filters(
+                item.get("numeric_results")
+            )
+        ]
+
+        ranked.sort(
+            key=lambda item: item["score"],
+            reverse=True,
+        )
+
+    if not ranked:
+        debug_notes = [
+            "No listings remained after structured filtering."
+        ]
+
+        # PRICE
+        price = (
+            req.filters.price
+            if req.filters
+            else None
+        )
+
+        if price and price.max_amount is not None:
+            debug_notes.append(
+                (
+                    f"Active price filter: "
+                    f"max {price.max_amount} "
+                    f"{price.currency or 'USD'} "
+                    f"{price.scope or ''}"
+                ).strip()
+            )
+
+        # BEDROOMS
+        if (
+            req.filters
+            and req.filters.bedrooms_min is not None
+        ):
+            debug_notes.append(
+                (
+                    "Active bedrooms filter: "
+                    f"min {req.filters.bedrooms_min}"
+                )
+            )
+
+        # AREA
+        if (
+            req.filters
+            and req.filters.area_sqm_min is not None
+        ):
+            debug_notes.append(
+                (
+                    "Active area filter: "
+                    f"min {req.filters.area_sqm_min} sqm"
+                )
+            )
+
+        # PROPERTY TYPE
+        if req.property_types:
+            debug_notes.append(
+                "Active property types: "
+                + ", ".join(
+                    property_type.value
+                    for property_type
+                    in req.property_types
+                )
+            )
+
+        # CONSTRAINTS
+        must_constraints = [
+            constraint.normalized_text
+            for constraint in (
+                req.constraints or []
+            )
+            if _priority_value(
+                getattr(
+                    constraint,
+                    "priority",
+                    None,
+                )
+            )
+            == "must"
+        ]
+
+        if must_constraints:
+            debug_notes.append(
+                "Active must constraints: "
+                + ", ".join(must_constraints)
+            )
+
+        nice_constraints = [
+            constraint.normalized_text
+            for constraint in (
+                req.constraints or []
+            )
+            if _priority_value(
+                getattr(
+                    constraint,
+                    "priority",
+                    None,
+                )
+            )
+            == "nice"
+        ]
+
+        if nice_constraints:
+            debug_notes.append(
+                "Optional constraints: "
+                + ", ".join(nice_constraints)
+            )
+
+        return {
+            "need_clarification": True,
+            "questions": [
+                "Nothing found. Try changing your requirements."
+            ],
+            "debug_notes": debug_notes,
+            "active_intent": req.model_dump(
+                mode="json",
+                exclude_none=True,
+            ),
+            "dropped_requests": dropped_requests,
+        }
+
+    with trace.step(
+        "final_selection",
+        ranked_count=len(ranked),
+        result_limit=result_limit,
+    ):
+        selected = select_ranked_items(
+            ranked,
+            top_n=result_limit,
+        )
+
+    with trace.step(
+        "normalize_response",
+        selected_count=len(selected),
+    ):
+        normalized = normalize_search_response(
+            req,
+            selected,
+            top_n=result_limit,
+            dropped_requests=dropped_requests,
+        )
+
+        payload = normalized.model_dump(
+            mode="json",
+            exclude_none=True,
+        )
+
+        payload["constraint_statuses"] = (
+            _build_constraint_statuses(
+                selected[
+                    : max(0, result_limit)
+                ]
+            )
+        )
+
+    return payload

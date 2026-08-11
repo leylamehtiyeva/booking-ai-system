@@ -7,7 +7,9 @@ from app.logic.intent_update import update_search_state_async
 from app.logic.request_resolution import resolve_required_search_context
 from app.logic.listing_signals import collect_listing_signals
 from app.schemas.query import SearchRequest
-from app.tools.orchestrate_search_tool import orchestrate_search
+from app.tools.orchestrate_search_tool import (
+    orchestrate_search_request,
+)
 from app.logic.constraint_evidence_resolution import (
     ConstraintResolutionRequest,
     resolve_constraint_via_textual_evidence,
@@ -114,13 +116,6 @@ async def _answer_listing_question(
     }
 
 
-def _build_orchestrate_intent_payload(state: SearchRequest) -> dict[str, Any]:
-    """
-    Serialize the canonical constraint-centric search state for orchestrate_search.
-    """
-    payload = _build_state_payload(state)
-    assert payload is not None
-    return payload
 
 
 async def handle_user_message(
@@ -308,9 +303,8 @@ async def handle_user_message(
         ],
     }
 
-    state_json = _build_orchestrate_intent_payload(
-        state
-    )
+    state_json = _build_state_payload(state)
+    assert state_json is not None
 
     resolved = resolve_required_search_context(
         state
@@ -329,12 +323,11 @@ async def handle_user_message(
             action=effective_action,
         )
 
-    result = await orchestrate_search(
-        user_text=user_message,
-        intent=state_json,
-        top_n=top_n,
+    result = await orchestrate_search_request(
+        state,
+        result_limit=top_n,
+        candidate_pool_size=max_items,
         fallback_policy=fallback_policy,
-        max_items=max_items,
         source=source,
         trace=trace,
     )
