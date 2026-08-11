@@ -1,35 +1,28 @@
 from __future__ import annotations
-from app.schemas.property_semantics import OccupancyType, PropertyType
-import asyncio
-import json
-import os
-from app.observability.trace import RequestTrace
+
 from datetime import date
-from typing import Any, Dict, List, Optional, Tuple
-from app.logic.result_selection import select_ranked_items
-from google.genai import Client
-from google.genai import types as genai_types
-from pydantic import ValidationError
-from app.agents.intent_router_agent import IntentRoute
+from typing import Any, Dict, List, Tuple
+
 from app.config.settings import MAX_ITEMS_HARD_CAP
+from app.logic.constraint_evidence_resolution import (
+    resolve_listing_constraints_with_fallback,
+)
 from app.logic.matcher_structured import match_listing_structured
+from app.logic.normalize_search_response import normalize_search_response
 from app.logic.numeric_filters import evaluate_numeric_filters
+from app.logic.occupancy import evaluate_occupancy
+from app.logic.property_semantics import (
+    match_occupancy_types,
+    match_property_types,
+)
+from app.logic.result_selection import select_ranked_items
+from app.observability.trace import RequestTrace
 from app.retrieval import Source, get_candidates
+from app.schemas.fallback_policy import FallbackPolicy
 from app.schemas.fields import Field
 from app.schemas.listing import ListingRaw
 from app.schemas.match import Ternary
 from app.schemas.query import SearchRequest
-from app.logic.property_semantics import match_occupancy_types, match_property_types
-from app.logic.normalize_search_response import normalize_search_response
-from app.logic.request_resolution import resolve_required_search_context
-from app.logic.occupancy import evaluate_occupancy
-from app.config.llm import get_gemini_model
-from collections import Counter
-
-from app.logic.constraint_evidence_resolution import (
-    resolve_listing_constraints_with_fallback,
-)
-from app.schemas.fallback_policy import FallbackPolicy
 
 
 
@@ -283,239 +276,8 @@ def _listing_city_matches(lst: ListingRaw, requested_city: str | None) -> bool:
     return listing_city == requested
 
 
-def _gemini_client() -> Client:
-    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        raise ValueError("Missing GEMINI_API_KEY/GOOGLE_API_KEY")
-    return Client(api_key=api_key)
 
 
-async def _repair_intent_with_llm(
-    intent_raw: Dict[str, Any],
-    errors: list[dict],
-    model: str = get_gemini_model(),
-) -> Dict[str, Any]:
-    """Ask LLM to repair intent so it matches IntentRoute exactly.
-
-    Contract:
-    - constraints is the canonical semantic state
-    - only schema-defined keys are allowed
-    - invalid legacy enum-like items may be dropped from enum slots
-    - preserve user meaning inside constraints whenever possible
-    """
-    allowed_values = [f.value for f in Field]
-    
-    system = (
-        "You are a JSON repair assistant.\n"
-        "Return ONLY a valid JSON object. No markdown. No code fences.\n"
-        "Fix the JSON to match the target schema EXACTLY.\n"
-        "constraints is the source of truth for user constraints.\n"
-        "Do NOT invent new keys.\n"
-        "If an invalid legacy enum-like item cannot be mapped safely, remove it from that enum list.\n"
-        "Preserve meaningful user meaning inside constraints whenever possible.\n"
-    )
-
-    payload = {
-        "allowed_fields": allowed_values,
-        "validation_errors": errors,
-        "input_intent": intent_raw,
-        "target_schema": {
-            "city": "string|null",
-            "check_in": "YYYY-MM-DD|null",
-            "check_out": "YYYY-MM-DD|null",
-            "nights": "int|null",
-            "adults": "int|null",
-            "children": "int|null",
-            "rooms": "int|null",
-            "constraints": [
-                {
-                    "raw_text": "string",
-                    "normalized_text": "string",
-                    "priority": "must|nice|forbidden",
-                    "category": "amenity|policy|location|layout|numeric|property_type|occupancy|other",
-                    "mapping_status": "known|unresolved",
-                    "mapped_fields": "list[canonical_key]",
-                    "evidence_strategy": "structured|textual|none",
-                }
-            ],
-            "filters": {
-                "bedrooms_min": "int|null",
-                "bedrooms_max": "int|null",
-                "area_sqm_min": "float|null",
-                "area_sqm_max": "float|null",
-                "bathrooms_min": "float|null",
-                "bathrooms_max": "float|null",
-                "price": {
-                    "min_amount": "float|null",
-                    "max_amount": "float|null",
-                    "currency": "string|null",
-                    "scope": "per_night|total_stay|null",
-                },
-            },
-            "property_types": [
-                "ryokan|hotel|apartment|resort|villa|bed_and_breakfast|holiday_home|guest_house|hostel|capsule_hotel|homestay|chalet|lodge|campsite|country_house|love_hotel|house|aparthotel|guesthouse"
-            ],
-            "occupancy_types": [
-                "entire_place|private_room|shared_room|hotel_room"
-            ],
-        },
-    }
-
-    def _call_sync() -> Dict[str, Any]:
-        client = _gemini_client()
-        resp = client.models.generate_content(
-            model=model,
-            contents=[
-                genai_types.Content(
-                    role="user",
-                    parts=[genai_types.Part(text=json.dumps(payload, ensure_ascii=False))],
-                )
-            ],
-            config=genai_types.GenerateContentConfig(system_instruction=system),
-        )
-        text = (resp.text or "").strip()
-        return json.loads(text)
-
-    return await asyncio.to_thread(_call_sync)
-
-
-def _salvage_only_enum_keys(intent_dict: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
-    """
-    Keep only safely parseable enum-based values and collect dropped legacy residue separately.
-
-    Contract:
-    - returned intent dict is safe to validate as IntentRoute
-    - unknown_requests is not used as a salvage bucket
-    - dropped_requests contains invalid legacy enum-like items that could not be preserved
-    """
-    dropped_requests: list[str] = []
-
-    out: Dict[str, Any] = {
-        "city": intent_dict.get("city"),
-        "check_in": intent_dict.get("check_in"),
-        "check_out": intent_dict.get("check_out"),
-        "nights": intent_dict.get("nights"),
-        "adults": intent_dict.get("adults"),
-        "children": intent_dict.get("children"),
-        "rooms": intent_dict.get("rooms"),
-        "constraints": intent_dict.get("constraints") or [],
-        "filters": intent_dict.get("filters") or {},
-        "property_types": [],
-        "occupancy_types": [],
-    }
-
-    def parse_enum_list(xs, enum_cls):
-        ok = []
-        for x in xs or []:
-            if isinstance(x, enum_cls):
-                ok.append(x)
-                continue
-
-            if isinstance(x, str):
-                s = x.strip()
-
-                try:
-                    ok.append(enum_cls(s))
-                    continue
-                except Exception:
-                    pass
-
-                try:
-                    ok.append(enum_cls[s])
-                    continue
-                except Exception:
-                    pass
-
-                try:
-                    ok.append(enum_cls[s.upper()])
-                    continue
-                except Exception:
-                    pass
-
-                if s:
-                    dropped_requests.append(s)
-            else:
-                dropped_requests.append(str(x))
-        return ok
-
-    out["property_types"] = parse_enum_list(intent_dict.get("property_types"), PropertyType)
-    out["occupancy_types"] = parse_enum_list(intent_dict.get("occupancy_types"), OccupancyType)
-
-    seen: set[str] = set()
-    deduped_dropped: list[str] = []
-    for item in dropped_requests:
-        cleaned = item.strip()
-        key = cleaned.casefold()
-        if not cleaned or key in seen:
-            continue
-        seen.add(key)
-        deduped_dropped.append(cleaned)
-
-    return out, deduped_dropped
-
-async def _validate_and_repair_intent(intent: Any, attempts: int = 2) -> Tuple[IntentRoute, List[str]]:
-    """Validate intent as IntentRoute with up to N LLM repair attempts.
-
-    Returns (intent_obj, dropped_requests).
-
-    dropped_requests:
-    - invalid legacy enum-like residue we could not preserve cleanly
-    - NOT compatibility unknown_requests
-    - NOT canonical unresolved constraints
-    """
-    intent_work: Dict[str, Any] = intent if isinstance(intent, dict) else {}
-    dropped_requests: list[str] = []
-
-    intent_obj: Optional[IntentRoute] = None
-    for _ in range(max(0, attempts)):
-        try:
-            intent_obj = IntentRoute.model_validate(intent_work)
-            break
-        except ValidationError as e:
-            try:
-                intent_work = await _repair_intent_with_llm(intent_work, e.errors())
-            except Exception:
-                break
-
-    if intent_obj is None:
-        try:
-            intent_obj = IntentRoute.model_validate(intent_work)
-        except ValidationError:
-            salvaged, salvage_dropped = _salvage_only_enum_keys(intent_work)
-            dropped_requests.extend(salvage_dropped)
-            intent_obj = IntentRoute.model_validate(salvaged)
-
-    return intent_obj, dropped_requests
-
-
-
-
-
-def _build_request(
-    user_text: str,
-    intent_obj: IntentRoute,
-    city: str,
-    check_in: date,
-    check_out: date,
-) -> SearchRequest:
-    req = SearchRequest(
-    city=city,
-    check_in=check_in,
-    check_out=check_out,
-    adults=intent_obj.adults or 2,
-    children=intent_obj.children or 0,
-    rooms=intent_obj.rooms or 1,
-    currency="USD",
-    budget_max=None,
-    min_guest_rating=None,
-    filters=intent_obj.filters,
-    property_types=intent_obj.property_types or None,
-    occupancy_types=intent_obj.occupancy_types or None,
-    constraints=intent_obj.constraints,
-)
-    # Canonical flow:
-    # SearchRequest semantic state is carried by constraints.
-    return req
 
 
 def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dict[str, Any]]:
@@ -523,7 +285,7 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
 
     must_constraints, nice_constraints, _ = _constraints_by_priority(req)
     structured_must_fields = _known_mapped_fields(must_constraints)
-    rejection_reasons = Counter()
+    
     for lst in listings:
         report = match_listing_structured(lst, req)
         numeric_results = evaluate_numeric_filters(
@@ -539,18 +301,6 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
         if _fails_must(report.matches, structured_must_fields):
             continue
 
-        # strict numeric filter
-        if _fails_numeric_filters(numeric_results):
-            rejection_reasons["numeric_filters"] += 1
-            continue
-
-        if property_result is not None and property_result.value == Ternary.NO:
-            rejection_reasons["property_type"] += 1
-            continue
-
-        if occupancy_result is not None and occupancy_result.value == Ternary.NO:
-            rejection_reasons["occupancy_type"] += 1
-            continue
 
         score, must_yes, must_total, why = _score_listing(
             req,
@@ -584,80 +334,6 @@ def _rank_structured(req: SearchRequest, listings: List[ListingRaw]) -> List[Dic
     return ranked
 
 
-
-
-
-
-async def orchestrate_search(
-    user_text: str,
-    intent: Dict[str, Any],
-    top_n: int = MAX_ITEMS_HARD_CAP,
-    max_items: int = MAX_ITEMS_HARD_CAP,
-    result_limit: int | None = None,
-    candidate_pool_size: int | None = None,
-    source: Source = "fixtures",
-    fallback_policy: FallbackPolicy | None = None,
-    trace: RequestTrace | None = None,
-) -> Dict[str, Any]:
-    """
-    Backward-compatible wrapper for legacy callers.
-
-    Converts legacy intent input into the canonical SearchRequest,
-    then delegates actual search execution to
-    orchestrate_search_request().
-    """
-
-    if result_limit is None:
-        result_limit = top_n
-
-    if candidate_pool_size is None:
-        candidate_pool_size = max_items
-
-    if trace is None:
-        trace = RequestTrace()
-
-    with trace.step(
-        "validate_and_repair_intent"
-    ):
-        intent_obj, dropped_requests = (
-            await _validate_and_repair_intent(
-                intent,
-                attempts=2,
-            )
-        )
-
-    with trace.step(
-        "resolve_required_search_context"
-    ):
-        resolved = resolve_required_search_context(
-            intent_obj
-        )
-
-    if resolved.need_clarification:
-        return {
-            "need_clarification": True,
-            "questions": resolved.questions,
-            "dropped_requests": dropped_requests,
-        }
-
-    with trace.step("build_search_request"):
-        req = _build_request(
-            user_text=user_text,
-            intent_obj=intent_obj,
-            city=resolved.city,
-            check_in=resolved.check_in,
-            check_out=resolved.check_out,
-        )
-
-    return await orchestrate_search_request(
-        req,
-        result_limit=result_limit,
-        candidate_pool_size=candidate_pool_size,
-        source=source,
-        fallback_policy=fallback_policy,
-        trace=trace,
-        dropped_requests=dropped_requests,
-    )
     
 def _format_match_why(field: Field, fm: Any) -> str:
     if fm is None:
@@ -867,35 +543,36 @@ async def orchestrate_search_request(
     source: Source = "fixtures",
     fallback_policy: FallbackPolicy | None = None,
     trace: RequestTrace | None = None,
-    dropped_requests: list[str] | None = None,
 ) -> Dict[str, Any]:
     """
-    Execute accommodation search for an already validated canonical SearchRequest.
+    Execute accommodation search for an already validated
+    canonical SearchRequest.
 
-    This function is the core search orchestrator.
-    It does not parse, repair, or rebuild user intent.
+    The caller is responsible for constructing and validating
+    the SearchRequest before entering the search layer.
     """
 
     if candidate_pool_size <= 0:
-        raise ValueError("candidate_pool_size must be > 0")
+        raise ValueError(
+            "candidate_pool_size must be > 0"
+        )
 
     if result_limit <= 0:
-        raise ValueError("result_limit must be > 0")
+        raise ValueError(
+            "result_limit must be > 0"
+        )
 
     if candidate_pool_size > MAX_ITEMS_HARD_CAP:
         return {
             "need_clarification": True,
             "questions": [
-                f"Too many items requested ({candidate_pool_size}). "
-                f"Please use <= {MAX_ITEMS_HARD_CAP}."
+                (
+                    "Too many items requested "
+                    f"({candidate_pool_size}). "
+                    f"Please use <= {MAX_ITEMS_HARD_CAP}."
+                )
             ],
         }
-
-    if trace is None:
-        trace = RequestTrace()
-
-    if dropped_requests is None:
-        dropped_requests = []
 
     if (
         not req.city
@@ -907,7 +584,10 @@ async def orchestrate_search_request(
             "city, check_in and check_out"
         )
 
-    # Retrieve candidates
+    if trace is None:
+        trace = RequestTrace()
+
+    # Retrieval
     try:
         with trace.step(
             "retrieval",
@@ -920,15 +600,19 @@ async def orchestrate_search_request(
                 source=source,
                 trace=trace,
             )
+
     except NotImplementedError:
         return {
             "need_clarification": True,
             "questions": [
-                "Apify retriever is not enabled yet. "
-                "Using fixtures only for now."
+                (
+                    "Apify retriever is not enabled yet. "
+                    "Using fixtures only for now."
+                )
             ],
         }
 
+    # Fixture-only city filtering
     with trace.step(
         "city_filter",
         listings_count=len(listings),
@@ -937,83 +621,62 @@ async def orchestrate_search_request(
     ):
         if source == "fixtures":
             listings = [
-                lst
-                for lst in listings
-                if _listing_city_matches(lst, req.city)
+                listing
+                for listing in listings
+                if _listing_city_matches(
+                    listing,
+                    req.city,
+                )
             ]
 
+    # Fixture-only date filtering
     with trace.step(
         "date_filter",
         listings_count=len(listings),
-        applied=_should_apply_local_date_filter(source),
+        applied=_should_apply_local_date_filter(
+            source
+        ),
         source=source,
     ):
         if _should_apply_local_date_filter(source):
             listings = [
-                lst
-                for lst in listings
+                listing
+                for listing in listings
                 if _covers_dates(
-                    lst,
+                    listing,
                     req.check_in,
                     req.check_out,
                 )
             ]
 
+    # Occupancy filtering
     with trace.step(
         "occupancy_filter",
         listings_count=len(listings),
     ):
-        occupancy_results = {
-            (
-                getattr(lst, "id", None)
-                or getattr(lst, "url", None)
-                or str(i)
-            ): evaluate_occupancy(lst, req)
-            for i, lst in enumerate(listings)
-        }
+        filtered_listings: list[ListingRaw] = []
 
-        filtered_listings = []
-
-        for i, lst in enumerate(listings):
-            key = (
-                getattr(lst, "id", None)
-                or getattr(lst, "url", None)
-                or str(i)
+        for listing in listings:
+            occupancy = evaluate_occupancy(
+                listing,
+                req,
             )
 
-            occ = occupancy_results[key]
-
-            if occ.passed:
-                filtered_listings.append(lst)
+            if occupancy.passed:
+                filtered_listings.append(
+                    listing
+                )
 
         listings = filtered_listings
 
-    # NOTE:
-    # This duplicate occupancy filtering already exists in the current code.
-    # We intentionally keep it during this refactor so that behavior does not change.
-    # We will remove it in a separate cleanup step.
-    filtered_listings = []
-
-    for i, lst in enumerate(listings):
-        key = (
-            getattr(lst, "id", None)
-            or getattr(lst, "url", None)
-            or str(i)
-        )
-
-        occ = occupancy_results[key]
-
-        if occ.passed:
-            filtered_listings.append(lst)
-
-    listings = filtered_listings
-
-    # If no candidates after initial filters
     if not listings:
         return {
             "need_clarification": True,
             "questions": [
-                "Nothing found. Try changing your requirements."
+                (
+                    "Nothing found. "
+                    "Try changing your requirements."
+                )
             ],
             "request_summary": None,
             "top_results": [],
@@ -1034,10 +697,10 @@ async def orchestrate_search_request(
                 mode="json",
                 exclude_none=True,
             ),
-            "dropped_requests": dropped_requests,
+            "dropped_requests": [],
         }
 
-    # Structured ranking
+    # Structured matching and initial ranking
     with trace.step(
         "structured_ranking",
         listings_count=len(listings),
@@ -1047,7 +710,7 @@ async def orchestrate_search_request(
             listings,
         )
 
-    # Fallback constraint resolution
+    # Textual fallback for unresolved evidence
     if fallback_policy is None:
         fallback_policy = _build_fallback_policy(
             fallback_top_k=5
@@ -1073,22 +736,27 @@ async def orchestrate_search_request(
             ranked,
         )
 
-    # Final scoring
+    # Apply fallback results to score
     with trace.step("fallback_scoring"):
-        ranked = _apply_constraint_resolution_scoring(
-            ranked
+        ranked = (
+            _apply_constraint_resolution_scoring(
+                ranked
+            )
         )
 
+    # Final deterministic filtering
     with trace.step(
         "post_fallback_structured_filtering",
         ranked_count=len(ranked),
     ):
-        must_constraints, _, _ = _constraints_by_priority(
-            req
+        must_constraints, _, _ = (
+            _constraints_by_priority(req)
         )
 
-        structured_must_fields = _known_mapped_fields(
-            must_constraints
+        structured_must_fields = (
+            _known_mapped_fields(
+                must_constraints
+            )
         )
 
         ranked = [
@@ -1110,51 +778,57 @@ async def orchestrate_search_request(
 
     if not ranked:
         debug_notes = [
-            "No listings remained after structured filtering."
+            (
+                "No listings remained after "
+                "structured filtering."
+            )
         ]
 
-        # PRICE
         price = (
             req.filters.price
             if req.filters
             else None
         )
 
-        if price and price.max_amount is not None:
+        if (
+            price
+            and price.max_amount is not None
+        ):
             debug_notes.append(
                 (
-                    f"Active price filter: "
+                    "Active price filter: "
                     f"max {price.max_amount} "
                     f"{price.currency or 'USD'} "
                     f"{price.scope or ''}"
                 ).strip()
             )
 
-        # BEDROOMS
         if (
             req.filters
-            and req.filters.bedrooms_min is not None
+            and req.filters.bedrooms_min
+            is not None
         ):
             debug_notes.append(
                 (
                     "Active bedrooms filter: "
-                    f"min {req.filters.bedrooms_min}"
+                    f"min "
+                    f"{req.filters.bedrooms_min}"
                 )
             )
 
-        # AREA
         if (
             req.filters
-            and req.filters.area_sqm_min is not None
+            and req.filters.area_sqm_min
+            is not None
         ):
             debug_notes.append(
                 (
                     "Active area filter: "
-                    f"min {req.filters.area_sqm_min} sqm"
+                    f"min "
+                    f"{req.filters.area_sqm_min} sqm"
                 )
             )
 
-        # PROPERTY TYPE
         if req.property_types:
             debug_notes.append(
                 "Active property types: "
@@ -1165,62 +839,59 @@ async def orchestrate_search_request(
                 )
             )
 
-        # CONSTRAINTS
-        must_constraints = [
+        must_constraint_names = [
             constraint.normalized_text
-            for constraint in (
-                req.constraints or []
-            )
+            for constraint
+            in (req.constraints or [])
             if _priority_value(
-                getattr(
-                    constraint,
-                    "priority",
-                    None,
-                )
+                constraint.priority
             )
             == "must"
         ]
 
-        if must_constraints:
+        if must_constraint_names:
             debug_notes.append(
                 "Active must constraints: "
-                + ", ".join(must_constraints)
+                + ", ".join(
+                    must_constraint_names
+                )
             )
 
-        nice_constraints = [
+        nice_constraint_names = [
             constraint.normalized_text
-            for constraint in (
-                req.constraints or []
-            )
+            for constraint
+            in (req.constraints or [])
             if _priority_value(
-                getattr(
-                    constraint,
-                    "priority",
-                    None,
-                )
+                constraint.priority
             )
             == "nice"
         ]
 
-        if nice_constraints:
+        if nice_constraint_names:
             debug_notes.append(
                 "Optional constraints: "
-                + ", ".join(nice_constraints)
+                + ", ".join(
+                    nice_constraint_names
+                )
             )
 
         return {
             "need_clarification": True,
             "questions": [
-                "Nothing found. Try changing your requirements."
+                (
+                    "Nothing found. "
+                    "Try changing your requirements."
+                )
             ],
             "debug_notes": debug_notes,
             "active_intent": req.model_dump(
                 mode="json",
                 exclude_none=True,
             ),
-            "dropped_requests": dropped_requests,
+            "dropped_requests": [],
         }
 
+    # Final result limit
     with trace.step(
         "final_selection",
         ranked_count=len(ranked),
@@ -1231,6 +902,7 @@ async def orchestrate_search_request(
             top_n=result_limit,
         )
 
+    # Normalize search output
     with trace.step(
         "normalize_response",
         selected_count=len(selected),
@@ -1239,7 +911,7 @@ async def orchestrate_search_request(
             req,
             selected,
             top_n=result_limit,
-            dropped_requests=dropped_requests,
+            dropped_requests=[],
         )
 
         payload = normalized.model_dump(
@@ -1249,9 +921,7 @@ async def orchestrate_search_request(
 
         payload["constraint_statuses"] = (
             _build_constraint_statuses(
-                selected[
-                    : max(0, result_limit)
-                ]
+                selected[:result_limit]
             )
         )
 
