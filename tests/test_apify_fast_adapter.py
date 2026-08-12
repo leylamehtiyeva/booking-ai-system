@@ -1,4 +1,6 @@
-from app.retrieval.apify_fast import normalize_fast_listing
+from app.retrieval.apify_fast import (
+    normalize_fast_listing,
+)
 
 
 def test_normalize_fast_listing_maps_provider_fields():
@@ -14,18 +16,33 @@ def test_normalize_fast_listing_maps_provider_fields():
         "address": "Baku, Azerbaijan",
         "checkIn": "2026-09-15",
         "checkOut": "2026-09-18",
-        "timeOfScrapeISO": "2026-08-11T10:00:00Z",
+        "timeOfScrapeISO": (
+            "2026-08-11T10:00:00Z"
+        ),
     }
 
     listing = normalize_fast_listing(
-        raw_item,
-        requested_city="Baku",
+        raw_item
     )
 
-    assert listing.city == "Baku"
+    # Search scope is not treated as
+    # verified listing location.
+    assert listing.city is None
 
-    assert listing.name == "Central Baku Apartment"
-    assert listing.url == "https://www.booking.com/example"
+    assert (
+        listing.address
+        == "Baku, Azerbaijan"
+    )
+
+    assert (
+        listing.name
+        == "Central Baku Apartment"
+    )
+
+    assert (
+        listing.url
+        == "https://www.booking.com/example"
+    )
 
     assert listing.price == 240.5
     assert listing.currency == "US$"
@@ -33,7 +50,11 @@ def test_normalize_fast_listing_maps_provider_fields():
     assert listing.rating == 8.7
     assert listing.stars == 4
 
-    assert listing.room_type == "One-Bedroom Apartment"
+    assert (
+        listing.room_type
+        == "One-Bedroom Apartment"
+    )
+
     assert listing.max_occupancy == 3
 
     assert listing.raw == raw_item
@@ -42,7 +63,10 @@ def test_normalize_fast_listing_maps_provider_fields():
 def test_normalize_fast_listing_does_not_invent_rich_evidence():
     raw_item = {
         "name": "Fast Result",
-        "url": "https://www.booking.com/fast-result",
+        "url": (
+            "https://www.booking.com/"
+            "fast-result"
+        ),
         "price": 100,
         "currency": "USD",
         "roomType": "Double Room",
@@ -50,8 +74,7 @@ def test_normalize_fast_listing_does_not_invent_rich_evidence():
     }
 
     listing = normalize_fast_listing(
-        raw_item,
-        requested_city="Baku",
+        raw_item
     )
 
     assert listing.description is None
@@ -69,8 +92,7 @@ def test_normalize_fast_listing_parses_numeric_strings():
     }
 
     listing = normalize_fast_listing(
-        raw_item,
-        requested_city="Baku",
+        raw_item
     )
 
     assert listing.price == 1234.50
@@ -89,8 +111,7 @@ def test_normalize_fast_listing_invalid_numeric_values_become_unknown():
     }
 
     listing = normalize_fast_listing(
-        raw_item,
-        requested_city="Baku",
+        raw_item
     )
 
     assert listing.price is None
@@ -102,7 +123,9 @@ def test_normalize_fast_listing_invalid_numeric_values_become_unknown():
 def test_normalize_fast_listing_preserves_original_payload():
     raw_item = {
         "name": "Fast Result",
-        "address": "Some provider-specific address",
+        "address": (
+            "Some provider-specific address"
+        ),
         "checkIn": "2026-09-15",
         "checkOut": "2026-09-18",
         "customProviderField": {
@@ -111,13 +134,14 @@ def test_normalize_fast_listing_preserves_original_payload():
     }
 
     listing = normalize_fast_listing(
-        raw_item,
-        requested_city="Baku",
+        raw_item
     )
 
     assert listing.raw == raw_item
 
     assert (
-        listing.raw["customProviderField"]["some"]
+        listing.raw[
+            "customProviderField"
+        ]["some"]
         == "value"
     )

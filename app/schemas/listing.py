@@ -54,6 +54,8 @@ class ListingRaw(BaseModel):
 
     id: str | None = None
     city: str | None = None
+    address: str | None = None
+
 
     name: str | None = None
     url: str | None = None
