@@ -25,9 +25,10 @@ class Room(BaseModel):
     Represents a room-level accommodation entity returned by the provider.
 
     This model keeps room-specific attributes such as the room name,
-    available facilities, and booking options. Room facilities are important
-    for structured constraint matching because some user requirements may be
-    satisfied at the room level rather than at the listing level.
+    available facilities, and booking options.
+
+    Extra provider-specific fields are preserved because Full retrieval
+    may contain additional room-level evidence.
     """
 
     model_config = ConfigDict(extra="allow")
@@ -39,13 +40,14 @@ class Room(BaseModel):
 
 class ListingRaw(BaseModel):
     """
-    Represents the raw listing contract received from the external provider.
+    Internal listing representation used by the retrieval and
+    matching pipeline.
 
-    The model intentionally defines only the fields used by the current
-    pipeline while allowing additional provider-specific fields to be preserved.
-    This makes the ingestion layer more robust to schema changes and keeps
-    the original payload available for debugging, enrichment, and future
-    feature extraction.
+    Provider-specific payloads should be normalized into this model
+    before they are passed further into the search pipeline.
+
+    The raw provider payload is preserved in `raw` for debugging and
+    future enrichment needs.
     """
 
     model_config = ConfigDict(extra="allow")
@@ -64,7 +66,13 @@ class ListingRaw(BaseModel):
 
     property_type: str | None = None
 
+
+    room_type: str | None = None
+    max_occupancy: int | None = None
+
+
     description: str | None = None
     facilities: list[Any] = Field(default_factory=list)
     rooms: list[Room] = Field(default_factory=list)
+
     raw: dict[str, Any] | None = None
