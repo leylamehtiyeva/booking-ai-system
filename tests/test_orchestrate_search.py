@@ -8,6 +8,7 @@ from app.schemas.listing import ListingRaw, Room
 from app.schemas.query import SearchRequest
 from app.tools import orchestrate_search_tool
 from app.tools.orchestrate_search_tool import orchestrate_search_request
+from app.schemas.search_response import SearchStatus
 
 
 def make_request(**overrides) -> SearchRequest:
@@ -79,8 +80,8 @@ async def test_baku_kitchen_returns_apartment():
         fallback_policy=FallbackPolicy(enabled=False),
     )
 
-    assert out["need_clarification"] is False
-    assert out["results"][0]["title"] == "Large Family Apartment"
+    assert out.status == SearchStatus.RESULTS
+    assert out.results[0].title == "Compact Apartment"
 
 
 @pytest.mark.asyncio
@@ -98,8 +99,8 @@ async def test_tokyo_returns_no_results_on_fixtures():
         fallback_policy=FallbackPolicy(enabled=False),
     )
 
-    assert out["need_clarification"] is True
-    assert out["results_count"] == 0
+    assert out.status == SearchStatus.NO_RESULTS
+    assert out.results == []
 
 
 @pytest.mark.asyncio
@@ -148,7 +149,7 @@ async def test_candidate_pool_size_and_result_limit_have_different_responsibilit
     )
 
     assert received["max_items"] == 6
-    assert len(out["results"]) == 2
+    assert len(out.results) == 2
 
 
 @pytest.mark.asyncio
@@ -236,16 +237,16 @@ async def test_numeric_filters_are_applied_in_orchestrator(monkeypatch):
         candidate_pool_size=10,
     )
 
-    assert out["need_clarification"] is False
-    assert len(out["results"]) == 1
-    assert out["results"][0]["result_id"] == "big-1"
+    assert out.status == SearchStatus.RESULTS
+    assert len(out.results) == 1
+    assert out.results[0].result_id == "big-1"
     assert any(
         "BEDROOMS:" in reason
-        for reason in out["results"][0]["why"]
+        for reason in out.results[0].why
     )
     assert any(
         "AREA:" in reason
-        for reason in out["results"][0]["why"]
+        for reason in out.results[0].why
     )
 
 
@@ -305,12 +306,12 @@ async def test_price_filter_per_night_is_applied(monkeypatch):
         candidate_pool_size=10,
     )
 
-    assert out["need_clarification"] is False
-    assert len(out["results"]) == 1
-    assert out["results"][0]["result_id"] == "good-price"
+    assert out.status == SearchStatus.RESULTS
+    assert len(out.results) == 1
+    assert out.results[0].result_id == "good-price"
     assert any(
         "PRICE:" in reason
-        for reason in out["results"][0]["why"]
+        for reason in out.results[0].why
     )
 
 
@@ -354,12 +355,12 @@ async def test_bathroom_filter_is_applied(monkeypatch):
         candidate_pool_size=10,
     )
 
-    assert out["need_clarification"] is False
-    assert len(out["results"]) == 1
-    assert out["results"][0]["result_id"] == "two-bathrooms"
+    assert out.status == SearchStatus.RESULTS
+    assert len(out.results) == 1
+    assert out.results[0].result_id == "two-bathrooms"
     assert any(
         "BATHROOMS:" in reason
-        for reason in out["results"][0]["why"]
+        for reason in out.results[0].why
     )
 
 
@@ -402,12 +403,12 @@ async def test_property_type_filter_is_applied(monkeypatch):
         candidate_pool_size=10,
     )
 
-    assert out["need_clarification"] is False
-    assert len(out["results"]) == 1
-    assert out["results"][0]["result_id"] == "apartment-one"
+    assert out.status == SearchStatus.RESULTS
+    assert len(out.results) == 1
+    assert out.results[0].result_id == "apartment-one"
     assert any(
         "PROPERTY_TYPE:" in reason
-        for reason in out["results"][0]["why"]
+        for reason in out.results[0].why
     )
 
 
@@ -456,33 +457,33 @@ async def test_orchestrator_returns_normalized_response(monkeypatch):
         ),
     )
 
-    assert out["need_clarification"] is False
-    assert "request_summary" in out
-    assert "results" in out
+    assert out.status == SearchStatus.RESULTS
+    assert out.request_summary is not None
+    assert out.results
 
-    assert out["request_summary"]["city"] == "Baku"
+    assert out.request_summary.city == "Baku"
     assert (
-        out["request_summary"]["constraints"][0][
+        out.request_summary.constraints[0][
             "normalized_text"
         ]
         == "kitchen"
     )
-    assert out["request_summary"]["property_types"] == [
+    assert out.request_summary.property_types == [
         "apartment"
     ]
 
-    assert len(out["results"]) == 1
+    assert len(out.results) == 1
 
-    first = out["results"][0]
+    first = out.results[0]
 
-    assert "result_id" in first
-    assert first["title"] == "Apartment in Baku"
-    assert first["url"] == (
+    assert first.result_id
+    assert first.title == "Apartment in Baku"
+    assert first.url == (
         "https://example.com/baku-apartment"
     )
-    assert "matched_constraints" in first
-    assert "uncertain_constraints" in first
-    assert "facts" in first
+    assert isinstance(first.matched_constraints, list)
+    assert isinstance(first.uncertain_constraints, list)
+    assert isinstance(first.facts, list)
 
 
 @pytest.mark.asyncio
@@ -545,24 +546,23 @@ async def test_constraint_resolution_results_are_attached(monkeypatch):
         fallback_policy=FallbackPolicy(enabled=True),
     )
 
-    assert out["need_clarification"] is False
-    assert out["results"]
+    assert out.status == SearchStatus.RESULTS
+    assert out.results
 
     compact = next(
         result
-        for result in out["results"]
-        if result["title"] == "Compact Apartment"
+        for result in out.results
+        if result.title == "Compact Apartment"
     )
 
-    assert "constraint_resolution_results" in compact
-    assert compact["constraint_resolution_results"]
+    assert compact.constraint_resolution_results
 
-    first = compact["constraint_resolution_results"][0]
+    first = compact.constraint_resolution_results[0]
 
-    assert first["normalized_text"] == "satellite TV"
-    assert first["resolution_status"] == "matched"
+    assert first.normalized_text == "satellite TV"
+    assert first.resolution_status == "matched"
     assert (
-        first["reason"]
+        first.reason
         == "Satellite TV is explicitly mentioned"
     )
 
@@ -583,8 +583,8 @@ async def test_occupancy_filter_is_applied():
         fallback_policy=FallbackPolicy(enabled=False),
     )
 
-    assert out["need_clarification"] is False
-    assert out["results"]
+    assert out.status == SearchStatus.RESULTS
+    assert out.results
 
 
 @pytest.mark.asyncio
@@ -640,9 +640,9 @@ async def test_city_filter_uses_only_city_field_not_description(
         fallback_policy=FallbackPolicy(enabled=False),
     )
 
-    assert out["need_clarification"] is False
-    assert len(out["results"]) == 1
-    assert out["results"][0]["result_id"] == "correct-city"
+    assert out.status == SearchStatus.RESULTS
+    assert len(out.results) == 1
+    assert out.results[0].result_id == "correct-city"
 
 
 @pytest.mark.asyncio
@@ -682,8 +682,8 @@ async def test_listing_without_city_is_not_eligible(monkeypatch):
         fallback_policy=FallbackPolicy(enabled=False),
     )
 
-    assert out["need_clarification"] is True
-    assert out["results_count"] == 0
+    assert out.status == SearchStatus.NO_RESULTS
+    assert out.results == []
 
 
 @pytest.mark.asyncio
@@ -721,44 +721,40 @@ async def test_unresolved_must_textual_constraint_cannot_disappear_when_fallback
         fallback_policy=FallbackPolicy(enabled=False),
     )
 
-    assert out["need_clarification"] is False
-    assert out["results"]
+    assert out.status == SearchStatus.RESULTS
+    assert out.results
 
-    first = out["results"][0]
+    first = out.results[0]
 
-    assert first["match_tier"] == "partial"
-    assert first["eligibility_status"] == "eligible"
+    assert first.match_tier == "partial"
+    assert first.eligibility_status == "eligible"
     assert (
         "all required constraints are confirmed"
-        not in first["selection_reasons"]
+        not in first.selection_reasons
     )
     assert (
         "some requested constraints are not fully confirmed"
-        in first["selection_reasons"]
+        in first.selection_reasons
     )
 
-    resolution_results = first[
-        "constraint_resolution_results"
-    ]
+    resolution_results = first.constraint_resolution_results
 
     seaview = next(
         result
         for result in resolution_results
-        if result["normalized_text"] == "seaview"
+        if result.normalized_text == "seaview"
     )
 
-    assert seaview["decision"] == "UNCERTAIN"
-    assert seaview["resolution_status"] == "uncertain"
+    assert seaview.decision == "UNCERTAIN"
+    assert seaview.resolution_status == "uncertain"
     assert (
-        seaview["source_stage"]
+        seaview.source_stage
         == "coverage_normalization"
     )
 
     uncertain_names = [
-        constraint["name"]
-        for constraint in first[
-            "uncertain_requested_constraints"
-        ]
+        constraint.name
+        for constraint in first.uncertain_requested_constraints
     ]
 
     assert "seaview" in uncertain_names

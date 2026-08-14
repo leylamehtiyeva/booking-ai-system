@@ -23,6 +23,12 @@ from app.schemas.fields import Field
 from app.schemas.listing import ListingRaw
 from app.schemas.match import Ternary
 from app.schemas.query import SearchRequest
+from app.schemas.search_response import NormalizedSearchResponse
+
+from app.schemas.search_response import (
+    NormalizedSearchResponse,
+    SearchStatus,
+)
 
 
 
@@ -524,15 +530,6 @@ def _apply_constraint_resolution_scoring(ranked_items: list[dict]) -> list[dict]
     return ranked_items
 
 
-def _build_constraint_statuses(ranked_items: list[dict]) -> list[dict]:
-    statuses: list[dict] = []
-
-    for item in ranked_items:
-        for result in item.get("constraint_resolution_results", []) or []:
-            statuses.append(result)
-
-    return statuses
-
 
 
 async def orchestrate_search_request(
@@ -543,7 +540,7 @@ async def orchestrate_search_request(
     source: Source = "fixtures",
     fallback_policy: FallbackPolicy | None = None,
     trace: RequestTrace | None = None,
-) -> Dict[str, Any]:
+) -> NormalizedSearchResponse:
     """
     Execute accommodation search for an already validated
     canonical SearchRequest.
@@ -563,16 +560,10 @@ async def orchestrate_search_request(
         )
 
     if candidate_pool_size > MAX_ITEMS_HARD_CAP:
-        return {
-            "need_clarification": True,
-            "questions": [
-                (
-                    "Too many items requested "
-                    f"({candidate_pool_size}). "
-                    f"Please use <= {MAX_ITEMS_HARD_CAP}."
-                )
-            ],
-        }
+        raise ValueError(
+            "candidate_pool_size must be <= "
+            f"{MAX_ITEMS_HARD_CAP}"
+        )
 
     if (
         not req.city
@@ -588,29 +579,18 @@ async def orchestrate_search_request(
         trace = RequestTrace()
 
     # Retrieval
-    try:
-        with trace.step(
-            "retrieval",
+    with trace.step(
+        "retrieval",
+        source=source,
+        candidate_pool_size=candidate_pool_size,
+    ):
+        listings = await get_candidates(
+            req,
+            max_items=candidate_pool_size,
             source=source,
-            candidate_pool_size=candidate_pool_size,
-        ):
-            listings = await get_candidates(
-                req,
-                max_items=candidate_pool_size,
-                source=source,
-                trace=trace,
-            )
+            trace=trace,
+        )
 
-    except NotImplementedError:
-        return {
-            "need_clarification": True,
-            "questions": [
-                (
-                    "Apify retriever is not enabled yet. "
-                    "Using fixtures only for now."
-                )
-            ],
-        }
 
     # Fixture-only city filtering
     with trace.step(
@@ -670,19 +650,10 @@ async def orchestrate_search_request(
         listings = filtered_listings
 
     if not listings:
-        return {
-            "need_clarification": True,
-            "questions": [
-                (
-                    "Nothing found. "
-                    "Try changing your requirements."
-                )
-            ],
-            "request_summary": None,
-            "top_results": [],
-            "results": [],
-            "results_count": 0,
-            "debug_notes": [
+        return NormalizedSearchResponse(
+            status=SearchStatus.NO_RESULTS,
+            results=[],
+            debug_notes=[
                 (
                     "No listings remained after initial "
                     "city/date/occupancy filtering."
@@ -693,12 +664,7 @@ async def orchestrate_search_request(
                     f"check_out={req.check_out}"
                 ),
             ],
-            "active_intent": req.model_dump(
-                mode="json",
-                exclude_none=True,
-            ),
-            "dropped_requests": [],
-        }
+        )
 
     # Structured matching and initial ranking
     with trace.step(
@@ -875,21 +841,11 @@ async def orchestrate_search_request(
                 )
             )
 
-        return {
-            "need_clarification": True,
-            "questions": [
-                (
-                    "Nothing found. "
-                    "Try changing your requirements."
-                )
-            ],
-            "debug_notes": debug_notes,
-            "active_intent": req.model_dump(
-                mode="json",
-                exclude_none=True,
-            ),
-            "dropped_requests": [],
-        }
+        return NormalizedSearchResponse(
+            status=SearchStatus.NO_RESULTS,
+            results=[],
+            debug_notes=debug_notes,
+        )
 
     # Final result limit
     with trace.step(
@@ -908,21 +864,10 @@ async def orchestrate_search_request(
         selected_count=len(selected),
     ):
         normalized = normalize_search_response(
-            req,
-            selected,
-            top_n=result_limit,
-            dropped_requests=[],
-        )
+        req,
+        selected,
+        top_n=result_limit,
+        dropped_requests=[],
+    )
 
-        payload = normalized.model_dump(
-            mode="json",
-            exclude_none=True,
-        )
-
-        payload["constraint_statuses"] = (
-            _build_constraint_statuses(
-                selected[:result_limit]
-            )
-        )
-
-    return payload
+    return normalized

@@ -3,6 +3,10 @@ from __future__ import annotations
 from typing import Any
 
 from app.schemas.search_response import NormalizedSearchResponse
+from app.schemas.search_response import (
+    NormalizedSearchResponse,
+    SearchStatus,
+)
 
 
 IMPORTANT_FACT_KEYS = {
@@ -601,16 +605,19 @@ def build_answer_payload(
         else None
     )
 
-    if response.need_clarification:
+    if response.status == SearchStatus.NO_RESULTS:
         return {
-            "need_clarification": True,
-            "questions": list(response.questions or []),
+            "need_clarification": False,
+            "questions": [],
+            "search_status": response.status.value,
             "latest_user_query": latest_user_query,
             "request_summary": request_summary,
             "active_intent": request_summary,
             "results_count": 0,
             "top_results": [],
-            "debug_notes": list(response.debug_notes or []),
+            "debug_notes": list(
+                response.debug_notes or []
+            ),
         }
 
     top_results: list[dict[str, Any]] = []
@@ -753,10 +760,12 @@ def build_answer_payload(
     return {
         "need_clarification": False,
         "questions": [],
+        "search_status": response.status.value,
         "latest_user_query": latest_user_query,
         "request_summary": request_summary,
         "active_intent": request_summary,
         "results_count": len(response.results or []),
         "top_results": top_results,
         "debug_notes": list(response.debug_notes or []),
+        
     }

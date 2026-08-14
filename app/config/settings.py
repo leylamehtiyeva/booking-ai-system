@@ -8,6 +8,7 @@ MAX_ITEMS_HARD_CAP = 40
 TOP_N_DEFAULT = 2  # how many results to return for each search request (default: 2)
 FALLBACK_TOP_K_DEFAULT = 5
 SOURCE_NAME = "fixtures"
+#apify/fixtures
 
 FX_BASE_CURRENCY = os.getenv("FX_BASE_CURRENCY", "USD")
 FX_CACHE_TTL_DAYS = int(os.getenv("FX_CACHE_TTL_DAYS", "10"))

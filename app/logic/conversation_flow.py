@@ -323,13 +323,18 @@ async def handle_user_message(
             action=effective_action,
         )
 
-    result = await orchestrate_search_request(
+    search_response = await orchestrate_search_request(
         state,
         result_limit=top_n,
         candidate_pool_size=max_items,
         fallback_policy=fallback_policy,
         source=source,
         trace=trace,
+    )
+
+    result = search_response.model_dump(
+        mode="json",
+        exclude_none=True,
     )
 
     result["state"] = state_json

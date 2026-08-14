@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 from typing import Any
-
+from enum import Enum
 from pydantic import BaseModel, Field, Field as PydanticField
 
+
+
+class SearchStatus(str, Enum):
+    RESULTS = "results"
+    NO_RESULTS = "no_results"
 
 class NormalizedRequestSummary(BaseModel):
     city: str | None = None
@@ -93,10 +98,13 @@ class NormalizedSearchResult(BaseModel):
 
 
 class NormalizedSearchResponse(BaseModel):
-    need_clarification: bool
-    questions: list[str] = Field(default_factory=list)
+    status: SearchStatus
 
     request_summary: NormalizedRequestSummary | None = None
-    results: list[NormalizedSearchResult] = Field(default_factory=list)
+    results: list[NormalizedSearchResult] = Field(
+        default_factory=list
+    )
 
-    debug_notes: list[str] = Field(default_factory=list)
+    debug_notes: list[str] = Field(
+        default_factory=list
+    )

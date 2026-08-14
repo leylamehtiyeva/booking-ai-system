@@ -5,23 +5,24 @@
     "name": "Large Family Apartment",
     "city": "Baku",
     "url": "https://example.com/apt-large-good",
-    "price": 460,
+    "price": 70,
     "currency": "USD",
     "property_type": "apartment",
     "available_dates": {
-      "check_in": "2026-04-01",
-      "check_out": "2026-04-30"
+      "check_in": "2026-08-01",
+      "check_out": "2026-09-15"
     },
-    "description": "Spacious apartment in Baku with private bathroom, full kitchen, and 120 square meters of space. Ideal for families. Two-bedroom apartment.",
+    "description": "Spacious apartment in the centre of Baku.",
     "facilities": [
       {"name": "Kitchen"},
       {"name": "Private bathroom"},
-      {"name": "Free WiFi"}
+      {"name": "Free WiFi"},
+      {"name": "2nd floor"}
     ],
     "rooms": [
       {
         "name": "Two-Bedroom Apartment",
-        "roomType": "Two-Bedroom Apartment",
+        "roomType": "Apartment",
         "facilities": ["Kitchen", "Private bathroom"]
       }
     ]

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, List
-
+from app.schemas.search_response import SearchStatus
 from app.logic.result_ids import build_result_id
 from app.schemas.match import Ternary
 from app.schemas.query import SearchRequest
@@ -583,8 +583,7 @@ def normalize_search_response(
         )
 
     return NormalizedSearchResponse(
-        need_clarification=False,
-        questions=[],
+        status=SearchStatus.RESULTS,
         request_summary=request_summary,
         results=results,
         debug_notes=debug_notes or [],
