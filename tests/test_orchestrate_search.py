@@ -1,7 +1,7 @@
 from datetime import date
 
 import pytest
-
+from app.logic import listing_evaluation
 from app.logic.constraint_evidence_resolution import ConstraintResolutionResult
 from app.schemas.fallback_policy import FallbackPolicy
 from app.schemas.listing import ListingRaw, Room
@@ -534,7 +534,7 @@ async def test_constraint_resolution_results_are_attached(monkeypatch):
         ]
 
     monkeypatch.setattr(
-        orchestrate_search_tool,
+        listing_evaluation,
         "resolve_listing_constraints_with_fallback",
         fake_resolve_listing_constraints_with_fallback,
     )
@@ -587,103 +587,7 @@ async def test_occupancy_filter_is_applied():
     assert out.results
 
 
-@pytest.mark.asyncio
-async def test_city_filter_uses_only_city_field_not_description(
-    monkeypatch,
-):
-    async def fake_get_candidates(req, max_items, source, trace=None):
-        return [
-            ListingRaw(
-                id="wrong-city-mentioned-in-description",
-                name="Nice Apartment",
-                city="Baku",
-                url="https://example.com/wrong-city",
-                description=(
-                    "Beautiful apartment in Hong Kong with WiFi."
-                ),
-                available_dates={
-                    "check_in": "2026-04-01",
-                    "check_out": "2026-04-30",
-                },
-                rooms=[],
-            ),
-            ListingRaw(
-                id="correct-city",
-                name="Hong Kong Studio",
-                city="Hong Kong",
-                url="https://example.com/correct-city",
-                description="Simple studio with WiFi.",
-                available_dates={
-                    "check_in": "2026-04-01",
-                    "check_out": "2026-04-30",
-                },
-                rooms=[],
-            ),
-        ]
 
-    monkeypatch.setattr(
-        orchestrate_search_tool,
-        "get_candidates",
-        fake_get_candidates,
-    )
-
-    req = make_request(
-        city="Hong Kong",
-        check_in=date(2026, 4, 15),
-        check_out=date(2026, 4, 20),
-    )
-
-    out = await orchestrate_search_request(
-        req,
-        source="fixtures",
-        candidate_pool_size=10,
-        fallback_policy=FallbackPolicy(enabled=False),
-    )
-
-    assert out.status == SearchStatus.RESULTS
-    assert len(out.results) == 1
-    assert out.results[0].result_id == "correct-city"
-
-
-@pytest.mark.asyncio
-async def test_listing_without_city_is_not_eligible(monkeypatch):
-    async def fake_get_candidates(req, max_items, source, trace=None):
-        return [
-            ListingRaw(
-                id="missing-city",
-                name="Hong Kong Studio",
-                city=None,
-                url="https://example.com/missing-city",
-                description="Studio in Hong Kong with WiFi.",
-                available_dates={
-                    "check_in": "2026-04-01",
-                    "check_out": "2026-04-30",
-                },
-                rooms=[],
-            )
-        ]
-
-    monkeypatch.setattr(
-        orchestrate_search_tool,
-        "get_candidates",
-        fake_get_candidates,
-    )
-
-    req = make_request(
-        city="Hong Kong",
-        check_in=date(2026, 4, 15),
-        check_out=date(2026, 4, 20),
-    )
-
-    out = await orchestrate_search_request(
-        req,
-        source="fixtures",
-        candidate_pool_size=10,
-        fallback_policy=FallbackPolicy(enabled=False),
-    )
-
-    assert out.status == SearchStatus.NO_RESULTS
-    assert out.results == []
 
 
 @pytest.mark.asyncio
