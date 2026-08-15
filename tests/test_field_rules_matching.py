@@ -42,7 +42,10 @@ def test_find_best_signal_match_for_free_cancellation():
                 options=[
                     RoomOption(
                         name="Flexible rate",
-                        yourChoices=["Free cancellation", "No prepayment needed"],
+                        choices=[
+                            "Free cancellation",
+                            "No prepayment needed",
+                        ],
                     )
                 ],
             )
@@ -59,7 +62,7 @@ def test_find_best_signal_match_for_free_cancellation():
     )
 
     assert best is not None
-    assert best.path == "rooms[0].options[0].yourChoices"
+    assert best.path == "rooms[0].options[0].choices"
     assert best.raw_text == "Free cancellation"
 
 

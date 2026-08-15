@@ -22,14 +22,20 @@ def test_match_listing_structured_uses_signal_rules():
         facilities=[{"name": "Free WiFi"}],
         rooms=[
             Room(
-                name="Three-Bedroom Apartment",
-                roomType="Three-Bedroom Apartment with Balcony",
-                facilities=["Private kitchen", "Private bathroom", "Washing machine"],
+                name="Three-Bedroom Apartment with Balcony",
+                facilities=[
+                    "Private kitchen",
+                    "Private bathroom",
+                    "Washing machine",
+                ],
                 options=[
                     RoomOption(
-                        name="Flexible rate",
-                        yourChoices=["Free cancellation", "No prepayment needed"],
-                    )
+                    name="Flexible rate",
+                    choices=[
+                        "Free cancellation",
+                        "No prepayment needed",
+                    ],
+                )
                 ],
             )
         ],

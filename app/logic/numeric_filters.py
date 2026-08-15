@@ -54,36 +54,87 @@ def _word_to_number(token: str) -> Optional[int]:
     return _NUMBER_WORDS.get(token)
 
 
-def _collect_text_candidates(listing: ListingRaw) -> List[Tuple[str, str]]:
+def _collect_text_candidates(
+    listing: ListingRaw,
+) -> List[Tuple[str, str]]:
     """
-    Собираем все разумные текстовые места, где могут встретиться
-    bedroom count / area.
+    Collect canonical textual evidence that may
+    contain bedroom count, bathroom count or area.
 
-    Возвращаем список:
-    [
-        (normalized_text, "evidence.path"),
-        ...
-    ]
+    Important:
+    - room.name may contain "Three-Bedroom Apartment"
+    - room facilities may contain "2 bathrooms" or "85 m²"
+    - bed_types are intentionally NOT used here:
+      number of beds is not number of bedrooms
     """
+
     out: List[Tuple[str, str]] = []
 
-    def add(path: str, value: Any) -> None:
-        if isinstance(value, str) and value.strip():
-            out.append((_normalize_text(value), path))
-        elif isinstance(value, list):
-            parts = [str(x).strip() for x in value if str(x).strip()]
-            if parts:
-                out.append((_normalize_text(" ".join(parts)), path))
+    def add(
+        path: str,
+        value: Any,
+    ) -> None:
+        if not isinstance(value, str):
+            return
 
-    add("listing.name", getattr(listing, "name", None))
-    add("listing.description", getattr(listing, "description", None))
-    add("listing.bedTypes", getattr(listing, "bedTypes", None))
+        value = value.strip()
 
-    for i, room in enumerate(getattr(listing, "rooms", []) or []):
-        add(f"rooms[{i}].name", getattr(room, "name", None))
-        add(f"rooms[{i}].roomType", getattr(room, "roomType", None))
-        add(f"rooms[{i}].bedTypes", getattr(room, "bedTypes", None))
-        add(f"rooms[{i}].facilities", getattr(room, "facilities", None))
+        if not value:
+            return
+
+        out.append(
+            (
+                _normalize_text(value),
+                path,
+            )
+        )
+
+    add(
+        "listing.name",
+        listing.name,
+    )
+
+    add(
+        "listing.description",
+        listing.description,
+    )
+
+    for i, room in enumerate(
+        listing.rooms or []
+    ):
+        add(
+            f"rooms[{i}].name",
+            room.name,
+        )
+
+        for j, facility in enumerate(
+            room.facilities or []
+        ):
+            if isinstance(facility, str):
+                add(
+                    (
+                        f"rooms[{i}]"
+                        f".facilities[{j}]"
+                    ),
+                    facility,
+                )
+                continue
+
+            add(
+                (
+                    f"rooms[{i}]"
+                    f".facilities[{j}].name"
+                ),
+                facility.name,
+            )
+
+            add(
+                (
+                    f"rooms[{i}]"
+                    f".facilities[{j}].overview"
+                ),
+                facility.overview,
+            )
 
     return out
 
@@ -208,63 +259,46 @@ def _extract_bathroom_mentions_from_text(
     return out
 
 
-def extract_bathroom_count(listing: ListingRaw) -> tuple[float | None, list[Evidence]]:
+def extract_bathroom_count(
+    listing: ListingRaw,
+) -> tuple[
+    float | None,
+    list[Evidence],
+]:
     """
-    Extract bathroom count from listing text / room facilities.
+    Extract bathroom count from canonical
+    listing and room evidence.
 
-    Strategy:
-    - search name
-    - search description
-    - search roomType
-    - search facilities
-    - return the max detected bathroom count as the safest approximation
+    Sources:
+    - listing name
+    - listing description
+    - room name
+    - room facility name / overview
     """
-    candidates: list[tuple[float, Evidence]] = []
 
-    name = getattr(listing, "name", None) or ""
-    description = getattr(listing, "description", None) or ""
+    candidates: list[
+        tuple[float, Evidence]
+    ] = []
 
-    candidates.extend(
-        _extract_bathroom_mentions_from_text(
-            name,
-            source=EvidenceSource.STRUCTURED,
-            path="listing.name",
-        )
-    )
-    candidates.extend(
-        _extract_bathroom_mentions_from_text(
-            description,
-            source=EvidenceSource.STRUCTURED,
-            path="listing.description",
-        )
-    )
-
-    rooms = getattr(listing, "rooms", []) or []
-    for i, room in enumerate(rooms):
-        room_type = getattr(room, "roomType", None) or ""
+    for text, path in (
+        _collect_text_candidates(listing)
+    ):
         candidates.extend(
             _extract_bathroom_mentions_from_text(
-                room_type,
+                text,
                 source=EvidenceSource.STRUCTURED,
-                path=f"rooms[{i}].roomType",
+                path=path,
             )
         )
-
-        facilities = getattr(room, "facilities", []) or []
-        for j, facility in enumerate(facilities):
-            facility_text = str(facility)
-            candidates.extend(
-                _extract_bathroom_mentions_from_text(
-                    facility_text,
-                    source=EvidenceSource.STRUCTURED,
-                    path=f"rooms[{i}].facilities[{j}]",
-                )
-            )
 
     if not candidates:
         return None, []
 
-    best_count, best_evidence = max(candidates, key=lambda x: x[0])
+    best_count, best_evidence = max(
+        candidates,
+        key=lambda x: x[0],
+    )
+
     return best_count, [best_evidence]
 
 _AREA_PATTERNS = [

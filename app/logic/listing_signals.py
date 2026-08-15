@@ -38,46 +38,49 @@ class ListingSignal:
     raw_text: str
 
 
-def _stringify_maybe_list(value: Any) -> List[str]:
-    if value is None:
-        return []
+def _add_facility_signals(
+    signals: list[ListingSignal],
+    path: str,
+    facilities: Any,
+) -> None:
+    for i, facility in enumerate(
+        facilities or []
+    ):
+        # Temporary compatibility with
+        # old fixtures.
+        if isinstance(facility, str):
+            _add_signal(
+                signals,
+                path,
+                facility,
+            )
+            continue
 
-    if isinstance(value, str):
-        return [value]
+        name = getattr(
+            facility,
+            "name",
+            None,
+        )
 
-    if isinstance(value, list):
-        out: List[str] = []
-        for item in value:
-            if isinstance(item, str) and item.strip():
-                out.append(item)
-            elif isinstance(item, dict):
-                # common patterns
-                for key in ("name", "title", "content", "text", "value"):
-                    v = item.get(key)
-                    if isinstance(v, str) and v.strip():
-                        out.append(v)
+        if name:
+            _add_signal(
+                signals,
+                f"{path}[{i}].name",
+                name,
+            )
 
-                contents = item.get("contents")
-                if isinstance(contents, list):
-                    for c in contents:
-                        if isinstance(c, str) and c.strip():
-                            out.append(c)
-        return out
+        overview = getattr(
+            facility,
+            "overview",
+            None,
+        )
 
-    if isinstance(value, dict):
-        out: List[str] = []
-        for key in ("name", "title", "content", "text", "value"):
-            v = value.get(key)
-            if isinstance(v, str) and v.strip():
-                out.append(v)
-
-        contents = value.get("contents")
-        if isinstance(contents, list):
-            for c in contents:
-                if isinstance(c, str) and c.strip():
-                    out.append(c)
-
-        return out
+        if overview:
+            _add_signal(
+                signals,
+                f"{path}[{i}].overview",
+                overview,
+            )
 
 
 def _add_signal(signals: List[ListingSignal], path: str, raw_text: str) -> None:
@@ -99,87 +102,176 @@ def _add_many(signals: List[ListingSignal], path: str, values: Iterable[str]) ->
         _add_signal(signals, path, v)
 
 
-def collect_listing_signals(listing: ListingRaw) -> List[ListingSignal]:
+def collect_listing_signals(
+    listing: ListingRaw,
+) -> list[ListingSignal]:
     """
-    Build a normalized evidence layer over raw provider JSON.
+    Build normalized evidence from our canonical
+    ListingRaw model.
 
-    Important:
-    - tolerant to missing fields
-    - tolerant to extra fields
-    - does NOT make match decisions
+    This layer must not depend on provider-specific
+    field names such as roomType, bedTypes,
+    yourChoices or finePrint.
     """
-    signals: List[ListingSignal] = []
 
-    # listing-level plain text
-    if getattr(listing, "name", None):
-        _add_signal(signals, "listing.name", listing.name)
+    signals: list[ListingSignal] = []
 
-    if getattr(listing, "property_type", None):
-        _add_signal(signals, "listing.property_type", listing.property_type)
-
-    if getattr(listing, "description", None):
-        for sent in split_into_sentences(listing.description):
-            _add_signal(signals, "listing.description", sent)
-
-    # listing-level facilities
-    _add_many(
-        signals,
-        "listing.facilities",
-        _stringify_maybe_list(getattr(listing, "facilities", [])),
-    )
-
-    # rooms
-    for i, room in enumerate(getattr(listing, "rooms", []) or []):
-        if getattr(room, "name", None):
-            _add_signal(signals, f"rooms[{i}].name", room.name)
-
-        room_type = getattr(room, "roomType", None)
-        if room_type:
-            _add_signal(signals, f"rooms[{i}].roomType", room_type)
-
-        bed_types = getattr(room, "bedTypes", None)
-        _add_many(signals, f"rooms[{i}].bedTypes", _stringify_maybe_list(bed_types))
-
-        _add_many(
+    # Listing-level text
+    if listing.name:
+        _add_signal(
             signals,
-            f"rooms[{i}].facilities",
-            _stringify_maybe_list(getattr(room, "facilities", [])),
+            "listing.name",
+            listing.name,
         )
 
-        for j, opt in enumerate(getattr(room, "options", []) or []):
-            if getattr(opt, "name", None):
-                _add_signal(signals, f"rooms[{i}].options[{j}].name", opt.name)
+    if listing.property_type:
+        _add_signal(
+            signals,
+            "listing.property_type",
+            listing.property_type,
+        )
 
-            your_choices = getattr(opt, "yourChoices", None)
-            _add_many(
+    if listing.description:
+        for sentence in split_into_sentences(
+            listing.description
+        ):
+            _add_signal(
                 signals,
-                f"rooms[{i}].options[{j}].yourChoices",
-                _stringify_maybe_list(your_choices),
+                "listing.description",
+                sentence,
             )
 
-    # common listing extras
-    highlights = getattr(listing, "highlights", None)
-    if isinstance(highlights, list):
-        for i, hl in enumerate(highlights):
-            if isinstance(hl, dict):
-                _add_many(
+    if listing.fine_print:
+        _add_signal(
+            signals,
+            "listing.fine_print",
+            listing.fine_print,
+        )
+
+    # Listing-level facilities
+    _add_facility_signals(
+        signals,
+        "listing.facilities",
+        listing.facilities,
+    )
+
+    # Rooms
+    for i, room in enumerate(
+        listing.rooms or []
+    ):
+        if room.name:
+            _add_signal(
+                signals,
+                f"rooms[{i}].name",
+                room.name,
+            )
+
+        # Canonical bed structure
+        for j, bed_group in enumerate(
+            room.bed_types or []
+        ):
+            if bed_group.room:
+                _add_signal(
                     signals,
-                    f"highlights[{i}]",
-                    _stringify_maybe_list(hl),
+                    (
+                        f"rooms[{i}]"
+                        f".bed_types[{j}].room"
+                    ),
+                    bed_group.room,
                 )
 
-    policies = getattr(listing, "policies", None)
-    if isinstance(policies, list):
-        for i, pol in enumerate(policies):
-            if isinstance(pol, dict):
-                _add_many(
+            for bed in bed_group.beds or []:
+                _add_signal(
                     signals,
-                    f"policies[{i}]",
-                    _stringify_maybe_list(pol),
+                    (
+                        f"rooms[{i}]"
+                        f".bed_types[{j}].beds"
+                    ),
+                    bed,
                 )
+
+        _add_facility_signals(
+            signals,
+            f"rooms[{i}].facilities",
+            room.facilities,
+        )
+
+        for j, option in enumerate(
+            room.options or []
+        ):
+            if option.name:
+                _add_signal(
+                    signals,
+                    (
+                        f"rooms[{i}]"
+                        f".options[{j}].name"
+                    ),
+                    option.name,
+                )
+
+            for choice in (
+                option.choices or []
+            ):
+                _add_signal(
+                    signals,
+                    (
+                        f"rooms[{i}]"
+                        f".options[{j}].choices"
+                    ),
+                    choice,
+                )
+
+            # Structured boolean evidence.
+            if option.free_cancellation is True:
+                _add_signal(
+                    signals,
+                    (
+                        f"rooms[{i}]"
+                        f".options[{j}]"
+                        ".free_cancellation"
+                    ),
+                    "free cancellation",
+                )
+
+    # Highlights
+    for i, highlight in enumerate(
+        listing.highlights or []
+    ):
+        if highlight.header:
+            _add_signal(
+                signals,
+                f"highlights[{i}].header",
+                highlight.header,
+            )
+
+        for content in (
+            highlight.contents or []
+        ):
+            _add_signal(
+                signals,
+                f"highlights[{i}].contents",
+                content,
+            )
+
+    # Policies
+    for i, policy in enumerate(
+        listing.policies or []
+    ):
+        if policy.title:
+            _add_signal(
+                signals,
+                f"policies[{i}].title",
+                policy.title,
+            )
+
+        if policy.content:
+            _add_signal(
+                signals,
+                f"policies[{i}].content",
+                policy.content,
+            )
 
     return signals
-
 
 
 def signal_contains_alias(signal_text: str, alias: str) -> bool:

@@ -1,6 +1,13 @@
 from app.logic.listing_signals import collect_listing_signals
-from app.schemas.listing import ListingRaw, Room, RoomOption
-
+from app.schemas.listing import (
+    BedGroup,
+    Facility,
+    Highlight,
+    ListingRaw,
+    Policy,
+    Room,
+    RoomOption,
+)
 
 
 def test_collect_listing_signals_from_listing_and_rooms():
@@ -8,53 +15,126 @@ def test_collect_listing_signals_from_listing_and_rooms():
         id="x1",
         name="CHINAR Apartment",
         property_type="apartment",
-        description="Spacious apartment in Baku center",
-        facilities=[{"name": "Free WiFi"}, {"name": "Air conditioning"}],
+        description=(
+            "Spacious apartment in Baku center"
+        ),
+        facilities=[
+            Facility(name="Free WiFi"),
+            Facility(
+                name="Air conditioning"
+            ),
+        ],
         rooms=[
             Room(
-                name="Three-Bedroom Apartment",
-                facilities=["Private kitchen", "Private bathroom"],
+                name=(
+                    "Three-Bedroom Apartment "
+                    "with View"
+                ),
+                facilities=[
+                    Facility(
+                        name="Private kitchen"
+                    ),
+                    Facility(
+                        name="Private bathroom"
+                    ),
+                ],
+                bed_types=[
+                    BedGroup(
+                        room="Bedroom 1",
+                        beds=[
+                            "3 single beds",
+                            "1 sofa bed",
+                        ],
+                    )
+                ],
                 options=[
                     RoomOption(
                         name="Deluxe rate",
-                        yourChoices=["Free cancellation", "No prepayment needed"],
+                        choices=[
+                            "Free cancellation",
+                            (
+                                "No prepayment "
+                                "needed"
+                            ),
+                        ],
                     )
                 ],
-                roomType="Three-Bedroom Apartment with View",
-                bedTypes=["3 single beds", "1 sofa bed"],
             )
         ],
     )
 
-    signals = collect_listing_signals(listing)
+    signals = collect_listing_signals(
+        listing
+    )
 
-    texts = [s.text for s in signals]
-    paths = [s.path for s in signals]
+    texts = [
+        signal.text
+        for signal in signals
+    ]
+
+    paths = [
+        signal.path
+        for signal in signals
+    ]
 
     assert "chinar apartment" in texts
     assert "apartment" in texts
-    assert "spacious apartment in baku center" in texts
+
+    assert (
+        "spacious apartment in baku center"
+        in texts
+    )
+
     assert "free wifi" in texts
     assert "air conditioning" in texts
-    assert "three-bedroom apartment" in texts
-    assert "three-bedroom apartment with view" in texts
+
+    assert (
+        "three-bedroom apartment with view"
+        in texts
+    )
+
     assert "private kitchen" in texts
     assert "private bathroom" in texts
     assert "deluxe rate" in texts
     assert "free cancellation" in texts
-    assert "no prepayment needed" in texts
+
+    assert (
+        "no prepayment needed"
+        in texts
+    )
+
     assert "3 single beds" in texts
 
     assert "listing.name" in paths
     assert "listing.property_type" in paths
-    assert "listing.description" in paths
-    assert "listing.facilities" in paths
+
+    assert any(
+        path.startswith(
+            "listing.facilities"
+        )
+        for path in paths
+    )
+
     assert "rooms[0].name" in paths
-    assert "rooms[0].roomType" in paths
-    assert "rooms[0].facilities" in paths
-    assert "rooms[0].options[0].name" in paths
-    assert "rooms[0].options[0].yourChoices" in paths
-    assert "rooms[0].bedTypes" in paths
+
+    assert any(
+        path.startswith(
+            "rooms[0].bed_types"
+        )
+        for path in paths
+    )
+
+    assert any(
+        path.startswith(
+            "rooms[0].facilities"
+        )
+        for path in paths
+    )
+
+    assert (
+        "rooms[0].options[0].choices"
+        in paths
+    )
 
 
 def test_collect_listing_signals_from_highlights_and_policies():
@@ -62,23 +142,85 @@ def test_collect_listing_signals_from_highlights_and_policies():
         id="x2",
         name="Nice stay",
         highlights=[
-            {"title": "Great for your stay", "contents": ["Balcony", "City view"]},
+            Highlight(
+                header="Great for your stay",
+                contents=[
+                    "Balcony",
+                    "City view",
+                ],
+            )
         ],
         policies=[
-            {"title": "Pets", "content": "Pets are allowed on request."},
-            {"title": "Smoking", "content": "Non-smoking throughout."},
+            Policy(
+                title="Pets",
+                content=(
+                    "Pets are allowed "
+                    "on request."
+                ),
+            ),
+            Policy(
+                title="Smoking",
+                content=(
+                    "Non-smoking throughout."
+                ),
+            ),
         ],
     )
 
-    signals = collect_listing_signals(listing)
-    texts = [s.text for s in signals]
+    signals = collect_listing_signals(
+        listing
+    )
+
+    texts = [
+        signal.text
+        for signal in signals
+    ]
 
     assert "great for your stay" in texts
     assert "balcony" in texts
     assert "city view" in texts
     assert "pets" in texts
-    assert "pets are allowed on request." in texts
+
+    assert (
+        "pets are allowed on request."
+        in texts
+    )
+
     assert "smoking" in texts
-    assert "non-smoking throughout." in texts
+
+    assert (
+        "non-smoking throughout."
+        in texts
+    )
     
+    
+def test_collect_listing_signals_preserves_facility_overview():
+    listing = ListingRaw(
+        id="parking-1",
+        facilities=[
+            Facility(
+                name="Parking",
+                category="Parking",
+                overview=(
+                    "No parking available."
+                ),
+            )
+        ],
+    )
+
+    signals = collect_listing_signals(
+        listing
+    )
+
+    texts = [
+        signal.text
+        for signal in signals
+    ]
+
+    assert "parking" in texts
+
+    assert (
+        "no parking available."
+        in texts
+    )
     
