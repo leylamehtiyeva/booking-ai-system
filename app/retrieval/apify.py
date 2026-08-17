@@ -4,7 +4,7 @@ import asyncio
 import json
 import os
 from datetime import date
-
+from app.schemas.property_semantics import PropertyType
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Mapping
@@ -26,6 +26,23 @@ from app.schemas.listing import (
     Room,
     RoomOption,
 )
+
+APIFY_PROPERTY_TYPES = {
+    "hotel": "Hotels",
+    "apartment": "Apartments",
+    "hostel": "Hostels",
+    "guest_house": "Guest houses",
+    "homestay": "Homestays",
+    "bed_and_breakfast": "Bed and breakfasts",
+    "holiday_home": "Holiday homes",
+    "villa": "Villas",
+    "resort": "Resorts",
+    "campsite": "Campsites",
+    "motel": "Motels",
+    "boat": "Boats",
+    "holiday_park": "Holiday parks",
+    "luxury_tent": "Luxury tents",
+}
 
 
 
@@ -84,7 +101,9 @@ def _save_apify_debug_payload(actor_input: Dict[str, Any], items: Any) -> None:
     debug_dir = Path("logs/apify_raw")
     debug_dir.mkdir(parents=True, exist_ok=True)
 
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    ts = datetime.now().strftime(
+        "%Y%m%d_%H%M%S_%f"
+    )
 
     payload = {
         "timestamp": ts,
@@ -593,43 +612,89 @@ def normalize_apify_listing(
         raw=dict(item),
     )
 
-def _apify_property_type(req: SearchRequest) -> str | None:
-    """
-    Convert internal canonical property type into Apify Booking actor format.
+def _apify_property_type(
+    property_type: PropertyType | str | None,
+) -> str:
+    if property_type is None:
+        return "none"
 
-    Internal:
-        apartment, hotel
+    value = (
+        property_type.value
+        if isinstance(property_type, PropertyType)
+        else str(property_type)
+    )
 
-    Apify input expects:
-        Apartments, Hotels
+    return APIFY_PROPERTY_TYPES.get(
+        value,
+        "none",
+    )
+    
 
-    Apify output may return:
-        apartment, hotel
-    """
-    if not req.property_types:
-        return None
+def _deduplicate_listings(
+    listings: List[ListingRaw],
+) -> List[ListingRaw]:
 
-    pt = req.property_types[0]
-    value = pt.value if hasattr(pt, "value") else str(pt)
+    seen: set[tuple[str, str]] = set()
+    result: List[ListingRaw] = []
 
-    apify_property_types = {
-        "hotel": "Hotels",
-        "apartment": "Apartments",
-        "hostel": "Hostels",
-        "guest_house": "Guest houses",
-        "homestay": "Homestays",
-        "bed_and_breakfast": "Bed and breakfasts",
-        "holiday_home": "Holiday homes",
-        "villa": "Villas",
-        "resort": "Resorts",
-        "campsite": "Campsites",
-        "motel": "Motels",
-        "boat": "Boats",
-        "holiday_park": "Holiday parks",
-        "luxury_tent": "Luxury tents",
-    }
+    for listing in listings:
+        key = None
 
-    return apify_property_types.get(value)
+        if listing.id:
+            key = (
+                "id",
+                str(listing.id),
+            )
+
+        elif listing.url:
+            key = (
+                "url",
+                listing.url,
+            )
+
+        if key is not None:
+            if key in seen:
+                continue
+
+            seen.add(key)
+
+        result.append(listing)
+
+    return result
+
+def _split_max_items(
+    max_items: int,
+    property_type_count: int,
+) -> list[int]:
+    if property_type_count <= 0:
+        return []
+
+    base = max_items // property_type_count
+    remainder = max_items % property_type_count
+
+    return [
+        base + (1 if index < remainder else 0)
+        for index in range(property_type_count)
+    ]
+
+
+def _apify_property_types(
+    property_types: list[PropertyType] | None,
+) -> list[str]:
+    if not property_types:
+        return ["none"]
+
+    result: list[str] = []
+
+    for property_type in property_types:
+        apify_type = _apify_property_type(
+            property_type
+        )
+
+        if apify_type not in result:
+            result.append(apify_type)
+
+    return result
 
 
 def _post_json_sync(url: str, payload: Dict[str, Any], timeout: int = 180) -> Any:
@@ -649,34 +714,62 @@ def _post_json_sync(url: str, payload: Dict[str, Any], timeout: int = 180) -> An
 
 
 class ApifyRetriever:
-    async def get_candidates(
+    async def _get_candidates_for_property_type(
         self,
         req: SearchRequest,
+        property_type: str,
         max_items: int,
         trace: RequestTrace | None = None,
-        ) -> List[ListingRaw]:        
+    ) -> List[ListingRaw]:
+
         token = os.getenv("APIFY_TOKEN")
         if not token:
-            raise ValueError("Missing APIFY_TOKEN in environment")
+            raise ValueError(
+                "Missing APIFY_TOKEN in environment"
+            )
 
-        actor = os.getenv("APIFY_BOOKING_ACTOR", "voyager~booking-scraper")
+        actor = os.getenv(
+            "APIFY_BOOKING_ACTOR",
+            "voyager~booking-scraper",
+        )
 
         if not req.city:
-            raise ValueError("SearchRequest.city is required for Apify search")
+            raise ValueError(
+                "SearchRequest.city is required for Apify search"
+            )
 
         if req.check_in is None or req.check_out is None:
-            raise ValueError("SearchRequest.check_in/check_out are required for Apify search")
+            raise ValueError(
+                "SearchRequest.check_in/check_out "
+                "are required for Apify search"
+            )
 
-        currency = getattr(req, "currency", None) or os.getenv("APIFY_CURRENCY", "USD")
-        language = os.getenv("APIFY_LANGUAGE", "en-gb")
-        adults = int(getattr(req, "adults", 2) or 2)
-        children = int(getattr(req, "children", 0) or 0)
-        rooms = int(getattr(req, "rooms", 1) or 1)
+        currency = (
+            getattr(req, "currency", None)
+            or os.getenv(
+                "APIFY_CURRENCY",
+                "USD",
+            )
+        )
 
+        language = os.getenv(
+            "APIFY_LANGUAGE",
+            "en-gb",
+        )
+
+        adults = int(
+            getattr(req, "adults", 2) or 2
+        )
+
+        children = int(
+            getattr(req, "children", 0) or 0
+        )
+
+        rooms = int(
+            getattr(req, "rooms", 1) or 1
+        )
 
         search_query = str(req.city).strip()
-        property_type = _apify_property_type(req)
-        
 
         actor_input = {
             "search": search_query,
@@ -688,13 +781,18 @@ class ApifyRetriever:
             "adults": adults,
             "children": children,
             "rooms": rooms,
+            "propertyType": property_type,
         }
-        
-        if property_type:
-            actor_input["propertyType"] = property_type
 
-        api_base = os.getenv("APIFY_BASE_URL", "https://api.apify.com")
-        omit_fields = "images,roomImages,breadcrumbs,categoryReviews"
+        api_base = os.getenv(
+            "APIFY_BASE_URL",
+            "https://api.apify.com",
+        )
+
+        omit_fields = (
+            "images,roomImages,"
+            "breadcrumbs,categoryReviews"
+        )
 
         url = (
             f"{api_base}/v2/acts/{actor}/run-sync-get-dataset-items"
@@ -708,9 +806,22 @@ class ApifyRetriever:
 
         try:
             started = time.perf_counter()
-            items = await asyncio.to_thread(_post_json_sync, url, actor_input, 180)
 
-            latency_ms = round((time.perf_counter() - started) * 1000, 2)
+            items = await asyncio.to_thread(
+                _post_json_sync,
+                url,
+                actor_input,
+                180,
+            )
+
+            latency_ms = round(
+                (
+                    time.perf_counter()
+                    - started
+                )
+                * 1000,
+                2,
+            )
 
             if trace is not None:
                 trace.add_external_call(
@@ -718,54 +829,88 @@ class ApifyRetriever:
                         step="apify_booking_search",
                         provider="apify",
                         latency_ms=latency_ms,
-                        estimated_cost_usd=estimate_apify_cost_usd(run_count=1),
+                        estimated_cost_usd=(
+                            estimate_apify_cost_usd(
+                                run_count=1
+                            )
+                        ),
                         success=True,
                         metadata={
                             "actor": actor,
                             "max_items": max_items,
                             "city": req.city,
-                            "check_in": _iso(req.check_in),
-                            "check_out": _iso(req.check_out),
+                            "check_in": _iso(
+                                req.check_in
+                            ),
+                            "check_out": _iso(
+                                req.check_out
+                            ),
+                            "property_type": property_type,
                         },
                     )
                 )
+
         except HTTPError as e:
             body = ""
+
             try:
-                body = e.read().decode("utf-8")
+                body = e.read().decode(
+                    "utf-8"
+                )
             except Exception:
                 pass
 
-            raise RuntimeError(f"Apify HTTPError {e.code}: {body}") from e
-        except URLError as e:
-            raise RuntimeError(f"Apify URLError: {e}") from e
+            raise RuntimeError(
+                f"Apify HTTPError "
+                f"{e.code}: {body}"
+            ) from e
 
-        _save_apify_debug_payload(actor_input, items)
+        except URLError as e:
+            raise RuntimeError(
+                f"Apify URLError: {e}"
+            ) from e
+
+        _save_apify_debug_payload(
+            actor_input,
+            items,
+        )
+
         if not isinstance(items, list):
-            raise RuntimeError(f"Unexpected Apify response type: {type(items)}")
+            raise RuntimeError(
+                "Unexpected Apify response type: "
+                f"{type(items)}"
+            )
 
         out: List[ListingRaw] = []
 
         for index, item in enumerate(
             items[:max_items]
         ):
-            if not isinstance(item, Mapping):
+            if not isinstance(
+                item,
+                Mapping,
+            ):
                 logger.warning(
-                    "Skipping Apify item at index %s: "
-                    "expected mapping, got %s",
+                    "Skipping Apify item at "
+                    "index %s: expected mapping, "
+                    "got %s",
                     index,
                     type(item).__name__,
                 )
                 continue
 
             try:
-                listing = normalize_apify_listing(
-                    item
+                listing = (
+                    normalize_apify_listing(
+                        item
+                    )
                 )
+
             except Exception:
                 logger.exception(
-                    "Failed to normalize Apify listing "
-                    "at index %s, name=%r",
+                    "Failed to normalize "
+                    "Apify listing at index %s, "
+                    "name=%r",
                     index,
                     item.get("name"),
                 )
@@ -774,4 +919,47 @@ class ApifyRetriever:
             out.append(listing)
 
         return out
+
+    async def get_candidates(
+        self,
+        req: SearchRequest,
+        max_items: int,
+        trace: RequestTrace | None = None,
+    ) -> List[ListingRaw]:
+
+        property_types = _apify_property_types(
+            req.property_types
+        )
+
+        budgets = _split_max_items(
+            max_items,
+            len(property_types),
+        )
+
+        tasks = [
+            self._get_candidates_for_property_type(
+                req,
+                property_type=property_type,
+                max_items=budget,
+                trace=trace,
+            )
+            for property_type, budget
+            in zip(property_types, budgets)
+            if budget > 0
+        ]
+
+        results = await asyncio.gather(
+            *tasks
+        )
+
+        merged: List[ListingRaw] = []
+
+        for batch in results:
+            merged.extend(batch)
+
+        deduplicated = _deduplicate_listings(
+            merged
+        )
+
+        return deduplicated[:max_items]
 
