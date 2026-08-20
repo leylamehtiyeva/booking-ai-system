@@ -3,6 +3,114 @@ from __future__ import annotations
 from typing import Any
 
 
+def _property_type_value(
+    item: dict[str, Any],
+) -> str | None:
+    property_result = item.get(
+        "property_result"
+    )
+
+    if property_result is None:
+        return None
+
+    actual_value = getattr(
+        property_result,
+        "actual_value",
+        None,
+    )
+
+    if actual_value is None:
+        return None
+
+    return str(actual_value).strip().lower()
+
+
+def _diversify_equal_score_items(
+    items: list[dict[str, Any]],
+    requested_property_types: list[Any] | None,
+) -> list[dict[str, Any]]:
+    if not requested_property_types:
+        return items
+
+    requested = [
+        str(
+            getattr(
+                property_type,
+                "value",
+                property_type,
+            )
+        ).lower()
+        for property_type
+        in requested_property_types
+    ]
+
+    if len(requested) <= 1:
+        return items
+
+    result: list[dict[str, Any]] = []
+
+    index = 0
+
+    while index < len(items):
+        score = float(
+            items[index].get(
+                "score",
+                0.0,
+            )
+        )
+
+        same_score_group = []
+
+        while (
+            index < len(items)
+            and float(
+                items[index].get(
+                    "score",
+                    0.0,
+                )
+            ) == score
+        ):
+            same_score_group.append(
+                items[index]
+            )
+            index += 1
+
+        buckets = {
+            property_type: []
+            for property_type in requested
+        }
+
+        other_items = []
+
+        for item in same_score_group:
+            property_type = (
+                _property_type_value(item)
+            )
+
+            if property_type in buckets:
+                buckets[
+                    property_type
+                ].append(item)
+            else:
+                other_items.append(item)
+
+        while any(
+            buckets[property_type]
+            for property_type in requested
+        ):
+            for property_type in requested:
+                if buckets[property_type]:
+                    result.append(
+                        buckets[
+                            property_type
+                        ].pop(0)
+                    )
+
+        result.extend(other_items)
+
+    return result
+
+
 def summarize_selection_signals(item: dict[str, Any]) -> dict[str, int]:
     matched_constraints = item.get("matched_constraints") or []
     uncertain_constraints = item.get("uncertain_constraints") or []
@@ -193,8 +301,11 @@ def classify_ranked_item(item: dict[str, Any]) -> dict[str, Any]:
 
     return classified
 
-
-def select_ranked_items(items: list[dict[str, Any]], top_n: int) -> list[dict[str, Any]]:
+def select_ranked_items(
+    items: list[dict[str, Any]],
+    top_n: int,
+    requested_property_types: list[Any] | None = None,
+) -> list[dict[str, Any]]:
     classified = [classify_ranked_item(item) for item in items]
 
     def is_eligible(x):
@@ -210,6 +321,22 @@ def select_ranked_items(items: list[dict[str, Any]], top_n: int) -> list[dict[st
         and x.get("match_tier") == "weak"
         and not x.get("blocking_reasons") 
     ]
+    
+    
+    strong = _diversify_equal_score_items(
+        strong,
+        requested_property_types,
+    )
+
+    partial = _diversify_equal_score_items(
+        partial,
+        requested_property_types,
+    )
+
+    weak = _diversify_equal_score_items(
+        weak,
+        requested_property_types,
+    )
 
     def sort_by_score(items):
         return sorted(items, key=lambda x: float(x.get("score", 0.0)), reverse=True)

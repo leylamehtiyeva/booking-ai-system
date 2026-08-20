@@ -1,5 +1,5 @@
 from app.logic.result_selection import classify_ranked_item, select_ranked_items
-
+from app.schemas.property_semantics import PropertyType
 
 def test_classify_ranked_item_as_strong_when_all_required_constraints_are_confirmed():
     item = {
@@ -338,3 +338,123 @@ def test_property_yes_but_explicit_negative_still_ineligible():
 
     assert classified["eligibility_status"] == "ineligible"
     assert classified["match_tier"] == "weak"
+    
+    
+def test_select_ranked_items_diversifies_equal_quality_requested_property_types():
+    apartment_a = _base_item(
+        listing_name="Apartment A",
+        score=10.0,
+        property_result=_property_result(
+            Ternary.YES,
+            actual_value="apartment",
+        ),
+    )
+
+    apartment_b = _base_item(
+        listing_name="Apartment B",
+        score=10.0,
+        property_result=_property_result(
+            Ternary.YES,
+            actual_value="apartment",
+        ),
+    )
+
+    hotel_a = _base_item(
+        listing_name="Hotel A",
+        score=10.0,
+        property_result=_property_result(
+            Ternary.YES,
+            actual_value="hotel",
+        ),
+    )
+
+    hotel_b = _base_item(
+        listing_name="Hotel B",
+        score=10.0,
+        property_result=_property_result(
+            Ternary.YES,
+            actual_value="hotel",
+        ),
+    )
+
+    selected = select_ranked_items(
+        [
+            apartment_a,
+            apartment_b,
+            hotel_a,
+            hotel_b,
+        ],
+        top_n=2,
+        requested_property_types=[
+            PropertyType.APARTMENT,
+            PropertyType.HOTEL,
+        ],
+    )
+
+    assert [
+        item["listing_name"]
+        for item in selected
+    ] == [
+        "Apartment A",
+        "Hotel A",
+    ]
+    
+    
+def test_select_ranked_items_diversifies_equal_quality_requested_property_types():
+    apartment_a = _base_item(
+        listing_name="Apartment A",
+        score=10.0,
+        property_result=_property_result(
+            Ternary.YES,
+            actual_value="apartment",
+        ),
+    )
+
+    apartment_b = _base_item(
+        listing_name="Apartment B",
+        score=10.0,
+        property_result=_property_result(
+            Ternary.YES,
+            actual_value="apartment",
+        ),
+    )
+
+    hotel_a = _base_item(
+        listing_name="Hotel A",
+        score=10.0,
+        property_result=_property_result(
+            Ternary.YES,
+            actual_value="hotel",
+        ),
+    )
+
+    hotel_b = _base_item(
+        listing_name="Hotel B",
+        score=10.0,
+        property_result=_property_result(
+            Ternary.YES,
+            actual_value="hotel",
+        ),
+    )
+
+    selected = select_ranked_items(
+        [
+            apartment_a,
+            apartment_b,
+            hotel_a,
+            hotel_b,
+        ],
+        top_n=2,
+        requested_property_types=[
+            PropertyType.APARTMENT,
+            PropertyType.HOTEL,
+        ],
+    )
+
+    assert [
+        item["listing_name"]
+        for item in selected
+    ] == [
+        "Apartment A",
+        "Hotel A",
+    ]

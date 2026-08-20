@@ -108,6 +108,7 @@ async def orchestrate_search_request(
         selected = select_ranked_items(
             ranked,
             top_n=result_limit,
+            requested_property_types=req.property_types,
         )
 
     # Normalize search output
