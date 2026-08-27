@@ -5,7 +5,7 @@
     "name": "Large Family Apartment",
     "city": "Baku",
     "url": "https://example.com/apt-large-good",
-    "price": 70,
+    "price": 3150,
     "currency": "USD",
     "property_type": "apartment",
     "available_dates": {
@@ -32,7 +32,7 @@
     "name": "Compact Apartment",
     "city": "Baku",
     "url": "https://example.com/apt-small",
-    "price": 65,
+    "price": 1885,
     "currency": "USD",
     "property_type": "apartment",
     "available_dates": {
@@ -57,7 +57,7 @@
     "name": "Premium Apartment",
     "city": "Baku",
     "url": "https://example.com/apt-expensive",
-    "price": 500,
+    "price": 14500,
     "currency": "USD",
     "property_type": "apartment",
     "available_dates": {
@@ -85,7 +85,7 @@
     "name": "Large Hotel Room",
     "city": "Baku",
     "url": "https://example.com/hotel-large",
-    "price": 70,
+    "price": 2030,
     "currency": "USD",
     "property_type": "hotel",
     "available_dates": {
@@ -105,10 +105,10 @@
     ]
   },
   { "city": "Tbilisi",
-    "id": "hotel-large",
+    "id": "tbilisi-hotel-large",
     "name": "Tbilisi hotel",
-    "url": "https://example.com/hotel-large",
-    "price": 70,
+    "url": "https://example.com/tbilisi-hotel-large",
+    "price": 2030,
     "currency": "USD",
     "property_type": "hotel",
     "available_dates": {
@@ -132,7 +132,7 @@
       "name": "Sunny Central Apartment",
       "city": "Baku",
       "url": "https://example.com/baku-apt-1",
-      "price": 200,
+      "price": 5800,
       "currency": "USD",
       "property_type": "apartment",
       "available_dates": {
@@ -160,7 +160,7 @@
       "name": "Spacious Family Flat",
       "city": "Baku",
       "url": "https://example.com/baku-apt-2",
-      "price": 220,
+      "price": 4400,
       "currency": "USD",
       "property_type": "apartment",
       "available_dates": {
@@ -189,7 +189,7 @@
       "name": "Budget Hotel Room",
       "city": "Baku",
       "url": "https://example.com/baku-hotel-1",
-      "price": 40,
+      "price": 720,
       "currency": "USD",
       "property_type": "hotel",
       "available_dates": {
@@ -216,7 +216,7 @@
       "name": "Modern Loft Apartment",
       "city": "Baku",
       "url": "https://example.com/baku-apt-3",
-      "price": 150,
+      "price": 4350,
       "currency": "USD",
       "property_type": "apartment",
       "available_dates": {
@@ -241,7 +241,7 @@
       "name": "Luxury Sea View Apartment",
       "city": "Baku",
       "url": "https://example.com/baku-apt-4",
-      "price": 520,
+      "price": 12480,
       "currency": "USD",
       "property_type": "apartment",
       "available_dates": {
@@ -270,7 +270,7 @@
       "name": "Tbilisi Old Town Hotel",
       "city": "Tbilisi",
       "url": "https://example.com/tbilisi-hotel-1",
-      "price": 75,
+      "price": 1425,
       "currency": "USD",
       "property_type": "hotel",
       "available_dates": {
@@ -298,7 +298,7 @@
       "name": "Compact City Apartment",
       "city": "Tbilisi",
       "url": "https://example.com/tbilisi-apt-1",
-      "price": 55,
+      "price": 1100,
       "currency": "USD",
       "property_type": "apartment",
       "available_dates": {
@@ -323,7 +323,7 @@
       "name": "Business Hotel",
       "city": "Baku",
       "url": "https://example.com/baku-hotel-2",
-      "price": 110,
+      "price": 2750,
       "currency": "USD",
       "property_type": "hotel",
       "available_dates": {
@@ -351,7 +351,7 @@
       "name": "Quiet Suburb Apartment",
       "city": "Baku",
       "url": "https://example.com/baku-apt-5",
-      "price": 60,
+      "price": 1740,
       "currency": "USD",
       "property_type": "apartment",
       "available_dates": {
@@ -377,7 +377,7 @@
       "name": "Batumi Beach Apartment",
       "city": "Batumi",
       "url": "https://example.com/batumi-apt-1",
-      "price": 95,
+      "price": 1900,
       "currency": "USD",
       "property_type": "apartment",
       "available_dates": {
@@ -405,7 +405,7 @@
         "name": "City Center Compact Loft",
         "city": "Baku",
         "url": "https://example.com/baku-apt-6",
-        "price": 70,
+        "price": 2030,
         "currency": "USD",
         "property_type": "apartment",
         "available_dates": {
@@ -432,7 +432,7 @@
         "name": "Grand City Hotel",
         "city": "Baku",
         "url": "https://example.com/baku-hotel-3",
-        "price": 180,
+        "price": 4140,
         "currency": "USD",
         "property_type": "hotel",
         "available_dates": {
@@ -461,7 +461,7 @@
         "name": "Old Town Spacious Flat",
         "city": "Baku",
         "url": "https://example.com/baku-apt-7",
-        "price": 260,
+        "price": 5980,
         "currency": "USD",
         "property_type": "apartment",
         "available_dates": {
@@ -489,7 +489,7 @@
         "name": "Central Plaza Hotel",
         "city": "Tbilisi",
         "url": "https://example.com/tbilisi-hotel-2",
-        "price": 95,
+        "price": 2755,
         "currency": "USD",
         "property_type": "hotel",
         "available_dates": {
@@ -517,7 +517,7 @@
         "name": "Modern Minimal Apartment",
         "city": "Baku",
         "url": "https://example.com/baku-apt-8",
-        "price": 130,
+        "price": 3510,
         "currency": "USD",
         "property_type": "apartment",
         "available_dates": {
@@ -542,7 +542,7 @@
         "name": "Airport Transit Hotel",
         "city": "Baku",
         "url": "https://example.com/baku-hotel-4",
-        "price": 60,
+        "price": 1200,
         "currency": "USD",
         "property_type": "hotel",
         "available_dates": {
@@ -569,7 +569,7 @@
         "name": "Rustic Style Apartment",
         "city": "Tbilisi",
         "url": "https://example.com/tbilisi-apt-2",
-        "price": 80,
+        "price": 1600,
         "currency": "USD",
         "property_type": "apartment",
         "available_dates": {
@@ -596,7 +596,7 @@
         "name": "Seaside Hotel Batumi",
         "city": "Batumi",
         "url": "https://example.com/batumi-hotel-1",
-        "price": 120,
+        "price": 3480,
         "currency": "USD",
         "property_type": "hotel",
         "available_dates": {
@@ -624,7 +624,7 @@
         "name": "Economy Apartment",
         "city": "Baku",
         "url": "https://example.com/baku-apt-9",
-        "price": 50,
+        "price": 1450,
         "currency": "USD",
         "property_type": "apartment",
         "available_dates": {
@@ -649,7 +649,7 @@
         "name": "Designer Luxury Loft",
         "city": "Baku",
         "url": "https://example.com/baku-apt-10",
-        "price": 480,
+        "price": 12480,
         "currency": "USD",
         "property_type": "apartment",
         "available_dates": {
@@ -678,7 +678,7 @@
           "name": "Central Park Apartment",
           "city": "Baku",
           "url": "https://example.com/baku-apt-11",
-          "price": 140,
+          "price": 4060,
           "currency": "USD",
           "property_type": "apartment",
           "available_dates": {
@@ -706,7 +706,7 @@
           "name": "City Lights Hotel",
           "city": "Baku",
           "url": "https://example.com/baku-hotel-5",
-          "price": 95,
+          "price": 2280,
           "currency": "USD",
           "property_type": "hotel",
           "available_dates": {
@@ -734,7 +734,7 @@
           "name": "Sea Breeze Apartment",
           "city": "Baku",
           "url": "https://example.com/baku-apt-12",
-          "price": 300,
+          "price": 7800,
           "currency": "USD",
           "property_type": "apartment",
           "available_dates": {
@@ -762,7 +762,7 @@
           "name": "Quiet Stay Hotel",
           "city": "Baku",
           "url": "https://example.com/baku-hotel-6",
-          "price": 55,
+          "price": 1595,
           "currency": "USD",
           "property_type": "hotel",
           "available_dates": {
@@ -787,7 +787,7 @@
           "name": "Old Town Balcony Apartment",
           "city": "Tbilisi",
           "url": "https://example.com/tbilisi-apt-3",
-          "price": 110,
+          "price": 2640,
           "currency": "USD",
           "property_type": "apartment",
           "available_dates": {
@@ -814,7 +814,7 @@
           "name": "River View Hotel",
           "city": "Tbilisi",
           "url": "https://example.com/tbilisi-hotel-3",
-          "price": 85,
+          "price": 2125,
           "currency": "USD",
           "property_type": "hotel",
           "available_dates": {
@@ -842,7 +842,7 @@
           "name": "Minimal Studio Flat",
           "city": "Tbilisi",
           "url": "https://example.com/tbilisi-apt-4",
-          "price": 60,
+          "price": 1440,
           "currency": "USD",
           "property_type": "apartment",
           "available_dates": {
@@ -867,7 +867,7 @@
           "name": "Istanbul Grand Hotel",
           "city": "Istanbul",
           "url": "https://example.com/istanbul-hotel-1",
-          "price": 150,
+          "price": 4350,
           "currency": "USD",
           "property_type": "hotel",
           "available_dates": {
@@ -895,7 +895,7 @@
           "name": "Beachfront Studio",
           "city": "Batumi",
           "url": "https://example.com/batumi-apt-2",
-          "price": 90,
+          "price": 2520,
           "currency": "USD",
           "property_type": "apartment",
           "available_dates": {
@@ -923,7 +923,7 @@
           "name": "Dubai Marina Apartment",
           "city": "Dubai",
           "url": "https://example.com/dubai-apt-1",
-          "price": 400,
+          "price": 11600,
           "currency": "USD",
           "property_type": "apartment",
           "available_dates": {
@@ -951,7 +951,7 @@
     "name": "Shibuya Compact Studio",
     "city": "Tokyo",
     "url": "https://example.com/tokyo-apt-1",
-    "price": 12000,
+    "price": 348000,
     "currency": "JPY",
     "property_type": "apartment",
     "available_dates": {
@@ -978,7 +978,7 @@
     "name": "สุขุมวิท City Hotel",
     "city": "Bangkok",
     "url": "https://example.com/bangkok-hotel-1",
-    "price": 2500,
+    "price": 62500,
     "currency": "THB",
     "property_type": "hotel",
     "available_dates": {
@@ -1006,7 +1006,7 @@
     "name": "Gangnam Modern Apartment",
     "city": "Seoul",
     "url": "https://example.com/seoul-apt-1",
-    "price": 180000,
+    "price": 4680000,
     "currency": "KRW",
     "property_type": "apartment",
     "available_dates": {
@@ -1033,7 +1033,7 @@
     "name": "Marina Business Hotel",
     "city": "Singapore",
     "url": "https://example.com/singapore-hotel-1",
-    "price": 220,
+    "price": 6380,
     "currency": "SGD",
     "property_type": "hotel",
     "available_dates": {
@@ -1061,7 +1061,7 @@
     "name": "KL City View Apartment",
     "city": "Kuala Lumpur",
     "url": "https://example.com/kl-apt-1",
-    "price": 350,
+    "price": 9450,
     "currency": "MYR",
     "property_type": "apartment",
     "available_dates": {
@@ -1088,7 +1088,7 @@
     "name": "Ubud Garden Resort",
     "city": "Bali",
     "url": "https://example.com/bali-hotel-1",
-    "price": 1200000,
+    "price": 34800000,
     "currency": "IDR",
     "property_type": "hotel",
     "available_dates": {
@@ -1116,7 +1116,7 @@
     "name": "Central HK Studio",
     "city": "Hong Kong",
     "url": "https://example.com/hk-apt-1",
-    "price": 900,
+    "price": 25200,
     "currency": "HKD",
     "property_type": "apartment",
     "available_dates": {
@@ -1141,7 +1141,7 @@
     "name": "Beach Condo Phuket",
     "city": "Phuket",
     "url": "https://example.com/phuket-apt-1",
-    "price": 3000,
+    "price": 87000,
     "currency": "THB",
     "property_type": "apartment",
     "available_dates": {
@@ -1169,7 +1169,7 @@
     "name": "Jakarta Business Inn",
     "city": "Jakarta",
     "url": "https://example.com/jakarta-hotel-1",
-    "price": 950000,
+    "price": 23750000,
     "currency": "IDR",
     "property_type": "hotel",
     "available_dates": {
@@ -1197,34 +1197,7 @@
     "name": "Manila City Apartment",
     "city": "Manila",
     "url": "https://example.com/manila-apt-1",
-    "price": 3500,
-    "currency": "PHP",
-    "property_type": "apartment",
-    "available_dates": {
-      "check_in": "2026-04-01",
-      "check_out": "2026-04-30"
-    },
-    "description": "Apartment about 70 sqm in Manila city center, close to malls and metro. Has kitchen and air conditioning.",
-    "facilities": [
-      {"name": "Air conditioning"}
-    ],
-    "policies": [
-      {"title": "Pets", "content": "Pets are not allowed."}
-    ],
-    "rooms": [
-      {
-        "name": "Apartment",
-        "roomType": "Studio Apartment",
-        "facilities": ["Kitchen", "Air conditioning"]
-      }
-    ]
-  },
-    {
-    "id": "manila-apt-1",
-    "name": "Manila City Apartment",
-    "city": "Manila",
-    "url": "https://example.com/manila-apt-1",
-    "price": 3500,
+    "price": 101500,
     "currency": "PHP",
     "property_type": "apartment",
     "available_dates": {
@@ -1251,7 +1224,7 @@
     "name": "Kyoto Traditional Ryokan",
     "city": "Kyoto",
     "url": "https://example.com/kyoto-ryokan-1",
-    "price": 180,
+    "price": 540,
     "currency": "USD",
     "property_type": "ryokan",
     "available_dates": {
@@ -1279,6 +1252,62 @@
           "Air conditioning",
           "Shared bathroom"
         ]
+      }
+    ]
+  },
+  {
+    "id": "baku-apt-smoking",
+    "name": "Smokers Loft Baku",
+    "city": "Baku",
+    "url": "https://example.com/baku-apt-smoking",
+    "price": 1595,
+    "currency": "USD",
+    "property_type": "apartment",
+    "available_dates": {
+      "check_in": "2026-04-01",
+      "check_out": "2026-04-30"
+    },
+    "description": "Apartment in Baku with kitchen and balcony.",
+    "facilities": [
+      {"name": "Kitchen"},
+      {"name": "Free WiFi"}
+    ],
+    "policies": [
+      {"title": "Smoking", "content": "Smoking allowed on the balcony."}
+    ],
+    "rooms": [
+      {
+        "name": "Apartment",
+        "roomType": "One-Bedroom Apartment",
+        "facilities": ["Kitchen"]
+      }
+    ]
+  },
+  {
+    "id": "baku-apt-nonsmoking",
+    "name": "Non-smoking Apartment Baku",
+    "city": "Baku",
+    "url": "https://example.com/baku-apt-nonsmoking",
+    "price": 1595,
+    "currency": "USD",
+    "property_type": "apartment",
+    "available_dates": {
+      "check_in": "2026-04-01",
+      "check_out": "2026-04-30"
+    },
+    "description": "Apartment in Baku with kitchen and balcony.",
+    "facilities": [
+      {"name": "Kitchen"},
+      {"name": "Free WiFi"}
+    ],
+    "policies": [
+      {"title": "Smoking", "content": "Smoking is not allowed anywhere on the property."}
+    ],
+    "rooms": [
+      {
+        "name": "Apartment",
+        "roomType": "One-Bedroom Apartment",
+        "facilities": ["Kitchen"]
       }
     ]
   }

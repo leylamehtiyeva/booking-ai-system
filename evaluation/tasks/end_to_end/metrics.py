@@ -93,6 +93,11 @@ def compute_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
         for row in yes_rows
     )
 
+    rejection_rows = [
+        row for row in ok_rows
+        if row["expected_decision"] in ("NO", "UNCERTAIN")
+    ]
+
     critical_false_yes_count = sum(
         row["critical_false_yes"]
         for row in ok_rows
@@ -161,10 +166,11 @@ def compute_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
             len(yes_rows),
         ),
 
+        "rejection_total": len(rejection_rows),
         "critical_false_yes_count": critical_false_yes_count,
         "critical_false_yes_rate": _safe_rate(
             critical_false_yes_count,
-            len(ok_rows),
+            len(rejection_rows),
         ),
 
         "runtime_ms": {
