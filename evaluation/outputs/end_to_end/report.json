@@ -1,44 +1,43 @@
 {
   "metrics": {
     "total": 50,
-    "ok_total": 48,
-    "error_total": 2,
-    "error_rate": 0.04,
-    "error_types": {
-      "ValidationError": 1,
-      "ServerError": 1
-    },
-    "decision_correct_count": 27,
-    "decision_accuracy": 0.5625,
-    "yes_total": 24,
-    "top1_selection_correct_count": 18,
-    "top1_selection_accuracy": 0.75,
-    "topk_contains_acceptable_count": 22,
-    "topk_contains_acceptable_rate": 0.9166666666666666,
-    "mrr": 0.8229166666666666,
-    "critical_false_yes_count": 20,
-    "critical_false_yes_rate": 0.4166666666666667,
+    "ok_total": 50,
+    "error_total": 0,
+    "error_rate": 0.0,
+    "error_types": {},
+    "decision_correct_count": 33,
+    "decision_accuracy": 0.66,
+    "yes_total": 25,
+    "top1_selection_correct_count": 21,
+    "top1_selection_accuracy": 0.84,
+    "topk_contains_acceptable_count": 21,
+    "topk_contains_acceptable_rate": 0.84,
+    "mrr": 0.84,
+    "rejection_total": 25,
+    "critical_false_yes_count": 12,
+    "critical_false_yes_rate": 0.48,
     "runtime_ms": {
-      "mean": 6406.833333333333,
-      "max": 39972
+      "mean": 8621.32,
+      "max": 35841
     },
     "cost": {
-      "total_estimated_usd": 0.021414999999999993,
-      "mean_estimated_usd": 0.00044614583333333333
+      "total_estimated_usd": 0.044056,
+      "mean_estimated_usd": 0.00088112
     },
     "llm_calls": {
-      "total": 126,
-      "mean": 2.625
+      "total": 290,
+      "mean": 5.8
     },
     "confusion_matrix": {
-      "YES->YES": 23,
-      "YES->NO": 1,
-      "NO->YES": 12,
-      "NO->NO": 3,
+      "YES->YES": 21,
+      "YES->NO": 4,
+      "NO->NO": 11,
+      "NO->YES": 4,
       "UNCERTAIN->YES": 8,
+      "UNCERTAIN->NO": 1,
       "UNCERTAIN->UNCERTAIN": 1
     }
   },
-  "failure_count": 28,
+  "failure_count": 17,
   "failures_path": "evaluation/outputs/end_to_end/failures.jsonl"
 }
