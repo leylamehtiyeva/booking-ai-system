@@ -14,7 +14,31 @@ class FieldRule:
     negative_aliases: Tuple[str, ...] = ()
 
 
+# FORBIDDEN constraints normally reject a listing when the mapped field is
+# confirmed YES (e.g. smoking_allowed=YES means smoking IS permitted — bad).
+# A few fields are phrased the opposite way — their "aliases" describe the
+# SAFE state, and "negative_aliases" describe the violation — so YES means
+# safe, not a violation. List them here; add/remove a Field.X line as new
+# cases are found, nothing else needs to change.
+INVERTED_POLARITY_FORBIDDEN_FIELDS: frozenset = frozenset({
+    Field.NON_SMOKING,
+    Field.FREE_CANCELLATION,
+})
+
+
 FIELD_RULES: Dict[Field, FieldRule] = {
+    Field.NON_SMOKING: FieldRule(
+        aliases=(
+            "non-smoking",
+            "non smoking",
+            "smoke-free",
+            "smoking not allowed",
+            "smoking is not allowed",
+            "no smoking",
+        ),
+        preferred_path_prefixes=("policies", "listing.description"),
+        negative_aliases=("smoking allowed", "smoking is allowed"),
+    ),
     Field.KITCHEN: FieldRule(
         aliases=("kitchen", "private kitchen", "kitchenette", "shared kitchen"),
         preferred_path_prefixes=("rooms[", "listing.facilities", "listing.description"),

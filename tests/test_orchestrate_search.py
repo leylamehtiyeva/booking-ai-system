@@ -365,54 +365,6 @@ async def test_bathroom_filter_is_applied(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_property_type_filter_is_applied(monkeypatch):
-    async def fake_get_candidates(req, max_items, source, trace=None):
-        return [
-            ListingRaw(
-                id="hotel-one",
-                name="Hotel in Baku",
-                city="Baku",
-                url="https://example.com/baku-hotel",
-                description="Nice hotel in Baku.",
-                rooms=[],
-            ),
-            ListingRaw(
-                id="apartment-one",
-                name="Apartment in Baku",
-                city="Baku",
-                url="https://example.com/baku-apartment",
-                description="Entire apartment in Baku with kitchen.",
-                rooms=[],
-            ),
-        ]
-
-    monkeypatch.setattr(
-        orchestrate_search_tool,
-        "get_candidates",
-        fake_get_candidates,
-    )
-
-    req = make_request(
-        property_types=["apartment"],
-        occupancy_types=[],
-    )
-
-    out = await orchestrate_search_request(
-        req,
-        source="fixtures",
-        candidate_pool_size=10,
-    )
-
-    assert out.status == SearchStatus.RESULTS
-    assert len(out.results) == 1
-    assert out.results[0].result_id == "apartment-one"
-    assert any(
-        "PROPERTY_TYPE:" in reason
-        for reason in out.results[0].why
-    )
-
-
-@pytest.mark.asyncio
 async def test_orchestrator_returns_normalized_response(monkeypatch):
     async def fake_get_candidates(req, max_items, source, trace=None):
         return [
@@ -525,6 +477,7 @@ async def test_constraint_resolution_results_are_attached(monkeypatch):
                 raw_text="satellite TV",
                 normalized_text="satellite TV",
                 resolver_type="textual",
+                priority="must",
                 decision="YES",
                 resolution_status="matched",
                 confidence=0.95,
@@ -565,6 +518,106 @@ async def test_constraint_resolution_results_are_attached(monkeypatch):
         first.reason
         == "Satellite TV is explicitly mentioned"
     )
+
+
+@pytest.mark.asyncio
+async def test_forbidden_constraint_excludes_violating_listing(monkeypatch):
+    async def fake_get_candidates(req, max_items, source, trace=None):
+        return [
+            ListingRaw(
+                id="smoking-1",
+                name="Smokers Loft",
+                city="Baku",
+                url="https://example.com/smoking-1",
+                description="Apartment in Baku.",
+                available_dates={
+                    "check_in": "2026-04-01",
+                    "check_out": "2026-04-30",
+                },
+                policies=[
+                    {"title": "Smoking", "content": "Smoking allowed on the balcony."},
+                ],
+            ),
+            ListingRaw(
+                id="quiet-1",
+                name="Quiet Apartment",
+                city="Baku",
+                url="https://example.com/quiet-1",
+                description="Apartment in Baku.",
+                available_dates={
+                    "check_in": "2026-04-01",
+                    "check_out": "2026-04-30",
+                },
+                policies=[
+                    {"title": "Smoking", "content": "Smoking is not allowed anywhere on the property."},
+                ],
+            ),
+        ]
+
+    monkeypatch.setattr(
+        orchestrate_search_tool,
+        "get_candidates",
+        fake_get_candidates,
+    )
+
+    req = make_request(
+        constraints=[
+            {
+                "raw_text": "no smoking",
+                "normalized_text": "no smoking",
+                "priority": "forbidden",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": ["smoking_allowed"],
+                "evidence_strategy": "structured",
+            }
+        ],
+    )
+
+    out = await orchestrate_search_request(
+        req,
+        source="fixtures",
+        candidate_pool_size=10,
+        fallback_policy=FallbackPolicy(enabled=False),
+    )
+
+    assert out.status == SearchStatus.RESULTS
+    result_ids = [r.result_id for r in out.results]
+    assert "smoking-1" not in result_ids
+    assert "quiet-1" in result_ids
+
+
+@pytest.mark.asyncio
+async def test_non_smoking_forbidden_constraint_matches_real_router_output():
+    """Reproduces the exact router output the user got from a real chat
+    message ("без курения в номере" -> mapped_fields=["non_smoking"],
+    priority=forbidden) against the fixtures added for this scenario."""
+    req = make_request(
+        constraints=[
+            {
+                "raw_text": "без курения в номере",
+                "normalized_text": "non-smoking",
+                "priority": "forbidden",
+                "category": "policy",
+                "mapping_status": "known",
+                "mapped_fields": ["non_smoking"],
+                "evidence_strategy": "structured",
+            }
+        ],
+    )
+
+    out = await orchestrate_search_request(
+        req,
+        source="fixtures",
+        candidate_pool_size=40,
+        result_limit=40,
+        fallback_policy=FallbackPolicy(enabled=False),
+    )
+
+    assert out.status == SearchStatus.RESULTS
+    result_ids = [r.result_id for r in out.results]
+    assert "baku-apt-smoking" not in result_ids
+    assert "baku-apt-nonsmoking" in result_ids
 
 
 @pytest.mark.asyncio

@@ -1,4 +1,4 @@
-from app.logic.matcher_structured import match_listing_structured
+from app.logic.matcher_structured import match_forbidden_fields, match_listing_structured
 from app.schemas.fields import Field
 from app.schemas.listing import ListingRaw, Room, RoomOption
 from app.schemas.match import Ternary
@@ -132,4 +132,108 @@ def test_match_listing_structured_uses_signal_rules():
     assert report.matches[Field.FREE_CANCELLATION].value == Ternary.YES
     assert report.matches[Field.PET_FRIENDLY].value == Ternary.YES
     assert report.matches[Field.BALCONY].value == Ternary.YES
-    
+
+
+def _forbidden_smoking_constraint() -> UserConstraint:
+    return UserConstraint(
+        raw_text="no smoking",
+        normalized_text="no smoking",
+        priority=ConstraintPriority.FORBIDDEN,
+        category=ConstraintCategory.AMENITY,
+        mapping_status=ConstraintMappingStatus.KNOWN,
+        mapped_fields=[Field.SMOKING_ALLOWED],
+        evidence_strategy=EvidenceStrategy.STRUCTURED,
+    )
+
+
+def test_match_forbidden_fields_detects_violation():
+    listing = ListingRaw(
+        id="f1",
+        name="Smokers Loft",
+        policies=[
+            {"title": "Smoking", "content": "Smoking allowed on the balcony."},
+        ],
+    )
+
+    result = match_forbidden_fields(listing, [_forbidden_smoking_constraint()])
+
+    assert result[Field.SMOKING_ALLOWED].value == Ternary.YES
+
+
+def test_match_forbidden_fields_confirms_safe_listing():
+    listing = ListingRaw(
+        id="f2",
+        name="Quiet Apartment",
+        policies=[
+            {"title": "Smoking", "content": "Smoking is not allowed anywhere on the property."},
+        ],
+    )
+
+    result = match_forbidden_fields(listing, [_forbidden_smoking_constraint()])
+
+    assert result[Field.SMOKING_ALLOWED].value == Ternary.NO
+
+
+def _forbidden_non_smoking_constraint() -> UserConstraint:
+    return UserConstraint(
+        raw_text="no smoking",
+        normalized_text="non-smoking",
+        priority=ConstraintPriority.FORBIDDEN,
+        category=ConstraintCategory.POLICY,
+        mapping_status=ConstraintMappingStatus.KNOWN,
+        mapped_fields=[Field.NON_SMOKING],
+        evidence_strategy=EvidenceStrategy.STRUCTURED,
+    )
+
+
+def test_match_forbidden_fields_non_smoking_confirms_safe_listing():
+    listing = ListingRaw(
+        id="ns1",
+        name="Non-smoking Apartment",
+        policies=[
+            {"title": "Smoking", "content": "Smoking is not allowed anywhere on the property."},
+        ],
+    )
+
+    result = match_forbidden_fields(listing, [_forbidden_non_smoking_constraint()])
+
+    assert result[Field.NON_SMOKING].value == Ternary.YES
+
+
+def test_match_forbidden_fields_non_smoking_detects_violation():
+    listing = ListingRaw(
+        id="ns2",
+        name="Smokers Loft",
+        policies=[
+            {"title": "Smoking", "content": "Smoking allowed on the balcony."},
+        ],
+    )
+
+    result = match_forbidden_fields(listing, [_forbidden_non_smoking_constraint()])
+
+    assert result[Field.NON_SMOKING].value == Ternary.NO
+
+
+def test_forbidden_fields_are_excluded_from_structured_matches():
+    listing = ListingRaw(
+        id="f3",
+        name="Smokers Loft",
+        policies=[
+            {"title": "Smoking", "content": "Smoking allowed on the balcony."},
+        ],
+    )
+
+    req = SearchRequest(
+        city="Baku",
+        check_in="2026-04-08",
+        check_out="2026-04-15",
+        adults=2,
+        children=0,
+        rooms=1,
+        currency="USD",
+        constraints=[_forbidden_smoking_constraint()],
+    )
+
+    report = match_listing_structured(listing, req)
+
+    assert Field.SMOKING_ALLOWED not in report.matches

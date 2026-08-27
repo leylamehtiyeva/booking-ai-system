@@ -76,6 +76,102 @@ def test_known_constraint_with_positive_structured_match_is_not_fallback_eligibl
     ) is False
 
 
+def test_unresolved_forbidden_textual_constraint_is_fallback_eligible():
+    constraint = UserConstraint(
+        raw_text="no smoking",
+        normalized_text="no smoking",
+        priority=ConstraintPriority.FORBIDDEN,
+        category=ConstraintCategory.AMENITY,
+        mapping_status=ConstraintMappingStatus.UNRESOLVED,
+        mapped_fields=[],
+        evidence_strategy=EvidenceStrategy.TEXTUAL,
+    )
+
+    policy = FallbackPolicy(enabled=True, must_only=True)
+
+    assert cer.is_constraint_fallback_eligible(
+        constraint,
+        structured_value=None,
+        policy=policy,
+    ) is True
+
+
+def test_known_forbidden_constraint_with_uncertain_structured_match_is_fallback_eligible():
+    constraint = UserConstraint(
+        raw_text="no smoking",
+        normalized_text="no smoking",
+        priority=ConstraintPriority.FORBIDDEN,
+        category=ConstraintCategory.AMENITY,
+        mapping_status=ConstraintMappingStatus.KNOWN,
+        mapped_fields=[Field.SMOKING_ALLOWED],
+        evidence_strategy=EvidenceStrategy.STRUCTURED,
+    )
+
+    policy = FallbackPolicy(enabled=True, must_only=True)
+
+    assert cer.is_constraint_fallback_eligible(
+        constraint,
+        structured_value=Ternary.UNCERTAIN,
+        policy=policy,
+    ) is True
+
+
+def test_unresolved_nice_textual_constraint_stays_ineligible_under_must_only():
+    constraint = UserConstraint(
+        raw_text="sea view",
+        normalized_text="sea view",
+        priority=ConstraintPriority.NICE,
+        category=ConstraintCategory.OTHER,
+        mapping_status=ConstraintMappingStatus.UNRESOLVED,
+        mapped_fields=[],
+        evidence_strategy=EvidenceStrategy.TEXTUAL,
+    )
+
+    policy = FallbackPolicy(enabled=True, must_only=True)
+
+    assert cer.is_constraint_fallback_eligible(
+        constraint,
+        structured_value=None,
+        policy=policy,
+    ) is False
+
+
+def test_normalize_result_carries_constraint_priority_and_mapped_fields():
+    req = cer.ConstraintResolutionRequest(
+        listing_id="listing-1",
+        listing_title="Demo listing",
+        constraint_id="c4",
+        raw_text="no smoking",
+        normalized_text="no smoking",
+        priority="forbidden",
+        category="amenity",
+        mapping_status="known",
+        evidence_strategy="structured",
+        mapped_fields=["non_smoking"],
+        structured_value=None,
+        resolver_type="textual",
+        listing_evidence=[],
+    )
+
+    raw = {
+        "signals": [],
+        "has_direct_support": False,
+        "has_direct_contradiction": False,
+        "has_only_weak_or_indirect_evidence": False,
+        "has_conflicting_evidence": False,
+        "evidence_missing": True,
+        "condition_or_extra_requirement_present": False,
+        "confidence": 0.0,
+        "reason": "",
+    }
+
+    result = cer._normalize_result(raw, req)
+
+    assert result.priority == "forbidden"
+    assert result.mapped_fields == ["non_smoking"]
+    assert result.decision == "UNCERTAIN"
+
+
 def test_decide_from_analysis_returns_no_for_strong_contradiction():
     analysis = cer.ConstraintEvidenceAnalysis(
         signals=[
@@ -219,6 +315,7 @@ async def test_resolve_listing_constraints_with_fallback_returns_unified_results
                 raw_text=req.raw_text,
                 normalized_text=req.normalized_text,
                 resolver_type="textual",
+                priority=req.priority,
                 decision="UNCERTAIN",
                 resolution_status="uncertain",
                 confidence=0.35,
@@ -235,6 +332,7 @@ async def test_resolve_listing_constraints_with_fallback_returns_unified_results
             raw_text=req.raw_text,
             normalized_text=req.normalized_text,
             resolver_type="textual",
+            priority=req.priority,
             decision="YES",
             resolution_status="matched",
             confidence=0.92,
@@ -389,6 +487,7 @@ async def test_fallback_policy_limits_constraints_per_listing(monkeypatch):
             raw_text=req.raw_text,
             normalized_text=req.normalized_text,
             resolver_type="textual",
+            priority=req.priority,
             decision="UNCERTAIN",
             resolution_status="uncertain",
             confidence=0.3,

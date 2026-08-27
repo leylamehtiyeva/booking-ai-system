@@ -6,43 +6,60 @@ from typing import Any
 def _property_type_value(
     item: dict[str, Any],
 ) -> str | None:
-    property_result = item.get(
-        "property_result"
-    )
+    """
+    Property type for diversification, read straight from the listing —
+    Apify already filters retrieval by requested property type, so this
+    is not the output of any match/comparison, just the raw field.
+    """
+    listing = item.get("listing")
+    property_type = getattr(listing, "property_type", None)
 
-    if property_result is None:
+    if not property_type:
         return None
 
-    actual_value = getattr(
-        property_result,
-        "actual_value",
-        None,
-    )
+    return str(property_type).strip().lower()
 
-    if actual_value is None:
-        return None
 
-    return str(actual_value).strip().lower()
+def _normalize_requested_property_types(
+    requested_property_types: list[Any] | None,
+) -> list[str]:
+    return [
+        str(getattr(property_type, "value", property_type)).lower()
+        for property_type in (requested_property_types or [])
+    ]
+
+
+def _property_type_mismatch(
+    item: dict[str, Any],
+    requested_property_types: list[Any] | None,
+) -> bool:
+    """
+    Safety net for when retrieval's own property-type filter misses (e.g.
+    the fast provider can only push a single propertyType to Apify, or
+    Apify's own classification disagrees with what we asked for).
+
+    Compares the listing's raw property_type field to the requested types
+    directly — no text inference, and unlike the old match_property_types,
+    this only excludes on a confirmed mismatch; it does not promote a
+    match to "strong" (see the diversification value in _property_type_value
+    for why the raw field is trusted here instead of a match result).
+    """
+    requested = _normalize_requested_property_types(requested_property_types)
+    if not requested:
+        return False
+
+    detected = _property_type_value(item)
+    if detected is None:
+        return False
+
+    return detected not in requested
 
 
 def _diversify_equal_score_items(
     items: list[dict[str, Any]],
     requested_property_types: list[Any] | None,
 ) -> list[dict[str, Any]]:
-    if not requested_property_types:
-        return items
-
-    requested = [
-        str(
-            getattr(
-                property_type,
-                "value",
-                property_type,
-            )
-        ).lower()
-        for property_type
-        in requested_property_types
-    ]
+    requested = _normalize_requested_property_types(requested_property_types)
 
     if len(requested) <= 1:
         return items
@@ -171,7 +188,10 @@ def summarize_selection_signals(item: dict[str, Any]) -> dict[str, int]:
     }
 
 
-def classify_ranked_item(item: dict[str, Any]) -> dict[str, Any]:
+def classify_ranked_item(
+    item: dict[str, Any],
+    requested_property_types: list[Any] | None = None,
+) -> dict[str, Any]:
     signals = summarize_selection_signals(item)
 
     must_total = signals["must_total"]
@@ -181,23 +201,16 @@ def classify_ranked_item(item: dict[str, Any]) -> dict[str, Any]:
     unknown_uncertain_count = signals["unknown_uncertain_count"]
     explicit_negative_count = signals["explicit_negative_count"]
 
-    property_result = item.get("property_result")
-    occupancy_result = item.get("occupancy_result")
-
-    property_value = getattr(property_result, "value", None)
-    occupancy_value = getattr(occupancy_result, "value", None)
-
-    property_value_str = str(getattr(property_value, "value", property_value)).lower()
-    occupancy_value_str = str(getattr(occupancy_value, "value", occupancy_value)).lower()
-
-    property_confirmed = property_value_str == "yes"
-    occupancy_confirmed = occupancy_value_str == "yes"
-
-    property_failed = property_value_str == "no"
-    occupancy_failed = occupancy_value_str == "no"
-
-    property_uncertain = property_value_str == "uncertain"
-    occupancy_uncertain = occupancy_value_str == "uncertain"
+    # A requested property type is itself a requirement — fold it into the
+    # same must-count "strong" requires ALL of, rather than letting a match
+    # promote to "strong" independently of unconfirmed musts (or an unknown
+    # property_type, e.g. from the fast provider, count as confirmed).
+    requested_property_type_values = _normalize_requested_property_types(requested_property_types)
+    if requested_property_type_values:
+        must_total += 1
+        detected_property_type = _property_type_value(item)
+        if detected_property_type is not None and detected_property_type in requested_property_type_values:
+            must_matched += 1
 
     selection_reasons: list[str] = []
     blocking_reasons: list[str] = []
@@ -219,11 +232,8 @@ def classify_ranked_item(item: dict[str, Any]) -> dict[str, Any]:
     if has_negative_resolution:
         blocking_reasons.append("negative constraint resolution result")
 
-    if property_failed:
+    if _property_type_mismatch(item, requested_property_types):
         blocking_reasons.append("property type does not match requested type")
-
-    if occupancy_failed:
-        blocking_reasons.append("occupancy type does not match requested type")
 
     if blocking_reasons:
         eligibility_status = "ineligible"
@@ -232,46 +242,24 @@ def classify_ranked_item(item: dict[str, Any]) -> dict[str, Any]:
     else:
         eligibility_status = "eligible"
 
-        no_uncertainty = (
-            must_uncertain == 0
-            and unknown_uncertain_count == 0
-            and not property_uncertain
-            and not occupancy_uncertain
-        )
+        no_uncertainty = must_uncertain == 0 and unknown_uncertain_count == 0
 
         no_failures = (
             must_failed == 0
             and explicit_negative_count == 0
             and not has_negative_resolution
-            and not property_failed
-            and not occupancy_failed
         )
 
         all_must_confirmed = must_total > 0 and must_matched == must_total
 
-        has_confirmed_core_signal = (
-            all_must_confirmed
-            or property_confirmed
-            or occupancy_confirmed
-        )
-
-        if no_failures and no_uncertainty and has_confirmed_core_signal:
+        if no_failures and no_uncertainty and all_must_confirmed:
             match_tier = "strong"
-
-            if all_must_confirmed:
-                selection_reasons.append("all required constraints are confirmed")
-            else:
-                selection_reasons.append("core request is confirmed")
+            selection_reasons.append("all required constraints are confirmed")
 
         elif must_total > 0 and must_matched == 0:
             match_tier = "weak"
 
-            if (
-                must_uncertain > 0
-                or unknown_uncertain_count > 0
-                or property_uncertain
-                or occupancy_uncertain
-            ):
+            if must_uncertain > 0 or unknown_uncertain_count > 0:
                 selection_reasons.append("no required constraints are confirmed")
             else:
                 selection_reasons.append("weak match for required constraints")
@@ -279,12 +267,7 @@ def classify_ranked_item(item: dict[str, Any]) -> dict[str, Any]:
         elif no_failures:
             match_tier = "partial"
 
-            if (
-                must_uncertain > 0
-                or unknown_uncertain_count > 0
-                or property_uncertain
-                or occupancy_uncertain
-            ):
+            if must_uncertain > 0 or unknown_uncertain_count > 0:
                 selection_reasons.append("some requested constraints are not fully confirmed")
             else:
                 selection_reasons.append("matches the core request")
@@ -306,7 +289,10 @@ def select_ranked_items(
     top_n: int,
     requested_property_types: list[Any] | None = None,
 ) -> list[dict[str, Any]]:
-    classified = [classify_ranked_item(item) for item in items]
+    classified = [
+        classify_ranked_item(item, requested_property_types=requested_property_types)
+        for item in items
+    ]
 
     def is_eligible(x):
         return x.get("eligibility_status") == "eligible"
@@ -385,23 +371,6 @@ def _derive_constraint_buckets(
         ternary_value = getattr(getattr(result, "value", None), "value", None) or str(getattr(result, "value", "")).lower()
         if not name:
             continue
-
-        status_item = {"name": name}
-
-        if ternary_value == "yes":
-            matched.append(status_item)
-        elif ternary_value == "uncertain":
-            uncertain.append(status_item)
-        elif ternary_value == "no":
-            failed.append(status_item)
-
-    for attr_name in ("property_result", "occupancy_result"):
-        result = item.get(attr_name)
-        if result is None:
-            continue
-
-        name = attr_name.replace("_result", "")
-        ternary_value = getattr(getattr(result, "value", None), "value", None) or str(getattr(result, "value", "")).lower()
 
         status_item = {"name": name}
 

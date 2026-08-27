@@ -385,69 +385,19 @@ def _collect_constraint_statuses(
         else:
             failed.append(_status_bucket(display_name, "failed", reason, constraint_meta=constraint_meta))
 
-    property_result = item.get("property_result")
-    if property_result is not None:
-        constraint_meta = _resolve_constraint_meta(
-            lookup=constraint_lookup,
-            name="property_type",
-            mapped_fields=["property_type"],
-        )
-        display_name = (
-            constraint_meta.get("normalized_text")
-            if constraint_meta and constraint_meta.get("normalized_text")
-            else "property_type"
-        )
-
-        if property_result.value == Ternary.YES:
-            matched.append(_status_bucket(display_name, "matched", property_result.why, constraint_meta=constraint_meta))
-        elif property_result.value == Ternary.UNCERTAIN:
-            uncertain.append(_status_bucket(display_name, "uncertain", property_result.why, constraint_meta=constraint_meta))
-        else:
-            failed.append(_status_bucket(display_name, "failed", property_result.why, constraint_meta=constraint_meta))
-
-    occupancy_result = item.get("occupancy_result")
-    if occupancy_result is not None:
-        constraint_meta = _resolve_constraint_meta(
-            lookup=constraint_lookup,
-            name="occupancy_type",
-            mapped_fields=["occupancy_type"],
-        )
-        display_name = (
-            constraint_meta.get("normalized_text")
-            if constraint_meta and constraint_meta.get("normalized_text")
-            else "occupancy_type"
-        )
-
-        if occupancy_result.value == Ternary.YES:
-            matched.append(_status_bucket(display_name, "matched", occupancy_result.why, constraint_meta=constraint_meta))
-        elif occupancy_result.value == Ternary.UNCERTAIN:
-            uncertain.append(_status_bucket(display_name, "uncertain", occupancy_result.why, constraint_meta=constraint_meta))
-        else:
-            failed.append(_status_bucket(display_name, "failed", occupancy_result.why, constraint_meta=constraint_meta))
-
     return _merge_constraint_resolution_statuses(item, matched, uncertain, failed)
 
 def _collect_facts(item: dict[str, Any], req: SearchRequest) -> list[ResultFact]:
     listing = item.get("listing")
     facts: list[ResultFact] = []
 
-    property_result = item.get("property_result")
-    if property_result is not None and getattr(property_result, "actual_value", None) is not None:
+    property_type = getattr(listing, "property_type", None)
+    if property_type:
         facts.append(
             ResultFact(
                 key="property_type",
-                value=property_result.actual_value,
-                source="property_semantics",
-            )
-        )
-
-    occupancy_result = item.get("occupancy_result")
-    if occupancy_result is not None and getattr(occupancy_result, "actual_value", None) is not None:
-        facts.append(
-            ResultFact(
-                key="occupancy_type",
-                value=occupancy_result.actual_value,
-                source="property_semantics",
+                value=property_type,
+                source="listing",
             )
         )
 

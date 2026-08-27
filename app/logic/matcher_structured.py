@@ -173,6 +173,23 @@ def match_listing_structured(listing: ListingRaw, request: SearchRequest) -> Mat
     )
 
 
+def match_forbidden_fields(
+    listing: ListingRaw,
+    forbidden_constraints: list,
+) -> dict[Field, FieldMatch]:
+    """
+    Structured detection for FORBIDDEN constraints.
+
+    Deliberately kept separate from match_listing_structured()'s `matches`:
+    a YES here means the listing violates the constraint (bad), whereas a
+    YES for a must/nice field means it's satisfied (good) — mixing the two
+    into one dict would make generic Ternary-based consumers misread a safe
+    forbidden field (NO) as a failed constraint.
+    """
+    forbidden_fields = _known_mapped_fields(forbidden_constraints)
+    return {f: _match_field_via_rules(listing, f) for f in forbidden_fields}
+
+
 def _match_field_via_rules(listing: ListingRaw, field: Field) -> FieldMatch:
     signals = collect_listing_signals(listing)
     rule = FIELD_RULES.get(field)

@@ -1,5 +1,7 @@
 from app.logic.result_selection import classify_ranked_item, select_ranked_items
+from app.schemas.listing import ListingRaw
 from app.schemas.property_semantics import PropertyType
+
 
 def test_classify_ranked_item_as_strong_when_all_required_constraints_are_confirmed():
     item = {
@@ -9,8 +11,6 @@ def test_classify_ranked_item_as_strong_when_all_required_constraints_are_confir
         "constraint_resolution_results": [],
         "matches": {},
         "numeric_results": [],
-        "property_result": None,
-        "occupancy_result": None,
     }
 
     classified = classify_ranked_item(item)
@@ -34,8 +34,6 @@ def test_classify_ranked_item_as_partial_when_required_constraints_are_uncertain
         ],
         "matches": {},
         "numeric_results": [],
-        "property_result": None,
-        "occupancy_result": None,
     }
 
     classified = classify_ranked_item(item)
@@ -59,8 +57,6 @@ def test_classify_ranked_item_as_ineligible_when_required_constraints_failed():
         ],
         "matches": {},
         "numeric_results": [],
-        "property_result": None,
-        "occupancy_result": None,
     }
 
     classified = classify_ranked_item(item)
@@ -79,8 +75,6 @@ def test_select_ranked_items_prefers_strong_matches_before_partial():
         "constraint_resolution_results": [],
         "matches": {},
         "numeric_results": [],
-        "property_result": None,
-        "occupancy_result": None,
     }
 
     partial_item = {
@@ -97,8 +91,6 @@ def test_select_ranked_items_prefers_strong_matches_before_partial():
         ],
         "matches": {},
         "numeric_results": [],
-        "property_result": None,
-        "occupancy_result": None,
     }
 
     selected = select_ranked_items([partial_item, strong_item], top_n=2)
@@ -108,11 +100,6 @@ def test_select_ranked_items_prefers_strong_matches_before_partial():
     assert selected[0]["match_tier"] == "strong"
     assert selected[1]["listing_name"] == "Partial listing"
     assert selected[1]["match_tier"] == "partial"
-    
-    
-    
-from app.logic.property_semantics import SemanticMatchResult
-from app.schemas.match import Ternary
 
 
 def _base_item(**overrides):
@@ -124,21 +111,9 @@ def _base_item(**overrides):
         "constraint_resolution_results": [],
         "matches": {},
         "numeric_results": [],
-        "property_result": None,
-        "occupancy_result": None,
     }
     item.update(overrides)
     return item
-
-
-def _property_result(value: Ternary, actual_value: str | None = None):
-    return SemanticMatchResult(
-        attribute="property_type",
-        value=value,
-        actual_value=actual_value,
-        evidence=[],
-        why=f"PROPERTY_TYPE: {value.value}",
-    )
 
 
 def test_eligible_strong_when_all_must_constraints_confirmed():
@@ -214,247 +189,211 @@ def test_ineligible_when_explicit_negative_evidence_found():
     assert "explicit negative evidence for requested constraints" in classified["blocking_reasons"]
 
 
-def test_property_type_yes_makes_core_request_strong():
-    item = _base_item(
-        property_result=_property_result(Ternary.YES, actual_value="ryokan"),
+def test_select_ranked_items_diversifies_equal_quality_requested_property_types():
+    """
+    Property type for diversification comes straight from item["listing"].property_type
+    (the Apify-provided field) — not from a match/comparison result, since retrieval
+    already filters by requested property type.
+    """
+    apartment_a = _base_item(
+        listing_name="Apartment A",
+        score=10.0,
+        listing=ListingRaw(property_type="apartment"),
     )
 
-    classified = classify_ranked_item(item)
+    apartment_b = _base_item(
+        listing_name="Apartment B",
+        score=10.0,
+        listing=ListingRaw(property_type="apartment"),
+    )
+
+    hotel_a = _base_item(
+        listing_name="Hotel A",
+        score=10.0,
+        listing=ListingRaw(property_type="hotel"),
+    )
+
+    hotel_b = _base_item(
+        listing_name="Hotel B",
+        score=10.0,
+        listing=ListingRaw(property_type="hotel"),
+    )
+
+    selected = select_ranked_items(
+        [
+            apartment_a,
+            apartment_b,
+            hotel_a,
+            hotel_b,
+        ],
+        top_n=2,
+        requested_property_types=[
+            PropertyType.APARTMENT,
+            PropertyType.HOTEL,
+        ],
+    )
+
+    assert [
+        item["listing_name"]
+        for item in selected
+    ] == [
+        "Apartment A",
+        "Hotel A",
+    ]
+
+
+def test_property_type_mismatch_makes_item_ineligible():
+    """
+    Safety net for when retrieval's own property-type filter misses (e.g.
+    Apify's own classification disagrees with what we requested).
+    """
+    item = _base_item(
+        matched_must_total=1,
+        matched_must_count=1,
+        listing=ListingRaw(property_type="hotel"),
+    )
+
+    classified = classify_ranked_item(
+        item,
+        requested_property_types=[PropertyType.APARTMENT],
+    )
+
+    assert classified["eligibility_status"] == "ineligible"
+    assert "property type does not match requested type" in classified["blocking_reasons"]
+
+
+def test_property_type_match_stays_eligible():
+    item = _base_item(
+        matched_must_total=1,
+        matched_must_count=1,
+        listing=ListingRaw(property_type="apartment"),
+    )
+
+    classified = classify_ranked_item(
+        item,
+        requested_property_types=[PropertyType.APARTMENT],
+    )
+
+    assert classified["eligibility_status"] == "eligible"
+    assert classified["blocking_reasons"] == []
+
+
+def test_unknown_property_type_is_not_blocked():
+    """
+    A listing without a structured property_type (e.g. the fast provider,
+    which doesn't set this field) is not penalized — this is an exclusion
+    safety net, not a confirmation requirement.
+    """
+    item = _base_item(
+        matched_must_total=1,
+        matched_must_count=1,
+        listing=ListingRaw(property_type=None),
+    )
+
+    classified = classify_ranked_item(
+        item,
+        requested_property_types=[PropertyType.APARTMENT],
+    )
+
+    assert classified["eligibility_status"] == "eligible"
+    assert classified["blocking_reasons"] == []
+
+
+def test_property_type_alone_makes_strong_when_no_other_musts():
+    """
+    A confirmed property_type counts as its own must slot, so a query with
+    no other must-constraints ("just find me a ryokan") can still reach
+    "strong" — via the same all-musts-confirmed rule, not a separate
+    OR-branch that could bypass an unconfirmed must elsewhere.
+    """
+    item = _base_item(
+        matched_must_total=0,
+        matched_must_count=0,
+        listing=ListingRaw(property_type="ryokan"),
+    )
+
+    classified = classify_ranked_item(
+        item,
+        requested_property_types=[PropertyType.RYOKAN],
+    )
 
     assert classified["eligibility_status"] == "eligible"
     assert classified["match_tier"] == "strong"
-    assert "core request is confirmed" in classified["selection_reasons"]
+    assert "all required constraints are confirmed" in classified["selection_reasons"]
 
 
-def test_property_type_uncertain_makes_partial_match():
+def test_unconfirmed_must_still_blocks_strong_even_when_property_type_matches():
+    """
+    The bug this replaces: property_type used to be an independent OR
+    signal that could push a listing to "strong" even when a real must
+    (e.g. wifi) was not confirmed. Now it's just one more slot in the same
+    all-or-nothing must count.
+    """
     item = _base_item(
-        property_result=_property_result(Ternary.UNCERTAIN, actual_value=None),
+        matched_must_total=1,  # e.g. "wifi", not confirmed
+        matched_must_count=0,
+        listing=ListingRaw(property_type="apartment"),
     )
 
-    classified = classify_ranked_item(item)
+    classified = classify_ranked_item(
+        item,
+        requested_property_types=[PropertyType.APARTMENT],
+    )
+
+    assert classified["match_tier"] != "strong"
+
+
+def test_unknown_property_type_prevents_strong_even_with_musts_confirmed():
+    item = _base_item(
+        matched_must_total=1,
+        matched_must_count=1,
+        listing=ListingRaw(property_type=None),
+    )
+
+    classified = classify_ranked_item(
+        item,
+        requested_property_types=[PropertyType.APARTMENT],
+    )
 
     assert classified["eligibility_status"] == "eligible"
-    assert classified["match_tier"] == "partial"
+    assert classified["match_tier"] != "strong"
 
 
-def test_property_type_no_makes_ineligible():
+def test_no_requested_property_types_never_blocks():
     item = _base_item(
-        property_result=_property_result(Ternary.NO, actual_value="apartment"),
+        matched_must_total=1,
+        matched_must_count=1,
+        listing=ListingRaw(property_type="hotel"),
     )
 
-    classified = classify_ranked_item(item)
+    classified = classify_ranked_item(item, requested_property_types=None)
 
-    assert classified["eligibility_status"] == "ineligible"
-    assert classified["match_tier"] == "weak"
+    assert classified["eligibility_status"] == "eligible"
+    assert classified["blocking_reasons"] == []
 
 
-def test_select_ranked_items_excludes_ineligible_items():
-    eligible_item = _base_item(
+def test_select_ranked_items_excludes_property_type_mismatch():
+    matching = _base_item(
         listing_name="Kyoto Ryokan",
         score=10.0,
-        property_result=_property_result(Ternary.YES, actual_value="ryokan"),
+        matched_must_total=1,
+        matched_must_count=1,
+        listing=ListingRaw(property_type="ryokan"),
     )
 
-    ineligible_item = _base_item(
+    mismatched = _base_item(
         listing_name="Kyoto Apartment",
         score=100.0,
-        property_result=_property_result(Ternary.NO, actual_value="apartment"),
+        matched_must_total=1,
+        matched_must_count=1,
+        listing=ListingRaw(property_type="apartment"),
     )
 
-    selected = select_ranked_items([ineligible_item, eligible_item], top_n=2)
+    selected = select_ranked_items(
+        [mismatched, matching],
+        top_n=2,
+        requested_property_types=[PropertyType.RYOKAN],
+    )
 
     assert len(selected) == 1
     assert selected[0]["listing_name"] == "Kyoto Ryokan"
-    assert selected[0]["eligibility_status"] == "eligible"
-    assert selected[0]["match_tier"] == "strong"
-    
-    
-def test_occupancy_yes_makes_strong():
-    item = _base_item(
-        occupancy_result=_property_result(Ternary.YES, actual_value="entire_place"),
-    )
-
-    classified = classify_ranked_item(item)
-
-    assert classified["eligibility_status"] == "eligible"
-    assert classified["match_tier"] == "strong"
-
-
-def test_occupancy_uncertain_makes_partial():
-    item = _base_item(
-        occupancy_result=_property_result(Ternary.UNCERTAIN),
-    )
-
-    classified = classify_ranked_item(item)
-
-    assert classified["eligibility_status"] == "eligible"
-    assert classified["match_tier"] == "partial"
-
-
-def test_occupancy_no_makes_ineligible():
-    item = _base_item(
-        occupancy_result=_property_result(Ternary.NO, actual_value="shared_room"),
-    )
-
-    classified = classify_ranked_item(item)
-
-    assert classified["eligibility_status"] == "ineligible"
-    assert classified["match_tier"] == "weak"
-
-
-def test_property_yes_but_other_must_uncertain_results_in_weak():
-    item = _base_item(
-        matched_must_total=1,
-        matched_must_count=0,
-        constraint_resolution_results=[
-            {
-                "normalized_text": "city center",
-                "resolution_status": "uncertain",
-                "explicit_negative": False,
-            }
-        ],
-        property_result=_property_result(Ternary.YES, actual_value="ryokan"),
-    )
-
-    classified = classify_ranked_item(item)
-
-    assert classified["eligibility_status"] == "eligible"
-    assert classified["match_tier"] == "weak"
-
-
-def test_property_yes_but_explicit_negative_still_ineligible():
-    item = _base_item(
-        property_result=_property_result(Ternary.YES, actual_value="ryokan"),
-        constraint_resolution_results=[
-            {
-                "normalized_text": "pet friendly",
-                "resolution_status": "failed",
-                "explicit_negative": True,
-            }
-        ],
-    )
-
-    classified = classify_ranked_item(item)
-
-    assert classified["eligibility_status"] == "ineligible"
-    assert classified["match_tier"] == "weak"
-    
-    
-def test_select_ranked_items_diversifies_equal_quality_requested_property_types():
-    apartment_a = _base_item(
-        listing_name="Apartment A",
-        score=10.0,
-        property_result=_property_result(
-            Ternary.YES,
-            actual_value="apartment",
-        ),
-    )
-
-    apartment_b = _base_item(
-        listing_name="Apartment B",
-        score=10.0,
-        property_result=_property_result(
-            Ternary.YES,
-            actual_value="apartment",
-        ),
-    )
-
-    hotel_a = _base_item(
-        listing_name="Hotel A",
-        score=10.0,
-        property_result=_property_result(
-            Ternary.YES,
-            actual_value="hotel",
-        ),
-    )
-
-    hotel_b = _base_item(
-        listing_name="Hotel B",
-        score=10.0,
-        property_result=_property_result(
-            Ternary.YES,
-            actual_value="hotel",
-        ),
-    )
-
-    selected = select_ranked_items(
-        [
-            apartment_a,
-            apartment_b,
-            hotel_a,
-            hotel_b,
-        ],
-        top_n=2,
-        requested_property_types=[
-            PropertyType.APARTMENT,
-            PropertyType.HOTEL,
-        ],
-    )
-
-    assert [
-        item["listing_name"]
-        for item in selected
-    ] == [
-        "Apartment A",
-        "Hotel A",
-    ]
-    
-    
-def test_select_ranked_items_diversifies_equal_quality_requested_property_types():
-    apartment_a = _base_item(
-        listing_name="Apartment A",
-        score=10.0,
-        property_result=_property_result(
-            Ternary.YES,
-            actual_value="apartment",
-        ),
-    )
-
-    apartment_b = _base_item(
-        listing_name="Apartment B",
-        score=10.0,
-        property_result=_property_result(
-            Ternary.YES,
-            actual_value="apartment",
-        ),
-    )
-
-    hotel_a = _base_item(
-        listing_name="Hotel A",
-        score=10.0,
-        property_result=_property_result(
-            Ternary.YES,
-            actual_value="hotel",
-        ),
-    )
-
-    hotel_b = _base_item(
-        listing_name="Hotel B",
-        score=10.0,
-        property_result=_property_result(
-            Ternary.YES,
-            actual_value="hotel",
-        ),
-    )
-
-    selected = select_ranked_items(
-        [
-            apartment_a,
-            apartment_b,
-            hotel_a,
-            hotel_b,
-        ],
-        top_n=2,
-        requested_property_types=[
-            PropertyType.APARTMENT,
-            PropertyType.HOTEL,
-        ],
-    )
-
-    assert [
-        item["listing_name"]
-        for item in selected
-    ] == [
-        "Apartment A",
-        "Hotel A",
-    ]
