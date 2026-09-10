@@ -1,8 +1,36 @@
 from __future__ import annotations
 
+from enum import Enum
+
 from pydantic import BaseModel, ConfigDict
 
 from app.logic.soft_evidence_retrieval import DEFAULT_EMBEDDING_MODEL
+
+
+class SoftEvidenceIntegrationMode(str, Enum):
+    """
+    Phase C: how the new pipeline's output relates to downstream
+    decisions. Only meaningful when enabled=True - a disabled policy is
+    OFF regardless of integration_mode (see effective_integration_mode).
+
+    SHADOW (default): today's Phase B behavior. The legacy textual
+        fallback remains authoritative; the new pipeline runs
+        internally, attaches item["soft_preference_evidence"], and
+        writes telemetry only - it never affects
+        constraint_resolution_results/score/filtering/selection.
+
+    AUTHORITATIVE_FOR_SUPPORTED: the new pipeline becomes authoritative
+        ONLY for constraints that map to a supported Phase B semantic
+        family. For those constraints, a deterministic
+        SoftConstraintDecision (app.logic.soft_constraint_decision_policy)
+        populates constraint_resolution_results directly and the legacy
+        textual fallback is skipped for that same constraint - no
+        double LLM work. Unsupported constraints still use the legacy
+        fallback unchanged.
+    """
+
+    SHADOW = "shadow"
+    AUTHORITATIVE_FOR_SUPPORTED = "authoritative_for_supported"
 
 
 class SoftEvidencePipelinePolicy(BaseModel):
@@ -49,6 +77,7 @@ class SoftEvidencePipelinePolicy(BaseModel):
     retrieval_top_k: int = 3
     embedding_model: str = DEFAULT_EMBEDDING_MODEL
     embedding_max_concurrency: int = 3
+    integration_mode: SoftEvidenceIntegrationMode = SoftEvidenceIntegrationMode.SHADOW
 
     def normalized_shadow_hotel_top_k(self) -> int:
         return max(0, self.shadow_hotel_top_k)
@@ -58,3 +87,11 @@ class SoftEvidencePipelinePolicy(BaseModel):
 
     def normalized_embedding_max_concurrency(self) -> int:
         return max(1, self.embedding_max_concurrency)
+
+    def is_authoritative_for_supported(self) -> bool:
+        """
+        False whenever disabled, regardless of integration_mode - a
+        disabled policy is OFF, not a silently-ignored authoritative
+        request.
+        """
+        return self.enabled and self.integration_mode == SoftEvidenceIntegrationMode.AUTHORITATIVE_FOR_SUPPORTED

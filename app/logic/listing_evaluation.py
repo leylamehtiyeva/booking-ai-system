@@ -14,6 +14,8 @@ from app.logic.matcher_structured import (
 from app.logic.numeric_filters import (
     evaluate_numeric_filters,
 )
+from app.logic.soft_constraint_decision_adapter import soft_constraint_decision_to_resolution_dict
+from app.logic.soft_constraint_decision_policy import decide_constraint, families_for_constraint
 from app.logic.soft_evidence_collection import collect_soft_evidence_pool
 from app.logic.soft_evidence_orchestration import build_shadow_soft_preference_evidence
 from app.logic.soft_evidence_retrieval import EMBEDDING_STEP_POOL, EMBEDDING_STEP_QUERY
@@ -454,22 +456,41 @@ async def _apply_constraint_fallback_layer(
     policy: FallbackPolicy,
     trace: RequestTrace | None = None,
 ) -> None:
+    """
+    Legacy textual LLM fallback. A constraint already present in an
+    item's constraint_resolution_results (i.e. _resolution_key already
+    matches one of item.get("constraint_resolution_results")) is never
+    re-resolved here - in OFF/SHADOW mode nothing pre-populates that
+    list, so this is a no-op there (identical to before Phase C); in
+    AUTHORITATIVE_FOR_SUPPORTED mode, _apply_soft_evidence_authoritative_layer
+    already inserted a deterministic soft-evidence decision for every
+    constraint it could resolve, before this function runs - this is
+    what guarantees no double LLM work (section 8 of the Phase C spec)
+    per listing, not merely per request.
+    """
     if not policy.enabled:
         for item in ranked:
-            item["constraint_resolution_results"] = []
+            item["constraint_resolution_results"] = list(item.get("constraint_resolution_results") or [])
         return
 
     top_k = policy.normalized_top_k()
 
     for item in ranked[:top_k]:
+        existing = list(item.get("constraint_resolution_results") or [])
+
         listing = item.get("listing")
         if listing is None:
-            item["constraint_resolution_results"] = []
+            item["constraint_resolution_results"] = existing
             continue
+
+        already_resolved_keys = {_resolution_key(r) for r in existing if isinstance(r, dict)}
+        constraints_to_resolve = [
+            c for c in (req.constraints or []) if _constraint_key(c) not in already_resolved_keys
+        ]
 
         results = await resolve_listing_constraints_with_fallback(
             listing=listing,
-            constraints=req.constraints or [],
+            constraints=constraints_to_resolve,
             structured_matches_by_field={
                 **item.get("matches", {}),
                 **item.get("forbidden_matches", {}),
@@ -478,12 +499,12 @@ async def _apply_constraint_fallback_layer(
             trace=trace,
         )
 
-        item["constraint_resolution_results"] = [
+        item["constraint_resolution_results"] = existing + [
             r.model_dump(mode="json") for r in results
         ]
 
     for item in ranked[top_k:]:
-        item["constraint_resolution_results"] = []
+        item["constraint_resolution_results"] = list(item.get("constraint_resolution_results") or [])
 
 
 def _build_soft_evidence_pipeline_policy() -> SoftEvidencePipelinePolicy:
@@ -521,6 +542,115 @@ def _build_shadow_debug_entry(
     }
 
 
+async def _run_soft_evidence_pipeline_for_scope(
+    req: SearchRequest,
+    ranked: list[dict],
+    *,
+    pipeline_policy: SoftEvidencePipelinePolicy,
+    verifier_policy: SemanticVerifierPolicy,
+    trace: RequestTrace | None,
+) -> tuple[list[dict], list[SoftPreferenceEvidence], list[dict[str, Any]]]:
+    """
+    Scope/assignment computation + pipeline execution shared by both the
+    SHADOW and AUTHORITATIVE_FOR_SUPPORTED layers below. Always sets
+    item["soft_preference_evidence"] = None for every item first (both
+    callers rely on this null-by-default semantics - see
+    _apply_soft_evidence_shadow_layer's docstring), then, if the
+    pipeline actually ran for any hotel, also sets it to the computed
+    SoftPreferenceEvidence for that hotel.
+
+    Returns (shadow_scope_items, evidences, serialized_assignments).
+    shadow_scope_items/evidences are positionally aligned and empty when
+    the pipeline did not run (disabled / no constraint mapped to a
+    validated family / empty scope) - callers other than
+    item["soft_preference_evidence"] itself (e.g.
+    constraint_resolution_results) are this function's caller's
+    responsibility, not this function's.
+    """
+    for item in ranked:
+        item["soft_preference_evidence"] = None
+
+    if not pipeline_policy.enabled:
+        return [], [], []
+
+    assignments = decompose_constraints(req.constraints or [])
+    serialized_assignments = [a.model_dump(mode="json") for a in assignments]
+    if not assignments:
+        return [], [], serialized_assignments
+
+    top_k = pipeline_policy.normalized_shadow_hotel_top_k()
+    shadow_scope = [item for item in ranked[:top_k] if item.get("listing") is not None]
+    if not shadow_scope:
+        return [], [], serialized_assignments
+
+    listings = [item["listing"] for item in shadow_scope]
+
+    evidences = await build_shadow_soft_preference_evidence(
+        listings=listings,
+        claim_assignments=assignments,
+        pipeline_policy=pipeline_policy,
+        verifier_policy=verifier_policy,
+        trace=trace,
+    )
+
+    for item, evidence in zip(shadow_scope, evidences):
+        item["soft_preference_evidence"] = evidence
+
+    return shadow_scope, evidences, serialized_assignments
+
+
+def _record_soft_evidence_trace(
+    *,
+    trace: RequestTrace | None,
+    pipeline_policy: SoftEvidencePipelinePolicy,
+    verifier_policy: SemanticVerifierPolicy,
+    shadow_scope: list[dict],
+    evidences: list[SoftPreferenceEvidence],
+    serialized_assignments: list[dict[str, Any]],
+    extra_summary: dict[str, Any] | None = None,
+) -> None:
+    if trace is None:
+        return
+
+    if not evidences:
+        trace.set_soft_evidence_shadow_data(claim_assignments=serialized_assignments)
+        return
+
+    shadow_detail = [
+        _build_shadow_debug_entry(item, evidence)
+        for item, evidence in zip(shadow_scope, evidences)
+    ]
+    # summarize_soft_preference_evidence (Phase A) already tallies
+    # everything it knew about at the time, including MIXED (Phase
+    # A's own ClaimRelation already had it) - it's extended in a
+    # later commit to also tally the Phase B retrieval_status
+    # distribution; called here, not duplicated, so that extension
+    # requires no change at this call site.
+    summary = summarize_soft_preference_evidence(evidences)
+    # Concurrency is a performance-only knob (see
+    # soft_evidence_orchestration's module docstring) - these counts
+    # describe how the calls already tallied above were scheduled,
+    # not a change to which calls were made.
+    embedding_call_count = sum(
+        1 for call in trace.external_calls if call.step in (EMBEDDING_STEP_QUERY, EMBEDDING_STEP_POOL)
+    )
+    summary["concurrency"] = {
+        "embedding_max_concurrency": pipeline_policy.normalized_embedding_max_concurrency(),
+        "verifier_max_concurrency": verifier_policy.normalized_semantic_verifier_max_concurrency(),
+        "embedding_call_count": embedding_call_count,
+        "verifier_call_count": summary["verifier"]["total_calls"],
+    }
+    summary["integration_mode"] = pipeline_policy.integration_mode.value
+    if extra_summary:
+        summary.update(extra_summary)
+
+    trace.set_soft_evidence_shadow_data(
+        summary=summary,
+        shadow_detail=shadow_detail,
+        claim_assignments=serialized_assignments,
+    )
+
+
 async def _apply_soft_evidence_shadow_layer(
     req: SearchRequest,
     ranked: list[dict],
@@ -546,73 +676,94 @@ async def _apply_soft_evidence_shadow_layer(
     claims resolve to NOT_ENOUGH_EVIDENCE, semantic_verifier remaining
     None separately only when zero Gemini calls were actually made).
     """
-    for item in ranked:
-        item["soft_preference_evidence"] = None
-
-    if not pipeline_policy.enabled:
-        if trace is not None:
-            trace.set_soft_evidence_shadow_data(claim_assignments=[])
-        return
-
-    assignments = decompose_constraints(req.constraints or [])
-    if not assignments:
-        if trace is not None:
-            trace.set_soft_evidence_shadow_data(claim_assignments=[])
-        return
-
-    top_k = pipeline_policy.normalized_shadow_hotel_top_k()
-    shadow_scope = [item for item in ranked[:top_k] if item.get("listing") is not None]
-
-    serialized_assignments = [a.model_dump(mode="json") for a in assignments]
-
-    if not shadow_scope:
-        if trace is not None:
-            trace.set_soft_evidence_shadow_data(claim_assignments=serialized_assignments)
-        return
-
-    listings = [item["listing"] for item in shadow_scope]
-
-    evidences = await build_shadow_soft_preference_evidence(
-        listings=listings,
-        claim_assignments=assignments,
+    shadow_scope, evidences, serialized_assignments = await _run_soft_evidence_pipeline_for_scope(
+        req, ranked, pipeline_policy=pipeline_policy, verifier_policy=verifier_policy, trace=trace,
+    )
+    _record_soft_evidence_trace(
+        trace=trace,
         pipeline_policy=pipeline_policy,
         verifier_policy=verifier_policy,
-        trace=trace,
+        shadow_scope=shadow_scope,
+        evidences=evidences,
+        serialized_assignments=serialized_assignments,
+    )
+
+
+async def _apply_soft_evidence_authoritative_layer(
+    req: SearchRequest,
+    ranked: list[dict],
+    *,
+    pipeline_policy: SoftEvidencePipelinePolicy,
+    verifier_policy: SemanticVerifierPolicy,
+    trace: RequestTrace | None = None,
+) -> None:
+    """
+    AUTHORITATIVE_FOR_SUPPORTED mode only (see evaluate_listings, which
+    calls this INSTEAD of _apply_soft_evidence_shadow_layer, and BEFORE
+    _apply_constraint_fallback_layer).
+
+    For every constraint that maps to a supported Phase B semantic
+    family (families_for_constraint - independent of any per-item
+    scope), derives a deterministic SoftConstraintDecision
+    (app.logic.soft_constraint_decision_policy.decide_constraint) from
+    this hotel's SoftPreferenceEvidence and appends its adapted dict
+    (app.logic.soft_constraint_decision_adapter) directly into
+    item["constraint_resolution_results"] - already-present entries are
+    never overwritten, only appended to, so
+    _ensure_unresolved_blocking_constraints_are_represented's existing
+    dedup-by-key logic sees them exactly like a legacy fallback result.
+
+    _apply_constraint_fallback_layer, which runs immediately after this
+    in evaluate_listings, skips any constraint whose key already exists
+    in an item's constraint_resolution_results - so a supported
+    constraint never also triggers the legacy LLM fallback for the same
+    listing (section 8: no double LLM work). Unsupported constraints
+    (families_for_constraint() == []) are left untouched here and are
+    resolved by that same legacy fallback call, unchanged.
+
+    Populates item["soft_preference_evidence"] exactly like the
+    SHADOW-mode layer, from the same single pipeline run - not a second,
+    duplicate one.
+    """
+    unsupported_constraint_ids = [
+        c.id for c in (req.constraints or []) if not families_for_constraint(c)
+    ]
+
+    shadow_scope, evidences, serialized_assignments = await _run_soft_evidence_pipeline_for_scope(
+        req, ranked, pipeline_policy=pipeline_policy, verifier_policy=verifier_policy, trace=trace,
     )
 
     for item, evidence in zip(shadow_scope, evidences):
-        item["soft_preference_evidence"] = evidence
+        listing = item["listing"]
+        existing = list(item.get("constraint_resolution_results") or [])
 
-    if trace is not None:
-        shadow_detail = [
-            _build_shadow_debug_entry(item, evidence)
-            for item, evidence in zip(shadow_scope, evidences)
-        ]
-        # summarize_soft_preference_evidence (Phase A) already tallies
-        # everything it knew about at the time, including MIXED (Phase
-        # A's own ClaimRelation already had it) - it's extended in a
-        # later commit to also tally the Phase B retrieval_status
-        # distribution; called here, not duplicated, so that extension
-        # requires no change at this call site.
-        summary = summarize_soft_preference_evidence(evidences)
-        # Concurrency is a performance-only knob (see
-        # soft_evidence_orchestration's module docstring) - these counts
-        # describe how the calls already tallied above were scheduled,
-        # not a change to which calls were made.
-        embedding_call_count = sum(
-            1 for call in trace.external_calls if call.step in (EMBEDDING_STEP_QUERY, EMBEDDING_STEP_POOL)
-        )
-        summary["concurrency"] = {
-            "embedding_max_concurrency": pipeline_policy.normalized_embedding_max_concurrency(),
-            "verifier_max_concurrency": verifier_policy.normalized_semantic_verifier_max_concurrency(),
-            "embedding_call_count": embedding_call_count,
-            "verifier_call_count": summary["verifier"]["total_calls"],
-        }
-        trace.set_soft_evidence_shadow_data(
-            summary=summary,
-            shadow_detail=shadow_detail,
-            claim_assignments=serialized_assignments,
-        )
+        for constraint in (req.constraints or []):
+            decision = decide_constraint(constraint, evidence)
+            if decision is None:
+                continue
+            existing.append(
+                soft_constraint_decision_to_resolution_dict(
+                    decision,
+                    listing_id=getattr(listing, "id", None),
+                    listing_title=getattr(listing, "name", None) or item.get("listing_name"),
+                )
+            )
+
+        item["constraint_resolution_results"] = existing
+
+    _record_soft_evidence_trace(
+        trace=trace,
+        pipeline_policy=pipeline_policy,
+        verifier_policy=verifier_policy,
+        shadow_scope=shadow_scope,
+        evidences=evidences,
+        serialized_assignments=serialized_assignments,
+        extra_summary={
+            "authoritative": {
+                "unsupported_constraint_ids_routed_to_legacy_fallback": unsupported_constraint_ids,
+            },
+        },
+    )
 
 
 def _apply_constraint_resolution_scoring(ranked_items: list[dict]) -> list[dict]:
@@ -745,7 +896,7 @@ async def evaluate_listings(
     - textual fallback
     - constraint coverage normalization
     - final deterministic filtering
-    - (shadow mode only) the new soft-evidence pipeline
+    - the new soft-evidence pipeline (mode-dependent, see below)
 
     Retrieval, final result selection and response normalization
     are outside this stage.
@@ -753,9 +904,26 @@ async def evaluate_listings(
     soft_evidence_pipeline_policy defaults to disabled when not passed
     (see _build_soft_evidence_pipeline_policy) - the new pipeline never
     runs, and item["soft_preference_evidence"] is always None, unless a
-    caller explicitly opts in. It is SHADOW MODE ONLY regardless: even
-    enabled, it only attaches item["soft_preference_evidence"] and
-    trace telemetry - it never affects score, filtering, or selection.
+    caller explicitly opts in. Three integration modes
+    (SoftEvidenceIntegrationMode), gated by policy.enabled and
+    policy.integration_mode via policy.is_authoritative_for_supported():
+
+    - OFF (enabled=False, any integration_mode): today's behavior.
+      Nothing runs; item["soft_preference_evidence"] stays None.
+    - SHADOW (enabled=True, integration_mode=SHADOW, the default): the
+      new pipeline runs AFTER every existing scoring/filtering decision
+      is already final, and only ever attaches
+      item["soft_preference_evidence"] + trace telemetry - it never
+      affects score, filtering, decision, or selection.
+    - AUTHORITATIVE_FOR_SUPPORTED (enabled=True, integration_mode=
+      AUTHORITATIVE_FOR_SUPPORTED): the new pipeline runs BEFORE the
+      legacy textual fallback. For constraints that map to a supported
+      Phase B semantic family, a deterministic SoftConstraintDecision
+      populates constraint_resolution_results directly (feeding the
+      SAME existing scoring/filtering code below unmodified) and the
+      legacy fallback is skipped for that constraint on that listing -
+      no double LLM work. Unsupported constraints still use the legacy
+      fallback, unchanged.
     """
     if trace is None:
         trace = RequestTrace()
@@ -777,7 +945,33 @@ async def evaluate_listings(
     if fallback_policy is None:
         fallback_policy = _build_fallback_policy(fallback_top_k=5)
 
-    # Resolve textual / uncertain evidence
+    # soft_evidence_pipeline_policy is resolved here (not only just
+    # before the shadow-layer call further down) because
+    # AUTHORITATIVE_FOR_SUPPORTED must run BEFORE the legacy textual
+    # fallback below - it populates constraint_resolution_results for
+    # every constraint it can resolve so the fallback call skips them.
+    if soft_evidence_pipeline_policy is None:
+        soft_evidence_pipeline_policy = _build_soft_evidence_pipeline_policy()
+    if semantic_verifier_policy is None:
+        semantic_verifier_policy = SemanticVerifierPolicy()
+
+    authoritative = soft_evidence_pipeline_policy.is_authoritative_for_supported()
+
+    if authoritative:
+        with trace.step("soft_evidence_authoritative_layer", ranked_count=len(ranked)):
+            await _apply_soft_evidence_authoritative_layer(
+                req,
+                ranked,
+                pipeline_policy=soft_evidence_pipeline_policy,
+                verifier_policy=semantic_verifier_policy,
+                trace=trace,
+            )
+
+    # Resolve textual / uncertain evidence. Constraints already resolved
+    # above by the authoritative soft-evidence layer are skipped inside
+    # (see _apply_constraint_fallback_layer's docstring) - a no-op when
+    # authoritative mode did not run, since nothing pre-populates
+    # constraint_resolution_results in that case.
     with trace.step("constraint_fallback_layer", ranked_count=len(ranked)):
         await _apply_constraint_fallback_layer(
             req,
@@ -818,20 +1012,20 @@ async def evaluate_listings(
     # SHADOW MODE ONLY: runs after every existing scoring/filtering
     # decision is already final. Only ever writes
     # item["soft_preference_evidence"] - nothing above this line reads
-    # it, and nothing below reads it either.
-    if soft_evidence_pipeline_policy is None:
-        soft_evidence_pipeline_policy = _build_soft_evidence_pipeline_policy()
-    if semantic_verifier_policy is None:
-        semantic_verifier_policy = SemanticVerifierPolicy()
-
-    with trace.step("soft_evidence_shadow_layer", ranked_count=len(ranked)):
-        await _apply_soft_evidence_shadow_layer(
-            req,
-            ranked,
-            pipeline_policy=soft_evidence_pipeline_policy,
-            verifier_policy=semantic_verifier_policy,
-            trace=trace,
-        )
+    # it, and nothing below reads it either. Skipped entirely in
+    # AUTHORITATIVE_FOR_SUPPORTED mode: _apply_soft_evidence_authoritative_layer
+    # above already ran the (single) pipeline execution and already
+    # populated item["soft_preference_evidence"] - running this too
+    # would duplicate every embedding/Gemini call for no reason.
+    if not authoritative:
+        with trace.step("soft_evidence_shadow_layer", ranked_count=len(ranked)):
+            await _apply_soft_evidence_shadow_layer(
+                req,
+                ranked,
+                pipeline_policy=soft_evidence_pipeline_policy,
+                verifier_policy=semantic_verifier_policy,
+                trace=trace,
+            )
 
     return ListingEvaluationResult(
         ranked_items=ranked,
