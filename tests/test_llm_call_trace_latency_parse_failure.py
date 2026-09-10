@@ -124,3 +124,52 @@ def test_llm_call_trace_flows_into_request_trace_summary():
     assert calls[0]["latency_ms"] == 42.0
     assert calls[0]["parse_failure"] is False
     assert calls[0]["error"] == "boom"
+
+
+def test_record_llm_call_from_response_returns_the_constructed_call():
+    """
+    A caller can read this call's own latency/tokens/cost directly
+    from the return value - never needs to guess which trace.llm_calls
+    entry is "the one it just made" (unsafe under concurrent execution).
+    """
+    trace = RequestTrace()
+
+    returned = record_llm_call_from_response(
+        trace=trace,
+        step="semantic_evidence_verifier",
+        model="gemini-2.5-flash",
+        response=_fake_response(prompt_tokens=20, completion_tokens=7, total_tokens=27),
+        success=True,
+        latency_ms=99.0,
+    )
+
+    assert returned is trace.llm_calls[0]
+    assert returned.prompt_tokens == 20
+    assert returned.total_tokens == 27
+    assert returned.latency_ms == 99.0
+
+
+def test_record_llm_call_from_response_returns_call_even_with_no_trace():
+    """trace=None still returns the constructed call - just doesn't append it anywhere."""
+    returned = record_llm_call_from_response(
+        trace=None,
+        step="semantic_evidence_verifier",
+        model="gemini-2.5-flash",
+        response=_fake_response(),
+        success=True,
+    )
+    assert returned.prompt_tokens == 10
+
+
+def test_record_llm_call_failed_returns_the_constructed_call():
+    returned = record_llm_call_failed(
+        trace=None,
+        step="semantic_evidence_verifier",
+        model="gemini-2.5-flash",
+        error="TimeoutError: no response",
+        latency_ms=55.0,
+    )
+    assert returned.error == "TimeoutError: no response"
+    assert returned.latency_ms == 55.0
+    assert returned.prompt_tokens is None
+    assert returned.estimated_cost_usd is None

@@ -16,6 +16,7 @@ from app.logic.numeric_filters import (
 )
 from app.logic.soft_evidence_collection import collect_soft_evidence_pool
 from app.logic.soft_evidence_orchestration import build_shadow_soft_preference_evidence
+from app.logic.soft_evidence_retrieval import EMBEDDING_STEP_POOL, EMBEDDING_STEP_QUERY
 from app.logic.soft_evidence_telemetry import summarize_soft_preference_evidence
 from app.logic.soft_preference_decomposition import decompose_constraints
 from app.observability.trace import RequestTrace
@@ -594,6 +595,19 @@ async def _apply_soft_evidence_shadow_layer(
         # distribution; called here, not duplicated, so that extension
         # requires no change at this call site.
         summary = summarize_soft_preference_evidence(evidences)
+        # Concurrency is a performance-only knob (see
+        # soft_evidence_orchestration's module docstring) - these counts
+        # describe how the calls already tallied above were scheduled,
+        # not a change to which calls were made.
+        embedding_call_count = sum(
+            1 for call in trace.external_calls if call.step in (EMBEDDING_STEP_QUERY, EMBEDDING_STEP_POOL)
+        )
+        summary["concurrency"] = {
+            "embedding_max_concurrency": pipeline_policy.normalized_embedding_max_concurrency(),
+            "verifier_max_concurrency": verifier_policy.normalized_semantic_verifier_max_concurrency(),
+            "embedding_call_count": embedding_call_count,
+            "verifier_call_count": summary["verifier"]["total_calls"],
+        }
         trace.set_soft_evidence_shadow_data(
             summary=summary,
             shadow_detail=shadow_detail,

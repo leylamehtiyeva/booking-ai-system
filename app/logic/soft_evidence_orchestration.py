@@ -6,17 +6,32 @@ aggregation -> SoftPreferenceEvidence, one object per hotel.
 Not wired into evaluate_listings() yet - see
 app.logic.listing_evaluation for the (separate, later) integration
 point.
+
+Concurrency design (performance-only - does not change any decision):
+planning (which embedding batches exist; which candidates get an
+approved Gemini call vs. SKIPPED_CALL_LIMIT) is always fully decided
+in plain, deterministic, synchronous Python, in a fixed order, BEFORE
+any concurrent execution begins. Only the already-approved, already-
+ordered external API calls are then executed concurrently (bounded by
+a semaphore, via app.logic.soft_evidence_concurrency.run_bounded), and
+results are restored into their pre-planned positions - never by
+completion order. See _plan_verifier_tasks and _plan_embedding_tasks.
 """
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from app.logic.semantic_evidence_verification import verify_evidence_relation
 from app.logic.soft_evidence_cleanup import DedupedEvidence, clean_and_route_candidates
-from app.logic.soft_evidence_collection import collect_soft_evidence_pool
+from app.logic.soft_evidence_collection import SoftEvidenceCandidate, collect_soft_evidence_pool
+from app.logic.soft_evidence_concurrency import run_bounded
 from app.logic.soft_evidence_retrieval import (
+    EMBEDDING_STEP_POOL,
+    EMBEDDING_STEP_QUERY,
+    MAX_BATCH_SIZE,
     EmbedBatchOutcome,
-    embed_evidence_pool,
-    embed_query_texts,
+    _embed_batch_async,
     retrieve_top_k,
 )
 from app.logic.soft_preference_decomposition import (
@@ -48,6 +63,13 @@ def compute_pool_retrieval_status(outcomes: list[EmbedBatchOutcome]) -> tuple[Re
     """
     An empty pool (no batches at all) is SUCCESS with no errors - a
     hotel genuinely having no evidence text is not a technical failure.
+
+    Depends only on the SET of outcomes (success/failure counts), not
+    their order, so it is unaffected by concurrent completion order.
+    The order of `outcomes` itself is still deterministic regardless
+    (see _plan_embedding_tasks: results are restored in batch-start
+    order, never completion order), so retrieval_errors' order is also
+    unaffected by concurrency.
     """
     if not outcomes:
         return RetrievalStatus.SUCCESS, []
@@ -103,40 +125,176 @@ class _HotelClaimContext:
         self.retrieved_candidate_count: int = 0
 
 
-async def schedule_gemini_verification(
+# ==================================================================
+# Embedding phase: deterministic planning + concurrent execution
+# ==================================================================
+
+
+@dataclass(frozen=True)
+class _EmbeddingTaskSpec:
+    """One planned embedding batch call. kind is "query" or "pool";
+    hotel_idx/batch_start are meaningless (-1/0) for the query task."""
+
+    kind: str
+    hotel_idx: int
+    batch_start: int
+    texts: list[str]
+    step: str
+
+
+def _plan_embedding_tasks(
+    *,
+    query_texts: list[str],
+    pools: dict[int, list[SoftEvidenceCandidate]],
+) -> list[_EmbeddingTaskSpec]:
+    """
+    Deterministic, synchronous, no I/O: decides exactly which
+    embedding batch calls are needed - the shared query batch (if any
+    queries exist) plus every hotel's evidence pool split into
+    <=MAX_BATCH_SIZE batches, in a fixed order (query first, then
+    hotel 0's batches in ascending start-index order, then hotel 1's,
+    ...). This plan - which calls exist, their content, their count -
+    is completely independent of concurrency; only how the resulting
+    task list is later executed (sequential or bounded-concurrent) can
+    vary.
+    """
+    specs: list[_EmbeddingTaskSpec] = []
+
+    if query_texts:
+        specs.append(_EmbeddingTaskSpec(kind="query", hotel_idx=-1, batch_start=0, texts=query_texts, step=EMBEDDING_STEP_QUERY))
+
+    for hotel_idx in sorted(pools.keys()):
+        pool = pools[hotel_idx]
+        for start in range(0, len(pool), MAX_BATCH_SIZE):
+            batch = pool[start : start + MAX_BATCH_SIZE]
+            specs.append(
+                _EmbeddingTaskSpec(
+                    kind="pool", hotel_idx=hotel_idx, batch_start=start,
+                    texts=[c.text for c in batch], step=EMBEDDING_STEP_POOL,
+                )
+            )
+
+    return specs
+
+
+async def _run_embedding_phase(
+    *,
+    listings: list[ListingRaw],
+    claim_ids: list[str],
+    pipeline_policy: SoftEvidencePipelinePolicy,
+    trace: RequestTrace | None,
+) -> tuple[
+    dict[str, list[float]],
+    EmbedBatchOutcome,
+    dict[int, list[SoftEvidenceCandidate]],
+    dict[int, list[list[float] | None]],
+    dict[int, list[EmbedBatchOutcome]],
+]:
+    """
+    Collects every hotel's evidence pool (pure, no I/O), plans the full
+    flat list of embedding batch calls (_plan_embedding_tasks - the
+    shared query batch and every hotel's pool batches, unchanged call
+    count/content from the sequential design), then executes that
+    whole plan through run_bounded(max_concurrency=
+    pipeline_policy.embedding_max_concurrency) - one bounded pool
+    shared across hotels, not a separate pool per hotel, so an idle
+    concurrency slot from a finished batch is immediately available to
+    any other hotel's pending batch.
+
+    Results are restored into query_vectors_by_claim / per-hotel
+    pool_vectors / pool_outcomes strictly by each task's planned
+    (hotel_idx, batch_start) position - run_bounded already guarantees
+    its return list is aligned with the input task order regardless of
+    completion order, so this restoration is safe under any
+    concurrency level.
+    """
+    pools: dict[int, list[SoftEvidenceCandidate]] = {
+        hotel_idx: collect_soft_evidence_pool(listing) for hotel_idx, listing in enumerate(listings)
+    }
+
+    queries = [(claim_id, get_retrieval_query(claim_id)) for claim_id in claim_ids]
+    query_texts = [q for _, q in queries]
+
+    specs = _plan_embedding_tasks(query_texts=query_texts, pools=pools)
+
+    query_vectors_by_claim: dict[str, list[float]] = {}
+    query_outcome = EmbedBatchOutcome(
+        success=True, batch_size=0, latency_ms=0.0, error=None, token_count=None, estimated_cost_usd=None
+    )
+    pool_vectors: dict[int, list[list[float] | None]] = {hotel_idx: [None] * len(pools[hotel_idx]) for hotel_idx in pools}
+    pool_outcomes: dict[int, list[EmbedBatchOutcome]] = {hotel_idx: [] for hotel_idx in pools}
+
+    if not specs:
+        return query_vectors_by_claim, query_outcome, pools, pool_vectors, pool_outcomes
+
+    coros = [
+        _embed_batch_async(spec.texts, model=pipeline_policy.embedding_model, trace=trace, step=spec.step)
+        for spec in specs
+    ]
+    raw_results = await run_bounded(coros, max_concurrency=pipeline_policy.normalized_embedding_max_concurrency())
+
+    for spec, (vectors, outcome) in zip(specs, raw_results):
+        if spec.kind == "query":
+            query_outcome = outcome
+            if vectors is not None:
+                query_vectors_by_claim = {claim_id: vector for (claim_id, _), vector in zip(queries, vectors)}
+        else:
+            pool_outcomes[spec.hotel_idx].append(outcome)
+            if vectors is not None:
+                for offset, vector in enumerate(vectors):
+                    pool_vectors[spec.hotel_idx][spec.batch_start + offset] = vector
+
+    return query_vectors_by_claim, query_outcome, pools, pool_vectors, pool_outcomes
+
+
+# ==================================================================
+# Verifier phase: deterministic planning + concurrent execution
+# ==================================================================
+
+
+@dataclass(frozen=True)
+class _PlannedVerifierTask:
+    hotel_idx: int
+    claim_id: str
+    candidate: DedupedEvidence
+    hypothesis: str
+
+
+def _plan_verifier_tasks(
     *,
     free_text_candidates: dict[int, dict[str, list[DedupedEvidence]]],
-    claim_hypotheses: dict[str, str] = CLAIM_HYPOTHESES,
-    canonical_claim_order: tuple[str, ...] = CANONICAL_CLAIM_ORDER,
+    claim_hypotheses: dict[str, str],
+    canonical_claim_order: tuple[str, ...],
     retrieval_top_k: int,
     verifier_policy: SemanticVerifierPolicy,
-    trace: RequestTrace | None,
-) -> tuple[dict[int, dict[str, list[EvidenceItem]]], dict[int, dict]]:
+) -> tuple[dict[int, dict[str, list[EvidenceItem | None]]], list[_PlannedVerifierTask], list[tuple[int, str, int]]]:
     """
-    Fair, deterministic round-based scheduling:
+    Fair, deterministic round-based PLANNING ONLY - no async, no I/O,
+    identical output for any concurrency level (concurrency is not
+    even a parameter here):
         candidate_rank -> claim (canonical order) -> hotel (rank order)
     i.e. every active claim on every hotel gets its rank-0 (best)
-    candidate attempted before ANY claim gets its rank-1 candidate
-    attempted anywhere. Per-hotel budget is "effective" (widened past
-    the base if a hotel genuinely has more active claims than the
-    base would cover); the request budget is a safety ceiling only -
-    sized by the caller so it does not bind before the per-hotel
-    budgets do under the standard scope.
+    candidate PLANNED before ANY claim's rank-1 candidate is planned.
+    Per-hotel budget is "effective" (widened past the base if a hotel
+    genuinely has more active claims than the base would cover); the
+    request budget is a safety ceiling exactly as configured, never
+    silently widened.
 
-    Once a budget is exhausted the traversal does NOT stop - every
-    remaining (rank, claim, hotel) combination still gets visited and
-    still gets an explicit SKIPPED_CALL_LIMIT EvidenceItem. A claim
-    with zero free-text candidates for a hotel (nothing retrieved,
-    everything deterministic, or everything filtered/deduped away)
-    simply never enters this loop for that hotel - not a special case.
+    The traversal does NOT stop once a budget is exhausted - every
+    remaining (rank, claim, hotel) combination is still visited and
+    still gets an explicit SKIPPED_CALL_LIMIT EvidenceItem placed
+    directly into `slots`. A claim with zero free-text candidates for
+    a hotel simply never enters this loop for that hotel.
 
-    Returns (gemini_items, verifier_usage_accum): gemini_items maps
-    hotel_idx -> claim_id -> list[EvidenceItem] (Gemini-resolved or
-    skipped); verifier_usage_accum maps hotel_idx -> a running dict of
-    calls/latency_ms/input_tokens/output_tokens/total_tokens/
-    estimated_cost_usd/parse_failures/errors, built by reading back
-    trace.llm_calls[-1] immediately after each awaited verifier call
-    (safe because calls are sequential, never concurrent).
+    Returns:
+      - slots: hotel_idx -> claim_id -> ordered list of EvidenceItem
+        (SKIPPED_CALL_LIMIT items already filled in) or None
+        (placeholder for an approved task, filled in after execution)
+      - approved: ordered list of _PlannedVerifierTask, in the exact
+        rank -> claim -> hotel plan order
+      - approved_positions: parallel to `approved` - (hotel_idx,
+        claim_id, slot_index) telling the executor exactly where each
+        approved task's eventual result belongs in `slots`
     """
     hotel_indices = sorted(free_text_candidates.keys())
 
@@ -146,24 +304,17 @@ async def schedule_gemini_verification(
         n_active_claims = sum(1 for claim_id in canonical_claim_order if free_text_candidates[hotel_idx].get(claim_id))
         hotel_budgets[hotel_idx] = effective_per_hotel_budget(base=base, n_active_claims=n_active_claims)
 
-    # The request budget is the safety ceiling exactly as configured -
-    # it is never silently widened here. "Consistent with the effective
-    # hotel budgets" is achieved by SemanticVerifierPolicy's own default
-    # (60 = 5 hotels x MAX_CLAIMS), not by overriding whatever a caller
-    # explicitly configures; a deliberately tighter cap must still bind.
+    # A safety ceiling exactly as configured - never silently widened.
+    # "Consistent with the effective hotel budgets" is achieved by
+    # SemanticVerifierPolicy's own default (60 = 5 hotels x MAX_CLAIMS),
+    # not by overriding whatever a caller explicitly configures.
     request_budget = verifier_policy.normalized_max_calls_per_request()
 
-    gemini_items: dict[int, dict[str, list[EvidenceItem]]] = {
+    slots: dict[int, dict[str, list[EvidenceItem | None]]] = {
         hotel_idx: {claim_id: [] for claim_id in canonical_claim_order} for hotel_idx in hotel_indices
     }
-    verifier_usage_accum: dict[int, dict] = {
-        hotel_idx: {
-            "calls": 0, "latency_ms": 0.0, "input_tokens": 0, "output_tokens": 0,
-            "total_tokens": 0, "estimated_cost_usd": 0.0, "cost_known": False,
-            "parse_failures": 0, "errors": [],
-        }
-        for hotel_idx in hotel_indices
-    }
+    approved: list[_PlannedVerifierTask] = []
+    approved_positions: list[tuple[int, str, int]] = []
 
     for rank in range(retrieval_top_k):
         for claim_id in canonical_claim_order:
@@ -175,61 +326,115 @@ async def schedule_gemini_verification(
                 candidate = candidates[rank]
 
                 if request_budget <= 0 or hotel_budgets[hotel_idx] <= 0:
-                    item = EvidenceItem(
-                        evidence_text=candidate.text,
-                        relation=None,
-                        resolution_method=ClaimResolutionMethod.GEMINI,
-                        resolution_status=EvidenceResolutionStatus.SKIPPED_CALL_LIMIT,
-                        error="skipped: verifier call limit reached",
-                        source_type=candidate.source_type,
-                        source_path=candidate.source_path,
-                        retrieval_score=candidate.retrieval_score,
+                    slots[hotel_idx][claim_id].append(
+                        EvidenceItem(
+                            evidence_text=candidate.text,
+                            relation=None,
+                            resolution_method=ClaimResolutionMethod.GEMINI,
+                            resolution_status=EvidenceResolutionStatus.SKIPPED_CALL_LIMIT,
+                            error="skipped: verifier call limit reached",
+                            source_type=candidate.source_type,
+                            source_path=candidate.source_path,
+                            retrieval_score=candidate.retrieval_score,
+                        )
                     )
-                else:
-                    request_budget -= 1
-                    hotel_budgets[hotel_idx] -= 1
+                    continue
 
-                    result = await verify_evidence_relation(
-                        candidate.text, hypothesis, policy=verifier_policy, trace=trace,
-                    )
+                request_budget -= 1
+                hotel_budgets[hotel_idx] -= 1
 
-                    item = EvidenceItem(
-                        evidence_text=candidate.text,
-                        relation=result.relation,
-                        resolution_method=ClaimResolutionMethod.GEMINI,
-                        resolution_status=result.status,
-                        error=result.error,
-                        source_type=candidate.source_type,
-                        source_path=candidate.source_path,
-                        retrieval_score=candidate.retrieval_score,
-                        verifier_reason=result.reason,
-                    )
+                slot_index = len(slots[hotel_idx][claim_id])
+                slots[hotel_idx][claim_id].append(None)  # placeholder, filled in after execution
+                approved.append(_PlannedVerifierTask(hotel_idx=hotel_idx, claim_id=claim_id, candidate=candidate, hypothesis=hypothesis))
+                approved_positions.append((hotel_idx, claim_id, slot_index))
 
-                    accum = verifier_usage_accum[hotel_idx]
-                    accum["calls"] += 1
-                    if trace is not None and trace.llm_calls:
-                        last_call = trace.llm_calls[-1]
-                        accum["latency_ms"] += last_call.latency_ms or 0.0
-                        accum["input_tokens"] += last_call.prompt_tokens or 0
-                        accum["output_tokens"] += last_call.completion_tokens or 0
-                        accum["total_tokens"] += last_call.total_tokens or 0
-                        # A call with no response at all (API/network
-                        # failure before any response came back) has
-                        # estimated_cost_usd=None - genuinely unknown,
-                        # not zero. Only sum in and mark cost_known when
-                        # a real cost value was actually observed, so a
-                        # hotel where every call failed without a
-                        # response reports estimated_cost_usd=None
-                        # below, not a fabricated 0.0.
-                        if last_call.estimated_cost_usd is not None:
-                            accum["estimated_cost_usd"] += last_call.estimated_cost_usd
-                            accum["cost_known"] = True
-                        if last_call.parse_failure:
-                            accum["parse_failures"] += 1
-                        if last_call.error:
-                            accum["errors"].append(last_call.error)
+    return slots, approved, approved_positions
 
-                gemini_items[hotel_idx][claim_id].append(item)
+
+def _new_verifier_usage_accum() -> dict:
+    return {
+        "calls": 0, "latency_ms": 0.0, "input_tokens": 0, "output_tokens": 0,
+        "total_tokens": 0, "estimated_cost_usd": 0.0, "cost_known": False,
+        "parse_failures": 0, "errors": [],
+    }
+
+
+async def schedule_gemini_verification(
+    *,
+    free_text_candidates: dict[int, dict[str, list[DedupedEvidence]]],
+    claim_hypotheses: dict[str, str] = CLAIM_HYPOTHESES,
+    canonical_claim_order: tuple[str, ...] = CANONICAL_CLAIM_ORDER,
+    retrieval_top_k: int,
+    verifier_policy: SemanticVerifierPolicy,
+    trace: RequestTrace | None,
+) -> tuple[dict[int, dict[str, list[EvidenceItem]]], dict[int, dict]]:
+    """
+    Plans (see _plan_verifier_tasks - deterministic, unaffected by
+    concurrency) which candidates get an approved Gemini call vs.
+    SKIPPED_CALL_LIMIT, THEN executes only the approved tasks
+    concurrently, bounded by verifier_policy.
+    normalized_semantic_verifier_max_concurrency(). Each executed
+    result is restored into its pre-planned slot by position (never by
+    completion order), so the final gemini_items structure is
+    identical for any concurrency level.
+
+    Returns (gemini_items, verifier_usage_accum) - same shape as
+    before: gemini_items maps hotel_idx -> claim_id ->
+    list[EvidenceItem]; verifier_usage_accum maps hotel_idx -> a
+    running usage dict, now built directly from each
+    SemanticVerificationResult's own telemetry fields (not by peeking
+    at trace.llm_calls[-1], which is unsafe once calls run
+    concurrently and may complete in a different order than they were
+    issued).
+    """
+    slots, approved, approved_positions = _plan_verifier_tasks(
+        free_text_candidates=free_text_candidates,
+        claim_hypotheses=claim_hypotheses,
+        canonical_claim_order=canonical_claim_order,
+        retrieval_top_k=retrieval_top_k,
+        verifier_policy=verifier_policy,
+    )
+
+    verifier_usage_accum: dict[int, dict] = {hotel_idx: _new_verifier_usage_accum() for hotel_idx in free_text_candidates}
+
+    if approved:
+        coros = [
+            verify_evidence_relation(task.candidate.text, task.hypothesis, policy=verifier_policy, trace=trace)
+            for task in approved
+        ]
+        results = await run_bounded(coros, max_concurrency=verifier_policy.normalized_semantic_verifier_max_concurrency())
+
+        for task, result, (hotel_idx, claim_id, slot_index) in zip(approved, results, approved_positions):
+            item = EvidenceItem(
+                evidence_text=task.candidate.text,
+                relation=result.relation,
+                resolution_method=ClaimResolutionMethod.GEMINI,
+                resolution_status=result.status,
+                error=result.error,
+                source_type=task.candidate.source_type,
+                source_path=task.candidate.source_path,
+                retrieval_score=task.candidate.retrieval_score,
+                verifier_reason=result.reason,
+            )
+            slots[hotel_idx][claim_id][slot_index] = item
+
+            accum = verifier_usage_accum[hotel_idx]
+            accum["calls"] += 1
+            accum["latency_ms"] += result.latency_ms
+            accum["input_tokens"] += result.prompt_tokens or 0
+            accum["output_tokens"] += result.completion_tokens or 0
+            accum["total_tokens"] += result.total_tokens or 0
+            if result.estimated_cost_usd is not None:
+                accum["estimated_cost_usd"] += result.estimated_cost_usd
+                accum["cost_known"] = True
+            if result.parse_failure:
+                accum["parse_failures"] += 1
+            if result.error:
+                accum["errors"].append(result.error)
+
+    # slots no longer contains any None placeholder at this point -
+    # every approved position was filled in by the loop above.
+    gemini_items: dict[int, dict[str, list[EvidenceItem]]] = slots  # type: ignore[assignment]
 
     return gemini_items, verifier_usage_accum
 
@@ -252,10 +457,8 @@ async def build_shadow_soft_preference_evidence(
     """
     claim_ids = [claim_id for claim_id in CANONICAL_CLAIM_ORDER if any(a.claim_id == claim_id for a in claim_assignments)]
 
-    query_vectors_by_claim, query_outcome = embed_query_texts(
-        [(claim_id, get_retrieval_query(claim_id)) for claim_id in claim_ids],
-        model=pipeline_policy.embedding_model,
-        trace=trace,
+    query_vectors_by_claim, query_outcome, pools, pool_vectors, pool_outcomes = await _run_embedding_phase(
+        listings=listings, claim_ids=claim_ids, pipeline_policy=pipeline_policy, trace=trace,
     )
 
     contexts: dict[int, dict[str, _HotelClaimContext]] = {}
@@ -263,9 +466,8 @@ async def build_shadow_soft_preference_evidence(
     for hotel_idx, listing in enumerate(listings):
         contexts[hotel_idx] = {claim_id: _HotelClaimContext() for claim_id in claim_ids}
 
-        pool = collect_soft_evidence_pool(listing)
-        pool_vectors, pool_outcomes = embed_evidence_pool(pool, model=pipeline_policy.embedding_model, trace=trace)
-        pool_status, pool_errors = compute_pool_retrieval_status(pool_outcomes)
+        pool = pools[hotel_idx]
+        pool_status, pool_errors = compute_pool_retrieval_status(pool_outcomes[hotel_idx])
 
         for claim_id in claim_ids:
             ctx = contexts[hotel_idx][claim_id]
@@ -277,7 +479,7 @@ async def build_shadow_soft_preference_evidence(
                 continue  # no query vector at all - nothing to retrieve for this claim
 
             retrieved = retrieve_top_k(
-                query_vectors_by_claim[claim_id], pool, pool_vectors, k=pipeline_policy.retrieval_top_k,
+                query_vectors_by_claim[claim_id], pool, pool_vectors[hotel_idx], k=pipeline_policy.retrieval_top_k,
             )
             ctx.retrieved_candidate_count = len(retrieved)
 

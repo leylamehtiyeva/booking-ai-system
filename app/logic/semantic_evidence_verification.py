@@ -65,17 +65,26 @@ RESPONSE_SCHEMA = {
 
 class SemanticVerificationResult(BaseModel):
     """
-    Narrow return type of verify_evidence_relation(). Owns nothing about
-    retrieval (no source_type/source_path/retrieval_score/evidence_text)
-    - the Phase B orchestrator combines this with the retrieval-side
-    metadata it already holds to build an EvidenceItem.
+    Narrow return type of verify_evidence_relation(). Still owns
+    nothing about retrieval (no source_type/source_path/
+    retrieval_score/evidence_text) - the orchestrator combines this
+    with the retrieval-side metadata it already holds to build an
+    EvidenceItem.
+
+    Does own this SPECIFIC call's own telemetry (latency/tokens/cost/
+    parse_failure), mirroring the LLMCallTrace entry
+    record_llm_call_from_response/record_llm_call_failed already
+    constructed for it - added so a caller can aggregate a call's usage
+    directly from the awaited result, never by peeking at
+    trace.llm_calls[-1] (unsafe once verifier calls run concurrently,
+    since the last-appended trace entry is not necessarily this call's).
 
     verify_evidence_relation() always returns one of these - never None,
     never raises - so a caller can never accidentally drop a verification
     attempt. status here is only ever RESOLVED or VERIFICATION_FAILED:
-    SKIPPED_CALL_LIMIT is assigned directly by the Phase B orchestrator
-    BEFORE calling this function at all (a skipped call never reaches
-    Gemini, so this module never produces that status itself).
+    SKIPPED_CALL_LIMIT is assigned directly by the orchestrator BEFORE
+    calling this function at all (a skipped call never reaches Gemini,
+    so this module never produces that status itself).
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -84,6 +93,13 @@ class SemanticVerificationResult(BaseModel):
     reason: str | None = None
     status: EvidenceResolutionStatus
     error: str | None = None
+
+    parse_failure: bool = False
+    latency_ms: float = 0.0
+    prompt_tokens: int | None = None
+    completion_tokens: int | None = None
+    total_tokens: int | None = None
+    estimated_cost_usd: float | None = None
 
 
 def _gemini_client():
@@ -169,7 +185,7 @@ async def verify_evidence_relation(
             latency_ms = round((time.perf_counter() - started) * 1000, 2)
             error = f"{type(e).__name__}: {e}"
 
-            record_llm_call_failed(
+            call = record_llm_call_failed(
                 trace=trace,
                 step=STEP_NAME,
                 model=policy.model,
@@ -183,6 +199,12 @@ async def verify_evidence_relation(
                 reason=None,
                 status=EvidenceResolutionStatus.VERIFICATION_FAILED,
                 error=error,
+                parse_failure=call.parse_failure,
+                latency_ms=call.latency_ms or 0.0,
+                prompt_tokens=call.prompt_tokens,
+                completion_tokens=call.completion_tokens,
+                total_tokens=call.total_tokens,
+                estimated_cost_usd=call.estimated_cost_usd,
             )
 
         latency_ms = round((time.perf_counter() - started) * 1000, 2)
@@ -201,7 +223,7 @@ async def verify_evidence_relation(
         except (json.JSONDecodeError, ValueError, AttributeError) as e:
             error = f"{type(e).__name__}: {e}"
 
-            record_llm_call_from_response(
+            call = record_llm_call_from_response(
                 trace=trace,
                 step=STEP_NAME,
                 model=policy.model,
@@ -217,10 +239,16 @@ async def verify_evidence_relation(
                 reason=None,
                 status=EvidenceResolutionStatus.VERIFICATION_FAILED,
                 error=error,
+                parse_failure=call.parse_failure,
+                latency_ms=call.latency_ms or 0.0,
+                prompt_tokens=call.prompt_tokens,
+                completion_tokens=call.completion_tokens,
+                total_tokens=call.total_tokens,
+                estimated_cost_usd=call.estimated_cost_usd,
             )
 
         # ---- 3. Valid structured response ----
-        record_llm_call_from_response(
+        call = record_llm_call_from_response(
             trace=trace,
             step=STEP_NAME,
             model=policy.model,
@@ -235,6 +263,12 @@ async def verify_evidence_relation(
             reason=reason,
             status=EvidenceResolutionStatus.RESOLVED,
             error=None,
+            parse_failure=call.parse_failure,
+            latency_ms=call.latency_ms or 0.0,
+            prompt_tokens=call.prompt_tokens,
+            completion_tokens=call.completion_tokens,
+            total_tokens=call.total_tokens,
+            estimated_cost_usd=call.estimated_cost_usd,
         )
 
     return await asyncio.to_thread(_call_sync)

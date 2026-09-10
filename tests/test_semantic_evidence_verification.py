@@ -67,6 +67,15 @@ async def test_verify_evidence_relation_success(monkeypatch):
     assert result.reason == "explicit match"
     assert result.error is None
 
+    # Result carries its own telemetry directly - matches the trace entry,
+    # so a caller never needs to peek at trace.llm_calls to aggregate usage.
+    assert result.parse_failure is False
+    assert result.latency_ms >= 0
+    assert result.prompt_tokens == 100
+    assert result.completion_tokens == 20
+    assert result.total_tokens == 120
+    assert result.estimated_cost_usd is not None
+
     assert len(trace.llm_calls) == 1
     call = trace.llm_calls[0]
     assert call.step == "semantic_evidence_verifier"
@@ -77,6 +86,9 @@ async def test_verify_evidence_relation_success(monkeypatch):
     assert call.prompt_tokens == 100
     assert call.total_tokens == 120
     assert call.estimated_cost_usd is not None
+    assert call.latency_ms == result.latency_ms
+    assert call.total_tokens == result.total_tokens
+    assert call.estimated_cost_usd == result.estimated_cost_usd
 
 
 # ---------------- 1. API / network / timeout exception (no response object) ----------------
@@ -103,6 +115,13 @@ async def test_verify_evidence_relation_api_exception_records_failed_call_withou
     assert result.relation is None
     assert "TimeoutError" in result.error
 
+    # No response object existed - result's own token accounting must
+    # stay unknown, not zero, matching the trace entry.
+    assert result.parse_failure is False
+    assert result.prompt_tokens is None
+    assert result.total_tokens is None
+    assert result.estimated_cost_usd is None
+
     assert len(trace.llm_calls) == 1
     call = trace.llm_calls[0]
     assert call.success is False
@@ -113,6 +132,7 @@ async def test_verify_evidence_relation_api_exception_records_failed_call_withou
     assert call.prompt_tokens is None
     assert call.total_tokens is None
     assert call.estimated_cost_usd is None
+    assert call.latency_ms == result.latency_ms
 
 
 # ---------------- 2. Response received, but JSON/enum parsing fails ----------------
@@ -137,6 +157,11 @@ async def test_verify_evidence_relation_invalid_json_is_parse_failure(monkeypatc
     assert result.status == EvidenceResolutionStatus.VERIFICATION_FAILED
     assert result.relation is None
     assert result.error is not None
+
+    # response WAS received; content just didn't parse - result's own
+    # parse_failure/tokens must reflect that (usage_metadata still readable).
+    assert result.parse_failure is True
+    assert result.prompt_tokens == 100
 
     assert len(trace.llm_calls) == 1
     call = trace.llm_calls[0]
@@ -175,8 +200,17 @@ async def test_verify_evidence_relation_invalid_relation_enum_is_parse_failure(m
 
 
 def test_semantic_verification_result_has_no_retrieval_fields():
+    """
+    Still owns nothing about retrieval - only this call's own outcome
+    and telemetry (relation/status/error/reason plus latency/tokens/
+    cost/parse_failure, added for concurrency-safe usage aggregation).
+    """
     fields = set(sev.SemanticVerificationResult.model_fields)
-    assert fields == {"relation", "reason", "status", "error"}
+    assert fields == {
+        "relation", "reason", "status", "error",
+        "parse_failure", "latency_ms", "prompt_tokens",
+        "completion_tokens", "total_tokens", "estimated_cost_usd",
+    }
     assert "source_type" not in fields
     assert "source_path" not in fields
     assert "retrieval_score" not in fields
