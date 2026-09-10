@@ -18,6 +18,16 @@ Facility.name at the listing level or the room level:
 Everything else (.overview prose, rooms[N].options[M].choices,
 rooms[N].name, highlights, description, policies, fine_print) is free
 text and must go through the semantic verifier instead.
+
+Also routes claims whose hypothesis is specifically about GUEST-REPORTED
+experience (currently only Q3: "Guests report little or no significant
+noise disturbance.") away from evidence that isn't actually guest-review
+text - see CLAIMS_REQUIRING_GUEST_REPORTED_EVIDENCE below. This fixes a
+real attribution bug: property/listing text like a facility named
+"Quiet street view" was reaching the semantic verifier for Q3 and being
+scored SUPPORT, even though it says nothing about what guests actually
+experienced. The fix is structural (source_type-based), not a literal-
+phrase check, so it generalizes to any non-review evidence.
 """
 
 from __future__ import annotations
@@ -58,6 +68,21 @@ DETERMINISTIC_CLAIM_ALIASES: dict[str, set[str]] = {
     "Q1": {"soundproofing", "soundproof rooms"},
 }
 
+# Claims whose hypothesis is specifically about what GUESTS reported
+# experiencing (not a property/listing description claim). Only
+# evidence actually sourced from guest review text can be evaluated as
+# SUPPORT/CONTRADICT for these - a facility name, description sentence,
+# or highlight can describe the property, but cannot report what a
+# guest experienced. General, source-type-based rule (not a per-phrase
+# check): extend this set if a future claim has the same "guest
+# experience" semantics as Q3.
+CLAIMS_REQUIRING_GUEST_REPORTED_EVIDENCE: frozenset[str] = frozenset({"Q3"})
+
+# The only source_type collect_soft_evidence_pool ever attributes to
+# actual guest review text (reviewSummary.pros/.cons) - see
+# app.logic.soft_evidence_collection._collect_review_summary_candidates.
+GUEST_REPORTED_SOURCE_TYPES: frozenset[str] = frozenset({"review_summary"})
+
 
 def is_controlled_structured_tag(path: str | None) -> bool:
     if not path:
@@ -75,17 +100,29 @@ def resolve_deterministic_claim(
 ) -> EvidenceItem | None:
     """
     Returns:
-    - None: not a controlled structured tag -> genuine free text, the
+    - None: not a controlled structured tag (and not a guest-evidence-
+      only claim being fed non-review text) -> genuine free text, the
       caller should route this candidate to the semantic verifier
       instead.
     - EvidenceItem(relation=SUPPORT): controlled tag with a known alias
       match for this claim_id.
-    - EvidenceItem(relation=NOT_ENOUGH_EVIDENCE): controlled tag, but no
-      known mapping exists for this claim_id -> deliberately resolved
-      deterministically as "no evidence" and NEVER forwarded to the
-      semantic verifier (a raw structured tag string is not
-      natural-language evidence to reason over).
+    - EvidenceItem(relation=NOT_ENOUGH_EVIDENCE): either a controlled
+      tag with no known mapping for this claim_id, OR a claim in
+      CLAIMS_REQUIRING_GUEST_REPORTED_EVIDENCE fed evidence that isn't
+      guest-review text - both deliberately resolved deterministically
+      and NEVER forwarded to the semantic verifier.
     """
+    if claim_id in CLAIMS_REQUIRING_GUEST_REPORTED_EVIDENCE and source_type not in GUEST_REPORTED_SOURCE_TYPES:
+        return EvidenceItem(
+            evidence_text=text,
+            relation=EvidenceRelation.NOT_ENOUGH_EVIDENCE,
+            resolution_method=ClaimResolutionMethod.DETERMINISTIC,
+            resolution_status=EvidenceResolutionStatus.RESOLVED,
+            source_type=source_type,
+            source_path=source_path,
+            retrieval_score=retrieval_score,
+        )
+
     if source_type not in STRUCTURED_SOURCE_TYPES:
         return None
     if not is_controlled_structured_tag(source_path):

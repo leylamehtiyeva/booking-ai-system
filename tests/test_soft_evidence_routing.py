@@ -120,3 +120,83 @@ def test_non_structured_source_type_returns_none():
         text="Soundproofing",
     )
     assert item is None
+
+
+# ---------------- Q3 guest-reported-evidence attribution fix ----------------
+
+
+def test_q3_facility_evidence_is_not_enough_evidence_not_support():
+    """
+    Known bug regression: a facility/description candidate like "Quiet
+    street view" must never become SUPPORT for Q3 ("guests report
+    little or no significant noise disturbance") - it says nothing
+    about what guests experienced. Resolved deterministically, never
+    forwarded to the semantic verifier.
+    """
+    item = resolve_deterministic_claim(
+        claim_id="Q3",
+        source_type="facilities",
+        source_path="listing.facilities[4].name",
+        text="Quiet street view",
+    )
+    assert item is not None
+    assert item.relation == EvidenceRelation.NOT_ENOUGH_EVIDENCE
+    assert item.resolution_method == ClaimResolutionMethod.DETERMINISTIC
+    assert item.resolution_status == EvidenceResolutionStatus.RESOLVED
+
+
+def test_q3_description_evidence_is_not_enough_evidence():
+    """Same rule for a free-text description sentence, not just a structured tag."""
+    item = resolve_deterministic_claim(
+        claim_id="Q3",
+        source_type="description",
+        source_path="listing.description",
+        text="Enjoy a quiet street view from your room.",
+    )
+    assert item is not None
+    assert item.relation == EvidenceRelation.NOT_ENOUGH_EVIDENCE
+
+
+def test_q3_highlight_evidence_is_not_enough_evidence():
+    """General rule, not a phrase check - any non-review source is excluded."""
+    item = resolve_deterministic_claim(
+        claim_id="Q3",
+        source_type="highlights",
+        source_path="highlights[0].contents",
+        text="Peaceful and calm atmosphere",
+    )
+    assert item is not None
+    assert item.relation == EvidenceRelation.NOT_ENOUGH_EVIDENCE
+
+
+def test_q3_review_summary_evidence_is_routed_to_semantic_verifier():
+    """
+    Genuine guest-reported text must still reach the semantic verifier
+    (returns None here) so it can be evaluated as SUPPORT/CONTRADICT -
+    the fix only excludes non-review sources, it does not block Q3
+    entirely.
+    """
+    item = resolve_deterministic_claim(
+        claim_id="Q3",
+        source_type="review_summary",
+        source_path="raw.reviewSummary.pros[0].description",
+        text="The room was very quiet and we heard no traffic at night.",
+    )
+    assert item is None
+
+
+def test_q2_facility_evidence_is_unaffected_by_the_q3_fix():
+    """
+    Q2 ("surroundings explicitly described as quiet") is a property-
+    description claim, not a guest-experience claim - a facility/
+    description candidate like "Quiet street view" must still be
+    allowed to reach the semantic verifier for Q2 (returns None here),
+    where it can legitimately be scored SUPPORT.
+    """
+    item = resolve_deterministic_claim(
+        claim_id="Q2",
+        source_type="description",
+        source_path="listing.description",
+        text="Quiet street view",
+    )
+    assert item is None
