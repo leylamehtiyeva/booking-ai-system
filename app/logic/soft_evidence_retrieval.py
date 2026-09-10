@@ -16,6 +16,7 @@ experiments. Not configurable to a different model in this migration.
 
 from __future__ import annotations
 
+import asyncio
 import math
 import os
 import time
@@ -165,6 +166,24 @@ def _embed_batch(
         token_count=token_count,
         estimated_cost_usd=estimated_cost_usd,
     )
+
+
+async def _embed_batch_async(
+    texts: list[str],
+    *,
+    model: str,
+    trace: RequestTrace | None,
+    step: str,
+) -> tuple[list[list[float]] | None, EmbedBatchOutcome]:
+    """
+    Async wrapper around _embed_batch, via asyncio.to_thread - the same
+    pattern already used by semantic_evidence_verification.
+    verify_evidence_relation for its (also synchronous) google-genai
+    SDK call. _embed_batch itself is completely unchanged: same call,
+    same trace recording, same outcome shape - this only lets it run
+    on a worker thread so multiple batches can be in flight at once.
+    """
+    return await asyncio.to_thread(_embed_batch, texts, model=model, trace=trace, step=step)
 
 
 def embed_query_texts(
