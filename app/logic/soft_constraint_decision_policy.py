@@ -4,16 +4,41 @@ Deterministic Python policy that aggregates one hotel's AtomicClaimResult[]
 original UserConstraint - the missing bridge documented in the Phase C
 task: AtomicClaimResult[] -> decision for the original UserConstraint.
 
+PRODUCT CONTRACT (read before changing any rule below): this system does
+not certify that a hotel objectively has a subjective property like
+"quiet" or "good for remote work" - the user still opens the listing and
+judges for themselves. The goal is to use available evidence to narrow
+the search to good CANDIDATES. Concretely:
+
+- YES means "the available evidence is sufficiently supportive to
+  consider this listing a good candidate for the preference" - not "we
+  have proven this property objectively satisfies it".
+- NO means "the available evidence gives a strong reason NOT to
+  consider this listing a candidate".
+- UNCERTAIN means "evidence is insufficient or materially conflicting"
+  - it is not a failure, and downstream eligibility does not treat it
+    as one (see app.logic.listing_evaluation._fails_constraint_resolution
+    and _apply_constraint_resolution_scoring: only priority=="must" with
+    decision=="NO", or a violating FORBIDDEN decision, cause hard
+    exclusion - UNCERTAIN never does).
+
 No LLM is used here. Every branch below is plain, inspectable Python -
-see the Phase C task spec for the exact conservative rules per family
-(quiet, remote_work, family_friendly, and four single-claim families).
+see the Phase C task spec for the exact rules per family (quiet,
+remote_work, family_friendly, and four single-claim families). Reasons
+must describe evidence, never assert a guarantee (no "this hotel is
+quiet" - only "soundproofing is listed; no guest noise evidence was
+found").
 
 Two-step design (kept deliberately separate, per the task's "separate
 factual state from user desirability" requirement):
 
 1. compute_family_factual_state(): factual, direction-agnostic -
-   SATISFIED / VIOLATED / UNRESOLVED for the positive semantic
-   proposition a family represents. Never inverted for FORBIDDEN.
+   SATISFIED / VIOLATED / UNRESOLVED for "is there enough evidence to
+   keep this listing as a useful candidate for the positive semantic
+   proposition a family represents" (SATISFIED), "is there a strong
+   reason to exclude it" (VIOLATED), or neither (UNRESOLVED). Never
+   inverted for FORBIDDEN - see _quiet_state's docstring for why this
+   still starts from evidence being read literally.
 2. apply_preference_direction(): applied exactly once, at the
    constraint boundary, turning (factual_state, PreferenceDirection)
    into YES / NO / UNCERTAIN.
@@ -161,114 +186,187 @@ def _notes_for(claims_by_id: dict[str, AtomicClaimResult], claim_ids: tuple[str,
 # ==================================================================
 
 
+_QUIET_LABELS: dict[str, str] = {"Q1": "soundproofing", "Q2": "quiet surroundings", "Q3": "guest noise reports"}
+
+
 def _quiet_state(claims_by_id: dict[str, AtomicClaimResult]) -> _FamilyOutcome:
+    """
+    Search-narrowing policy, not a certification of silence (see module
+    docstring). Q3's evidence is now attribution-fixed at the routing
+    boundary (app.logic.soft_evidence_routing.CLAIMS_REQUIRING_GUEST_REPORTED_EVIDENCE)
+    - only genuine guest-review text can ever reach Q3 as SUPPORT/CONTRADICT,
+    so "Quiet street view" (a facility/description claim) can no longer
+    falsely support it.
+
+    - YES: at least one of Q1/Q2/Q3 is a confirmed positive quiet signal,
+      AND neither Q2 nor Q3 is CONTRADICT or MIXED. A single positive
+      signal (e.g. soundproofing alone) is a useful candidate signal,
+      not proof of silence - the reason says exactly that.
+    - NO: Q2 or Q3 is explicitly CONTRADICT AND there is no positive
+      quiet signal anywhere to offset it.
+    - UNCERTAIN: everything else - including a positive signal that
+      coexists with a contradiction/MIXED elsewhere (conflict is
+      preserved for the user, not silently resolved to NO), and the
+      all-no-evidence case.
+    """
     q1, q2, q3 = _claim(claims_by_id, "Q1"), _claim(claims_by_id, "Q2"), _claim(claims_by_id, "Q3")
     notes = _notes_for(claims_by_id, ("Q1", "Q2", "Q3"))
+    claim_pairs = (("Q1", q1), ("Q2", q2), ("Q3", q3))
 
-    q2_violation = _relation_for_violation(q2)
-    q3_violation = _relation_for_violation(q3)
-    if q2_violation == ClaimRelation.CONTRADICT or q3_violation == ClaimRelation.CONTRADICT:
-        decisive = tuple(
-            cid for cid, rel in (("Q2", q2_violation), ("Q3", q3_violation)) if rel == ClaimRelation.CONTRADICT
-        )
-        return _FamilyOutcome(
-            "quiet", FactualState.VIOLATED, decisive, notes,
-            "guest/listing evidence explicitly reports significant noise or non-quiet surroundings",
-        )
+    supporting = tuple(cid for cid, c in claim_pairs if _relation_for_satisfaction(c) == ClaimRelation.SUPPORT)
+    has_support = bool(supporting)
 
-    # MIXED (or CONTRADICT, already excluded above) on Q2/Q3 must block a
-    # positive YES - known live issue: the verifier has been observed
-    # mis-scoring "quiet street view" as Q3 SUPPORT (a view claim, not a
-    # noise-disturbance report). This policy does NOT special-case that
-    # text pattern (would be "hiding the bug with vague aggregation",
-    # explicitly disallowed) - see
-    # tests/test_soft_constraint_decision_policy.py::test_known_regression_quiet_street_view_false_q3_support
-    # for the documented current behavior and app.logic.semantic_evidence_verification
-    # for where an eventual verifier-level fix belongs.
-    blocked = _raw_relation(q2) in (ClaimRelation.MIXED, ClaimRelation.CONTRADICT) or _raw_relation(q3) in (
+    contradicted = tuple(
+        cid for cid, c in (("Q2", q2), ("Q3", q3)) if _relation_for_violation(c) == ClaimRelation.CONTRADICT
+    )
+    blocking = _raw_relation(q2) in (ClaimRelation.MIXED, ClaimRelation.CONTRADICT) or _raw_relation(q3) in (
         ClaimRelation.MIXED,
         ClaimRelation.CONTRADICT,
     )
 
-    if not blocked and _relation_for_satisfaction(q3) == ClaimRelation.SUPPORT:
-        return _FamilyOutcome(
-            "quiet", FactualState.SATISFIED, ("Q3",), notes,
-            "guests explicitly report little or no significant noise disturbance",
+    if contradicted and not has_support:
+        reason = (
+            f"{'/'.join(_QUIET_LABELS[c] for c in contradicted)} explicitly report noise; "
+            "no positive quiet evidence was found to offset it"
         )
+        return _FamilyOutcome("quiet", FactualState.VIOLATED, contradicted, notes, reason)
 
-    if (
-        not blocked
-        and _relation_for_satisfaction(q1) == ClaimRelation.SUPPORT
-        and _relation_for_satisfaction(q2) == ClaimRelation.SUPPORT
-    ):
-        return _FamilyOutcome(
-            "quiet", FactualState.SATISFIED, ("Q1", "Q2"), notes,
-            "soundproofing is confirmed and the immediate surroundings are explicitly described as quiet",
+    if has_support and not blocking:
+        reason = f"{'; '.join(_QUIET_LABELS[c] for c in supporting)} support a quiet match; no contradicting evidence was found"
+        return _FamilyOutcome("quiet", FactualState.SATISFIED, supporting, notes, reason)
+
+    if has_support and (contradicted or blocking):
+        conflicting = tuple(cid for cid in ("Q2", "Q3") if _raw_relation(claims_by_id.get(cid)) in (
+            ClaimRelation.MIXED, ClaimRelation.CONTRADICT,
+        ))
+        decisive = tuple(sorted(set(supporting) | set(conflicting)))
+        reason = (
+            f"{'; '.join(_QUIET_LABELS[c] for c in supporting)} suggest a quiet match, but "
+            f"{'; '.join(_QUIET_LABELS[c] for c in conflicting)} conflicts with it - not enough to "
+            "confidently call this a quiet match"
         )
+        return _FamilyOutcome("quiet", FactualState.UNRESOLVED, decisive, notes, reason)
 
     return _FamilyOutcome(
         "quiet", FactualState.UNRESOLVED, (), notes,
-        "no conclusive evidence establishes whether the property is quiet",
+        "no conclusive evidence about noise or quiet surroundings was found",
     )
 
 
+_REMOTE_WORK_LABELS: dict[str, str] = {
+    "RW1": "a desk/workspace", "RW2A": "Wi-Fi availability", "RW2B": "connection reliability",
+}
+
+
 def _remote_work_state(claims_by_id: dict[str, AtomicClaimResult]) -> _FamilyOutcome:
+    """
+    RW1 (desk) and RW2A (Wi-Fi) are the essential signals for "good
+    candidate for remote work" - RW2B (reliability) is a bonus, never
+    required: desk + Wi-Fi with unknown reliability is exactly the kind
+    of useful candidate this system should surface, with a reason that
+    says reliability was not established (never that it IS reliable).
+
+    - YES: RW1 SUPPORT AND RW2A SUPPORT AND RW2B is not CONTRADICT/MIXED
+      (RW2B may be SUPPORT or NOT_ENOUGH_EVIDENCE).
+    - NO: RW1 or RW2A explicitly CONTRADICT, AND no positive remote-work
+      evidence anywhere to offset it.
+    - UNCERTAIN: only one of RW1/RW2A is supported, or there is
+      conflicting evidence (e.g. an essential CONTRADICT alongside a
+      positive signal elsewhere, or RW2B CONTRADICT/MIXED despite RW1+RW2A
+      SUPPORT).
+    """
     rw1, rw2a, rw2b = (
         _claim(claims_by_id, "RW1"),
         _claim(claims_by_id, "RW2A"),
         _claim(claims_by_id, "RW2B"),
     )
     notes = _notes_for(claims_by_id, ("RW1", "RW2A", "RW2B"))
-    claim_pairs = (("RW1", rw1), ("RW2A", rw2a), ("RW2B", rw2b))
 
-    contradicted = tuple(cid for cid, c in claim_pairs if _relation_for_violation(c) == ClaimRelation.CONTRADICT)
-    if contradicted:
-        return _FamilyOutcome(
-            "remote_work", FactualState.VIOLATED, contradicted, notes,
-            f"listing evidence explicitly contradicts {'/'.join(contradicted)}",
+    rw1_support = _relation_for_satisfaction(rw1) == ClaimRelation.SUPPORT
+    rw2a_support = _relation_for_satisfaction(rw2a) == ClaimRelation.SUPPORT
+    rw2b_support = _relation_for_satisfaction(rw2b) == ClaimRelation.SUPPORT
+    rw2b_raw = _raw_relation(rw2b)
+
+    if rw1_support and rw2a_support and rw2b_raw not in (ClaimRelation.MIXED, ClaimRelation.CONTRADICT):
+        decisive = ("RW1", "RW2A", "RW2B") if rw2b_support else ("RW1", "RW2A")
+        if rw2b_support:
+            reason = "a desk/workspace, Wi-Fi, and additional evidence of reliable connectivity are all supported"
+        else:
+            reason = "a desk/workspace and Wi-Fi are supported; connection reliability was not established"
+        return _FamilyOutcome("remote_work", FactualState.SATISFIED, decisive, notes, reason)
+
+    essential_contradicted = tuple(
+        cid for cid, c in (("RW1", rw1), ("RW2A", rw2a)) if _relation_for_violation(c) == ClaimRelation.CONTRADICT
+    )
+    support_by_id = {"RW1": rw1_support, "RW2A": rw2a_support, "RW2B": rw2b_support}
+    supporting = tuple(cid for cid in ("RW1", "RW2A", "RW2B") if support_by_id[cid])
+    has_any_support = bool(supporting)
+
+    if essential_contradicted and not has_any_support:
+        reason = f"{'/'.join(_REMOTE_WORK_LABELS[c] for c in essential_contradicted)} is explicitly contradicted; no positive remote-work evidence was found to offset it"
+        return _FamilyOutcome("remote_work", FactualState.VIOLATED, essential_contradicted, notes, reason)
+
+    if essential_contradicted:
+        reason = (
+            f"{'/'.join(_REMOTE_WORK_LABELS[c] for c in essential_contradicted)} is contradicted, but "
+            f"{'/'.join(_REMOTE_WORK_LABELS[c] for c in supporting)} is supported - conflicting evidence"
         )
+        decisive = tuple(sorted(set(essential_contradicted) | set(supporting)))
+        return _FamilyOutcome("remote_work", FactualState.UNRESOLVED, decisive, notes, reason)
 
-    satisfactions = {cid: _relation_for_satisfaction(c) for cid, c in claim_pairs}
-    raw_relations = {cid: _raw_relation(c) for cid, c in claim_pairs}
-    all_support = all(rel == ClaimRelation.SUPPORT for rel in satisfactions.values())
-    none_mixed = all(rel != ClaimRelation.MIXED for rel in raw_relations.values())
+    if supporting:
+        reason = f"only {'/'.join(_REMOTE_WORK_LABELS[c] for c in supporting)} is confirmed - not enough to confidently call this a good remote-work match"
+        return _FamilyOutcome("remote_work", FactualState.UNRESOLVED, supporting, notes, reason)
 
-    if all_support and none_mixed:
-        return _FamilyOutcome(
-            "remote_work", FactualState.SATISFIED, ("RW1", "RW2A", "RW2B"), notes,
-            "desk/workspace, Wi-Fi availability, and internet reliability are all explicitly supported",
-        )
-
-    labels = {"RW1": "desk/workspace", "RW2A": "Wi-Fi availability", "RW2B": "internet reliability"}
-    missing = [labels[cid] for cid, rel in satisfactions.items() if rel != ClaimRelation.SUPPORT]
     return _FamilyOutcome(
         "remote_work", FactualState.UNRESOLVED, (), notes,
-        f"no evidence establishes {', '.join(missing)}",
+        "no evidence establishes a desk/workspace, Wi-Fi, or connection reliability",
     )
 
 
 def _family_friendly_state(claims_by_id: dict[str, AtomicClaimResult]) -> _FamilyOutcome:
+    """
+    FC1 (formal policy accommodating children) carries more weight than
+    FAM1 (general family-suitability description): an explicit FC1
+    CONTRADICT is treated as a clear exclusion signal regardless of
+    FAM1, matching how a booking policy that plainly excludes children
+    is a stronger signal than descriptive marketing text.
+
+    - NO: FC1 explicitly CONTRADICT.
+    - YES: FC1 or FAM1 SUPPORT, with neither MIXED and FAM1 not
+      CONTRADICT.
+    - UNCERTAIN: everything else (including FAM1 CONTRADICT alone, or
+      no evidence at all).
+    """
     fc1, fam1 = _claim(claims_by_id, "FC1"), _claim(claims_by_id, "FAM1")
     notes = _notes_for(claims_by_id, ("FC1", "FAM1"))
 
-    contradicted = tuple(
-        cid
-        for cid, c in (("FC1", fc1), ("FAM1", fam1))
-        if _relation_for_violation(c) == ClaimRelation.CONTRADICT
-    )
-    if contradicted:
+    if _relation_for_violation(fc1) == ClaimRelation.CONTRADICT:
         return _FamilyOutcome(
-            "family_friendly", FactualState.VIOLATED, contradicted, notes,
-            f"listing evidence explicitly contradicts {'/'.join(contradicted)}",
+            "family_friendly", FactualState.VIOLATED, ("FC1",), notes,
+            "listing evidence explicitly indicates children are not accommodated",
         )
 
-    if (
-        _relation_for_satisfaction(fc1) == ClaimRelation.SUPPORT
-        and _relation_for_satisfaction(fam1) == ClaimRelation.SUPPORT
-    ):
+    support_by_id = {
+        "FC1": _relation_for_satisfaction(fc1) == ClaimRelation.SUPPORT,
+        "FAM1": _relation_for_satisfaction(fam1) == ClaimRelation.SUPPORT,
+    }
+    supporting = tuple(cid for cid in ("FC1", "FAM1") if support_by_id[cid])
+    fam1_contradicted = _relation_for_violation(fam1) == ClaimRelation.CONTRADICT
+    blocking = _raw_relation(fc1) == ClaimRelation.MIXED or _raw_relation(fam1) in (
+        ClaimRelation.MIXED, ClaimRelation.CONTRADICT,
+    )
+
+    if supporting and not blocking:
+        reason = "formal child-accommodation policy and/or family suitability are supported by listing evidence"
+        return _FamilyOutcome("family_friendly", FactualState.SATISFIED, supporting, notes, reason)
+
+    if supporting and blocking:
+        conflicting = ("FAM1",) if fam1_contradicted or _raw_relation(fam1) == ClaimRelation.MIXED else ()
+        decisive = tuple(sorted(set(supporting) | set(conflicting)))
         return _FamilyOutcome(
-            "family_friendly", FactualState.SATISFIED, ("FC1", "FAM1"), notes,
-            "policies formally accommodate children and the property is explicitly described as family-suitable",
+            "family_friendly", FactualState.UNRESOLVED, decisive, notes,
+            "some family-friendly evidence exists but conflicts with other evidence - not enough to confidently call this a match",
         )
 
     return _FamilyOutcome(

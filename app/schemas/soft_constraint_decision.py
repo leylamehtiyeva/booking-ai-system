@@ -4,6 +4,15 @@ original UserConstraint from the new soft-evidence pipeline's
 AtomicClaimResult[] (Phase C - the bridge from SoftPreferenceEvidence
 to a downstream-consumable decision).
 
+PRODUCT CONTRACT: `decision` is a candidate-matching signal, not a
+certification. YES means "enough evidence to keep this listing as a
+good candidate for the preference" - not "objectively proven true".
+NO means "a strong reason not to consider this listing a candidate".
+UNCERTAIN means "insufficient or materially conflicting evidence" - it
+is not a failure state. See app.logic.soft_constraint_decision_policy's
+module docstring for the full contract and the downstream eligibility
+semantics it does (and does not) drive.
+
 Deliberately separate from app.schemas.soft_evidence: that schema
 stays factual (evidence relations are never inverted for FORBIDDEN -
 see app.logic.soft_preference_decomposition.PreferenceDirection's own
@@ -30,9 +39,16 @@ class FactualState(str, Enum):
     """
     Intermediate, direction-agnostic state of the positive semantic
     proposition a family represents (e.g. Q1/Q2/Q3 -> "the property is
-    quiet"). PreferenceDirection is applied on top of this, once, at
-    the constraint boundary - never before (see apply_preference_direction
-    in app.logic.soft_constraint_decision_policy).
+    a good quiet candidate"). PreferenceDirection is applied on top of
+    this, once, at the constraint boundary - never before (see
+    apply_preference_direction in app.logic.soft_constraint_decision_policy).
+
+    SATISFIED: enough evidence exists to keep this listing as a useful
+        candidate for the proposition - not proof the property
+        objectively has it.
+    VIOLATED: evidence gives a strong reason to exclude this listing
+        for the proposition.
+    UNRESOLVED: evidence is insufficient or materially conflicting.
     """
 
     SATISFIED = "satisfied"

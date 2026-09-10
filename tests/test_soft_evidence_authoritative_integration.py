@@ -278,8 +278,8 @@ async def test_authoritative_no_decision_makes_must_constraint_reject_listing(mo
         return []
 
     async def _fake_build(*, listings, claim_assignments, pipeline_policy, verifier_policy, trace):
-        # Q2 CONTRADICT -> quiet VIOLATED -> MUST constraint -> NO -> reject
-        return [_fake_evidence(("Q1", SUP), ("Q2", CON), ("Q3", NEE)) for _ in listings]
+        # Q2 CONTRADICT with no offsetting positive signal -> quiet VIOLATED -> MUST -> NO -> reject
+        return [_fake_evidence(("Q1", NEE), ("Q2", CON), ("Q3", NEE)) for _ in listings]
 
     monkeypatch.setattr(listing_evaluation, "resolve_listing_constraints_with_fallback", _fake_fallback)
     monkeypatch.setattr(listing_evaluation, "build_shadow_soft_preference_evidence", _fake_build)
@@ -397,36 +397,50 @@ def _remote_work_constraint() -> UserConstraint:
 
 
 def test_nizami_hotel_quiet_is_uncertain():
+    """No quiet evidence at all -> UNCERTAIN (not a failure, just insufficient evidence)."""
     assert _combined_decision(_quiet_constraint(), ("Q1", NEE), ("Q2", NEE), ("Q3", NEE)) == ConstraintDecisionValue.UNCERTAIN
 
 
-def test_nizami_hotel_remote_work_is_uncertain():
-    """The old fallback previously returned YES largely because Wi-Fi existed - the new policy must not."""
-    assert (
-        _combined_decision(_remote_work_constraint(), ("RW1", SUP), ("RW2A", SUP), ("RW2B", NEE))
-        == ConstraintDecisionValue.UNCERTAIN
+def test_nizami_hotel_remote_work_is_yes():
+    """
+    Desk + Wi-Fi supported, reliability unconfirmed -> YES: a useful
+    candidate signal, not a guarantee the connection is reliable. The
+    old fallback previously returned YES largely because Wi-Fi alone
+    existed - the new policy reaches the same YES, but requires BOTH
+    desk and Wi-Fi, and the reason must say reliability was not
+    established.
+    """
+    ev = SoftPreferenceEvidence(
+        claims=[_claim("RW1", SUP), _claim("RW2A", SUP), _claim("RW2B", NEE)], semantic_verifier=None,
     )
+    decision = decide_constraint(_remote_work_constraint(), ev)
+    assert decision.decision == ConstraintDecisionValue.YES
+    assert "reliability" in decision.reason.lower()
+    assert "not established" in decision.reason.lower()
 
 
-def test_metro_city_quiet_is_uncertain():
-    """Soundproofing alone is not sufficient proof that the hotel is quiet."""
-    assert _combined_decision(_quiet_constraint(), ("Q1", SUP), ("Q2", NEE), ("Q3", NEE)) == ConstraintDecisionValue.UNCERTAIN
+def test_metro_city_quiet_is_yes():
+    """Soundproofing alone is a positive candidate signal, not a guarantee of silence."""
+    ev = SoftPreferenceEvidence(claims=[_claim("Q1", SUP), _claim("Q2", NEE), _claim("Q3", NEE)], semantic_verifier=None)
+    decision = decide_constraint(_quiet_constraint(), ev)
+    assert decision.decision == ConstraintDecisionValue.YES
+    assert "soundproofing" in decision.reason.lower()
 
 
-def test_metro_city_remote_work_is_uncertain():
+def test_metro_city_remote_work_is_yes():
     assert (
         _combined_decision(_remote_work_constraint(), ("RW1", SUP), ("RW2A", SUP), ("RW2B", NEE))
-        == ConstraintDecisionValue.UNCERTAIN
+        == ConstraintDecisionValue.YES
     )
 
 
 def test_maestro_address_quiet_is_uncertain():
-    """MIXED surroundings evidence must prevent an overconfident YES."""
+    """MIXED surroundings evidence (material conflict) must prevent an overconfident YES - and must not become NO either."""
     assert _combined_decision(_quiet_constraint(), ("Q1", SUP), ("Q2", MIX), ("Q3", SUP)) == ConstraintDecisionValue.UNCERTAIN
 
 
-def test_maestro_address_remote_work_is_uncertain():
+def test_maestro_address_remote_work_is_yes():
     assert (
         _combined_decision(_remote_work_constraint(), ("RW1", SUP), ("RW2A", SUP), ("RW2B", NEE))
-        == ConstraintDecisionValue.UNCERTAIN
+        == ConstraintDecisionValue.YES
     )

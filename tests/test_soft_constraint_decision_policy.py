@@ -69,25 +69,114 @@ SUP, CON, NEE, MIX = (
 
 
 # ==================================================================
-# QUIET
+# Q3 attribution bug fix - end-to-end through clean_and_route_candidates
+# (routing-unit tests live in tests/test_soft_evidence_routing.py)
 # ==================================================================
 
 
-def test_quiet_q2_contradict_is_violated():
+def test_q3_non_review_evidence_never_reaches_free_text_routing():
+    from app.logic.soft_evidence_cleanup import clean_and_route_candidates
+    from app.logic.soft_evidence_retrieval import RetrievedEvidence
+
+    candidates = [
+        RetrievedEvidence(
+            text="Quiet street view", source_type="facilities",
+            source_path="listing.facilities[4].name", retrieval_score=0.9,
+        ),
+    ]
+    routed = clean_and_route_candidates("Q3", candidates)
+
+    assert routed.free_text_candidates == []
+    assert len(routed.deterministic_items) == 1
+    assert routed.deterministic_items[0].relation == EvidenceRelation.NOT_ENOUGH_EVIDENCE
+    assert routed.deterministic_items[0].resolution_method.value == "deterministic"
+
+
+def test_q3_review_summary_evidence_reaches_free_text_routing():
+    from app.logic.soft_evidence_cleanup import clean_and_route_candidates
+    from app.logic.soft_evidence_retrieval import RetrievedEvidence
+
+    candidates = [
+        RetrievedEvidence(
+            text="The room was very quiet and we heard no traffic at night.",
+            source_type="review_summary",
+            source_path="raw.reviewSummary.pros[0].description", retrieval_score=0.9,
+        ),
+    ]
+    routed = clean_and_route_candidates("Q3", candidates)
+
+    assert routed.deterministic_items == []
+    assert len(routed.free_text_candidates) == 1
+    assert routed.free_text_candidates[0].text == "The room was very quiet and we heard no traffic at night."
+
+
+def test_q2_same_evidence_still_reaches_free_text_routing():
+    """The Q3 fix must not affect Q2 - a property-description claim."""
+    from app.logic.soft_evidence_cleanup import clean_and_route_candidates
+    from app.logic.soft_evidence_retrieval import RetrievedEvidence
+
+    candidates = [
+        RetrievedEvidence(
+            text="Quiet street view", source_type="description",
+            source_path="listing.description", retrieval_score=0.9,
+        ),
+    ]
+    routed = clean_and_route_candidates("Q2", candidates)
+
+    assert routed.deterministic_items == []
+    assert len(routed.free_text_candidates) == 1
+
+
+def test_q3_all_non_review_pool_produces_not_enough_evidence_claim_not_false_support():
+    """
+    Full regression proof: a hotel whose only Q3-retrieved evidence is
+    non-review text ("Quiet street view") must resolve Q3 to
+    NOT_ENOUGH_EVIDENCE (and therefore never drive a false quiet YES via
+    Q3 alone) - the routing fix, not the aggregation policy, is what
+    prevents the false positive.
+    """
+    from app.logic.soft_evidence_cleanup import clean_and_route_candidates
+    from app.logic.soft_evidence_retrieval import RetrievedEvidence
+    from app.schemas.soft_evidence import AtomicClaimResult
+
+    candidates = [
+        RetrievedEvidence(
+            text="Quiet street view", source_type="facilities",
+            source_path="listing.facilities[4].name", retrieval_score=0.9,
+        ),
+    ]
+    routed = clean_and_route_candidates("Q3", candidates)
+    assert routed.free_text_candidates == []  # nothing left for Gemini to (mis)score
+
+    result = AtomicClaimResult.from_evidence_items(
+        claim_id="Q3", hypothesis=CLAIM_HYPOTHESES["Q3"], evidence_items=routed.deterministic_items,
+    )
+    assert result.relation.value == "NOT_ENOUGH_EVIDENCE"
+
+
+# ==================================================================
+# QUIET - candidate-matching semantics (Q1=soundproofing,
+# Q2=quiet surroundings, Q3=guest-reported noise experience)
+# ==================================================================
+
+
+def test_quiet_q1_support_alone_is_satisfied():
+    """Soundproofing alone is a useful positive search signal -> YES."""
     from app.logic.soft_constraint_decision_policy import compute_family_factual_state
 
-    claims = {"Q1": claim("Q1", NEE), "Q2": claim("Q2", CON), "Q3": claim("Q3", NEE)}
+    claims = {"Q1": claim("Q1", SUP), "Q2": claim("Q2", NEE), "Q3": claim("Q3", NEE)}
     outcome = compute_family_factual_state("quiet", claims)
-    assert outcome.state == FactualState.VIOLATED
+    assert outcome.state == FactualState.SATISFIED
+    assert outcome.decisive_claim_ids == ("Q1",)
+
+
+def test_quiet_q2_support_alone_is_satisfied():
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"Q1": claim("Q1", NEE), "Q2": claim("Q2", SUP), "Q3": claim("Q3", NEE)}
+    outcome = compute_family_factual_state("quiet", claims)
+    assert outcome.state == FactualState.SATISFIED
     assert outcome.decisive_claim_ids == ("Q2",)
-
-
-def test_quiet_q3_contradict_is_violated():
-    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
-
-    claims = {"Q1": claim("Q1", NEE), "Q2": claim("Q2", NEE), "Q3": claim("Q3", CON)}
-    outcome = compute_family_factual_state("quiet", claims)
-    assert outcome.state == FactualState.VIOLATED
 
 
 def test_quiet_q3_support_alone_is_satisfied():
@@ -99,40 +188,46 @@ def test_quiet_q3_support_alone_is_satisfied():
     assert outcome.decisive_claim_ids == ("Q3",)
 
 
-def test_quiet_q1_and_q2_support_is_satisfied():
-    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
-
-    claims = {"Q1": claim("Q1", SUP), "Q2": claim("Q2", SUP), "Q3": claim("Q3", NEE)}
-    outcome = compute_family_factual_state("quiet", claims)
-    assert outcome.state == FactualState.SATISFIED
-    assert set(outcome.decisive_claim_ids) == {"Q1", "Q2"}
-
-
-def test_quiet_q1_support_alone_is_not_satisfied():
-    """Soundproofing alone must NOT mean 'quiet hotel = YES'."""
-    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
-
-    claims = {"Q1": claim("Q1", SUP), "Q2": claim("Q2", NEE), "Q3": claim("Q3", NEE)}
-    outcome = compute_family_factual_state("quiet", claims)
-    assert outcome.state == FactualState.UNRESOLVED
-
-
-def test_quiet_q2_mixed_blocks_satisfied_even_with_q3_support():
-    """Maestro Address scenario: Q1 SUPPORT, Q2 MIXED, Q3 SUPPORT -> UNRESOLVED."""
-    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
-
-    claims = {"Q1": claim("Q1", SUP), "Q2": claim("Q2", MIX), "Q3": claim("Q3", SUP)}
-    outcome = compute_family_factual_state("quiet", claims)
-    assert outcome.state == FactualState.UNRESOLVED
-
-
 def test_quiet_all_not_enough_evidence_is_unresolved():
-    """Nizami Hotel scenario: Q1/Q2/Q3 all NEE -> UNRESOLVED."""
+    """Nizami Hotel scenario: Q1/Q2/Q3 all NEE -> UNCERTAIN."""
     from app.logic.soft_constraint_decision_policy import compute_family_factual_state
 
     claims = {"Q1": claim("Q1", NEE), "Q2": claim("Q2", NEE), "Q3": claim("Q3", NEE)}
     outcome = compute_family_factual_state("quiet", claims)
     assert outcome.state == FactualState.UNRESOLVED
+
+
+def test_quiet_support_plus_mixed_is_unresolved():
+    """Q1 SUPPORT, Q2 MIXED, Q3 SUPPORT -> UNCERTAIN: material conflict, not a confident YES."""
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"Q1": claim("Q1", SUP), "Q2": claim("Q2", MIX), "Q3": claim("Q3", SUP)}
+    outcome = compute_family_factual_state("quiet", claims)
+    assert outcome.state == FactualState.UNRESOLVED
+    assert set(outcome.decisive_claim_ids) >= {"Q2"}  # the conflicting claim is preserved
+
+
+def test_quiet_support_plus_explicit_contradiction_is_unresolved_not_no():
+    """
+    Q1 SUPPORT, Q2 NEE, Q3 CONTRADICT -> UNCERTAIN. Must NOT discard the
+    candidate as if we know the hotel is objectively noisy - the
+    conflict is preserved for the user, not silently resolved to NO.
+    """
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"Q1": claim("Q1", SUP), "Q2": claim("Q2", NEE), "Q3": claim("Q3", CON)}
+    outcome = compute_family_factual_state("quiet", claims)
+    assert outcome.state == FactualState.UNRESOLVED
+    assert set(outcome.decisive_claim_ids) == {"Q1", "Q3"}
+
+
+def test_quiet_contradiction_with_no_positive_signal_is_violated():
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"Q1": claim("Q1", NEE), "Q2": claim("Q2", NEE), "Q3": claim("Q3", CON)}
+    outcome = compute_family_factual_state("quiet", claims)
+    assert outcome.state == FactualState.VIOLATED
+    assert outcome.decisive_claim_ids == ("Q3",)
 
 
 def test_quiet_partial_retrieval_contradiction_still_violates():
@@ -174,40 +269,22 @@ def test_quiet_failed_retrieval_support_does_not_satisfy():
     assert outcome.state == FactualState.UNRESOLVED
 
 
-def test_known_regression_quiet_street_view_false_q3_support_still_satisfies_policy_as_specified():
-    """
-    Documented known live issue: the verifier has been observed
-    mis-scoring "Quiet street view" as SUPPORT for Q3 ("guests report
-    little or no significant noise disturbance"), which is really a
-    view claim, not a noise-disturbance report. Per the Phase C spec,
-    the aggregation policy does NOT special-case this text pattern
-    (that would hide the bug with vague aggregation) - so today, a
-    false-positive Q3 SUPPORT alone (with Q2 not MIXED/CONTRADICT)
-    still resolves quiet to SATISFIED, exactly as the general "Q3
-    SUPPORT alone" rule specifies. This test documents that as a known,
-    accepted limitation to be fixed at the verifier level later, not a
-    Phase C aggregation bug.
-    """
+def test_quiet_reason_never_asserts_a_guarantee():
     from app.logic.soft_constraint_decision_policy import compute_family_factual_state
 
-    claims = {
-        "Q1": claim("Q1", NEE),
-        "Q2": claim("Q2", NEE),
-        "Q3": claim(
-            "Q3", SUP,
-            evidence_items=[resolved_item("Quiet street view", EvidenceRelation.SUPPORT)],
-        ),
-    }
+    claims = {"Q1": claim("Q1", SUP), "Q2": claim("Q2", NEE), "Q3": claim("Q3", NEE)}
     outcome = compute_family_factual_state("quiet", claims)
-    assert outcome.state == FactualState.SATISFIED
+    assert "this hotel is quiet" not in outcome.reason_fragment.lower()
+    assert "soundproofing" in outcome.reason_fragment.lower()
 
 
 # ==================================================================
-# REMOTE WORK
+# REMOTE WORK - candidate-matching semantics (RW1=desk, RW2A=wifi,
+# RW2B=reliability, never required for YES)
 # ==================================================================
 
 
-def test_remote_work_all_support_is_satisfied():
+def test_remote_work_desk_wifi_reliability_all_support_is_satisfied():
     from app.logic.soft_constraint_decision_policy import compute_family_factual_state
 
     claims = {"RW1": claim("RW1", SUP), "RW2A": claim("RW2A", SUP), "RW2B": claim("RW2B", SUP)}
@@ -215,25 +292,64 @@ def test_remote_work_all_support_is_satisfied():
     assert outcome.state == FactualState.SATISFIED
 
 
-def test_remote_work_desk_and_wifi_but_unknown_reliability_is_unresolved():
-    """Nizami / Metro City / Maestro scenario: RW1+RW2A SUPPORT, RW2B NEE -> UNRESOLVED, not YES."""
+def test_remote_work_desk_and_wifi_with_unknown_reliability_is_satisfied():
+    """Nizami / Metro City / Maestro scenario: RW1+RW2A SUPPORT, RW2B NEE -> YES."""
     from app.logic.soft_constraint_decision_policy import compute_family_factual_state
 
     claims = {"RW1": claim("RW1", SUP), "RW2A": claim("RW2A", SUP), "RW2B": claim("RW2B", NEE)}
     outcome = compute_family_factual_state("remote_work", claims)
+    assert outcome.state == FactualState.SATISFIED
+    assert outcome.decisive_claim_ids == ("RW1", "RW2A")
+    # reason must explicitly say reliability was not established, never claim it IS reliable
+    reason = outcome.reason_fragment.lower()
+    assert "reliability" in reason and "not established" in reason
+    assert "reliable connectivity" not in reason
+
+
+def test_remote_work_wifi_only_is_unresolved():
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"RW1": claim("RW1", NEE), "RW2A": claim("RW2A", SUP), "RW2B": claim("RW2B", NEE)}
+    outcome = compute_family_factual_state("remote_work", claims)
     assert outcome.state == FactualState.UNRESOLVED
 
 
-def test_remote_work_any_contradict_is_violated():
+def test_remote_work_desk_only_is_unresolved():
     from app.logic.soft_constraint_decision_policy import compute_family_factual_state
 
-    claims = {"RW1": claim("RW1", SUP), "RW2A": claim("RW2A", CON), "RW2B": claim("RW2B", SUP)}
+    claims = {"RW1": claim("RW1", SUP), "RW2A": claim("RW2A", NEE), "RW2B": claim("RW2B", NEE)}
+    outcome = compute_family_factual_state("remote_work", claims)
+    assert outcome.state == FactualState.UNRESOLVED
+
+
+def test_remote_work_essential_contradiction_no_offsetting_support_is_violated():
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"RW1": claim("RW1", CON), "RW2A": claim("RW2A", NEE), "RW2B": claim("RW2B", NEE)}
     outcome = compute_family_factual_state("remote_work", claims)
     assert outcome.state == FactualState.VIOLATED
-    assert outcome.decisive_claim_ids == ("RW2A",)
+    assert outcome.decisive_claim_ids == ("RW1",)
 
 
-def test_remote_work_mixed_is_unresolved_not_violated():
+def test_remote_work_essential_contradiction_with_offsetting_support_is_unresolved():
+    """RW1 CONTRADICT (no desk) but RW2A SUPPORT (good wifi) - conflicting, not a clean NO."""
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"RW1": claim("RW1", CON), "RW2A": claim("RW2A", SUP), "RW2B": claim("RW2B", NEE)}
+    outcome = compute_family_factual_state("remote_work", claims)
+    assert outcome.state == FactualState.UNRESOLVED
+
+
+def test_remote_work_reliability_contradiction_despite_desk_and_wifi_is_unresolved():
+    """RW1+RW2A SUPPORT but RW2B explicitly CONTRADICT - material conflict, not YES."""
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"RW1": claim("RW1", SUP), "RW2A": claim("RW2A", SUP), "RW2B": claim("RW2B", CON)}
+    outcome = compute_family_factual_state("remote_work", claims)
+    assert outcome.state == FactualState.UNRESOLVED
+
+
+def test_remote_work_mixed_reliability_despite_desk_and_wifi_is_unresolved():
     from app.logic.soft_constraint_decision_policy import compute_family_factual_state
 
     claims = {"RW1": claim("RW1", SUP), "RW2A": claim("RW2A", SUP), "RW2B": claim("RW2B", MIX)}
@@ -241,8 +357,17 @@ def test_remote_work_mixed_is_unresolved_not_violated():
     assert outcome.state == FactualState.UNRESOLVED
 
 
+def test_remote_work_no_evidence_at_all_is_unresolved():
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"RW1": claim("RW1", NEE), "RW2A": claim("RW2A", NEE), "RW2B": claim("RW2B", NEE)}
+    outcome = compute_family_factual_state("remote_work", claims)
+    assert outcome.state == FactualState.UNRESOLVED
+
+
 # ==================================================================
-# FAMILY FRIENDLY
+# FAMILY FRIENDLY - FC1 (formal policy) carries stronger weight than
+# FAM1 (descriptive suitability)
 # ==================================================================
 
 
@@ -254,20 +379,43 @@ def test_family_friendly_both_support_is_satisfied():
     assert outcome.state == FactualState.SATISFIED
 
 
-@pytest.mark.parametrize("contradicted_id", ["FC1", "FAM1"])
-def test_family_friendly_either_contradict_is_violated(contradicted_id):
-    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
-
-    claims = {"FC1": claim("FC1", SUP), "FAM1": claim("FAM1", SUP)}
-    claims[contradicted_id] = claim(contradicted_id, CON)
-    outcome = compute_family_factual_state("family_friendly", claims)
-    assert outcome.state == FactualState.VIOLATED
-
-
-def test_family_friendly_one_missing_is_unresolved():
+def test_family_friendly_fc1_support_alone_is_satisfied():
     from app.logic.soft_constraint_decision_policy import compute_family_factual_state
 
     claims = {"FC1": claim("FC1", SUP), "FAM1": claim("FAM1", NEE)}
+    outcome = compute_family_factual_state("family_friendly", claims)
+    assert outcome.state == FactualState.SATISFIED
+
+
+def test_family_friendly_fam1_support_alone_is_satisfied():
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"FC1": claim("FC1", NEE), "FAM1": claim("FAM1", SUP)}
+    outcome = compute_family_factual_state("family_friendly", claims)
+    assert outcome.state == FactualState.SATISFIED
+
+
+def test_family_friendly_fc1_contradict_is_violated_regardless_of_fam1():
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"FC1": claim("FC1", CON), "FAM1": claim("FAM1", SUP)}
+    outcome = compute_family_factual_state("family_friendly", claims)
+    assert outcome.state == FactualState.VIOLATED
+    assert outcome.decisive_claim_ids == ("FC1",)
+
+
+def test_family_friendly_positive_plus_conflicting_is_unresolved():
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"FC1": claim("FC1", SUP), "FAM1": claim("FAM1", CON)}
+    outcome = compute_family_factual_state("family_friendly", claims)
+    assert outcome.state == FactualState.UNRESOLVED
+
+
+def test_family_friendly_no_evidence_is_unresolved():
+    from app.logic.soft_constraint_decision_policy import compute_family_factual_state
+
+    claims = {"FC1": claim("FC1", NEE), "FAM1": claim("FAM1", NEE)}
     outcome = compute_family_factual_state("family_friendly", claims)
     assert outcome.state == FactualState.UNRESOLVED
 
@@ -434,12 +582,28 @@ def test_decide_constraint_multi_family_combination_any_violated_wins():
     c = constraint("quiet and good for remote work", ConstraintPriority.MUST)
     ev = evidence(
         claim("Q1", SUP), claim("Q2", SUP), claim("Q3", NEE),  # quiet -> SATISFIED
-        claim("RW1", SUP), claim("RW2A", SUP), claim("RW2B", CON),  # remote_work -> VIOLATED
+        claim("RW1", CON), claim("RW2A", NEE), claim("RW2B", NEE),  # remote_work -> VIOLATED (no offset)
     )
     decision = decide_constraint(c, ev)
     assert set(decision.families) == {"quiet", "remote_work"}
     assert decision.factual_state == FactualState.VIOLATED
     assert decision.decision == ConstraintDecisionValue.NO
+
+
+def test_decide_constraint_multi_family_combination_unresolved_when_not_all_satisfied():
+    """
+    quiet SATISFIED + remote_work UNRESOLVED (no essential contradiction,
+    just unconfirmed reliability alongside desk+wifi being SUPPORT would
+    actually be SATISFIED - use a genuinely unresolved remote_work case).
+    """
+    c = constraint("quiet and good for remote work", ConstraintPriority.NICE)
+    ev = evidence(
+        claim("Q1", SUP), claim("Q2", NEE), claim("Q3", NEE),  # quiet -> SATISFIED
+        claim("RW1", SUP), claim("RW2A", NEE), claim("RW2B", NEE),  # remote_work -> UNRESOLVED
+    )
+    decision = decide_constraint(c, ev)
+    assert decision.factual_state == FactualState.UNRESOLVED
+    assert decision.decision == ConstraintDecisionValue.UNCERTAIN
 
 
 def test_decide_constraint_evidence_refs_populated_for_decisive_claims():
