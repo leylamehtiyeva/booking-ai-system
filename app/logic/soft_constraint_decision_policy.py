@@ -8,19 +8,36 @@ PRODUCT CONTRACT (read before changing any rule below): this system does
 not certify that a hotel objectively has a subjective property like
 "quiet" or "good for remote work" - the user still opens the listing and
 judges for themselves. The goal is to use available evidence to narrow
-the search to good CANDIDATES. Concretely:
+the search to good CANDIDATES. At the END-TO-END OUTCOME level (after
+the existing downstream priority-based interpretation below), that
+means:
 
-- YES means "the available evidence is sufficiently supportive to
-  consider this listing a good candidate for the preference" - not "we
-  have proven this property objectively satisfies it".
-- NO means "the available evidence gives a strong reason NOT to
-  consider this listing a candidate".
-- UNCERTAIN means "evidence is insufficient or materially conflicting"
-  - it is not a failure, and downstream eligibility does not treat it
-    as one (see app.logic.listing_evaluation._fails_constraint_resolution
-    and _apply_constraint_resolution_scoring: only priority=="must" with
-    decision=="NO", or a violating FORBIDDEN decision, cause hard
-    exclusion - UNCERTAIN never does).
+- a DESIRED preference kept eligible/rewarded means "the available
+  evidence is sufficiently supportive to consider this listing a good
+  candidate" - not "we have proven this property objectively satisfies
+  it".
+- a FORBIDDEN preference that excludes/penalizes a listing means "the
+  available evidence gives a strong reason NOT to consider this listing
+  a candidate".
+- neither excluding nor rewarding means "evidence is insufficient or
+  materially conflicting" - not a failure (see
+  app.logic.listing_evaluation._fails_constraint_resolution and
+  _apply_constraint_resolution_scoring: only priority=="must" with
+  decision=="NO", or a violating FORBIDDEN decision, cause hard
+  exclusion - UNCERTAIN never does).
+
+IMPORTANT - what `decision` (YES/NO/UNCERTAIN) itself means is NARROWER
+and direction-AGNOSTIC: it always answers "is the underlying POSITIVE
+proposition a claim/family represents confirmed by evidence" (e.g. NL1:
+"Nightlife is available nearby" -> SUPPORT -> decision="YES" means
+"nightlife IS confirmed present", regardless of whether the user desired
+or forbade nightlife). This exactly mirrors what the EXISTING downstream
+contract already expects and already applies FORBIDDEN's inversion to,
+purely from `priority` - see apply_preference_direction's own docstring
+for the full audit trail of why an earlier version of this module got
+this backwards for FORBIDDEN, and
+tests/test_soft_constraint_forbidden_downstream.py for the regression
+proof. Do not re-invert `decision` anywhere downstream of decide_constraint.
 
 No LLM is used here. Every branch below is plain, inspectable Python -
 see the Phase C task spec for the exact rules per family (quiet,
@@ -40,8 +57,9 @@ factual state from user desirability" requirement):
    inverted for FORBIDDEN - see _quiet_state's docstring for why this
    still starts from evidence being read literally.
 2. apply_preference_direction(): applied exactly once, at the
-   constraint boundary, turning (factual_state, PreferenceDirection)
-   into YES / NO / UNCERTAIN.
+   constraint boundary, mapping factual_state directly to YES / NO /
+   UNCERTAIN - see its own docstring for why `direction` does NOT
+   change this mapping today.
 
 Multiple families per constraint are combined conservatively (see
 combine_family_states) BEFORE apply_preference_direction runs - so a
@@ -431,19 +449,58 @@ def combine_family_states(states: list[FactualState]) -> FactualState:
     return FactualState.UNRESOLVED
 
 
-_DIRECTION_TABLE: dict[tuple[PreferenceDirection, FactualState], ConstraintDecisionValue] = {
-    (PreferenceDirection.DESIRED, FactualState.SATISFIED): ConstraintDecisionValue.YES,
-    (PreferenceDirection.DESIRED, FactualState.VIOLATED): ConstraintDecisionValue.NO,
-    (PreferenceDirection.DESIRED, FactualState.UNRESOLVED): ConstraintDecisionValue.UNCERTAIN,
-    (PreferenceDirection.FORBIDDEN, FactualState.SATISFIED): ConstraintDecisionValue.NO,
-    (PreferenceDirection.FORBIDDEN, FactualState.VIOLATED): ConstraintDecisionValue.YES,
-    (PreferenceDirection.FORBIDDEN, FactualState.UNRESOLVED): ConstraintDecisionValue.UNCERTAIN,
+_FACTUAL_STATE_TO_DECISION: dict[FactualState, ConstraintDecisionValue] = {
+    FactualState.SATISFIED: ConstraintDecisionValue.YES,
+    FactualState.VIOLATED: ConstraintDecisionValue.NO,
+    FactualState.UNRESOLVED: ConstraintDecisionValue.UNCERTAIN,
 }
 
 
 def apply_preference_direction(state: FactualState, direction: PreferenceDirection) -> ConstraintDecisionValue:
-    """Section 2's table, applied exactly once, at the constraint boundary."""
-    return _DIRECTION_TABLE[(direction, state)]
+    """
+    IMPORTANT, audited contract-boundary fix: this mapping is
+    deliberately IDENTICAL for DESIRED and FORBIDDEN. `direction` is
+    accepted (and still stored on SoftConstraintDecision.preference_direction
+    for telemetry/UI) but does not change the emitted decision - see
+    below for why.
+
+    `decision` communicates whether the underlying POSITIVE proposition
+    a claim/family represents (e.g. NL1: "Nightlife is available
+    nearby") is confirmed by evidence - never whether it matches what
+    the user wants. That is exactly what the EXISTING downstream
+    contract already expects and itself already implements the
+    FORBIDDEN inversion for, purely from `priority` - see
+    app.logic.listing_evaluation._fails_constraint_resolution and
+    _apply_constraint_resolution_scoring: a FORBIDDEN "no smoking"
+    constraint's legacy-fallback-resolved decision="YES" (smoking IS
+    allowed) is what causes _fails_constraint_resolution to reject the
+    listing (confirmed by
+    tests/test_listing_evaluation.py::test_forbidden_resolved_yes_via_llm_fallback_excludes_listing);
+    decision="NO" is the safe case
+    (::test_forbidden_resolved_no_via_llm_fallback_keeps_listing).
+
+    An earlier version of this function inverted SATISFIED/VIOLATED for
+    FORBIDDEN before this contract boundary - e.g. NL1 SUPPORT (nightlife
+    confirmed present, FactualState.SATISFIED) emitted decision="NO",
+    which _fails_constraint_resolution then read as "forbidden thing NOT
+    detected" = safe, exactly backwards (a real nightlife-supporting
+    hotel would have passed a FORBIDDEN "no nightlife" constraint). That
+    was a double inversion: PreferenceDirection was already being
+    applied a second time, silently, by the existing downstream code.
+    Fixed by removing the first inversion entirely - see
+    tests/test_soft_constraint_forbidden_downstream.py for the full
+    regression proof (decide_constraint -> adapter -> the real
+    _fails_constraint_resolution / _apply_constraint_resolution_scoring).
+
+    `direction` remains a parameter (not simplified away) because every
+    current claim hypothesis happens to be positively-phrased
+    (non-inverted polarity, matching the STRUCTURED matcher's own
+    default - see INVERTED_POLARITY_FORBIDDEN_FIELDS in
+    app.logic.field_rules for the analogous structured-field concept) -
+    a future claim phrased as a negation/absence would need a real,
+    claim-specific inversion here, not a blanket per-direction one.
+    """
+    return _FACTUAL_STATE_TO_DECISION[state]
 
 
 def _preference_direction_for(priority: ConstraintPriority) -> PreferenceDirection:

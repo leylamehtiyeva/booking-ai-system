@@ -4,20 +4,30 @@ original UserConstraint from the new soft-evidence pipeline's
 AtomicClaimResult[] (Phase C - the bridge from SoftPreferenceEvidence
 to a downstream-consumable decision).
 
-PRODUCT CONTRACT: `decision` is a candidate-matching signal, not a
-certification. YES means "enough evidence to keep this listing as a
-good candidate for the preference" - not "objectively proven true".
-NO means "a strong reason not to consider this listing a candidate".
-UNCERTAIN means "insufficient or materially conflicting evidence" - it
-is not a failure state. See app.logic.soft_constraint_decision_policy's
-module docstring for the full contract and the downstream eligibility
-semantics it does (and does not) drive.
+PRODUCT CONTRACT: the END-TO-END OUTCOME (after downstream's existing
+priority-based interpretation) is a candidate-matching signal, not a
+certification - a kept/rewarded DESIRED preference means "enough
+evidence to keep this listing as a good candidate", an excluded/
+penalized FORBIDDEN preference means "a strong reason not to consider
+this listing a candidate", and neither means "insufficient or
+materially conflicting evidence" (not a failure state).
+
+`decision` ITSELF is narrower and direction-agnostic: it always answers
+"is the underlying positive proposition confirmed by evidence" -
+YES/NO/UNCERTAIN do NOT get pre-inverted for FORBIDDEN here (the
+existing downstream contract - app.logic.listing_evaluation.
+_fails_constraint_resolution / _apply_constraint_resolution_scoring -
+already applies that inversion itself, from `priority`). See
+app.logic.soft_constraint_decision_policy's module docstring and
+apply_preference_direction's docstring for the full contract, including
+the audit trail of a since-fixed double-inversion bug.
 
 Deliberately separate from app.schemas.soft_evidence: that schema
 stays factual (evidence relations are never inverted for FORBIDDEN -
 see app.logic.soft_preference_decomposition.PreferenceDirection's own
-docstring). This module is where PreferenceDirection is finally
-applied, at the ORIGINAL constraint boundary, not before.
+docstring). `preference_direction` is still recorded on
+SoftConstraintDecision below for telemetry/UI provenance even though it
+does not currently change `decision`'s value.
 
 No probabilistic confidence is ever fabricated here - `confidence` is
 always None. The deterministic policy that reaches `decision` is pure

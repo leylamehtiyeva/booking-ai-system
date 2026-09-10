@@ -483,6 +483,16 @@ def test_combine_mixed_satisfied_and_unresolved_is_unresolved():
 
 # ==================================================================
 # apply_preference_direction (full truth table)
+#
+# AUDITED CONTRACT: `decision` is direction-agnostic - it always
+# reflects whether the underlying positive proposition is confirmed,
+# regardless of DESIRED vs FORBIDDEN. The existing downstream contract
+# (_fails_constraint_resolution / _apply_constraint_resolution_scoring
+# in app.logic.listing_evaluation) already applies FORBIDDEN's
+# desirability inversion itself, purely from `priority` - pre-inverting
+# here too would double-invert. See
+# tests/test_soft_constraint_forbidden_downstream.py for the full,
+# real-downstream-code regression proof that this must NOT invert.
 # ==================================================================
 
 
@@ -496,11 +506,16 @@ def test_apply_preference_direction_desired(state, expected):
 
 
 @pytest.mark.parametrize("state,expected", [
-    (FactualState.SATISFIED, ConstraintDecisionValue.NO),
-    (FactualState.VIOLATED, ConstraintDecisionValue.YES),
+    (FactualState.SATISFIED, ConstraintDecisionValue.YES),
+    (FactualState.VIOLATED, ConstraintDecisionValue.NO),
     (FactualState.UNRESOLVED, ConstraintDecisionValue.UNCERTAIN),
 ])
-def test_apply_preference_direction_forbidden(state, expected):
+def test_apply_preference_direction_forbidden_is_identical_to_desired(state, expected):
+    """
+    Same table as DESIRED, by design - see the module-level comment
+    above. This is the regression guard that the FORBIDDEN inversion
+    bug (fixed) cannot silently return to apply_preference_direction.
+    """
     assert apply_preference_direction(state, PreferenceDirection.FORBIDDEN) == expected
 
 
@@ -552,21 +567,30 @@ def test_decide_constraint_desired_quiet_satisfied_is_yes():
 # --- FORBIDDEN nightlife examples from the Phase C spec (section 9) ---
 
 
-def test_decide_constraint_forbidden_nightlife_support_is_no():
+def test_decide_constraint_forbidden_nightlife_support_is_yes():
+    """
+    NL1 SUPPORT = nightlife exists. decision="YES" means "the positive
+    proposition (nightlife present) is confirmed" - this is what
+    _fails_constraint_resolution reads as a FORBIDDEN violation and
+    rejects on (see tests/test_soft_constraint_forbidden_downstream.py).
+    It does NOT mean "good candidate" at the raw field level - the
+    downstream FORBIDDEN branch is what turns this into "exclude".
+    """
     c = constraint("no nightlife nearby please", ConstraintPriority.FORBIDDEN)
     ev = evidence(claim("NL1", SUP))
     decision = decide_constraint(c, ev)
     assert decision.factual_state == FactualState.SATISFIED  # nightlife IS present, factually
-    assert decision.decision == ConstraintDecisionValue.NO
-    assert decision.reason.startswith("NO:")
+    assert decision.decision == ConstraintDecisionValue.YES
+    assert decision.reason.startswith("YES:")
 
 
-def test_decide_constraint_forbidden_nightlife_contradict_is_yes():
+def test_decide_constraint_forbidden_nightlife_contradict_is_no():
+    """NL1 CONTRADICT = nightlife confirmed absent -> decision="NO" -> downstream reads FORBIDDEN+NO as safe."""
     c = constraint("no nightlife nearby please", ConstraintPriority.FORBIDDEN)
     ev = evidence(claim("NL1", CON))
     decision = decide_constraint(c, ev)
     assert decision.factual_state == FactualState.VIOLATED
-    assert decision.decision == ConstraintDecisionValue.YES
+    assert decision.decision == ConstraintDecisionValue.NO
 
 
 @pytest.mark.parametrize("relation", [NEE, MIX])
