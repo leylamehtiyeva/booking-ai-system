@@ -76,8 +76,7 @@ def test_build_answer_payload_uses_actual_property_type_in_explanation():
 
 def test_build_answer_payload_for_normal_results():
     response = NormalizedSearchResponse(
-        need_clarification=False,
-        questions=[],
+        status=SearchStatus.RESULTS,
         request_summary=NormalizedRequestSummary(
             city="Baku",
             check_in="2026-04-08",
@@ -215,27 +214,9 @@ def test_build_answer_payload_for_normal_results():
     assert explanation["needs_confirmation"][0]["label"] == "Budget"
 
 
-def test_build_answer_payload_for_clarification():
-    response = NormalizedSearchResponse(
-        need_clarification=True,
-        questions=["В каком городе искать?"],
-        request_summary=None,
-        results=[],
-        debug_notes=[],
-    )
-
-    payload = build_answer_payload(response)
-
-    assert payload["need_clarification"] is True
-    assert payload["questions"] == ["В каком городе искать?"]
-    assert payload["results_count"] == 0
-    assert payload["top_results"] == []
-
-
 def test_build_answer_payload_uses_uncertain_reason_instead_of_field_name():
     response = NormalizedSearchResponse(
-        need_clarification=False,
-        questions=[],
+        status=SearchStatus.RESULTS,
         request_summary=NormalizedRequestSummary(
             city="Baku",
             check_in="2026-04-08",
@@ -302,8 +283,7 @@ def test_build_answer_payload_uses_uncertain_reason_instead_of_field_name():
 
 def test_build_answer_payload_includes_constraint_resolution_results():
     response = NormalizedSearchResponse(
-        need_clarification=False,
-        questions=[],
+        status=SearchStatus.RESULTS,
         request_summary=NormalizedRequestSummary(
             city="Baku",
             check_in="2026-04-08",
@@ -384,8 +364,7 @@ def test_build_answer_payload_includes_constraint_resolution_results():
 
 def test_build_answer_payload_includes_ranking_reasons_and_standout_reason():
     response = NormalizedSearchResponse(
-        need_clarification=False,
-        questions=[],
+        status=SearchStatus.RESULTS,
         request_summary=NormalizedRequestSummary(
             city="Baku",
             check_in="2026-04-08",

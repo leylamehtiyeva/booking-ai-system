@@ -208,11 +208,12 @@ def process_user_message(user_message: str) -> None:
             top_n=TOP_N_DEFAULT,
             max_items=MAX_ITEMS_HARD_CAP,
             result_summary={
+                "status": result.get("status"),
                 "need_clarification": result.get(
                     "need_clarification"
                 ),
-                "results_count": result.get(
-                    "results_count"
+                "results_count": len(
+                    result.get("results") or []
                 ),
                 "questions": result.get("questions"),
             },

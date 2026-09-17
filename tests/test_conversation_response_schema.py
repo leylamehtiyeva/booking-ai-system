@@ -11,7 +11,7 @@ from app.schemas.conversation_response import (
 )
 from app.schemas.conversation_route import ConversationAction
 from app.schemas.query import SearchRequest
-from app.schemas.search_response import NormalizedSearchResponse
+from app.schemas.search_response import NormalizedSearchResponse, SearchStatus
 
 
 def test_conversation_message_accepts_user_and_assistant_roles():
@@ -50,7 +50,7 @@ def test_general_chat_response_input_does_not_require_search_state():
 
 def test_search_outcome_requires_normalized_search_response():
     search_response = NormalizedSearchResponse(
-        need_clarification=False,
+        status=SearchStatus.NO_RESULTS,
         results=[],
     )
 
@@ -87,7 +87,7 @@ def test_response_input_can_contain_current_search():
         current_search=current_search,
         outcome=SearchConversationOutcome(
             search_response=NormalizedSearchResponse(
-                need_clarification=False,
+                status=SearchStatus.NO_RESULTS,
                 results=[],
             )
         ),
