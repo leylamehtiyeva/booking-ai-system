@@ -23,8 +23,11 @@ from app.logic.conversation_response_generator import (
 )
 from app.schemas.conversation_response import (
     ClarificationConversationOutcome,
+    ConversationFailureOutcome,
     ConversationResponseInput,
     GeneralChatConversationOutcome,
+    InformationalConversationOutcome,
+    ListingQueryConversationOutcome,
     SearchConversationOutcome,
 )
 
@@ -47,8 +50,18 @@ CONVERSATION_RESPONSE_TIMEOUT_SECONDS = 10.0
 
 @dataclass(frozen=True)
 class ConversationResponseGenerationResult:
+    """
+    source:
+    - "llm": the LLM call succeeded and its text is used as-is.
+    - "deterministic": the outcome's rendering policy is deliberately
+      deterministic-only - no LLM was ever attempted, this is not a
+      fallback from a failure.
+    - "deterministic_fallback": an LLM call was attempted for an
+      LLM-eligible outcome but failed, timed out, or returned empty text.
+    """
+
     text: str
-    source: Literal["llm", "deterministic_fallback"]
+    source: Literal["llm", "deterministic", "deterministic_fallback"]
 
 
 def _extract_event_text(event: Any) -> str | None:
@@ -143,10 +156,15 @@ def _build_llm_payload(
         outcome,
         SearchConversationOutcome,
     ):
+        # outcome.search_response.results is already the final shown list
+        # (top_n applied upstream in orchestrate_search_request/
+        # select_ranked_items) - top_k must not independently re-truncate
+        # it here, or the LLM prompt could diverge from what
+        # ShownResultSet/the rendered result links actually show.
         answer_payload = build_answer_payload(
             outcome.search_response,
             latest_user_query=None,
-            top_k=3,
+            top_k=len(outcome.search_response.results),
         )
 
         compact_results: list[dict[str, Any]] = []
@@ -225,6 +243,34 @@ async def generate_conversation_response_with_llm(
             response_input
         )
     )
+
+    if isinstance(
+        response_input.outcome,
+        (
+            ConversationFailureOutcome,
+            InformationalConversationOutcome,
+            ListingQueryConversationOutcome,
+        ),
+    ):
+        # These outcomes are deliberately deterministic-only, not an LLM
+        # attempt that happened to fail:
+        # - ConversationFailureOutcome/InformationalConversationOutcome
+        #   carry a fixed, already-decided message that must reach the
+        #   user verbatim, never LLM-paraphrased or reinterpreted.
+        # - ListingQueryConversationOutcome carries a FINAL factual
+        #   verdict (ResultQueryMatch[]) that an LLM must never be given
+        #   a chance to reinterpret (YES/NO/UNCERTAIN could otherwise be
+        #   softened or flipped in prose).
+        # _build_llm_payload does not handle any of these kinds at all
+        # (by design - it would defeat the point), so this must
+        # short-circuit before _build_llm_prompt is ever called. source
+        # is "deterministic" (not "deterministic_fallback") - no LLM call
+        # was ever attempted here, so this must not read as a failure in
+        # telemetry.
+        return ConversationResponseGenerationResult(
+            text=deterministic_fallback,
+            source="deterministic",
+        )
 
     prompt = _build_llm_prompt(response_input)
 

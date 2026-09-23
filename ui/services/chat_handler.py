@@ -18,11 +18,18 @@ from app.logic.conversation_response_generator import (
 from app.logic.conversation_response_llm import (
     generate_conversation_response_with_llm,
 )
-from app.schemas.conversation_route import ConversationAction
 from app.schemas.query import SearchRequest
 from app.observability.trace import RequestTrace
 from ui.formatters import build_display_answer
-from ui.state import append_message, get_search_state, set_search_state, get_messages
+from app.schemas.shown_result_set import ShownResultSet
+from ui.state import (
+    append_message,
+    get_search_state,
+    get_shown_result_set,
+    set_search_state,
+    set_shown_result_set,
+    get_messages,
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -80,22 +87,22 @@ def build_assistant_response(
     result: dict[str, Any],
     recent_messages: list[ConversationMessage] | None = None,
 ) -> tuple[str, dict[str, Any] | None]:
-    conversation_action = result.get("conversation_action")
-
-    use_conversation_response_layer = conversation_action in {
-        ConversationAction.START_SEARCH.value,
-        ConversationAction.UPDATE_SEARCH.value,
-        ConversationAction.GENERAL_CHAT.value,
-    }
-
-    if not use_conversation_response_layer:
-        return build_display_answer(result)
-
+    """
+    Deterministic-only counterpart of process_user_message's response
+    generation (no LLM) - used by tests that want to assert the
+    deterministic renderer's exact text. Routing strategy mirrors
+    production: build_conversation_response_input decides, by outcome
+    type, whether a typed response exists at all - this function does
+    not re-derive that from ConversationAction.
+    """
     response_input = build_conversation_response_input(
-    user_message=user_message,
-    result=result,
-    recent_messages=recent_messages,
-)
+        user_message=user_message,
+        result=result,
+        recent_messages=recent_messages,
+    )
+
+    if response_input is None:
+        return build_display_answer(result)
 
     assistant_answer = generate_deterministic_conversation_response(
         response_input
@@ -125,6 +132,14 @@ def process_user_message(user_message: str) -> None:
             current_state
         )
 
+    shown_result_set = None
+    current_shown_results = get_shown_result_set()
+
+    if current_shown_results is not None:
+        shown_result_set = ShownResultSet.model_validate(
+            current_shown_results
+        )
+
     # 2. Run router + domain processing.
     with st.spinner("Thinking..."):
         result = run_async(
@@ -138,33 +153,32 @@ def process_user_message(user_message: str) -> None:
                     top_k=FALLBACK_TOP_K_DEFAULT,
                 ),
                 max_items=MAX_ITEMS_HARD_CAP,
+                shown_result_set=shown_result_set,
                 trace=trace,
             )
         )
 
-    conversation_action = result.get(
-        "conversation_action"
-    )
-
-    use_conversation_response_layer = (
-        conversation_action
-        in {
-            ConversationAction.START_SEARCH.value,
-            ConversationAction.UPDATE_SEARCH.value,
-            ConversationAction.GENERAL_CHAT.value,
-        }
+    # 3. Generate the final user-facing response.
+    #
+    # Routing strategy (typed response layer vs. direct passthrough) is
+    # decided entirely by build_conversation_response_input, based on the
+    # application result's shape - the UI does not decide this from
+    # ConversationAction. The one narrow exception is the known
+    # routing_unavailable technical-failure shape, which has no
+    # ConversationAction at all (see build_conversation_response_input's
+    # own docstring) and returns None for that reason alone.
+    response_input = build_conversation_response_input(
+        user_message=user_message,
+        result=result,
+        recent_messages=recent_messages,
     )
 
     response_source = "direct"
 
-    # 3. Generate the final user-facing response.
-    if use_conversation_response_layer:
-        response_input = build_conversation_response_input(
-            user_message=user_message,
-            result=result,
-            recent_messages=recent_messages,
-        )
+    if response_input is None:
+        assistant_answer, answer_payload = build_display_answer(result)
 
+    else:
         generation_result = run_async(
             generate_conversation_response_with_llm(
                 response_input,
@@ -185,11 +199,6 @@ def process_user_message(user_message: str) -> None:
             assistant_answer = (
                 f"{assistant_answer}\n\n{result_links}"
             )
-
-    else:
-        assistant_answer, answer_payload = (
-            build_display_answer(result)
-        )
 
     # 4. IMPORTANT:
     # Rebuild telemetry only AFTER conversation response generation.
@@ -237,3 +246,10 @@ def process_user_message(user_message: str) -> None:
     )
 
     set_search_state(result.get("state"))
+
+    # Only present when orchestrate_search_request actually ran this turn
+    # (START_SEARCH/UPDATE_SEARCH that executed) - absent for GENERAL_CHAT,
+    # LISTING_QUESTION, and update_search blocked by need_clarification, so
+    # the previous snapshot is left untouched in those cases by construction.
+    if "shown_result_set" in result:
+        set_shown_result_set(result["shown_result_set"])

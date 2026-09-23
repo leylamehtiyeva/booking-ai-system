@@ -35,6 +35,8 @@ _DIRECT_RESPONSE_TYPES = {
     "other",
     "listing_question",
     "routing_unavailable",
+    "listing_query_result",
+    "listing_query_unsupported",
 }
 
 
@@ -70,10 +72,14 @@ def build_display_answer(
 
     normalized = NormalizedSearchResponse.model_validate(result)
 
+    # normalized.results is already the final selected/shown list (top_n
+    # applied upstream in orchestrate_search_request) - top_k must not
+    # independently re-truncate it, or the rendered result links could
+    # diverge from ShownResultSet/what select_ranked_items decided to show.
     payload = build_answer_payload(
         normalized,
         latest_user_query=None,
-        top_k=3,
+        top_k=len(normalized.results),
     )
 
     return build_user_answer(payload), payload
