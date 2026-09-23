@@ -1,0 +1,17 @@
+{
+  "schema": "v2 (atomic: Q1/Q2/Q3 quiet + FC1 sentence-split)",
+  "n_subclaims_total": 40,
+  "n_subclaims_supported": 16,
+  "recall_at_1": {
+    "k": 1,
+    "n_supported": 16,
+    "hits": 16,
+    "recall": 1.0
+  },
+  "recall_at_3": {
+    "k": 3,
+    "n_supported": 16,
+    "hits": 16,
+    "recall": 1.0
+  }
+}

@@ -1,0 +1,4828 @@
+{
+  "oracle_v1": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/nli_oracle_report.json",
+      "raw_section_omitted": "examples",
+      "n_omitted": 45,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "run_metadata": {
+      "model": "GuardrailsAI/finetuned_nli_provenance",
+      "base_model": "ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
+      "label_mapping": {
+        "entailment": "SUPPORT",
+        "neutral": "RELEVANT_NEUTRAL",
+        "contradiction": "CONTRADICT"
+      },
+      "premise_field": "evidence[].text",
+      "hypothesis_field": "subclaims[].hypothesis",
+      "max_length": 256,
+      "threshold_applied": false,
+      "low_confidence_diagnostic_threshold": 0.6,
+      "dataset_source": "evaluation/experiments/evidence_retrieval/golden/retrieval_checkpoint_v2.jsonl",
+      "n_examples": 45,
+      "n_unique_examples": 21,
+      "n_truncated": 0,
+      "max_token_count_observed": 148,
+      "relation_distribution_chunk_level": {
+        "SUPPORT": 40,
+        "CONTRADICT": 0,
+        "RELEVANT_NEUTRAL": 5
+      },
+      "relation_distribution_deduplicated": {
+        "SUPPORT": 17,
+        "CONTRADICT": 0,
+        "RELEVANT_NEUTRAL": 4
+      }
+    },
+    "chunk_level_metrics": {
+      "n": 45,
+      "accuracy": 0.7556,
+      "confusion_matrix": {
+        "SUPPORT": {
+          "SUPPORT": 34,
+          "CONTRADICT": 6,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "CONTRADICT": {
+          "SUPPORT": 0,
+          "CONTRADICT": 0,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "RELEVANT_NEUTRAL": {
+          "SUPPORT": 0,
+          "CONTRADICT": 5,
+          "RELEVANT_NEUTRAL": 0
+        }
+      },
+      "per_class": {
+        "SUPPORT": {
+          "precision": 1.0,
+          "recall": 0.85,
+          "f1": 0.9189,
+          "tp": 34,
+          "fp": 0,
+          "fn": 6,
+          "n_gold": 40,
+          "insufficient_data": false
+        },
+        "CONTRADICT": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": null,
+          "tp": 0,
+          "fp": 11,
+          "fn": 0,
+          "n_gold": 0,
+          "insufficient_data": true
+        },
+        "RELEVANT_NEUTRAL": {
+          "precision": null,
+          "recall": 0.0,
+          "f1": null,
+          "tp": 0,
+          "fp": 0,
+          "fn": 5,
+          "n_gold": 5,
+          "insufficient_data": false
+        }
+      },
+      "macro_f1_observed_classes": 0.9189,
+      "macro_f1_3class": {
+        "value": null,
+        "insufficient_data": true,
+        "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+      }
+    },
+    "deduplicated_metrics": {
+      "n": 21,
+      "accuracy": 0.7143,
+      "confusion_matrix": {
+        "SUPPORT": {
+          "SUPPORT": 15,
+          "CONTRADICT": 2,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "CONTRADICT": {
+          "SUPPORT": 0,
+          "CONTRADICT": 0,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "RELEVANT_NEUTRAL": {
+          "SUPPORT": 0,
+          "CONTRADICT": 4,
+          "RELEVANT_NEUTRAL": 0
+        }
+      },
+      "per_class": {
+        "SUPPORT": {
+          "precision": 1.0,
+          "recall": 0.8824,
+          "f1": 0.9375,
+          "tp": 15,
+          "fp": 0,
+          "fn": 2,
+          "n_gold": 17,
+          "insufficient_data": false
+        },
+        "CONTRADICT": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": null,
+          "tp": 0,
+          "fp": 6,
+          "fn": 0,
+          "n_gold": 0,
+          "insufficient_data": true
+        },
+        "RELEVANT_NEUTRAL": {
+          "precision": null,
+          "recall": 0.0,
+          "f1": null,
+          "tp": 0,
+          "fp": 0,
+          "fn": 4,
+          "n_gold": 4,
+          "insufficient_data": false
+        }
+      },
+      "macro_f1_observed_classes": 0.9375,
+      "macro_f1_3class": {
+        "value": null,
+        "insufficient_data": true,
+        "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+      }
+    },
+    "reliability_critical_metrics": {
+      "chunk_level": {
+        "neutral_to_support_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 5,
+          "insufficient_data": false
+        },
+        "contradict_to_support_rate": {
+          "rate": null,
+          "count": 0,
+          "n": 0,
+          "insufficient_data": true
+        },
+        "support_to_neutral_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 40,
+          "insufficient_data": false
+        }
+      },
+      "deduplicated": {
+        "neutral_to_support_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 4,
+          "insufficient_data": false
+        },
+        "contradict_to_support_rate": {
+          "rate": null,
+          "count": 0,
+          "n": 0,
+          "insufficient_data": true
+        },
+        "support_to_neutral_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 17,
+          "insufficient_data": false
+        }
+      }
+    },
+    "stratified_by_shape": {
+      "short_tag": {
+        "chunk_level": {
+          "n": 27,
+          "accuracy": 0.7407,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 20,
+              "CONTRADICT": 4,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 3,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 0.8333,
+              "f1": 0.9091,
+              "tp": 20,
+              "fp": 0,
+              "fn": 4,
+              "n_gold": 24,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 7,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 3,
+              "n_gold": 3,
+              "insufficient_data": false
+            }
+          },
+          "macro_f1_observed_classes": 0.9091,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        },
+        "deduplicated": {
+          "n": 7,
+          "accuracy": 0.5714,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 4,
+              "CONTRADICT": 1,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 2,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 0.8,
+              "f1": 0.8889,
+              "tp": 4,
+              "fp": 0,
+              "fn": 1,
+              "n_gold": 5,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 3,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 2,
+              "n_gold": 2,
+              "insufficient_data": false
+            }
+          },
+          "macro_f1_observed_classes": 0.8889,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        }
+      },
+      "sentence": {
+        "chunk_level": {
+          "n": 14,
+          "accuracy": 0.8571,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 12,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 2,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "tp": 12,
+              "fp": 0,
+              "fn": 0,
+              "n_gold": 12,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 2,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 2,
+              "n_gold": 2,
+              "insufficient_data": false
+            }
+          },
+          "macro_f1_observed_classes": 1.0,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        },
+        "deduplicated": {
+          "n": 11,
+          "accuracy": 0.8182,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 9,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 2,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "tp": 9,
+              "fp": 0,
+              "fn": 0,
+              "n_gold": 9,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 2,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 2,
+              "n_gold": 2,
+              "insufficient_data": false
+            }
+          },
+          "macro_f1_observed_classes": 1.0,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        }
+      },
+      "long_policy": {
+        "chunk_level": {
+          "n": 4,
+          "accuracy": 0.5,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 2,
+              "CONTRADICT": 2,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 0.5,
+              "f1": 0.6667,
+              "tp": 2,
+              "fp": 0,
+              "fn": 2,
+              "n_gold": 4,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 2,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            }
+          },
+          "macro_f1_observed_classes": 0.6667,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        },
+        "deduplicated": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 2,
+              "CONTRADICT": 1,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 0.6667,
+              "f1": 0.8,
+              "tp": 2,
+              "fp": 0,
+              "fn": 1,
+              "n_gold": 3,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 1,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            }
+          },
+          "macro_f1_observed_classes": 0.8,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        }
+      }
+    },
+    "errors": [
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "main",
+        "chunk_id": "12895996::9",
+        "shape_bucket": "sentence",
+        "premise": "This property will not accommodate hen, stag or similar parties.Quiet hours are between 22:00:00 and 07:00:00.",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.287835,
+          "neutral": 0.00247,
+          "contradiction": 0.709695
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "main",
+        "chunk_id": "12895996::118",
+        "shape_bucket": "short_tag",
+        "premise": "Quiet hours",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.410965,
+          "neutral": 0.069123,
+          "contradiction": 0.519912
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "main",
+        "chunk_id": "12895996::119",
+        "shape_bucket": "sentence",
+        "premise": "Guests must be quiet between 22:00 and 07:00.",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.064578,
+          "neutral": 0.001448,
+          "contradiction": 0.933974
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "main",
+        "chunk_id": "16084035::108",
+        "shape_bucket": "short_tag",
+        "premise": "Soundproofing",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.347757,
+          "neutral": 0.032557,
+          "contradiction": 0.619687
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "main",
+        "chunk_id": "16084035::133",
+        "shape_bucket": "short_tag",
+        "premise": "Soundproofing",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.347757,
+          "neutral": 0.032557,
+          "contradiction": 0.619687
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "main",
+        "chunk_id": "16084035::213",
+        "shape_bucket": "short_tag",
+        "premise": "Soundproofing",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.347757,
+          "neutral": 0.032557,
+          "contradiction": 0.619687
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "main",
+        "chunk_id": "16084035::283",
+        "shape_bucket": "short_tag",
+        "premise": "Soundproofing",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.347757,
+          "neutral": 0.032557,
+          "contradiction": 0.619687
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "main",
+        "chunk_id": "16084035::352",
+        "shape_bucket": "short_tag",
+        "premise": "Quiet street view",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.172246,
+          "neutral": 0.017333,
+          "contradiction": 0.810421
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "modern_apt_nizami__quiet",
+        "subclaim": "main",
+        "chunk_id": "16578874::160",
+        "shape_bucket": "short_tag",
+        "premise": "Quiet street view",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.172246,
+          "neutral": 0.017333,
+          "contradiction": 0.810421
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "nizami_studio__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16406264::97",
+        "shape_bucket": "long_policy",
+        "premise": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.258241,
+          "neutral": 0.000395,
+          "contradiction": 0.741365
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "modern_apt_nizami__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16578874::169",
+        "shape_bucket": "long_policy",
+        "premise": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.258241,
+          "neutral": 0.000395,
+          "contradiction": 0.741365
+        },
+        "truncated": false
+      }
+    ],
+    "n_errors": 11,
+    "low_confidence_correct_predictions": [
+      {
+        "pair_id": "apt_city_center__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "12895996::111",
+        "shape_bucket": "long_policy",
+        "premise": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 2 years Cot upon request Prices for cots are not included in the total price, and will have to be paid for separately during your stay. The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "SUPPORT",
+        "probs": {
+          "entailment": 0.522268,
+          "neutral": 0.000424,
+          "contradiction": 0.477308
+        },
+        "top_prob": 0.522268
+      }
+    ],
+    "n_low_confidence_correct": 1
+  },
+  "oracle_baseline_v1_recompute": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/nli_oracle_baseline_v1_report.json",
+      "raw_section_omitted": "examples",
+      "n_omitted": 45,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "run_metadata": {
+      "model": "GuardrailsAI/finetuned_nli_provenance",
+      "base_model": "ynie/roberta-large-snli_mnli_fever_anli_R1_R2_R3-nli",
+      "label_mapping": {
+        "entailment": "SUPPORT",
+        "neutral": "RELEVANT_NEUTRAL",
+        "contradiction": "CONTRADICT"
+      },
+      "premise_field": "evidence[].text",
+      "hypothesis_field": "subclaims[].hypothesis",
+      "max_length": 256,
+      "threshold_applied": false,
+      "low_confidence_diagnostic_threshold": 0.6,
+      "dataset_source": "evaluation/experiments/evidence_retrieval/golden/retrieval_checkpoint_v2.jsonl",
+      "n_examples": 45,
+      "n_unique_examples": 21,
+      "n_truncated": 0,
+      "max_token_count_observed": 148,
+      "relation_distribution_chunk_level": {
+        "SUPPORT": 40,
+        "CONTRADICT": 0,
+        "RELEVANT_NEUTRAL": 5
+      },
+      "relation_distribution_deduplicated": {
+        "SUPPORT": 17,
+        "CONTRADICT": 0,
+        "RELEVANT_NEUTRAL": 4
+      },
+      "frozen_as": "raw_nli_baseline_v1",
+      "input_version": "v1"
+    },
+    "chunk_level_metrics": {
+      "n": 45,
+      "accuracy": 0.7556,
+      "confusion_matrix": {
+        "SUPPORT": {
+          "SUPPORT": 34,
+          "CONTRADICT": 6,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "CONTRADICT": {
+          "SUPPORT": 0,
+          "CONTRADICT": 0,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "RELEVANT_NEUTRAL": {
+          "SUPPORT": 0,
+          "CONTRADICT": 5,
+          "RELEVANT_NEUTRAL": 0
+        }
+      },
+      "per_class": {
+        "SUPPORT": {
+          "precision": 1.0,
+          "recall": 0.85,
+          "f1": 0.9189,
+          "tp": 34,
+          "fp": 0,
+          "fn": 6,
+          "n_gold": 40,
+          "insufficient_data": false
+        },
+        "CONTRADICT": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": null,
+          "tp": 0,
+          "fp": 11,
+          "fn": 0,
+          "n_gold": 0,
+          "insufficient_data": true
+        },
+        "RELEVANT_NEUTRAL": {
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 5,
+          "n_gold": 5,
+          "insufficient_data": false
+        }
+      },
+      "macro_f1_observed_classes": 0.4595,
+      "macro_f1_3class": {
+        "value": null,
+        "insufficient_data": true,
+        "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+      }
+    },
+    "deduplicated_metrics": {
+      "n": 21,
+      "accuracy": 0.7143,
+      "confusion_matrix": {
+        "SUPPORT": {
+          "SUPPORT": 15,
+          "CONTRADICT": 2,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "CONTRADICT": {
+          "SUPPORT": 0,
+          "CONTRADICT": 0,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "RELEVANT_NEUTRAL": {
+          "SUPPORT": 0,
+          "CONTRADICT": 4,
+          "RELEVANT_NEUTRAL": 0
+        }
+      },
+      "per_class": {
+        "SUPPORT": {
+          "precision": 1.0,
+          "recall": 0.8824,
+          "f1": 0.9375,
+          "tp": 15,
+          "fp": 0,
+          "fn": 2,
+          "n_gold": 17,
+          "insufficient_data": false
+        },
+        "CONTRADICT": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": null,
+          "tp": 0,
+          "fp": 6,
+          "fn": 0,
+          "n_gold": 0,
+          "insufficient_data": true
+        },
+        "RELEVANT_NEUTRAL": {
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 4,
+          "n_gold": 4,
+          "insufficient_data": false
+        }
+      },
+      "macro_f1_observed_classes": 0.4688,
+      "macro_f1_3class": {
+        "value": null,
+        "insufficient_data": true,
+        "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+      }
+    },
+    "reliability_critical_metrics": {
+      "chunk_level": {
+        "neutral_to_support_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 5,
+          "insufficient_data": false
+        },
+        "contradict_to_support_rate": {
+          "rate": null,
+          "count": 0,
+          "n": 0,
+          "insufficient_data": true
+        },
+        "support_to_neutral_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 40,
+          "insufficient_data": false
+        },
+        "support_to_contradict_rate": {
+          "rate": 0.15,
+          "count": 6,
+          "n": 40,
+          "insufficient_data": false
+        },
+        "neutral_to_contradict_rate": {
+          "rate": 1.0,
+          "count": 5,
+          "n": 5,
+          "insufficient_data": false
+        }
+      },
+      "deduplicated": {
+        "neutral_to_support_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 4,
+          "insufficient_data": false
+        },
+        "contradict_to_support_rate": {
+          "rate": null,
+          "count": 0,
+          "n": 0,
+          "insufficient_data": true
+        },
+        "support_to_neutral_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 17,
+          "insufficient_data": false
+        },
+        "support_to_contradict_rate": {
+          "rate": 0.1176,
+          "count": 2,
+          "n": 17,
+          "insufficient_data": false
+        },
+        "neutral_to_contradict_rate": {
+          "rate": 1.0,
+          "count": 4,
+          "n": 4,
+          "insufficient_data": false
+        }
+      }
+    },
+    "per_hypothesis": {
+      "Guests can expect a quiet stay at this property, without significant noise disturbance.": {
+        "n": 10,
+        "accuracy": 0.1
+      },
+      "The property's policies formally accommodate children.": {
+        "n": 4,
+        "accuracy": 0.5
+      },
+      "The property has physical rooms/layout suited to families.": {
+        "n": 6,
+        "accuracy": 1.0
+      },
+      "The on-site dining experience is welcoming to families.": {
+        "n": 1,
+        "accuracy": 1.0
+      },
+      "Wi-Fi / internet access is available.": {
+        "n": 17,
+        "accuracy": 1.0
+      },
+      "The room has a desk or dedicated workspace.": {
+        "n": 7,
+        "accuracy": 1.0
+      }
+    },
+    "stratified_by_shape": {
+      "short_tag": {
+        "chunk_level": {
+          "n": 27,
+          "accuracy": 0.7407,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 20,
+              "CONTRADICT": 4,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 3,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 0.8333,
+              "f1": 0.9091,
+              "tp": 20,
+              "fp": 0,
+              "fn": 4,
+              "n_gold": 24,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 7,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 3,
+              "n_gold": 3,
+              "insufficient_data": false
+            }
+          },
+          "macro_f1_observed_classes": 0.9091,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        },
+        "deduplicated": {
+          "n": 7,
+          "accuracy": 0.5714,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 4,
+              "CONTRADICT": 1,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 2,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 0.8,
+              "f1": 0.8889,
+              "tp": 4,
+              "fp": 0,
+              "fn": 1,
+              "n_gold": 5,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 3,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 2,
+              "n_gold": 2,
+              "insufficient_data": false
+            }
+          },
+          "macro_f1_observed_classes": 0.8889,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        }
+      },
+      "sentence": {
+        "chunk_level": {
+          "n": 14,
+          "accuracy": 0.8571,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 12,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 2,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "tp": 12,
+              "fp": 0,
+              "fn": 0,
+              "n_gold": 12,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 2,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 2,
+              "n_gold": 2,
+              "insufficient_data": false
+            }
+          },
+          "macro_f1_observed_classes": 1.0,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        },
+        "deduplicated": {
+          "n": 11,
+          "accuracy": 0.8182,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 9,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 2,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 1.0,
+              "f1": 1.0,
+              "tp": 9,
+              "fp": 0,
+              "fn": 0,
+              "n_gold": 9,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 2,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": 0.0,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 2,
+              "n_gold": 2,
+              "insufficient_data": false
+            }
+          },
+          "macro_f1_observed_classes": 1.0,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        }
+      },
+      "long_policy": {
+        "chunk_level": {
+          "n": 4,
+          "accuracy": 0.5,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 2,
+              "CONTRADICT": 2,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 0.5,
+              "f1": 0.6667,
+              "tp": 2,
+              "fp": 0,
+              "fn": 2,
+              "n_gold": 4,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 2,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            }
+          },
+          "macro_f1_observed_classes": 0.6667,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        },
+        "deduplicated": {
+          "n": 3,
+          "accuracy": 0.6667,
+          "confusion_matrix": {
+            "SUPPORT": {
+              "SUPPORT": 2,
+              "CONTRADICT": 1,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "CONTRADICT": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            },
+            "RELEVANT_NEUTRAL": {
+              "SUPPORT": 0,
+              "CONTRADICT": 0,
+              "RELEVANT_NEUTRAL": 0
+            }
+          },
+          "per_class": {
+            "SUPPORT": {
+              "precision": 1.0,
+              "recall": 0.6667,
+              "f1": 0.8,
+              "tp": 2,
+              "fp": 0,
+              "fn": 1,
+              "n_gold": 3,
+              "insufficient_data": false
+            },
+            "CONTRADICT": {
+              "precision": 0.0,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 1,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            },
+            "RELEVANT_NEUTRAL": {
+              "precision": null,
+              "recall": null,
+              "f1": null,
+              "tp": 0,
+              "fp": 0,
+              "fn": 0,
+              "n_gold": 0,
+              "insufficient_data": true
+            }
+          },
+          "macro_f1_observed_classes": 0.8,
+          "macro_f1_3class": {
+            "value": null,
+            "insufficient_data": true,
+            "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+          }
+        }
+      }
+    },
+    "errors": [
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "main",
+        "chunk_id": "12895996::9",
+        "shape_bucket": "sentence",
+        "premise": "This property will not accommodate hen, stag or similar parties.Quiet hours are between 22:00:00 and 07:00:00.",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.287835,
+          "neutral": 0.00247,
+          "contradiction": 0.709695
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "main",
+        "chunk_id": "12895996::118",
+        "shape_bucket": "short_tag",
+        "premise": "Quiet hours",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.410965,
+          "neutral": 0.069123,
+          "contradiction": 0.519912
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "main",
+        "chunk_id": "12895996::119",
+        "shape_bucket": "sentence",
+        "premise": "Guests must be quiet between 22:00 and 07:00.",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.064578,
+          "neutral": 0.001448,
+          "contradiction": 0.933974
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "main",
+        "chunk_id": "16084035::108",
+        "shape_bucket": "short_tag",
+        "premise": "Soundproofing",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.347757,
+          "neutral": 0.032557,
+          "contradiction": 0.619687
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "main",
+        "chunk_id": "16084035::133",
+        "shape_bucket": "short_tag",
+        "premise": "Soundproofing",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.347757,
+          "neutral": 0.032557,
+          "contradiction": 0.619687
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "main",
+        "chunk_id": "16084035::213",
+        "shape_bucket": "short_tag",
+        "premise": "Soundproofing",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.347757,
+          "neutral": 0.032557,
+          "contradiction": 0.619687
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "main",
+        "chunk_id": "16084035::283",
+        "shape_bucket": "short_tag",
+        "premise": "Soundproofing",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.347757,
+          "neutral": 0.032557,
+          "contradiction": 0.619687
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "main",
+        "chunk_id": "16084035::352",
+        "shape_bucket": "short_tag",
+        "premise": "Quiet street view",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.172246,
+          "neutral": 0.017333,
+          "contradiction": 0.810421
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "modern_apt_nizami__quiet",
+        "subclaim": "main",
+        "chunk_id": "16578874::160",
+        "shape_bucket": "short_tag",
+        "premise": "Quiet street view",
+        "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.172246,
+          "neutral": 0.017333,
+          "contradiction": 0.810421
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "nizami_studio__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16406264::97",
+        "shape_bucket": "long_policy",
+        "premise": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.258241,
+          "neutral": 0.000395,
+          "contradiction": 0.741365
+        },
+        "truncated": false
+      },
+      {
+        "pair_id": "modern_apt_nizami__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16578874::169",
+        "shape_bucket": "long_policy",
+        "premise": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.258241,
+          "neutral": 0.000395,
+          "contradiction": 0.741365
+        },
+        "truncated": false
+      }
+    ],
+    "n_errors": 11,
+    "low_confidence_correct_predictions": [
+      {
+        "pair_id": "apt_city_center__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "12895996::111",
+        "shape_bucket": "long_policy",
+        "premise": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 2 years Cot upon request Prices for cots are not included in the total price, and will have to be paid for separately during your stay. The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "SUPPORT",
+        "probs": {
+          "entailment": 0.522268,
+          "neutral": 0.000424,
+          "contradiction": 0.477308
+        },
+        "top_prob": 0.522268
+      }
+    ]
+  },
+  "oracle_v2": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/nli_oracle_v2_report.json",
+      "raw_section_omitted": "examples",
+      "n_omitted": 89,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "run_metadata": {
+      "model": "GuardrailsAI/finetuned_nli_provenance",
+      "input_version": "v2",
+      "max_length": 256,
+      "threshold_applied": false,
+      "n_examples": 89,
+      "n_unique_examples": 42,
+      "n_structured": 43,
+      "n_free_text": 46,
+      "structured_rule": "word_count(premise) <= 3",
+      "relation_distribution": {
+        "SUPPORT": 46,
+        "CONTRADICT": 0,
+        "RELEVANT_NEUTRAL": 43
+      }
+    },
+    "chunk_level_metrics": {
+      "n": 89,
+      "accuracy": 0.4719,
+      "confusion_matrix": {
+        "SUPPORT": {
+          "SUPPORT": 42,
+          "CONTRADICT": 4,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "CONTRADICT": {
+          "SUPPORT": 0,
+          "CONTRADICT": 0,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "RELEVANT_NEUTRAL": {
+          "SUPPORT": 0,
+          "CONTRADICT": 43,
+          "RELEVANT_NEUTRAL": 0
+        }
+      },
+      "per_class": {
+        "SUPPORT": {
+          "precision": 1.0,
+          "recall": 0.913,
+          "f1": 0.9545,
+          "tp": 42,
+          "fp": 0,
+          "fn": 4,
+          "n_gold": 46,
+          "insufficient_data": false
+        },
+        "CONTRADICT": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": null,
+          "tp": 0,
+          "fp": 47,
+          "fn": 0,
+          "n_gold": 0,
+          "insufficient_data": true
+        },
+        "RELEVANT_NEUTRAL": {
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 43,
+          "n_gold": 43,
+          "insufficient_data": false
+        }
+      },
+      "macro_f1_observed_classes": 0.4773,
+      "macro_f1_3class": {
+        "value": null,
+        "insufficient_data": true,
+        "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+      }
+    },
+    "deduplicated_metrics": {
+      "n": 42,
+      "accuracy": 0.381,
+      "confusion_matrix": {
+        "SUPPORT": {
+          "SUPPORT": 16,
+          "CONTRADICT": 3,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "CONTRADICT": {
+          "SUPPORT": 0,
+          "CONTRADICT": 0,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "RELEVANT_NEUTRAL": {
+          "SUPPORT": 0,
+          "CONTRADICT": 23,
+          "RELEVANT_NEUTRAL": 0
+        }
+      },
+      "per_class": {
+        "SUPPORT": {
+          "precision": 1.0,
+          "recall": 0.8421,
+          "f1": 0.9143,
+          "tp": 16,
+          "fp": 0,
+          "fn": 3,
+          "n_gold": 19,
+          "insufficient_data": false
+        },
+        "CONTRADICT": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": null,
+          "tp": 0,
+          "fp": 26,
+          "fn": 0,
+          "n_gold": 0,
+          "insufficient_data": true
+        },
+        "RELEVANT_NEUTRAL": {
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0,
+          "tp": 0,
+          "fp": 0,
+          "fn": 23,
+          "n_gold": 23,
+          "insufficient_data": false
+        }
+      },
+      "macro_f1_observed_classes": 0.4572,
+      "macro_f1_3class": {
+        "value": null,
+        "insufficient_data": true,
+        "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+      }
+    },
+    "reliability_critical_metrics": {
+      "chunk_level": {
+        "neutral_to_support_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 43,
+          "insufficient_data": false
+        },
+        "contradict_to_support_rate": {
+          "rate": null,
+          "count": 0,
+          "n": 0,
+          "insufficient_data": true
+        },
+        "support_to_neutral_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 46,
+          "insufficient_data": false
+        },
+        "support_to_contradict_rate": {
+          "rate": 0.087,
+          "count": 4,
+          "n": 46,
+          "insufficient_data": false
+        },
+        "neutral_to_contradict_rate": {
+          "rate": 1.0,
+          "count": 43,
+          "n": 43,
+          "insufficient_data": false
+        }
+      },
+      "deduplicated": {
+        "neutral_to_support_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 23,
+          "insufficient_data": false
+        },
+        "contradict_to_support_rate": {
+          "rate": null,
+          "count": 0,
+          "n": 0,
+          "insufficient_data": true
+        },
+        "support_to_neutral_rate": {
+          "rate": 0.0,
+          "count": 0,
+          "n": 19,
+          "insufficient_data": false
+        },
+        "support_to_contradict_rate": {
+          "rate": 0.1579,
+          "count": 3,
+          "n": 19,
+          "insufficient_data": false
+        },
+        "neutral_to_contradict_rate": {
+          "rate": 1.0,
+          "count": 23,
+          "n": 23,
+          "insufficient_data": false
+        }
+      }
+    },
+    "per_hypothesis": {
+      "The room/property has soundproofing.": {
+        "subclaim": "Q1",
+        "n": 10,
+        "accuracy": 0.5
+      },
+      "The immediate surroundings are explicitly described as quiet.": {
+        "subclaim": "Q2",
+        "n": 10,
+        "accuracy": 0.2
+      },
+      "Guests report little or no significant noise disturbance.": {
+        "subclaim": "Q3",
+        "n": 10,
+        "accuracy": 0.0
+      },
+      "The property's policies formally accommodate children.": {
+        "subclaim": "FC1",
+        "n": 28,
+        "accuracy": 0.1429
+      },
+      "The property has physical rooms/layout suited to families.": {
+        "subclaim": "FC2",
+        "n": 6,
+        "accuracy": 1.0
+      },
+      "The on-site dining experience is welcoming to families.": {
+        "subclaim": "FC3",
+        "n": 1,
+        "accuracy": 1.0
+      },
+      "Wi-Fi / internet access is available.": {
+        "subclaim": "RW2a",
+        "n": 17,
+        "accuracy": 1.0
+      },
+      "The room has a desk or dedicated workspace.": {
+        "subclaim": "RW1",
+        "n": 7,
+        "accuracy": 1.0
+      }
+    },
+    "structured_vs_free_text": {
+      "structured": {
+        "n": 43,
+        "accuracy": 0.6047,
+        "confusion_matrix": {
+          "SUPPORT": {
+            "SUPPORT": 26,
+            "CONTRADICT": 0,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "CONTRADICT": {
+            "SUPPORT": 0,
+            "CONTRADICT": 0,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "RELEVANT_NEUTRAL": {
+            "SUPPORT": 0,
+            "CONTRADICT": 17,
+            "RELEVANT_NEUTRAL": 0
+          }
+        },
+        "per_class": {
+          "SUPPORT": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "tp": 26,
+            "fp": 0,
+            "fn": 0,
+            "n_gold": 26,
+            "insufficient_data": false
+          },
+          "CONTRADICT": {
+            "precision": 0.0,
+            "recall": null,
+            "f1": null,
+            "tp": 0,
+            "fp": 17,
+            "fn": 0,
+            "n_gold": 0,
+            "insufficient_data": true
+          },
+          "RELEVANT_NEUTRAL": {
+            "precision": null,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 17,
+            "n_gold": 17,
+            "insufficient_data": false
+          }
+        },
+        "macro_f1_observed_classes": 0.5,
+        "macro_f1_3class": {
+          "value": null,
+          "insufficient_data": true,
+          "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+        }
+      },
+      "free_text": {
+        "n": 46,
+        "accuracy": 0.3478,
+        "confusion_matrix": {
+          "SUPPORT": {
+            "SUPPORT": 16,
+            "CONTRADICT": 4,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "CONTRADICT": {
+            "SUPPORT": 0,
+            "CONTRADICT": 0,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "RELEVANT_NEUTRAL": {
+            "SUPPORT": 0,
+            "CONTRADICT": 26,
+            "RELEVANT_NEUTRAL": 0
+          }
+        },
+        "per_class": {
+          "SUPPORT": {
+            "precision": 1.0,
+            "recall": 0.8,
+            "f1": 0.8889,
+            "tp": 16,
+            "fp": 0,
+            "fn": 4,
+            "n_gold": 20,
+            "insufficient_data": false
+          },
+          "CONTRADICT": {
+            "precision": 0.0,
+            "recall": null,
+            "f1": null,
+            "tp": 0,
+            "fp": 30,
+            "fn": 0,
+            "n_gold": 0,
+            "insufficient_data": true
+          },
+          "RELEVANT_NEUTRAL": {
+            "precision": null,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 26,
+            "n_gold": 26,
+            "insufficient_data": false
+          }
+        },
+        "macro_f1_observed_classes": 0.4445,
+        "macro_f1_3class": {
+          "value": null,
+          "insufficient_data": true,
+          "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+        }
+      },
+      "structured_dedup": {
+        "n": 15,
+        "accuracy": 0.4,
+        "confusion_matrix": {
+          "SUPPORT": {
+            "SUPPORT": 6,
+            "CONTRADICT": 0,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "CONTRADICT": {
+            "SUPPORT": 0,
+            "CONTRADICT": 0,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "RELEVANT_NEUTRAL": {
+            "SUPPORT": 0,
+            "CONTRADICT": 9,
+            "RELEVANT_NEUTRAL": 0
+          }
+        },
+        "per_class": {
+          "SUPPORT": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "tp": 6,
+            "fp": 0,
+            "fn": 0,
+            "n_gold": 6,
+            "insufficient_data": false
+          },
+          "CONTRADICT": {
+            "precision": 0.0,
+            "recall": null,
+            "f1": null,
+            "tp": 0,
+            "fp": 9,
+            "fn": 0,
+            "n_gold": 0,
+            "insufficient_data": true
+          },
+          "RELEVANT_NEUTRAL": {
+            "precision": null,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 9,
+            "n_gold": 9,
+            "insufficient_data": false
+          }
+        },
+        "macro_f1_observed_classes": 0.5,
+        "macro_f1_3class": {
+          "value": null,
+          "insufficient_data": true,
+          "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+        }
+      },
+      "free_text_dedup": {
+        "n": 27,
+        "accuracy": 0.3704,
+        "confusion_matrix": {
+          "SUPPORT": {
+            "SUPPORT": 10,
+            "CONTRADICT": 3,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "CONTRADICT": {
+            "SUPPORT": 0,
+            "CONTRADICT": 0,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "RELEVANT_NEUTRAL": {
+            "SUPPORT": 0,
+            "CONTRADICT": 14,
+            "RELEVANT_NEUTRAL": 0
+          }
+        },
+        "per_class": {
+          "SUPPORT": {
+            "precision": 1.0,
+            "recall": 0.7692,
+            "f1": 0.8696,
+            "tp": 10,
+            "fp": 0,
+            "fn": 3,
+            "n_gold": 13,
+            "insufficient_data": false
+          },
+          "CONTRADICT": {
+            "precision": 0.0,
+            "recall": null,
+            "f1": null,
+            "tp": 0,
+            "fp": 17,
+            "fn": 0,
+            "n_gold": 0,
+            "insufficient_data": true
+          },
+          "RELEVANT_NEUTRAL": {
+            "precision": null,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 14,
+            "n_gold": 14,
+            "insufficient_data": false
+          }
+        },
+        "macro_f1_observed_classes": 0.4348,
+        "macro_f1_3class": {
+          "value": null,
+          "insufficient_data": true,
+          "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+        }
+      }
+    },
+    "errors": [
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "Q1",
+        "chunk_id": "12895996::9",
+        "source_chunk_id": "12895996::9",
+        "is_structured": false,
+        "premise": "This property will not accommodate hen, stag or similar parties.Quiet hours are between 22:00:00 and 07:00:00.",
+        "hypothesis": "The room/property has soundproofing.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.072097,
+          "neutral": 0.034215,
+          "contradiction": 0.893688
+        }
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "Q2",
+        "chunk_id": "12895996::9",
+        "source_chunk_id": "12895996::9",
+        "is_structured": false,
+        "premise": "This property will not accommodate hen, stag or similar parties.Quiet hours are between 22:00:00 and 07:00:00.",
+        "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.243834,
+          "neutral": 0.002796,
+          "contradiction": 0.75337
+        }
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "Q3",
+        "chunk_id": "12895996::9",
+        "source_chunk_id": "12895996::9",
+        "is_structured": false,
+        "premise": "This property will not accommodate hen, stag or similar parties.Quiet hours are between 22:00:00 and 07:00:00.",
+        "hypothesis": "Guests report little or no significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.02259,
+          "neutral": 0.012137,
+          "contradiction": 0.965273
+        }
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "Q1",
+        "chunk_id": "12895996::118",
+        "source_chunk_id": "12895996::118",
+        "is_structured": true,
+        "premise": "Quiet hours",
+        "hypothesis": "The room/property has soundproofing.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.154825,
+          "neutral": 0.114893,
+          "contradiction": 0.730283
+        }
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "Q2",
+        "chunk_id": "12895996::118",
+        "source_chunk_id": "12895996::118",
+        "is_structured": true,
+        "premise": "Quiet hours",
+        "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.302348,
+          "neutral": 0.006433,
+          "contradiction": 0.691219
+        }
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "Q3",
+        "chunk_id": "12895996::118",
+        "source_chunk_id": "12895996::118",
+        "is_structured": true,
+        "premise": "Quiet hours",
+        "hypothesis": "Guests report little or no significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.231091,
+          "neutral": 0.151664,
+          "contradiction": 0.617245
+        }
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "Q1",
+        "chunk_id": "12895996::119",
+        "source_chunk_id": "12895996::119",
+        "is_structured": false,
+        "premise": "Guests must be quiet between 22:00 and 07:00.",
+        "hypothesis": "The room/property has soundproofing.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.02122,
+          "neutral": 0.013653,
+          "contradiction": 0.965128
+        }
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "Q2",
+        "chunk_id": "12895996::119",
+        "source_chunk_id": "12895996::119",
+        "is_structured": false,
+        "premise": "Guests must be quiet between 22:00 and 07:00.",
+        "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.204842,
+          "neutral": 0.005713,
+          "contradiction": 0.789445
+        }
+      },
+      {
+        "pair_id": "apt_city_center__quiet",
+        "subclaim": "Q3",
+        "chunk_id": "12895996::119",
+        "source_chunk_id": "12895996::119",
+        "is_structured": false,
+        "premise": "Guests must be quiet between 22:00 and 07:00.",
+        "hypothesis": "Guests report little or no significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.025781,
+          "neutral": 0.008477,
+          "contradiction": 0.965742
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q2",
+        "chunk_id": "16084035::108",
+        "source_chunk_id": "16084035::108",
+        "is_structured": true,
+        "premise": "Soundproofing",
+        "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.192637,
+          "neutral": 0.005906,
+          "contradiction": 0.801457
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q3",
+        "chunk_id": "16084035::108",
+        "source_chunk_id": "16084035::108",
+        "is_structured": true,
+        "premise": "Soundproofing",
+        "hypothesis": "Guests report little or no significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.03264,
+          "neutral": 0.023234,
+          "contradiction": 0.944126
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q2",
+        "chunk_id": "16084035::113",
+        "source_chunk_id": "16084035::113",
+        "is_structured": true,
+        "premise": "Soundproof rooms",
+        "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.213623,
+          "neutral": 0.003319,
+          "contradiction": 0.783057
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q3",
+        "chunk_id": "16084035::113",
+        "source_chunk_id": "16084035::113",
+        "is_structured": true,
+        "premise": "Soundproof rooms",
+        "hypothesis": "Guests report little or no significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.167668,
+          "neutral": 0.071394,
+          "contradiction": 0.760938
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q2",
+        "chunk_id": "16084035::133",
+        "source_chunk_id": "16084035::133",
+        "is_structured": true,
+        "premise": "Soundproofing",
+        "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.192637,
+          "neutral": 0.005906,
+          "contradiction": 0.801457
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q3",
+        "chunk_id": "16084035::133",
+        "source_chunk_id": "16084035::133",
+        "is_structured": true,
+        "premise": "Soundproofing",
+        "hypothesis": "Guests report little or no significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.03264,
+          "neutral": 0.023234,
+          "contradiction": 0.944126
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q2",
+        "chunk_id": "16084035::213",
+        "source_chunk_id": "16084035::213",
+        "is_structured": true,
+        "premise": "Soundproofing",
+        "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.192637,
+          "neutral": 0.005906,
+          "contradiction": 0.801457
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q3",
+        "chunk_id": "16084035::213",
+        "source_chunk_id": "16084035::213",
+        "is_structured": true,
+        "premise": "Soundproofing",
+        "hypothesis": "Guests report little or no significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.03264,
+          "neutral": 0.023234,
+          "contradiction": 0.944126
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q2",
+        "chunk_id": "16084035::283",
+        "source_chunk_id": "16084035::283",
+        "is_structured": true,
+        "premise": "Soundproofing",
+        "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.192637,
+          "neutral": 0.005906,
+          "contradiction": 0.801457
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q3",
+        "chunk_id": "16084035::283",
+        "source_chunk_id": "16084035::283",
+        "is_structured": true,
+        "premise": "Soundproofing",
+        "hypothesis": "Guests report little or no significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.03264,
+          "neutral": 0.023234,
+          "contradiction": 0.944126
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q1",
+        "chunk_id": "16084035::352",
+        "source_chunk_id": "16084035::352",
+        "is_structured": true,
+        "premise": "Quiet street view",
+        "hypothesis": "The room/property has soundproofing.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.152356,
+          "neutral": 0.015764,
+          "contradiction": 0.83188
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__quiet",
+        "subclaim": "Q3",
+        "chunk_id": "16084035::352",
+        "source_chunk_id": "16084035::352",
+        "is_structured": true,
+        "premise": "Quiet street view",
+        "hypothesis": "Guests report little or no significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.097076,
+          "neutral": 0.037767,
+          "contradiction": 0.865157
+        }
+      },
+      {
+        "pair_id": "modern_apt_nizami__quiet",
+        "subclaim": "Q1",
+        "chunk_id": "16578874::160",
+        "source_chunk_id": "16578874::160",
+        "is_structured": true,
+        "premise": "Quiet street view",
+        "hypothesis": "The room/property has soundproofing.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.152356,
+          "neutral": 0.015764,
+          "contradiction": 0.83188
+        }
+      },
+      {
+        "pair_id": "modern_apt_nizami__quiet",
+        "subclaim": "Q3",
+        "chunk_id": "16578874::160",
+        "source_chunk_id": "16578874::160",
+        "is_structured": true,
+        "premise": "Quiet street view",
+        "hypothesis": "Guests report little or no significant noise disturbance.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.097076,
+          "neutral": 0.037767,
+          "contradiction": 0.865157
+        }
+      },
+      {
+        "pair_id": "apt_city_center__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "12895996::111#s1",
+        "source_chunk_id": "12895996::111",
+        "is_structured": false,
+        "premise": "To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.043225,
+          "neutral": 0.003938,
+          "contradiction": 0.952837
+        }
+      },
+      {
+        "pair_id": "apt_city_center__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "12895996::111#s2",
+        "source_chunk_id": "12895996::111",
+        "is_structured": false,
+        "premise": "Cot and extra bed policies 0 - 2 years Cot upon request Prices for cots are not included in the total price, and will have to be paid for separately during your stay.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.288528,
+          "neutral": 0.007287,
+          "contradiction": 0.704185
+        }
+      },
+      {
+        "pair_id": "apt_city_center__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "12895996::111#s3",
+        "source_chunk_id": "12895996::111",
+        "is_structured": false,
+        "premise": "The number of cots allowed is dependent on the option you choose.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.065557,
+          "neutral": 0.003268,
+          "contradiction": 0.931175
+        }
+      },
+      {
+        "pair_id": "apt_city_center__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "12895996::111#s4",
+        "source_chunk_id": "12895996::111",
+        "is_structured": false,
+        "premise": "Please check your selected option for more information.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.019825,
+          "neutral": 0.002703,
+          "contradiction": 0.977472
+        }
+      },
+      {
+        "pair_id": "apt_city_center__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "12895996::111#s5",
+        "source_chunk_id": "12895996::111",
+        "is_structured": false,
+        "premise": "There are no extra beds available at this property.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.018296,
+          "neutral": 0.002093,
+          "contradiction": 0.97961
+        }
+      },
+      {
+        "pair_id": "apt_city_center__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "12895996::111#s6",
+        "source_chunk_id": "12895996::111",
+        "is_structured": false,
+        "premise": "All cots are subject to availability.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.1098,
+          "neutral": 0.005598,
+          "contradiction": 0.884603
+        }
+      },
+      {
+        "pair_id": "nizami_studio__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16406264::97#s1",
+        "source_chunk_id": "16406264::97",
+        "is_structured": false,
+        "premise": "Children 18 years and above will be charged as adults at this property.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.061891,
+          "neutral": 0.001668,
+          "contradiction": 0.936442
+        }
+      },
+      {
+        "pair_id": "nizami_studio__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16406264::97#s2",
+        "source_chunk_id": "16406264::97",
+        "is_structured": false,
+        "premise": "To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.043225,
+          "neutral": 0.003938,
+          "contradiction": 0.952837
+        }
+      },
+      {
+        "pair_id": "nizami_studio__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16406264::97#s3",
+        "source_chunk_id": "16406264::97",
+        "is_structured": false,
+        "premise": "Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.272577,
+          "neutral": 0.004838,
+          "contradiction": 0.722585
+        }
+      },
+      {
+        "pair_id": "nizami_studio__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16406264::97#s4",
+        "source_chunk_id": "16406264::97",
+        "is_structured": false,
+        "premise": "Please check your selected option for more information.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.019825,
+          "neutral": 0.002703,
+          "contradiction": 0.977472
+        }
+      },
+      {
+        "pair_id": "nizami_studio__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16406264::97#s5",
+        "source_chunk_id": "16406264::97",
+        "is_structured": false,
+        "premise": "There are no extra beds available at this property.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.018296,
+          "neutral": 0.002093,
+          "contradiction": 0.97961
+        }
+      },
+      {
+        "pair_id": "nizami_studio__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16406264::97#s6",
+        "source_chunk_id": "16406264::97",
+        "is_structured": false,
+        "premise": "All cots are subject to availability.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.1098,
+          "neutral": 0.005598,
+          "contradiction": 0.884603
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16084035::364#s1",
+        "source_chunk_id": "16084035::364",
+        "is_structured": false,
+        "premise": "Children 18 years and above will be charged as adults at this property.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.061891,
+          "neutral": 0.001668,
+          "contradiction": 0.936442
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16084035::364#s2",
+        "source_chunk_id": "16084035::364",
+        "is_structured": false,
+        "premise": "To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.043225,
+          "neutral": 0.003938,
+          "contradiction": 0.952837
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16084035::364#s3",
+        "source_chunk_id": "16084035::364",
+        "is_structured": false,
+        "premise": "Cot and extra bed policies 0 - 5 years Cot always available 6 years Cot always available Extra bed upon request 7+ years Extra bed upon request Prices for cots and extra beds are not included in the total price, and will have to be paid for separately during your stay.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.372645,
+          "neutral": 0.006211,
+          "contradiction": 0.621144
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16084035::364#s4",
+        "source_chunk_id": "16084035::364",
+        "is_structured": false,
+        "premise": "The number of extra beds and cots allowed is dependent on the option you choose.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.061352,
+          "neutral": 0.003143,
+          "contradiction": 0.935504
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16084035::364#s5",
+        "source_chunk_id": "16084035::364",
+        "is_structured": false,
+        "premise": "Please check your selected option for more information.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.019825,
+          "neutral": 0.002703,
+          "contradiction": 0.977472
+        }
+      },
+      {
+        "pair_id": "fermaart_hotel__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16084035::364#s6",
+        "source_chunk_id": "16084035::364",
+        "is_structured": false,
+        "premise": "All extra beds are subject to availability.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.048972,
+          "neutral": 0.004681,
+          "contradiction": 0.946347
+        }
+      },
+      {
+        "pair_id": "modern_apt_nizami__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16578874::169#s1",
+        "source_chunk_id": "16578874::169",
+        "is_structured": false,
+        "premise": "Children 18 years and above will be charged as adults at this property.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.061891,
+          "neutral": 0.001668,
+          "contradiction": 0.936442
+        }
+      },
+      {
+        "pair_id": "modern_apt_nizami__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16578874::169#s2",
+        "source_chunk_id": "16578874::169",
+        "is_structured": false,
+        "premise": "To see correct prices and occupancy information, please add the number of children in your group and their ages to your search.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.043225,
+          "neutral": 0.003938,
+          "contradiction": 0.952837
+        }
+      },
+      {
+        "pair_id": "modern_apt_nizami__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16578874::169#s3",
+        "source_chunk_id": "16578874::169",
+        "is_structured": false,
+        "premise": "Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.272577,
+          "neutral": 0.004838,
+          "contradiction": 0.722585
+        }
+      },
+      {
+        "pair_id": "modern_apt_nizami__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16578874::169#s4",
+        "source_chunk_id": "16578874::169",
+        "is_structured": false,
+        "premise": "Please check your selected option for more information.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.019825,
+          "neutral": 0.002703,
+          "contradiction": 0.977472
+        }
+      },
+      {
+        "pair_id": "modern_apt_nizami__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16578874::169#s5",
+        "source_chunk_id": "16578874::169",
+        "is_structured": false,
+        "premise": "There are no extra beds available at this property.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.018296,
+          "neutral": 0.002093,
+          "contradiction": 0.97961
+        }
+      },
+      {
+        "pair_id": "modern_apt_nizami__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16578874::169#s6",
+        "source_chunk_id": "16578874::169",
+        "is_structured": false,
+        "premise": "All cots are subject to availability.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "RELEVANT_NEUTRAL",
+        "predicted_relation": "CONTRADICT",
+        "probs": {
+          "entailment": 0.1098,
+          "neutral": 0.005598,
+          "contradiction": 0.884603
+        }
+      }
+    ],
+    "n_errors": 47,
+    "low_confidence_correct_predictions": [
+      {
+        "pair_id": "apt_city_center__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "12895996::111#s0",
+        "premise": "Child policies Children of any age are welcome.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "SUPPORT",
+        "probs": {
+          "entailment": 0.501563,
+          "neutral": 0.009305,
+          "contradiction": 0.489132
+        },
+        "top_prob": 0.501563
+      },
+      {
+        "pair_id": "nizami_studio__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16406264::97#s0",
+        "premise": "Child policies Children of any age are welcome.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "SUPPORT",
+        "probs": {
+          "entailment": 0.501563,
+          "neutral": 0.009305,
+          "contradiction": 0.489132
+        },
+        "top_prob": 0.501563
+      },
+      {
+        "pair_id": "fermaart_hotel__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16084035::364#s0",
+        "premise": "Child policies Children of any age are welcome.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "SUPPORT",
+        "probs": {
+          "entailment": 0.501563,
+          "neutral": 0.009305,
+          "contradiction": 0.489132
+        },
+        "top_prob": 0.501563
+      },
+      {
+        "pair_id": "modern_apt_nizami__family_friendly",
+        "subclaim": "FC1",
+        "chunk_id": "16578874::169#s0",
+        "premise": "Child policies Children of any age are welcome.",
+        "hypothesis": "The property's policies formally accommodate children.",
+        "gold_relation": "SUPPORT",
+        "predicted_relation": "SUPPORT",
+        "probs": {
+          "entailment": 0.501563,
+          "neutral": 0.009305,
+          "contradiction": 0.489132
+        },
+        "top_prob": 0.501563
+      }
+    ]
+  },
+  "sanity_check": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/nli_oracle_sanity_check_report.json",
+      "raw_section_omitted": "examples",
+      "n_omitted": 9,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "run_metadata": {
+      "model": "GuardrailsAI/finetuned_nli_provenance",
+      "purpose": "Canonical NLI sanity check - NOT the Booking domain benchmark. Confirms the model/wrapper behaves correctly on unambiguous textbook cases.",
+      "n_cases": 9
+    },
+    "metrics": {
+      "n": 9,
+      "accuracy": 1.0,
+      "confusion_matrix": {
+        "SUPPORT": {
+          "SUPPORT": 3,
+          "CONTRADICT": 0,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "CONTRADICT": {
+          "SUPPORT": 0,
+          "CONTRADICT": 3,
+          "RELEVANT_NEUTRAL": 0
+        },
+        "RELEVANT_NEUTRAL": {
+          "SUPPORT": 0,
+          "CONTRADICT": 0,
+          "RELEVANT_NEUTRAL": 3
+        }
+      },
+      "per_class": {
+        "SUPPORT": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "n_gold": 3,
+          "insufficient_data": false
+        },
+        "CONTRADICT": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "n_gold": 3,
+          "insufficient_data": false
+        },
+        "RELEVANT_NEUTRAL": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "n_gold": 3,
+          "insufficient_data": false
+        }
+      },
+      "macro_f1_observed_classes": 1.0,
+      "macro_f1_3class": {
+        "value": 1.0,
+        "insufficient_data": false
+      }
+    }
+  },
+  "v1_vs_v2_comparison": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/nli_oracle_v1_vs_v2_comparison.json",
+      "raw_section_omitted": null,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "accuracy": {
+      "chunk_level": {
+        "v1": 0.7556,
+        "v2": 0.4719
+      },
+      "deduplicated": {
+        "v1": 0.7143,
+        "v2": 0.381
+      }
+    },
+    "macro_f1_observed_classes": {
+      "chunk_level": {
+        "v1": 0.4595,
+        "v2": 0.4773
+      },
+      "deduplicated": {
+        "v1": 0.4688,
+        "v2": 0.4572
+      }
+    },
+    "support_recall": {
+      "chunk_level": {
+        "v1": 0.85,
+        "v2": 0.913
+      },
+      "deduplicated": {
+        "v1": 0.8824,
+        "v2": 0.8421
+      }
+    },
+    "neutral_recall": {
+      "chunk_level": {
+        "v1": 0.0,
+        "v2": 0.0
+      },
+      "deduplicated": {
+        "v1": 0.0,
+        "v2": 0.0
+      }
+    },
+    "support_to_contradict_rate": {
+      "v1": 0.15,
+      "v2": 0.087
+    },
+    "neutral_to_contradict_rate": {
+      "v1": 1.0,
+      "v2": 1.0
+    },
+    "per_hypothesis": {
+      "v1": {
+        "Guests can expect a quiet stay at this property, without significant noise disturbance.": {
+          "n": 10,
+          "accuracy": 0.1
+        },
+        "The property's policies formally accommodate children.": {
+          "n": 4,
+          "accuracy": 0.5
+        },
+        "The property has physical rooms/layout suited to families.": {
+          "n": 6,
+          "accuracy": 1.0
+        },
+        "The on-site dining experience is welcoming to families.": {
+          "n": 1,
+          "accuracy": 1.0
+        },
+        "Wi-Fi / internet access is available.": {
+          "n": 17,
+          "accuracy": 1.0
+        },
+        "The room has a desk or dedicated workspace.": {
+          "n": 7,
+          "accuracy": 1.0
+        }
+      },
+      "v2": {
+        "The room/property has soundproofing.": {
+          "subclaim": "Q1",
+          "n": 10,
+          "accuracy": 0.5
+        },
+        "The immediate surroundings are explicitly described as quiet.": {
+          "subclaim": "Q2",
+          "n": 10,
+          "accuracy": 0.2
+        },
+        "Guests report little or no significant noise disturbance.": {
+          "subclaim": "Q3",
+          "n": 10,
+          "accuracy": 0.0
+        },
+        "The property's policies formally accommodate children.": {
+          "subclaim": "FC1",
+          "n": 28,
+          "accuracy": 0.1429
+        },
+        "The property has physical rooms/layout suited to families.": {
+          "subclaim": "FC2",
+          "n": 6,
+          "accuracy": 1.0
+        },
+        "The on-site dining experience is welcoming to families.": {
+          "subclaim": "FC3",
+          "n": 1,
+          "accuracy": 1.0
+        },
+        "Wi-Fi / internet access is available.": {
+          "subclaim": "RW2a",
+          "n": 17,
+          "accuracy": 1.0
+        },
+        "The room has a desk or dedicated workspace.": {
+          "subclaim": "RW1",
+          "n": 7,
+          "accuracy": 1.0
+        }
+      }
+    },
+    "structured_vs_free_text": {
+      "v2_only_note": "v1 had no structured/free-text split - this dimension is new in v2.",
+      "structured": {
+        "n": 43,
+        "accuracy": 0.6047,
+        "confusion_matrix": {
+          "SUPPORT": {
+            "SUPPORT": 26,
+            "CONTRADICT": 0,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "CONTRADICT": {
+            "SUPPORT": 0,
+            "CONTRADICT": 0,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "RELEVANT_NEUTRAL": {
+            "SUPPORT": 0,
+            "CONTRADICT": 17,
+            "RELEVANT_NEUTRAL": 0
+          }
+        },
+        "per_class": {
+          "SUPPORT": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "tp": 26,
+            "fp": 0,
+            "fn": 0,
+            "n_gold": 26,
+            "insufficient_data": false
+          },
+          "CONTRADICT": {
+            "precision": 0.0,
+            "recall": null,
+            "f1": null,
+            "tp": 0,
+            "fp": 17,
+            "fn": 0,
+            "n_gold": 0,
+            "insufficient_data": true
+          },
+          "RELEVANT_NEUTRAL": {
+            "precision": null,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 17,
+            "n_gold": 17,
+            "insufficient_data": false
+          }
+        },
+        "macro_f1_observed_classes": 0.5,
+        "macro_f1_3class": {
+          "value": null,
+          "insufficient_data": true,
+          "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+        }
+      },
+      "free_text": {
+        "n": 46,
+        "accuracy": 0.3478,
+        "confusion_matrix": {
+          "SUPPORT": {
+            "SUPPORT": 16,
+            "CONTRADICT": 4,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "CONTRADICT": {
+            "SUPPORT": 0,
+            "CONTRADICT": 0,
+            "RELEVANT_NEUTRAL": 0
+          },
+          "RELEVANT_NEUTRAL": {
+            "SUPPORT": 0,
+            "CONTRADICT": 26,
+            "RELEVANT_NEUTRAL": 0
+          }
+        },
+        "per_class": {
+          "SUPPORT": {
+            "precision": 1.0,
+            "recall": 0.8,
+            "f1": 0.8889,
+            "tp": 16,
+            "fp": 0,
+            "fn": 4,
+            "n_gold": 20,
+            "insufficient_data": false
+          },
+          "CONTRADICT": {
+            "precision": 0.0,
+            "recall": null,
+            "f1": null,
+            "tp": 0,
+            "fp": 30,
+            "fn": 0,
+            "n_gold": 0,
+            "insufficient_data": true
+          },
+          "RELEVANT_NEUTRAL": {
+            "precision": null,
+            "recall": 0.0,
+            "f1": 0.0,
+            "tp": 0,
+            "fp": 0,
+            "fn": 26,
+            "n_gold": 26,
+            "insufficient_data": false
+          }
+        },
+        "macro_f1_observed_classes": 0.4445,
+        "macro_f1_3class": {
+          "value": null,
+          "insufficient_data": true,
+          "reason": "0 CONTRADICT examples in the current dataset - a 3-class macro F1 would be undefined/misleading (recall for CONTRADICT is 0/0). Recompute once real CONTRADICT examples exist."
+        }
+      }
+    },
+    "n_examples": {
+      "v1": 45,
+      "v2": 89
+    },
+    "n_unique_examples": {
+      "v1": 21,
+      "v2": 42
+    }
+  },
+  "support_verifier_v2_analysis": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/nli_oracle_support_verifier_v2_analysis.json",
+      "raw_section_omitted": "subclaim_rows",
+      "n_omitted": 22,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "run_metadata": {
+      "purpose": "Re-evaluate the already-collected v2 Oracle NLI predictions as a binary SUPPORT verifier (entailment -> VERIFIED_SUPPORT, neutral/contradiction -> NOT_VERIFIED). No new model inference. Separate from the 3-class v1/v2 baseline reports.",
+      "source_report": "evaluation/outputs/nli_oracle_v2_report.json",
+      "n_chunk_level_examples": 89,
+      "n_subclaim_groups": 22,
+      "n_zero_evidence_subclaims_excluded": 7,
+      "source_type_resolution": {
+        "method": "looked up via evaluation.experiments.evidence_retrieval.chunking.build_evidence_chunks on the same property snapshots used to build v2 input - not invented",
+        "unresolved_source_chunk_ids": []
+      }
+    },
+    "subclaim_level_binary_metrics": {
+      "tp": 16,
+      "fp": 0,
+      "fn": 0,
+      "tn": 6,
+      "precision_verified_support": 1.0,
+      "recall_supported": 1.0,
+      "support_coverage": 1.0,
+      "f1": 1.0,
+      "false_support_rate": 0.0,
+      "n": 22,
+      "accuracy": 1.0
+    },
+    "chunk_level_binary_metrics_reference": {
+      "tp": 42,
+      "fp": 0,
+      "fn": 4,
+      "tn": 43,
+      "precision_verified_support": 1.0,
+      "recall_supported": 0.913,
+      "support_coverage": 0.913,
+      "f1": 0.9545,
+      "false_support_rate": 0.0,
+      "n": 89,
+      "accuracy": 0.9551
+    },
+    "false_negatives_subclaim_level": [],
+    "false_positives_subclaim_level": [],
+    "source_breakdown_chunk_level": {
+      "free_text": {
+        "tp": 14,
+        "fp": 0,
+        "fn": 4,
+        "tn": 33,
+        "precision_verified_support": 1.0,
+        "recall_supported": 0.7778,
+        "support_coverage": 0.7778,
+        "f1": 0.875,
+        "false_support_rate": 0.0,
+        "n": 51,
+        "source_types_included": [
+          "description",
+          "highlights",
+          "other",
+          "policies"
+        ]
+      },
+      "structured_like": {
+        "tp": 28,
+        "fp": 0,
+        "fn": 0,
+        "tn": 10,
+        "precision_verified_support": 1.0,
+        "recall_supported": 1.0,
+        "support_coverage": 1.0,
+        "f1": 1.0,
+        "false_support_rate": 0.0,
+        "n": 38,
+        "source_types_included": [
+          "facilities",
+          "room_facilities"
+        ]
+      }
+    },
+    "missed_support_by_source_type": {
+      "policies": 4
+    }
+  },
+  "end_to_end_v1": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/nli_end_to_end_verification_report.json",
+      "raw_section_omitted": "subclaims_with_candidates",
+      "n_omitted": 32,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "run_metadata": {
+      "model": "GuardrailsAI/finetuned_nli_provenance",
+      "max_length": 256,
+      "threshold_applied": false,
+      "pipeline": "atomic subclaim -> semantic retrieval (unchanged embedding model) -> top-k candidates -> NLI binary verifier (fresh inference, no oracle reuse)",
+      "checkpoint_source": "evaluation/experiments/evidence_retrieval/golden/retrieval_checkpoint_v2.jsonl (original 32-subclaim schema, NOT the Q1/Q2/Q3 or FC1-atomic NLI-only redesign)",
+      "n_subclaims_total": 32,
+      "n_subclaims_supported": 14,
+      "n_subclaims_not_supported": 18,
+      "denominator_note": "32 total atomic subclaims (4 constraints x up to 3 subclaims x 4 properties, minus structural gaps) is the correct denominator for this experiment - see the standalone explanation delivered before this run. Earlier oracle reports used smaller denominators (45, 89, or 22+7=29 examples/groups) because they excluded zero-evidence subclaims by design (recall/verification-only framing) or replaced/dropped subclaims during the NLI-input-v2 redesign (quiet -> Q1/Q2/Q3, good_breakfast and RW2b dropped entirely, some FC2/FC3/RW1 zero-evidence slots dropped). This end-to-end experiment must use the full, unmodified 32-subclaim checkpoint because false positives on zero-evidence subclaims are exactly what is being measured.",
+      "n_fresh_nli_calls": 160
+    },
+    "per_k": {
+      "1": {
+        "metrics": {
+          "n": 32,
+          "tp": 11,
+          "fp": 1,
+          "fn": 3,
+          "tn": 17,
+          "precision_verified_support": 0.9167,
+          "recall_support_coverage": 0.7857,
+          "f1": 0.8462,
+          "false_support_rate": 0.0556,
+          "false_negative_rate": 0.2143,
+          "accuracy": 0.875
+        },
+        "n_false_positives": 1,
+        "n_false_negatives": 3
+      },
+      "3": {
+        "metrics": {
+          "n": 32,
+          "tp": 12,
+          "fp": 3,
+          "fn": 2,
+          "tn": 15,
+          "precision_verified_support": 0.8,
+          "recall_support_coverage": 0.8571,
+          "f1": 0.8276,
+          "false_support_rate": 0.1667,
+          "false_negative_rate": 0.1429,
+          "accuracy": 0.8438
+        },
+        "n_false_positives": 3,
+        "n_false_negatives": 2
+      },
+      "5": {
+        "metrics": {
+          "n": 32,
+          "tp": 12,
+          "fp": 5,
+          "fn": 2,
+          "tn": 13,
+          "precision_verified_support": 0.7059,
+          "recall_support_coverage": 0.8571,
+          "f1": 0.7742,
+          "false_support_rate": 0.2778,
+          "false_negative_rate": 0.1429,
+          "accuracy": 0.7812
+        },
+        "n_false_positives": 7,
+        "n_false_negatives": 2
+      }
+    },
+    "false_positives_by_k": {
+      "1": [
+        {
+          "property_slug": "nizami_studio",
+          "constraint_text": "quiet",
+          "subclaim": "main",
+          "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+          "retrieval_rank": 1,
+          "evidence_text": "Non-smoking throughout",
+          "embedding_similarity_score": 0.631112,
+          "nli_entailment_probability": 0.471981,
+          "source_type": "facilities",
+          "chunk_id": "16406264::38"
+        }
+      ],
+      "3": [
+        {
+          "property_slug": "nizami_studio",
+          "constraint_text": "quiet",
+          "subclaim": "main",
+          "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+          "retrieval_rank": 1,
+          "evidence_text": "Non-smoking throughout",
+          "embedding_similarity_score": 0.631112,
+          "nli_entailment_probability": 0.471981,
+          "source_type": "facilities",
+          "chunk_id": "16406264::38"
+        },
+        {
+          "property_slug": "fermaart_hotel",
+          "constraint_text": "good breakfast",
+          "subclaim": "main",
+          "hypothesis": "The breakfast served at this property is good in quality.",
+          "retrieval_rank": 3,
+          "evidence_text": "Continental breakfast included",
+          "embedding_similarity_score": 0.676896,
+          "nli_entailment_probability": 0.429304,
+          "source_type": "room_facilities",
+          "chunk_id": "16084035::180"
+        },
+        {
+          "property_slug": "modern_apt_nizami",
+          "constraint_text": "family-friendly",
+          "subclaim": "FC2",
+          "hypothesis": "The property has physical rooms/layout suited to families.",
+          "retrieval_rank": 3,
+          "evidence_text": "Children and beds",
+          "embedding_similarity_score": 0.647562,
+          "nli_entailment_probability": 0.616736,
+          "source_type": "policies",
+          "chunk_id": "16578874::168"
+        }
+      ],
+      "5": [
+        {
+          "property_slug": "apt_city_center",
+          "constraint_text": "quiet",
+          "subclaim": "main",
+          "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+          "retrieval_rank": 4,
+          "evidence_text": "Non-smoking throughout",
+          "embedding_similarity_score": 0.631112,
+          "nli_entailment_probability": 0.471981,
+          "source_type": "facilities",
+          "chunk_id": "12895996::58"
+        },
+        {
+          "property_slug": "nizami_studio",
+          "constraint_text": "quiet",
+          "subclaim": "main",
+          "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+          "retrieval_rank": 1,
+          "evidence_text": "Non-smoking throughout",
+          "embedding_similarity_score": 0.631112,
+          "nli_entailment_probability": 0.471981,
+          "source_type": "facilities",
+          "chunk_id": "16406264::38"
+        },
+        {
+          "property_slug": "fermaart_hotel",
+          "constraint_text": "good breakfast",
+          "subclaim": "main",
+          "hypothesis": "The breakfast served at this property is good in quality.",
+          "retrieval_rank": 3,
+          "evidence_text": "Continental breakfast included",
+          "embedding_similarity_score": 0.676896,
+          "nli_entailment_probability": 0.429304,
+          "source_type": "room_facilities",
+          "chunk_id": "16084035::180"
+        },
+        {
+          "property_slug": "fermaart_hotel",
+          "constraint_text": "good breakfast",
+          "subclaim": "main",
+          "hypothesis": "The breakfast served at this property is good in quality.",
+          "retrieval_rank": 4,
+          "evidence_text": "Continental breakfast included",
+          "embedding_similarity_score": 0.676896,
+          "nli_entailment_probability": 0.429304,
+          "source_type": "room_facilities",
+          "chunk_id": "16084035::261"
+        },
+        {
+          "property_slug": "fermaart_hotel",
+          "constraint_text": "good breakfast",
+          "subclaim": "main",
+          "hypothesis": "The breakfast served at this property is good in quality.",
+          "retrieval_rank": 5,
+          "evidence_text": "Continental breakfast included",
+          "embedding_similarity_score": 0.676896,
+          "nli_entailment_probability": 0.429304,
+          "source_type": "room_facilities",
+          "chunk_id": "16084035::331"
+        },
+        {
+          "property_slug": "apt_city_center",
+          "constraint_text": "family-friendly",
+          "subclaim": "FC2",
+          "hypothesis": "The property has physical rooms/layout suited to families.",
+          "retrieval_rank": 4,
+          "evidence_text": "Children and beds",
+          "embedding_similarity_score": 0.647562,
+          "nli_entailment_probability": 0.616736,
+          "source_type": "policies",
+          "chunk_id": "12895996::110"
+        },
+        {
+          "property_slug": "modern_apt_nizami",
+          "constraint_text": "family-friendly",
+          "subclaim": "FC2",
+          "hypothesis": "The property has physical rooms/layout suited to families.",
+          "retrieval_rank": 3,
+          "evidence_text": "Children and beds",
+          "embedding_similarity_score": 0.647562,
+          "nli_entailment_probability": 0.616736,
+          "source_type": "policies",
+          "chunk_id": "16578874::168"
+        }
+      ]
+    },
+    "false_negatives_by_k": {
+      "1": [
+        {
+          "property_slug": "fermaart_hotel",
+          "constraint_text": "quiet",
+          "subclaim": "main",
+          "hypothesis": "Guests can expect a quiet stay at this property, without significant noise disturbance.",
+          "gold_support_chunk_ids": [
+            "16084035::108",
+            "16084035::113",
+            "16084035::133",
+            "16084035::213",
+            "16084035::283"
+          ],
+          "failure_mode": "retrieval_rank_failure",
+          "explanation": "Gold SUPPORT chunk(s) ['16084035::108', '16084035::113', '16084035::133', '16084035::213'] appear in the full top-5 retrieval, but ranked below top-1 - a retrieval-ranking failure specific to this K, not a verification failure.",
+          "top_k_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16084035::352",
+              "text": "Quiet street view",
+              "similarity_score": 0.797735,
+              "source_type": "highlights",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.172246,
+              "is_gold_support": false
+            }
+          ],
+          "full_top5_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16084035::352",
+              "text": "Quiet street view",
+              "similarity_score": 0.797735,
+              "is_gold_support": false
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16084035::113",
+              "text": "Soundproof rooms",
+              "similarity_score": 0.684737,
+              "is_gold_support": true
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16084035::108",
+              "text": "Soundproofing",
+              "similarity_score": 0.668831,
+              "is_gold_support": true
+            },
+            {
+              "rank": 4,
+              "chunk_id": "16084035::133",
+              "text": "Soundproofing",
+              "similarity_score": 0.668831,
+              "is_gold_support": true
+            },
+            {
+              "rank": 5,
+              "chunk_id": "16084035::213",
+              "text": "Soundproofing",
+              "similarity_score": 0.668831,
+              "is_gold_support": true
+            }
+          ]
+        },
+        {
+          "property_slug": "nizami_studio",
+          "constraint_text": "family-friendly",
+          "subclaim": "FC1",
+          "hypothesis": "The property's policies formally accommodate children.",
+          "gold_support_chunk_ids": [
+            "16406264::97"
+          ],
+          "failure_mode": "verification_failure",
+          "explanation": "Gold SUPPORT chunk(s) ['16406264::97'] WERE retrieved within top-1, but NLI did not call entailment on any of them (raw_label was neutral or contradiction) - a verification failure, not a retrieval failure.",
+          "top_k_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16406264::97",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.258241,
+              "is_gold_support": true
+            }
+          ],
+          "full_top5_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16406264::97",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "is_gold_support": true
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16406264::99",
+              "text": "There is no age requirement for check-in",
+              "similarity_score": 0.678747,
+              "is_gold_support": false
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16406264::98",
+              "text": "No age restriction",
+              "similarity_score": 0.669523,
+              "is_gold_support": false
+            },
+            {
+              "rank": 4,
+              "chunk_id": "16406264::96",
+              "text": "Children and beds",
+              "similarity_score": 0.66675,
+              "is_gold_support": false
+            },
+            {
+              "rank": 5,
+              "chunk_id": "16406264::10",
+              "text": "This property will not accommodate hen, stag or similar parties.",
+              "similarity_score": 0.63909,
+              "is_gold_support": false
+            }
+          ]
+        },
+        {
+          "property_slug": "modern_apt_nizami",
+          "constraint_text": "family-friendly",
+          "subclaim": "FC1",
+          "hypothesis": "The property's policies formally accommodate children.",
+          "gold_support_chunk_ids": [
+            "16578874::169"
+          ],
+          "failure_mode": "verification_failure",
+          "explanation": "Gold SUPPORT chunk(s) ['16578874::169'] WERE retrieved within top-1, but NLI did not call entailment on any of them (raw_label was neutral or contradiction) - a verification failure, not a retrieval failure.",
+          "top_k_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16578874::169",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.258241,
+              "is_gold_support": true
+            }
+          ],
+          "full_top5_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16578874::169",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "is_gold_support": true
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16578874::171",
+              "text": "There is no age requirement for check-in",
+              "similarity_score": 0.678747,
+              "is_gold_support": false
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16578874::170",
+              "text": "No age restriction",
+              "similarity_score": 0.669523,
+              "is_gold_support": false
+            },
+            {
+              "rank": 4,
+              "chunk_id": "16578874::168",
+              "text": "Children and beds",
+              "similarity_score": 0.66675,
+              "is_gold_support": false
+            },
+            {
+              "rank": 5,
+              "chunk_id": "16578874::59",
+              "text": "Pets are allowed on request. Charges may be applicable.",
+              "similarity_score": 0.654627,
+              "is_gold_support": false
+            }
+          ]
+        }
+      ],
+      "3": [
+        {
+          "property_slug": "nizami_studio",
+          "constraint_text": "family-friendly",
+          "subclaim": "FC1",
+          "hypothesis": "The property's policies formally accommodate children.",
+          "gold_support_chunk_ids": [
+            "16406264::97"
+          ],
+          "failure_mode": "verification_failure",
+          "explanation": "Gold SUPPORT chunk(s) ['16406264::97'] WERE retrieved within top-3, but NLI did not call entailment on any of them (raw_label was neutral or contradiction) - a verification failure, not a retrieval failure.",
+          "top_k_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16406264::97",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.258241,
+              "is_gold_support": true
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16406264::99",
+              "text": "There is no age requirement for check-in",
+              "similarity_score": 0.678747,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.11028,
+              "is_gold_support": false
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16406264::98",
+              "text": "No age restriction",
+              "similarity_score": 0.669523,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.053934,
+              "is_gold_support": false
+            }
+          ],
+          "full_top5_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16406264::97",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "is_gold_support": true
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16406264::99",
+              "text": "There is no age requirement for check-in",
+              "similarity_score": 0.678747,
+              "is_gold_support": false
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16406264::98",
+              "text": "No age restriction",
+              "similarity_score": 0.669523,
+              "is_gold_support": false
+            },
+            {
+              "rank": 4,
+              "chunk_id": "16406264::96",
+              "text": "Children and beds",
+              "similarity_score": 0.66675,
+              "is_gold_support": false
+            },
+            {
+              "rank": 5,
+              "chunk_id": "16406264::10",
+              "text": "This property will not accommodate hen, stag or similar parties.",
+              "similarity_score": 0.63909,
+              "is_gold_support": false
+            }
+          ]
+        },
+        {
+          "property_slug": "modern_apt_nizami",
+          "constraint_text": "family-friendly",
+          "subclaim": "FC1",
+          "hypothesis": "The property's policies formally accommodate children.",
+          "gold_support_chunk_ids": [
+            "16578874::169"
+          ],
+          "failure_mode": "verification_failure",
+          "explanation": "Gold SUPPORT chunk(s) ['16578874::169'] WERE retrieved within top-3, but NLI did not call entailment on any of them (raw_label was neutral or contradiction) - a verification failure, not a retrieval failure.",
+          "top_k_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16578874::169",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.258241,
+              "is_gold_support": true
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16578874::171",
+              "text": "There is no age requirement for check-in",
+              "similarity_score": 0.678747,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.11028,
+              "is_gold_support": false
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16578874::170",
+              "text": "No age restriction",
+              "similarity_score": 0.669523,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.053934,
+              "is_gold_support": false
+            }
+          ],
+          "full_top5_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16578874::169",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "is_gold_support": true
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16578874::171",
+              "text": "There is no age requirement for check-in",
+              "similarity_score": 0.678747,
+              "is_gold_support": false
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16578874::170",
+              "text": "No age restriction",
+              "similarity_score": 0.669523,
+              "is_gold_support": false
+            },
+            {
+              "rank": 4,
+              "chunk_id": "16578874::168",
+              "text": "Children and beds",
+              "similarity_score": 0.66675,
+              "is_gold_support": false
+            },
+            {
+              "rank": 5,
+              "chunk_id": "16578874::59",
+              "text": "Pets are allowed on request. Charges may be applicable.",
+              "similarity_score": 0.654627,
+              "is_gold_support": false
+            }
+          ]
+        }
+      ],
+      "5": [
+        {
+          "property_slug": "nizami_studio",
+          "constraint_text": "family-friendly",
+          "subclaim": "FC1",
+          "hypothesis": "The property's policies formally accommodate children.",
+          "gold_support_chunk_ids": [
+            "16406264::97"
+          ],
+          "failure_mode": "verification_failure",
+          "explanation": "Gold SUPPORT chunk(s) ['16406264::97'] WERE retrieved within top-5, but NLI did not call entailment on any of them (raw_label was neutral or contradiction) - a verification failure, not a retrieval failure.",
+          "top_k_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16406264::97",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.258241,
+              "is_gold_support": true
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16406264::99",
+              "text": "There is no age requirement for check-in",
+              "similarity_score": 0.678747,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.11028,
+              "is_gold_support": false
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16406264::98",
+              "text": "No age restriction",
+              "similarity_score": 0.669523,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.053934,
+              "is_gold_support": false
+            },
+            {
+              "rank": 4,
+              "chunk_id": "16406264::96",
+              "text": "Children and beds",
+              "similarity_score": 0.66675,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.048852,
+              "is_gold_support": false
+            },
+            {
+              "rank": 5,
+              "chunk_id": "16406264::10",
+              "text": "This property will not accommodate hen, stag or similar parties.",
+              "similarity_score": 0.63909,
+              "source_type": "other",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.013061,
+              "is_gold_support": false
+            }
+          ],
+          "full_top5_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16406264::97",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "is_gold_support": true
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16406264::99",
+              "text": "There is no age requirement for check-in",
+              "similarity_score": 0.678747,
+              "is_gold_support": false
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16406264::98",
+              "text": "No age restriction",
+              "similarity_score": 0.669523,
+              "is_gold_support": false
+            },
+            {
+              "rank": 4,
+              "chunk_id": "16406264::96",
+              "text": "Children and beds",
+              "similarity_score": 0.66675,
+              "is_gold_support": false
+            },
+            {
+              "rank": 5,
+              "chunk_id": "16406264::10",
+              "text": "This property will not accommodate hen, stag or similar parties.",
+              "similarity_score": 0.63909,
+              "is_gold_support": false
+            }
+          ]
+        },
+        {
+          "property_slug": "modern_apt_nizami",
+          "constraint_text": "family-friendly",
+          "subclaim": "FC1",
+          "hypothesis": "The property's policies formally accommodate children.",
+          "gold_support_chunk_ids": [
+            "16578874::169"
+          ],
+          "failure_mode": "verification_failure",
+          "explanation": "Gold SUPPORT chunk(s) ['16578874::169'] WERE retrieved within top-5, but NLI did not call entailment on any of them (raw_label was neutral or contradiction) - a verification failure, not a retrieval failure.",
+          "top_k_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16578874::169",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.258241,
+              "is_gold_support": true
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16578874::171",
+              "text": "There is no age requirement for check-in",
+              "similarity_score": 0.678747,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.11028,
+              "is_gold_support": false
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16578874::170",
+              "text": "No age restriction",
+              "similarity_score": 0.669523,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.053934,
+              "is_gold_support": false
+            },
+            {
+              "rank": 4,
+              "chunk_id": "16578874::168",
+              "text": "Children and beds",
+              "similarity_score": 0.66675,
+              "source_type": "policies",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.048852,
+              "is_gold_support": false
+            },
+            {
+              "rank": 5,
+              "chunk_id": "16578874::59",
+              "text": "Pets are allowed on request. Charges may be applicable.",
+              "similarity_score": 0.654627,
+              "source_type": "facilities",
+              "raw_label": "contradiction",
+              "entailment_prob": 0.068267,
+              "is_gold_support": false
+            }
+          ],
+          "full_top5_retrieved": [
+            {
+              "rank": 1,
+              "chunk_id": "16578874::169",
+              "text": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability.",
+              "similarity_score": 0.704004,
+              "is_gold_support": true
+            },
+            {
+              "rank": 2,
+              "chunk_id": "16578874::171",
+              "text": "There is no age requirement for check-in",
+              "similarity_score": 0.678747,
+              "is_gold_support": false
+            },
+            {
+              "rank": 3,
+              "chunk_id": "16578874::170",
+              "text": "No age restriction",
+              "similarity_score": 0.669523,
+              "is_gold_support": false
+            },
+            {
+              "rank": 4,
+              "chunk_id": "16578874::168",
+              "text": "Children and beds",
+              "similarity_score": 0.66675,
+              "is_gold_support": false
+            },
+            {
+              "rank": 5,
+              "chunk_id": "16578874::59",
+              "text": "Pets are allowed on request. Charges may be applicable.",
+              "similarity_score": 0.654627,
+              "is_gold_support": false
+            }
+          ]
+        }
+      ]
+    },
+    "subclaim_outcomes_by_k": {
+      "1": [
+        {
+          "pair_id": "apt_city_center__quiet",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__quiet",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "fermaart_hotel__quiet",
+          "subclaim": "main",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "FN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__quiet",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "FN"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "FN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        }
+      ],
+      "3": [
+        {
+          "pair_id": "apt_city_center__quiet",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__quiet",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "fermaart_hotel__quiet",
+          "subclaim": "main",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__quiet",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "FN"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "FN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        }
+      ],
+      "5": [
+        {
+          "pair_id": "apt_city_center__quiet",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "nizami_studio__quiet",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "fermaart_hotel__quiet",
+          "subclaim": "main",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__quiet",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "FN"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "FN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        }
+      ]
+    },
+    "no_evidence_case_analysis": {
+      "good_breakfast": {
+        "n_subclaims": 4,
+        "false_positive_at_top1": 0,
+        "false_positive_at_top5": 1,
+        "subclaims": [
+          {
+            "pair_id": "apt_city_center__good_breakfast",
+            "top1_text": "Microwave",
+            "top1_score": 0.616951,
+            "top1_raw_label": "contradiction",
+            "top1_entailment_prob": 0.017977
+          },
+          {
+            "pair_id": "nizami_studio__good_breakfast",
+            "top1_text": "Kitchenette",
+            "top1_score": 0.609907,
+            "top1_raw_label": "contradiction",
+            "top1_entailment_prob": 0.05808
+          },
+          {
+            "pair_id": "fermaart_hotel__good_breakfast",
+            "top1_text": "Breakfast info",
+            "top1_score": 0.736395,
+            "top1_raw_label": "contradiction",
+            "top1_entailment_prob": 0.174372
+          },
+          {
+            "pair_id": "modern_apt_nizami__good_breakfast",
+            "top1_text": "Great for your stay",
+            "top1_score": 0.660316,
+            "top1_raw_label": "contradiction",
+            "top1_entailment_prob": 0.147416
+          }
+        ]
+      },
+      "remote_work_reliability_RW2b": {
+        "n_subclaims": 4,
+        "false_positive_at_top1": 0,
+        "false_positive_at_top5": 0,
+        "subclaims": [
+          {
+            "pair_id": "apt_city_center__good_for_remote_work",
+            "top1_text": "Internet services",
+            "top1_score": 0.682456,
+            "top1_raw_label": "contradiction",
+            "top1_entailment_prob": 0.070629
+          },
+          {
+            "pair_id": "nizami_studio__good_for_remote_work",
+            "top1_text": "Internet services",
+            "top1_score": 0.682456,
+            "top1_raw_label": "contradiction",
+            "top1_entailment_prob": 0.070629
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "top1_text": "Internet services",
+            "top1_score": 0.682456,
+            "top1_raw_label": "contradiction",
+            "top1_entailment_prob": 0.070629
+          },
+          {
+            "pair_id": "modern_apt_nizami__good_for_remote_work",
+            "top1_text": "Internet services",
+            "top1_score": 0.682456,
+            "top1_raw_label": "contradiction",
+            "top1_entailment_prob": 0.070629
+          }
+        ]
+      },
+      "quiet_no_evidence_properties": {
+        "n_subclaims": 3,
+        "false_positive_at_top1": 1,
+        "false_positive_at_top5": 2,
+        "subclaims": [
+          {
+            "pair_id": "apt_city_center__quiet",
+            "top1_text": "Quiet hours",
+            "top1_score": 0.748853,
+            "top1_raw_label": "contradiction",
+            "top1_entailment_prob": 0.410965
+          },
+          {
+            "pair_id": "nizami_studio__quiet",
+            "top1_text": "Non-smoking throughout",
+            "top1_score": 0.631112,
+            "top1_raw_label": "entailment",
+            "top1_entailment_prob": 0.471981
+          },
+          {
+            "pair_id": "modern_apt_nizami__quiet",
+            "top1_text": "Quiet street view",
+            "top1_score": 0.797735,
+            "top1_raw_label": "contradiction",
+            "top1_entailment_prob": 0.172246
+          }
+        ]
+      }
+    }
+  }
+}

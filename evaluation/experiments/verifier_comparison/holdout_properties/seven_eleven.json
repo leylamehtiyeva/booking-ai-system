@@ -1,0 +1,2797 @@
+{
+  "id": "15025037",
+  "city": "Baku",
+  "address": "13 Jafarov Gardashlari, 1005 Baku, Azerbaijan",
+  "name": "Seven Eleven Hotel Baku",
+  "url": "https://www.booking.com/hotel/az/alta-baku.en-gb.html?checkout=2026-09-04&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-08-21&selected_currency=USD&group_adults=1&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+  "price": 919.508901635482,
+  "currency": "US$",
+  "rating": 8.5,
+  "stars": null,
+  "property_type": "hotel",
+  "room_type": null,
+  "max_occupancy": null,
+  "description": "Sign in to unlock the members-only price for your selected dates at Seven Eleven Hotel Baku\n\n\nGenius discounts at this property are subject to book dates, stay dates and other available deals.\n\nAbout this propertyComfortable Accommodations: Seven Eleven Hotel Baku in Baku offers family rooms with air-conditioning, private bathrooms, and city views. Each room includes a work desk, TV, and free WiFi.\n\nDining Experience: Guests can enjoy a traditional restaurant serving halal meals with local specialities, warm dishes, fresh pastries, and a variety of beverages. Breakfast options include a buffet, Italian, full English/Irish, and halal.\n\nConvenient Services: The hotel provides private check-in and check-out, a 24-hour front desk, concierge service, and a tour desk. Additional amenities include a minimarket, coffee shop, and hairdresser.\n\nPrime Location: Located 24 km from Heydar Aliyev International Airport, the hotel is a short walk from Fountains Square and near attractions such as Maiden Tower and the Azerbaijan Carpet Museum. An ice-skating rink is also nearby.Distance in property description is calculated using © OpenStreetMap",
+  "fine_print": "This property will not accommodate hen, stag or similar parties.",
+  "policies": [
+    {
+      "title": "Check-in",
+      "content": "From 14:00 to 23:00"
+    },
+    {
+      "title": "Check-out",
+      "content": "From 10:00 to 12:00"
+    },
+    {
+      "title": "Cancellation/ prepayment",
+      "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+    },
+    {
+      "title": "Children and beds",
+      "content": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot always available The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property."
+    },
+    {
+      "title": "Age restriction",
+      "content": "The minimum age for check-in is 18"
+    },
+    {
+      "title": "Pets",
+      "content": "Pets are allowed on request. Charges may be applicable."
+    },
+    {
+      "title": "Accepted payment methods",
+      "content": "Cash"
+    },
+    {
+      "title": "Parties",
+      "content": "Parties/events are not allowed"
+    }
+  ],
+  "highlights": [
+    {
+      "header": "Perfect for a 2-week stay!",
+      "contents": [
+        "Top location: Highly rated by recent guests (9.2)",
+        "Popular with solo travellers"
+      ]
+    },
+    {
+      "header": "Breakfast info",
+      "contents": [
+        "Italian, Full English/Irish, Halal, Buffet"
+      ]
+    },
+    {
+      "header": "Rooms with:",
+      "contents": [
+        "Landmark view",
+        "Quiet street view",
+        "City view"
+      ]
+    }
+  ],
+  "facilities": [
+    {
+      "name": "Restaurant",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Pets allowed",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Free WiFi",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Family rooms",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Room service",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking rooms",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tour desk",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Hiking",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Pets",
+      "category": "Pets",
+      "overview": "Pets are allowed on request. Charges may be applicable.",
+      "requires_additional_charge": null,
+      "is_off_site": null
+    },
+    {
+      "name": "Tour or class about local culture",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Happy hour",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Themed dinner nights",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": true
+    },
+    {
+      "name": "Bike tours",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Nightclub/DJ",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Hiking",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": true
+    },
+    {
+      "name": "Karaoke",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Coffee house on site",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Special diet menus (on request)",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Restaurant",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Internet services",
+      "category": "Internet",
+      "overview": "WiFi is available in all areas and is free of charge.",
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Parking",
+      "category": "Parking",
+      "overview": "No parking available.",
+      "requires_additional_charge": null,
+      "is_off_site": null
+    },
+    {
+      "name": "Invoice provided",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Lockers",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private check-in/check-out",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Concierge service",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "ATM/cash machine on site",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Luggage storage",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tour desk",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Currency exchange",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Express check-in/check-out",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "24-hour front desk",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Family rooms",
+      "category": "Family friendly",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Babysitting/child services",
+      "category": "Family friendly",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Kid-friendly buffet",
+      "category": "Family friendly",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Daily housekeeping",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Trouser press",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Ironing service",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Dry cleaning",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Laundry",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Fax/photocopying",
+      "category": "Business facilities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Fire extinguishers",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "CCTV outside property",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "CCTV in common areas",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Smoke alarms",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Security alarm",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Key card access",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "24-hour security",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Safety deposit box",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shuttle service",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Pet bowls",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Pet basket",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Grocery deliveries",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Minimarket on site",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Designated smoking area",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking throughout",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Heating",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Chapel/shrine",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Soundproof rooms",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Barber/beauty shop",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking rooms",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Room service",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Budget Single Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "1 single bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "Landmark view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Spa bath",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 919.508901635482,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1067.24231325863,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1107.162509900555,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast US$5",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Comfort Triple Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "1 sofa bed",
+            "1 large double bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "377 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Landmark view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Spa bath",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1643.234318587925,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast US$5",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1609.3021249717049,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1878.763731716466,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1918.683987181923,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast US$5",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Budget Twin Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "2 single beds"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "Landmark view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Spa bath",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 995.6139728638069,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1156.777694634513,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1196.697891276438,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast US$5",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Economy Double Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "1 large double bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "215 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Landmark view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Spa bath",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1078.505482815375,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1254.29713886819,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1294.2173355101181,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast US$5",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Deluxe Double Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "1 large double bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "269 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Landmark view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Spa bath",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1253.01397435428,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1459.6012257997759,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1499.521422441704,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast US$5",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Deluxe Twin Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "2 single beds"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "377 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Landmark view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Spa bath",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1269.98007116239,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1479.5613535325,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1519.481550174428,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast US$5",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Family Room with Private Bathroom",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "2 sofa beds",
+            "1 large double bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "377 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Landmark view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Spa bath",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1844.403777379922,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2155.353938701911,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast included",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2195.274194167368,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Exceptional breakfast US$5",
+            "Free cancellation before 14:00 on 21 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        }
+      ]
+    }
+  ],
+  "raw": {
+    "order": 10,
+    "url": "https://www.booking.com/hotel/az/alta-baku.en-gb.html?checkout=2026-09-04&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-08-21&selected_currency=USD&group_adults=1&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+    "startUrlOrQuery": "Baku",
+    "name": "Seven Eleven Hotel Baku",
+    "type": "hotel",
+    "description": "Sign in to unlock the members-only price for your selected dates at Seven Eleven Hotel Baku\n\n\nGenius discounts at this property are subject to book dates, stay dates and other available deals.\n\nAbout this propertyComfortable Accommodations: Seven Eleven Hotel Baku in Baku offers family rooms with air-conditioning, private bathrooms, and city views. Each room includes a work desk, TV, and free WiFi.\n\nDining Experience: Guests can enjoy a traditional restaurant serving halal meals with local specialities, warm dishes, fresh pastries, and a variety of beverages. Breakfast options include a buffet, Italian, full English/Irish, and halal.\n\nConvenient Services: The hotel provides private check-in and check-out, a 24-hour front desk, concierge service, and a tour desk. Additional amenities include a minimarket, coffee shop, and hairdresser.\n\nPrime Location: Located 24 km from Heydar Aliyev International Airport, the hotel is a short walk from Fountains Square and near attractions such as Maiden Tower and the Azerbaijan Carpet Museum. An ice-skating rink is also nearby.Distance in property description is calculated using © OpenStreetMap",
+    "stars": null,
+    "price": 919.508901635482,
+    "currency": "US$",
+    "rating": 8.5,
+    "ratingLabel": "Very good",
+    "reviews": 81,
+    "breakfast": "Italian, Full English/Irish, Halal, Buffet",
+    "checkIn": "From 14:00 to 23:00",
+    "checkOut": "From 10:00 to 12:00",
+    "checkInDate": "2026-08-21",
+    "checkOutDate": "2026-09-04",
+    "location": {
+      "lat": "40.37231830220866",
+      "lng": "49.83640866476833"
+    },
+    "address": {
+      "full": "13 Jafarov Gardashlari, 1005 Baku, Azerbaijan",
+      "country": "az",
+      "city": "Baku"
+    },
+    "image": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/818384112.jpg?k=519523623667234204dc067cb3950d4ec98c7a8d3b748a422d350c3900727f92&o=",
+    "rooms": [
+      {
+        "available": true,
+        "id": 1502503710,
+        "url": "https://www.booking.com/hotel/az/alta-baku.en-gb.html#room_1502503710",
+        "roomType": "Budget Single Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "1 single bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "Landmark view",
+          "City view",
+          "Air conditioning",
+          "Spa bath",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 2,
+        "options": [
+          {
+            "price": 919.508901635482,
+            "displayedPrice": 585.423709272249,
+            "excludedTaxesPrice": 187.729236381163,
+            "discount": {
+              "discountedPrice": 773.152945653412,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503710_424628731_0_1_0",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1067.24231325863,
+            "displayedPrice": 688.733827517525,
+            "excludedTaxesPrice": 206.325060018254,
+            "discount": {
+              "discountedPrice": 895.058887535779,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503710_424628731_1_1_0",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1107.162509900555,
+            "displayedPrice": 716.650062973292,
+            "excludedTaxesPrice": 211.349942400292,
+            "discount": {
+              "discountedPrice": 928.000005373584,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503710_424628731_1_2_0_1441042",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast US$5",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1502503706,
+        "url": "https://www.booking.com/hotel/az/alta-baku.en-gb.html#room_1502503706",
+        "roomType": "Comfort Triple Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "1 sofa bed",
+              "1 large double bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "377 feet²",
+          "Landmark view",
+          "City view",
+          "Air conditioning",
+          "Spa bath",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 2,
+        "options": [
+          {
+            "price": 1643.234318587925,
+            "displayedPrice": 1091.52541808518,
+            "excludedTaxesPrice": 278.827531026315,
+            "discount": {
+              "discountedPrice": 1370.352949111495,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503706_424628731_1_2_0_1441042",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast US$5",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1609.3021249717049,
+            "displayedPrice": 1067.79659441837,
+            "excludedTaxesPrice": 274.556354530995,
+            "discount": {
+              "discountedPrice": 1342.3529489493649,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503706_424628731_0_1_0",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1878.763731716466,
+            "displayedPrice": 1256.23130139185,
+            "excludedTaxesPrice": 308.474590021516,
+            "discount": {
+              "discountedPrice": 1564.7058914133659,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503706_424628731_3_1_0",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1918.683987181923,
+            "displayedPrice": 1284.14759567115,
+            "excludedTaxesPrice": 313.499531227083,
+            "discount": {
+              "discountedPrice": 1597.647126898233,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503706_424628731_3_2_0_1441042",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast US$5",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1502503709,
+        "url": "https://www.booking.com/hotel/az/alta-baku.en-gb.html#room_1502503709",
+        "roomType": "Budget Twin Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "2 single beds"
+            ]
+          }
+        ],
+        "facilities": [
+          "Landmark view",
+          "City view",
+          "Air conditioning",
+          "Spa bath",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 2,
+        "options": [
+          {
+            "price": 995.6139728638069,
+            "displayedPrice": 638.644062521598,
+            "excludedTaxesPrice": 197.308883495458,
+            "discount": {
+              "discountedPrice": 835.952946017056,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503709_424628731_0_1_0",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1156.777694634513,
+            "displayedPrice": 751.345945527139,
+            "excludedTaxesPrice": 217.595236554103,
+            "discount": {
+              "discountedPrice": 968.941182081242,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503709_424628731_2_1_0",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1196.697891276438,
+            "displayedPrice": 779.262239806436,
+            "excludedTaxesPrice": 222.62011893614,
+            "discount": {
+              "discountedPrice": 1001.882358742576,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503709_424628731_2_2_0_1441042",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast US$5",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1502503701,
+        "url": "https://www.booking.com/hotel/az/alta-baku.en-gb.html#room_1502503701",
+        "roomType": "Economy Double Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "1 large double bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "215 feet²",
+          "Landmark view",
+          "City view",
+          "Air conditioning",
+          "Spa bath",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 2,
+        "options": [
+          {
+            "price": 1078.505482815375,
+            "displayedPrice": 696.610180504309,
+            "excludedTaxesPrice": 207.742765908817,
+            "discount": {
+              "discountedPrice": 904.352946413126,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503701_424628731_0_1_0",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1254.29713886819,
+            "displayedPrice": 819.541357686731,
+            "excludedTaxesPrice": 229.87041309577,
+            "discount": {
+              "discountedPrice": 1049.411770782501,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503701_424628731_2_1_0",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1294.2173355101181,
+            "displayedPrice": 847.457651966027,
+            "excludedTaxesPrice": 234.895295477808,
+            "discount": {
+              "discountedPrice": 1082.352947443835,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503701_424628731_2_2_0_1441042",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast US$5",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1502503708,
+        "url": "https://www.booking.com/hotel/az/alta-baku.en-gb.html#room_1502503708",
+        "roomType": "Deluxe Double Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "1 large double bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "269 feet²",
+          "Landmark view",
+          "City view",
+          "Air conditioning",
+          "Spa bath",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 3,
+        "options": [
+          {
+            "price": 1253.01397435428,
+            "displayedPrice": 818.644063563888,
+            "excludedTaxesPrice": 229.70888368307,
+            "discount": {
+              "discountedPrice": 1048.3529472469581,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503708_424628731_0_1_0",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1459.6012257997759,
+            "displayedPrice": 963.110652635716,
+            "excludedTaxesPrice": 255.712883833646,
+            "discount": {
+              "discountedPrice": 1218.823536469362,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503708_424628731_2_1_0",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1499.521422441704,
+            "displayedPrice": 991.026946915012,
+            "excludedTaxesPrice": 260.737766215684,
+            "discount": {
+              "discountedPrice": 1251.764713130696,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503708_424628731_2_2_0_1441042",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast US$5",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1502503707,
+        "url": "https://www.booking.com/hotel/az/alta-baku.en-gb.html#room_1502503707",
+        "roomType": "Deluxe Twin Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "2 single beds"
+            ]
+          }
+        ],
+        "facilities": [
+          "377 feet²",
+          "Landmark view",
+          "City view",
+          "Air conditioning",
+          "Spa bath",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 2,
+        "options": [
+          {
+            "price": 1269.98007116239,
+            "displayedPrice": 830.508475397295,
+            "excludedTaxesPrice": 231.84447193073,
+            "discount": {
+              "discountedPrice": 1062.352947328025,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503707_424628731_0_1_0",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1479.5613535325,
+            "displayedPrice": 977.068829187129,
+            "excludedTaxesPrice": 258.22535443643,
+            "discount": {
+              "discountedPrice": 1235.294183623559,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503707_424628731_2_1_0",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 1519.481550174428,
+            "displayedPrice": 1004.9850646429,
+            "excludedTaxesPrice": 263.250236818468,
+            "discount": {
+              "discountedPrice": 1268.2353014613682,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503707_424628731_2_2_0_1441042",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast US$5",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1502503711,
+        "url": "https://www.booking.com/hotel/az/alta-baku.en-gb.html#room_1502503711",
+        "roomType": "Family Room with Private Bathroom",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "2 sofa beds",
+              "1 large double bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "377 feet²",
+          "Landmark view",
+          "City view",
+          "Air conditioning",
+          "Spa bath",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 2,
+        "options": [
+          {
+            "price": 1844.403777379922,
+            "displayedPrice": 1232.20341889978,
+            "excludedTaxesPrice": 304.149531172942,
+            "discount": {
+              "discountedPrice": 1536.352950072722,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503711_424628731_0_1_0",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 2155.353938701911,
+            "displayedPrice": 1449.65106721773,
+            "excludedTaxesPrice": 343.290119634881,
+            "discount": {
+              "discountedPrice": 1792.941186852611,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503711_424628731_3_1_0",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast included",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 2195.274194167368,
+            "displayedPrice": 1477.5673026735,
+            "excludedTaxesPrice": 348.315060840448,
+            "discount": {
+              "discountedPrice": 1825.8823635139481,
+              "text": "20% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1502503711_424628731_3_2_0_1441042",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Exceptional breakfast US$5",
+              "Free cancellation before 14:00 on 21 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          }
+        ]
+      }
+    ],
+    "highlights": [
+      {
+        "header": "Perfect for a 2-week stay!",
+        "contents": [
+          "Top location: Highly rated by recent guests (9.2)",
+          "Popular with solo travellers"
+        ]
+      },
+      {
+        "header": "Breakfast info",
+        "contents": [
+          "Italian, Full English/Irish, Halal, Buffet"
+        ]
+      },
+      {
+        "header": "Rooms with:",
+        "contents": [
+          "Landmark view",
+          "Quiet street view",
+          "City view"
+        ]
+      }
+    ],
+    "finePrint": "This property will not accommodate hen, stag or similar parties.",
+    "policies": [
+      {
+        "title": "Check-in",
+        "content": "From 14:00 to 23:00"
+      },
+      {
+        "title": "Check-out",
+        "content": "From 10:00 to 12:00"
+      },
+      {
+        "title": "Cancellation/ prepayment",
+        "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+      },
+      {
+        "title": "Children and beds",
+        "content": "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot always available The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property."
+      },
+      {
+        "title": "Age restriction",
+        "content": "The minimum age for check-in is 18"
+      },
+      {
+        "title": "Pets",
+        "content": "Pets are allowed on request. Charges may be applicable."
+      },
+      {
+        "title": "Accepted payment methods",
+        "content": "Cash"
+      },
+      {
+        "title": "Parties",
+        "content": "Parties/events are not allowed"
+      }
+    ],
+    "reviewSummary": null,
+    "hotelChain": null,
+    "licenseInfo": null,
+    "hostInfo": null,
+    "traderInfo": null,
+    "hotelId": 15025037,
+    "facilities": [
+      {
+        "name": "Great for your stay",
+        "facilities": [
+          {
+            "name": "Restaurant",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Pets allowed",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 11
+          },
+          {
+            "name": "Free WiFi",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Family rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 28
+          },
+          {
+            "name": "Airport shuttle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Room service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 5
+          },
+          {
+            "name": "Non-smoking rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 16
+          },
+          {
+            "name": "Tour desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 78
+          },
+          {
+            "name": "Hiking",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 70
+          }
+        ],
+        "overview": null,
+        "id": null
+      },
+      {
+        "name": "Pets",
+        "overview": "Pets are allowed on request. Charges may be applicable.",
+        "id": -2,
+        "facilities": []
+      },
+      {
+        "name": "Activities",
+        "overview": null,
+        "id": 2,
+        "facilities": [
+          {
+            "name": "Tour or class about local culture",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 408
+          },
+          {
+            "name": "Happy hour",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 407
+          },
+          {
+            "name": "Themed dinner nights",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": true
+            },
+            "id": 406
+          },
+          {
+            "name": "Bike tours",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 405
+          },
+          {
+            "name": "Nightclub/DJ",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 126
+          },
+          {
+            "name": "Hiking",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": true
+            },
+            "id": 70
+          },
+          {
+            "name": "Karaoke",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 59
+          }
+        ]
+      },
+      {
+        "name": "Food & Drink",
+        "overview": null,
+        "id": 7,
+        "facilities": [
+          {
+            "name": "Coffee house on site",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 219
+          },
+          {
+            "name": "Special diet menus (on request)",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 133
+          },
+          {
+            "name": "Restaurant",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 3
+          }
+        ]
+      },
+      {
+        "name": "Internet",
+        "overview": "WiFi is available in all areas and is free of charge.",
+        "id": 11,
+        "facilities": [
+          {
+            "name": "Internet services",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 47
+          }
+        ]
+      },
+      {
+        "name": "Parking",
+        "overview": "No parking available.",
+        "id": 16,
+        "facilities": []
+      },
+      {
+        "name": "Reception services",
+        "overview": null,
+        "id": 23,
+        "facilities": [
+          {
+            "name": "Invoice provided",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 465
+          },
+          {
+            "name": "Lockers",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 142
+          },
+          {
+            "name": "Private check-in/check-out",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 127
+          },
+          {
+            "name": "Concierge service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 124
+          },
+          {
+            "name": "ATM/cash machine on site",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 111
+          },
+          {
+            "name": "Luggage storage",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 91
+          },
+          {
+            "name": "Tour desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 78
+          },
+          {
+            "name": "Currency exchange",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 53
+          },
+          {
+            "name": "Express check-in/check-out",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 49
+          },
+          {
+            "name": "24-hour front desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 8
+          }
+        ]
+      },
+      {
+        "name": "Family friendly",
+        "overview": null,
+        "id": 25,
+        "facilities": [
+          {
+            "name": "Family rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 28
+          },
+          {
+            "name": "Babysitting/child services",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 21
+          },
+          {
+            "name": "Kid-friendly buffet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 177
+          }
+        ]
+      },
+      {
+        "name": "Cleaning services",
+        "overview": null,
+        "id": 26,
+        "facilities": [
+          {
+            "name": "Daily housekeeping",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 158
+          },
+          {
+            "name": "Trouser press",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 134
+          },
+          {
+            "name": "Ironing service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 44
+          },
+          {
+            "name": "Dry cleaning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 23
+          },
+          {
+            "name": "Laundry",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 22
+          }
+        ]
+      },
+      {
+        "name": "Business facilities",
+        "overview": null,
+        "id": 27,
+        "facilities": [
+          {
+            "name": "Fax/photocopying",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 81
+          }
+        ]
+      },
+      {
+        "name": "Safety & security",
+        "overview": null,
+        "id": 34,
+        "facilities": [
+          {
+            "name": "Fire extinguishers",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 425
+          },
+          {
+            "name": "CCTV outside property",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 424
+          },
+          {
+            "name": "CCTV in common areas",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 423
+          },
+          {
+            "name": "Smoke alarms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 422
+          },
+          {
+            "name": "Security alarm",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 421
+          },
+          {
+            "name": "Key card access",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 420
+          },
+          {
+            "name": "24-hour security",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 418
+          },
+          {
+            "name": "Safety deposit box",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 51
+          }
+        ]
+      },
+      {
+        "name": "General",
+        "overview": null,
+        "id": 1,
+        "facilities": [
+          {
+            "name": "Shuttle service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 304
+          },
+          {
+            "name": "Pet bowls",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 218
+          },
+          {
+            "name": "Pet basket",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 217
+          },
+          {
+            "name": "Grocery deliveries",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 159
+          },
+          {
+            "name": "Minimarket on site",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 145
+          },
+          {
+            "name": "Designated smoking area",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 110
+          },
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 109
+          },
+          {
+            "name": "Non-smoking throughout",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 108
+          },
+          {
+            "name": "Heating",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 80
+          },
+          {
+            "name": "Chapel/shrine",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 71
+          },
+          {
+            "name": "Soundproof rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 64
+          },
+          {
+            "name": "Barber/beauty shop",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 27
+          },
+          {
+            "name": "Airport shuttle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 17
+          },
+          {
+            "name": "Non-smoking rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 16
+          },
+          {
+            "name": "Room service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 5
+          }
+        ]
+      }
+    ],
+    "timeOfScrapeISO": "2026-08-17T13:27:06.546Z"
+  },
+  "_review_summary": null
+}

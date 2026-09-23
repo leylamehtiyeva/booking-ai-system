@@ -60,6 +60,24 @@ MODEL_PRICES_USD_PER_1M = {
             )
         ),
     },
+    # Verified against ai.google.dev/gemini-api/docs/pricing. No output/
+    # completion tokens exist for an embedding call - "output" is 0 so
+    # estimate_llm_cost_usd(model=..., prompt_tokens=..., completion_tokens=0)
+    # can be reused unchanged rather than adding a separate cost function.
+    # As of this pricing entry being added, the Developer API's
+    # embed_content does not actually return token usage (confirmed via
+    # a live call - see tests/test_embedding_google_genai_compat.py), so
+    # this price is currently unused until/unless that changes; it is
+    # not applied to any estimated string-length-based token count.
+    "gemini-embedding-001": {
+        "input": float(
+            os.getenv(
+                "PRICE_GEMINI_EMBEDDING_001_INPUT_PER_1M",
+                "0.15",
+            )
+        ),
+        "output": 0.0,
+    },
 }
 
 

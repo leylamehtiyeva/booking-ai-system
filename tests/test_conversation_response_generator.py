@@ -15,6 +15,7 @@ from app.schemas.query import SearchRequest
 from app.schemas.search_response import (
     NormalizedRequestSummary,
     NormalizedSearchResponse,
+    SearchStatus,
 )
 
 
@@ -58,7 +59,7 @@ def test_search_response_uses_current_search_as_domain_truth():
     )
 
     search_response = NormalizedSearchResponse(
-        need_clarification=False,
+        status=SearchStatus.NO_RESULTS,
         request_summary=NormalizedRequestSummary(
             city="Paris",
             check_in="2026-09-10",

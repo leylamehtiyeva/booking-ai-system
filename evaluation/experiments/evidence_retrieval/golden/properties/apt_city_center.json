@@ -1,0 +1,1299 @@
+{
+  "id": "12895996",
+  "city": "Baku",
+  "address": "Uzeyir Hajibeyov Street 5, Sabayil , AZ1000 Baku, Azerbaijan",
+  "name": "Apartment City center",
+  "url": "https://www.booking.com/hotel/az/apartment-city-center-baki1.en-gb.html?checkout=2026-09-02&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-08-21&selected_currency=USD&group_adults=1&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+  "price": 898.6784068358199,
+  "currency": "US$",
+  "rating": 10.0,
+  "stars": null,
+  "property_type": "apartment",
+  "room_type": null,
+  "max_occupancy": null,
+  "description": "About this propertyComfortable Living: Apartment City center in Baku offers a one-bedroom apartment with a living room. The property includes a kitchenette, air-conditioning, and a washing machine. Guests can enjoy free WiFi throughout the stay.\n\nModern Amenities: The apartment features a bath, tea and coffee maker, hairdryer, dining table, fruits, and an inner courtyard view. Additional amenities include a refrigerator, microwave, dishwasher, shower, TV, sofa, and wardrobe.\n\nConvenient Location: Located 25 km from Heydar Aliyev International Airport, the apartment is near an ice-skating rink. Reception staff speak English, Russian, and Turkish.Distance in property description is calculated using © OpenStreetMap",
+  "fine_print": "This property will not accommodate hen, stag or similar parties.Quiet hours are between 22:00:00 and 07:00:00.",
+  "policies": [
+    {
+      "title": "Check-in",
+      "content": "From 10:00 to 22:00You'll need to let the property know in advance what time you'll arrive."
+    },
+    {
+      "title": "Check-out",
+      "content": "From 09:00 to 16:00"
+    },
+    {
+      "title": "Cancellation/ prepayment",
+      "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+    },
+    {
+      "title": "Children and beds",
+      "content": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 2 years Cot upon request Prices for cots are not included in the total price, and will have to be paid for separately during your stay. The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability."
+    },
+    {
+      "title": "No age restriction",
+      "content": "There is no age requirement for check-in"
+    },
+    {
+      "title": "Smoking",
+      "content": "Smoking is not allowed."
+    },
+    {
+      "title": "Parties",
+      "content": "Parties/events are not allowed"
+    },
+    {
+      "title": "Quiet hours",
+      "content": "Guests must be quiet between 22:00 and 07:00."
+    },
+    {
+      "title": "Pets",
+      "content": "Free!Pets are allowed. No extra charges."
+    }
+  ],
+  "highlights": [
+    {
+      "header": "Perfect for a 12-night stay!",
+      "contents": [
+        "Situated in the best rated area in Baku, this property has an excellent location score of 10.0"
+      ]
+    },
+    {
+      "header": "Apartments with:",
+      "contents": [
+        "Inner courtyard view"
+      ]
+    },
+    {
+      "header": null,
+      "contents": [
+        "Parking available on-site"
+      ]
+    }
+  ],
+  "facilities": [
+    {
+      "name": "Parking",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Pets allowed",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "View",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Free WiFi",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bath",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Kitchen",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Flat-screen TV",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Washing machine",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Parking",
+      "category": "Parking",
+      "overview": "Public parking is possible on site (reservation is not needed) and costs AZN 1 per hour.",
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Internet services",
+      "category": "Internet",
+      "overview": "WiFi is available in all areas and is free of charge.",
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Dining table",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Stovetop",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Oven",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Electric kettle",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Kitchen",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Washing machine",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Dishwasher",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Microwave",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Refrigerator",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Kitchenette",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Wardrobe or closet",
+      "category": "Bedroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Toilet paper",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bath or shower",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Toilet",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Hairdryer",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bath",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shower",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Dining area",
+      "category": "Living Area",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Sofa",
+      "category": "Living Area",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Flat-screen TV",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "TV",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Socket near the bed",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Clothes rack",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Hardwood or parquet floors",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tile/marble floor",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Heating",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Iron",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Pets",
+      "category": "Pets",
+      "overview": "Pets are allowed. No extra charges.",
+      "requires_additional_charge": null,
+      "is_off_site": null
+    },
+    {
+      "name": "Tea/Coffee maker",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Inner courtyard view",
+      "category": "Outdoor & View",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "View",
+      "category": "Outdoor & View",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle",
+      "category": "Transport",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking throughout",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    }
+  ],
+  "rooms": [
+    {
+      "name": "One-Bedroom Apartment",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": "Bedroom 1",
+          "beds": [
+            "1 double bed"
+          ]
+        },
+        {
+          "room": "Living room",
+          "beds": [
+            "1 sofa bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "377 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private kitchen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Inner courtyard view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dishwasher",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Washing machine",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Sofa",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bath or shower",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hardwood or parquet floors",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Socket near the bed",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Tile/marble floor",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Refrigerator",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Tea/Coffee maker",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Iron",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Microwave",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Heating",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hairdryer",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchenette",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Electric kettle",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wardrobe or closet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Oven",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Stovetop",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dining area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dining table",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Clothes rack",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet paper",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 898.6784068358199,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Free cancellation before 14 August 2026",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        }
+      ]
+    }
+  ],
+  "raw": {
+    "order": 16,
+    "url": "https://www.booking.com/hotel/az/apartment-city-center-baki1.en-gb.html?checkout=2026-09-02&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-08-21&selected_currency=USD&group_adults=1&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+    "startUrlOrQuery": "Baku",
+    "name": "Apartment City center",
+    "type": "apartment",
+    "description": "About this propertyComfortable Living: Apartment City center in Baku offers a one-bedroom apartment with a living room. The property includes a kitchenette, air-conditioning, and a washing machine. Guests can enjoy free WiFi throughout the stay.\n\nModern Amenities: The apartment features a bath, tea and coffee maker, hairdryer, dining table, fruits, and an inner courtyard view. Additional amenities include a refrigerator, microwave, dishwasher, shower, TV, sofa, and wardrobe.\n\nConvenient Location: Located 25 km from Heydar Aliyev International Airport, the apartment is near an ice-skating rink. Reception staff speak English, Russian, and Turkish.Distance in property description is calculated using © OpenStreetMap",
+    "stars": null,
+    "price": 898.6784068358199,
+    "currency": "US$",
+    "rating": 10,
+    "ratingLabel": "Exceptional",
+    "reviews": 3,
+    "breakfast": null,
+    "checkIn": "From 10:00 to 22:00You'll need to let the property know in advance what time you'll arrive.",
+    "checkOut": "From 09:00 to 16:00",
+    "checkInDate": "2026-08-21",
+    "checkOutDate": "2026-09-02",
+    "location": {
+      "lat": "40.3713369929777",
+      "lng": "49.8388365105644"
+    },
+    "address": {
+      "full": "Uzeyir Hajibeyov Street 5, Sabayil , AZ1000 Baku, Azerbaijan",
+      "country": "az",
+      "city": "Baku"
+    },
+    "image": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/904388887.jpg?k=00eee16fc05eb4c170ed762ac10894b29467d73461454710599ba191b957a309&o=",
+    "rooms": [
+      {
+        "available": true,
+        "id": 1289599601,
+        "url": "https://www.booking.com/hotel/az/apartment-city-center-baki1.en-gb.html#room_1289599601",
+        "roomType": "One-Bedroom Apartment",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": "Bedroom 1",
+            "beds": [
+              "1 double bed"
+            ]
+          },
+          {
+            "room": "Living room",
+            "beds": [
+              "1 sofa bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "",
+          "377 feet²",
+          "Private kitchen",
+          "Inner courtyard view",
+          "Air conditioning",
+          "Dishwasher",
+          "Flat-screen TV",
+          "Free WiFi",
+          "Kitchen",
+          "Washing machine",
+          "Toilet",
+          "Sofa",
+          "Bath or shower",
+          "Hardwood or parquet floors",
+          "Socket near the bed",
+          "Tile/marble floor",
+          "TV",
+          "Refrigerator",
+          "Tea/Coffee maker",
+          "Iron",
+          "Microwave",
+          "Heating",
+          "Hairdryer",
+          "Kitchenette",
+          "Electric kettle",
+          "Wardrobe or closet",
+          "Oven",
+          "Stovetop",
+          "Dining area",
+          "Dining table",
+          "Clothes rack",
+          "Toilet paper"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 1,
+        "options": [
+          {
+            "price": 898.6784068358199,
+            "displayedPrice": 761.591888119656,
+            "excludedTaxesPrice": 137.086518716164,
+            "discount": null,
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1289599601_402777981_0_0_0",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Free cancellation before 14 August 2026",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          }
+        ]
+      }
+    ],
+    "highlights": [
+      {
+        "header": "Perfect for a 12-night stay!",
+        "contents": [
+          "Situated in the best rated area in Baku, this property has an excellent location score of 10.0"
+        ]
+      },
+      {
+        "header": "Apartments with:",
+        "contents": [
+          "Inner courtyard view"
+        ]
+      },
+      {
+        "header": "",
+        "contents": [
+          "Parking available on-site"
+        ]
+      }
+    ],
+    "finePrint": "This property will not accommodate hen, stag or similar parties.Quiet hours are between 22:00:00 and 07:00:00.",
+    "policies": [
+      {
+        "title": "Check-in",
+        "content": "From 10:00 to 22:00You'll need to let the property know in advance what time you'll arrive."
+      },
+      {
+        "title": "Check-out",
+        "content": "From 09:00 to 16:00"
+      },
+      {
+        "title": "Cancellation/ prepayment",
+        "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+      },
+      {
+        "title": "Children and beds",
+        "content": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 2 years Cot upon request Prices for cots are not included in the total price, and will have to be paid for separately during your stay. The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability."
+      },
+      {
+        "title": "No age restriction",
+        "content": "There is no age requirement for check-in"
+      },
+      {
+        "title": "Smoking",
+        "content": "Smoking is not allowed."
+      },
+      {
+        "title": "Parties",
+        "content": "Parties/events are not allowed"
+      },
+      {
+        "title": "Quiet hours",
+        "content": "Guests must be quiet between 22:00 and 07:00."
+      },
+      {
+        "title": "Pets",
+        "content": "Free!Pets are allowed. No extra charges."
+      }
+    ],
+    "hotelChain": null,
+    "licenseInfo": null,
+    "hostInfo": {
+      "name": "Emili",
+      "imageUrl": null,
+      "reviewsCount": 2,
+      "reviewsScore": 10,
+      "yearsOnWebsite": null,
+      "managedProperties": null,
+      "welcomeMessage": "The apartment is located in the very center of the city, near the central metro station",
+      "ownerInfo": "we will try to help you in everything!",
+      "neighboorhoodInfo": "The seaside boulevard and the central shopping street are located nearby.",
+      "familyTips": null,
+      "language": "en",
+      "spokenLanguages": [
+        "en",
+        "ru",
+        "tr"
+      ]
+    },
+    "traderInfo": null,
+    "hotelId": 12895996,
+    "facilities": [
+      {
+        "name": "Great for your stay",
+        "facilities": [
+          {
+            "name": "Parking",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 2
+          },
+          {
+            "name": "Pets allowed",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 11
+          },
+          {
+            "name": "View",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 81
+          },
+          {
+            "name": "Free WiFi",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Bath",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 5
+          },
+          {
+            "name": "Kitchen",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 45
+          },
+          {
+            "name": "Airport shuttle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Flat-screen TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 75
+          },
+          {
+            "name": "Washing machine",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 34
+          }
+        ],
+        "overview": null,
+        "id": null
+      },
+      {
+        "name": "Parking",
+        "overview": "Public parking is possible on site (reservation is not needed) and costs AZN 1 per hour.",
+        "id": 16,
+        "facilities": [
+          {
+            "name": "Parking",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 2
+          }
+        ]
+      },
+      {
+        "name": "Internet",
+        "overview": "WiFi is available in all areas and is free of charge.",
+        "id": 11,
+        "facilities": [
+          {
+            "name": "Internet services",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 47
+          }
+        ]
+      },
+      {
+        "name": "Kitchen",
+        "overview": null,
+        "id": 12,
+        "facilities": [
+          {
+            "name": "Dining table",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 126
+          },
+          {
+            "name": "Stovetop",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 97
+          },
+          {
+            "name": "Oven",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 96
+          },
+          {
+            "name": "Electric kettle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 86
+          },
+          {
+            "name": "Kitchen",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 45
+          },
+          {
+            "name": "Washing machine",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 34
+          },
+          {
+            "name": "Dishwasher",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 33
+          },
+          {
+            "name": "Microwave",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 32
+          },
+          {
+            "name": "Refrigerator",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 22
+          },
+          {
+            "name": "Kitchenette",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 16
+          }
+        ]
+      },
+      {
+        "name": "Bedroom",
+        "overview": null,
+        "id": 17,
+        "facilities": [
+          {
+            "name": "Wardrobe or closet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 95
+          }
+        ]
+      },
+      {
+        "name": "Bathroom",
+        "overview": null,
+        "id": 5,
+        "facilities": [
+          {
+            "name": "Toilet paper",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 141
+          },
+          {
+            "name": "Bath or shower",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 69
+          },
+          {
+            "name": "Toilet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 31
+          },
+          {
+            "name": "Hairdryer",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 12
+          },
+          {
+            "name": "Bath",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 5
+          },
+          {
+            "name": "Shower",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 4
+          }
+        ]
+      },
+      {
+        "name": "Living Area",
+        "overview": null,
+        "id": 15,
+        "facilities": [
+          {
+            "name": "Dining area",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 85
+          },
+          {
+            "name": "Sofa",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 77
+          }
+        ]
+      },
+      {
+        "name": "Media & Technology",
+        "overview": null,
+        "id": 6,
+        "facilities": [
+          {
+            "name": "Flat-screen TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 75
+          },
+          {
+            "name": "TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 8
+          }
+        ]
+      },
+      {
+        "name": "Room amenities",
+        "overview": null,
+        "id": 4,
+        "facilities": [
+          {
+            "name": "Socket near the bed",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 184
+          },
+          {
+            "name": "Clothes rack",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 138
+          },
+          {
+            "name": "Hardwood or parquet floors",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 82
+          },
+          {
+            "name": "Tile/marble floor",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 80
+          },
+          {
+            "name": "Heating",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 40
+          },
+          {
+            "name": "Iron",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 15
+          }
+        ]
+      },
+      {
+        "name": "Pets",
+        "overview": "Pets are allowed. No extra charges.",
+        "id": -2,
+        "facilities": []
+      },
+      {
+        "name": "Food & Drink",
+        "overview": null,
+        "id": 7,
+        "facilities": [
+          {
+            "name": "Tea/Coffee maker",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 1
+          }
+        ]
+      },
+      {
+        "name": "Outdoor & View",
+        "overview": null,
+        "id": 9,
+        "facilities": [
+          {
+            "name": "Inner courtyard view",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 190
+          },
+          {
+            "name": "View",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 81
+          }
+        ]
+      },
+      {
+        "name": "Transport",
+        "overview": null,
+        "id": 22,
+        "facilities": [
+          {
+            "name": "Airport shuttle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 17
+          }
+        ]
+      },
+      {
+        "name": "Miscellaneous",
+        "overview": null,
+        "id": 29,
+        "facilities": [
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 109
+          },
+          {
+            "name": "Non-smoking throughout",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 108
+          }
+        ]
+      }
+    ],
+    "timeOfScrapeISO": "2026-08-12T13:24:54.689Z"
+  }
+}

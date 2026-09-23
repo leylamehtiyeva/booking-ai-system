@@ -76,6 +76,7 @@ def test_builds_search_outcome():
         "conversation_action": "start_search",
         "need_clarification": False,
         "questions": [],
+        "status": "results",
         "request_summary": {
             "city": "Baku",
         },

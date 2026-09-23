@@ -46,6 +46,60 @@ def ms_to_s(value: float | int | None) -> str:
     return f"{value / 1000:.2f} s"
 
 
+def flatten_soft_evidence_records(records: list[dict[str, Any]]) -> pd.DataFrame:
+    """
+    One row per request that actually ran the shadow soft-evidence
+    pipeline (soft_evidence_summary is None otherwise - Phase B,
+    disabled/not-applicable requests are simply absent from this
+    dataframe, not zero-filled).
+    """
+    rows: list[dict[str, Any]] = []
+
+    for r in records:
+        telemetry = r.get("telemetry", {}) or {}
+        summary = telemetry.get("soft_evidence_summary")
+        if not summary:
+            continue
+
+        relation_counts = summary.get("claim_relation_counts", {}) or {}
+        resolution_counts = summary.get("evidence_resolution_status_counts", {}) or {}
+        retrieval_counts = summary.get("retrieval_status_counts", {}) or {}
+        verifier = summary.get("verifier", {}) or {}
+
+        rows.append(
+            {
+                "timestamp": r.get("timestamp"),
+                "trace_id": telemetry.get("trace_id"),
+                "total_hotels": summary.get("total_hotels"),
+                "hotels_requiring_gemini": summary.get("hotels_requiring_gemini"),
+                "hotels_requiring_gemini_pct": summary.get("hotels_requiring_gemini_pct"),
+                "deterministic_evidence_item_count": summary.get("deterministic_evidence_item_count"),
+                "gemini_evidence_item_count": summary.get("gemini_evidence_item_count"),
+                "relation_support": relation_counts.get("SUPPORT", 0),
+                "relation_contradict": relation_counts.get("CONTRADICT", 0),
+                "relation_not_enough_evidence": relation_counts.get("NOT_ENOUGH_EVIDENCE", 0),
+                "relation_mixed": relation_counts.get("MIXED", 0),
+                "resolved": resolution_counts.get("resolved", 0),
+                "verification_failed": resolution_counts.get("verification_failed", 0),
+                "skipped_call_limit": resolution_counts.get("skipped_call_limit", 0),
+                "retrieval_success": retrieval_counts.get("success", 0),
+                "retrieval_partial": retrieval_counts.get("partial", 0),
+                "retrieval_failed": retrieval_counts.get("failed", 0),
+                "verifier_calls": verifier.get("total_calls", 0),
+                "verifier_latency_ms": verifier.get("total_latency_ms", 0.0),
+                "verifier_tokens": verifier.get("total_tokens", 0),
+                "verifier_cost_usd": verifier.get("total_cost_usd", 0.0),
+                "verifier_parse_failures": verifier.get("total_parse_failures", 0),
+                "shadow_detail": telemetry.get("soft_evidence_shadow_detail"),
+            }
+        )
+
+    df = pd.DataFrame(rows)
+    if not df.empty and "timestamp" in df.columns:
+        df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
+    return df
+
+
 def flatten_records(records: list[dict[str, Any]]) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     request_rows: list[dict[str, Any]] = []
     step_rows: list[dict[str, Any]] = []
@@ -410,6 +464,88 @@ def show_errors(llm_df: pd.DataFrame, external_df: pd.DataFrame) -> None:
     st.dataframe(pd.concat(errors, ignore_index=True), use_container_width=True, hide_index=True)
 
 
+def show_soft_evidence_shadow(soft_evidence_df: pd.DataFrame, external_df: pd.DataFrame) -> None:
+    """
+    Phase B shadow-mode observability - reuses the existing telemetry
+    structures (soft_evidence_summary via RequestTrace, and the
+    already-generic external_calls funnel for embedding calls) rather
+    than a separate monitoring path.
+    """
+    st.subheader("Soft evidence (shadow mode)")
+
+    if soft_evidence_df.empty:
+        st.info("No requests with a populated soft_evidence_summary yet (pipeline disabled, not applicable, or no telemetry recorded).")
+        return
+
+    total_requests = len(soft_evidence_df)
+    total_hotels = int(soft_evidence_df["total_hotels"].fillna(0).sum())
+    avg_gemini_pct = soft_evidence_df["hotels_requiring_gemini_pct"].mean()
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Shadow requests", f"{total_requests}")
+    c2.metric("Hotels evaluated", f"{total_hotels}")
+    c3.metric("Avg hotels needing Gemini", f"{avg_gemini_pct:.1f}%" if pd.notna(avg_gemini_pct) else "—")
+    c4.metric("Verifier calls (total)", f"{int(soft_evidence_df['verifier_calls'].sum())}")
+
+    st.markdown("**Claim relation distribution**")
+    relation_totals = soft_evidence_df[["relation_support", "relation_contradict", "relation_not_enough_evidence", "relation_mixed"]].sum()
+    relation_totals.index = ["SUPPORT", "CONTRADICT", "NOT_ENOUGH_EVIDENCE", "MIXED"]
+    st.bar_chart(relation_totals)
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown("**Evidence resolution status**")
+        resolution_totals = soft_evidence_df[["resolved", "verification_failed", "skipped_call_limit"]].sum()
+        resolution_totals.index = ["resolved", "verification_failed", "skipped_call_limit"]
+        st.bar_chart(resolution_totals)
+    with col_b:
+        st.markdown("**Retrieval status**")
+        retrieval_totals = soft_evidence_df[["retrieval_success", "retrieval_partial", "retrieval_failed"]].sum()
+        retrieval_totals.index = ["SUCCESS", "PARTIAL", "FAILED"]
+        st.bar_chart(retrieval_totals)
+
+    st.markdown("**Gemini semantic verifier**")
+    verifier_cols = ["timestamp", "verifier_calls", "verifier_latency_ms", "verifier_tokens", "verifier_cost_usd", "verifier_parse_failures"]
+    st.dataframe(soft_evidence_df[verifier_cols].sort_values("timestamp", ascending=False), use_container_width=True, hide_index=True)
+
+    st.markdown("**Embedding retrieval (gemini_embedding external calls)**")
+    if not external_df.empty and "raw" in external_df.columns:
+        embedding_rows = external_df[external_df["raw"].apply(lambda raw: isinstance(raw, dict) and raw.get("provider") == "gemini_embedding")]
+        if embedding_rows.empty:
+            st.info("No gemini_embedding external calls recorded in the selected range.")
+        else:
+            metadata = embedding_rows["raw"].apply(lambda raw: raw.get("metadata") or {})
+            display = pd.DataFrame(
+                {
+                    "timestamp": embedding_rows["timestamp"],
+                    "step": embedding_rows["raw"].apply(lambda raw: raw.get("step")),
+                    "success": embedding_rows["success"],
+                    "latency_ms": embedding_rows["latency_ms"],
+                    "batch_size": metadata.apply(lambda m: m.get("batch_size")),
+                    "token_count": metadata.apply(lambda m: m.get("token_count")),
+                    "error": embedding_rows["error"],
+                }
+            )
+            e1, e2, e3 = st.columns(3)
+            e1.metric("Embedding calls", f"{len(display)}")
+            e2.metric("Embedding failures", f"{int((~display['success']).sum())}")
+            token_known = display["token_count"].notna().sum()
+            e3.metric("Calls with known token count", f"{token_known} / {len(display)}")
+            st.dataframe(display.sort_values("timestamp", ascending=False), use_container_width=True, hide_index=True)
+    else:
+        st.info("No external call data available.")
+
+    with st.expander("Bounded shadow detail (<=5 hotels per request) - raw"):
+        detail_rows = soft_evidence_df[soft_evidence_df["shadow_detail"].notna()]
+        if detail_rows.empty:
+            st.info("No shadow detail recorded.")
+        else:
+            selected_trace = st.selectbox("Request (trace_id)", detail_rows["trace_id"].tolist())
+            selected = detail_rows[detail_rows["trace_id"] == selected_trace]
+            if not selected.empty:
+                st.json(selected.iloc[0]["shadow_detail"])
+
+
 def show_raw_tables(requests_df: pd.DataFrame, steps_df: pd.DataFrame, llm_df: pd.DataFrame, external_df: pd.DataFrame) -> None:
     st.subheader("Raw data")
     with st.expander("Requests"):
@@ -439,13 +575,14 @@ def main() -> None:
         return
 
     requests_df, steps_df, llm_df, external_df = flatten_records(records)
+    soft_evidence_df = flatten_soft_evidence_records(records)
     requests_df, steps_df, llm_df, external_df = apply_filters(requests_df, steps_df, llm_df, external_df)
 
     if requests_df.empty:
         st.warning("No records match selected filters.")
         return
 
-    tabs = st.tabs(["Overview", "Latency", "Outliers", "Cost & LLM", "Branches", "Errors", "Raw"])
+    tabs = st.tabs(["Overview", "Latency", "Outliers", "Cost & LLM", "Soft Evidence (shadow)", "Branches", "Errors", "Raw"])
 
     with tabs[0]:
         show_overview(requests_df, llm_df)
@@ -462,12 +599,15 @@ def main() -> None:
         show_cost(requests_df, llm_df)
 
     with tabs[4]:
-        show_branch_usage(requests_df)
+        show_soft_evidence_shadow(soft_evidence_df, external_df)
 
     with tabs[5]:
-        show_errors(llm_df, external_df)
+        show_branch_usage(requests_df)
 
     with tabs[6]:
+        show_errors(llm_df, external_df)
+
+    with tabs[7]:
         show_raw_tables(requests_df, steps_df, llm_df, external_df)
 
 

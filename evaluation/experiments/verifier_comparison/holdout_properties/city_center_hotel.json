@@ -1,0 +1,3871 @@
+{
+  "id": "13716234",
+  "city": "Baku",
+  "address": "M.Ə. Rəsulzadə 8, Sabayil , AZ 1000 Baku, Azerbaijan",
+  "name": "City Center Hotel & Restaurant",
+  "url": "https://www.booking.com/hotel/az/city-center-baku2.en-gb.html?checkout=2026-09-02&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-08-21&selected_currency=USD&group_adults=1&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+  "price": 1739.392287397152,
+  "currency": "US$",
+  "rating": 8.8,
+  "stars": null,
+  "property_type": "hotel",
+  "room_type": null,
+  "max_occupancy": null,
+  "description": "Sign in to unlock the members-only price for your selected dates at City Center Hotel & Restaurant\n\n\nGenius discounts at this property are subject to book dates, stay dates and other available deals.\n\nAbout this propertyComfortable Accommodations: City Center Hotel & Restaurant in Baku offers family rooms with air-conditioning, private bathrooms, and modern amenities. Each room includes a minibar, TV, and free WiFi, ensuring a pleasant stay.\n\nDining Experience: The hotel features a family-friendly restaurant serving Greek, Italian, and Middle Eastern cuisines. Guests can enjoy brunch, lunch, dinner, high tea, and cocktails in a traditional, modern, or romantic ambience.\n\nLeisure Facilities: The property offers a garden, terrace, and outdoor seating area. Additional amenities include a bar, coffee shop, and live music, providing entertainment options for all guests.\n\nConvenient Location: Located 25 km from Heydar Aliyev International Airport, the hotel is near an ice-skating rink. Guests can enjoy local specialities, fresh pastries, and a variety of beverages at the on-site restaurant.Solo travellers particularly like the location — they rated it 9.4 for a one-person stay.Distance in property description is calculated using © OpenStreetMap",
+  "fine_print": "Please note that the 'Budget Single Room' and 'Budget Double Room' don't have windows.Please inform City Center Hotel & Restaurant in advance of your expected arrival time. You can use the Special Requests box when booking, or contact the property directly with the contact details provided in your confirmation.This property will not accommodate hen, stag or similar parties.",
+  "policies": [
+    {
+      "title": "Check-in",
+      "content": "From 14:00You'll need to let the property know in advance what time you'll arrive."
+    },
+    {
+      "title": "Check-out",
+      "content": "Until 12:00"
+    },
+    {
+      "title": "Cancellation/ prepayment",
+      "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+    },
+    {
+      "title": "Children and beds",
+      "content": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 2 years Extra bed upon request Cot upon request 3+ years Extra bed upon request Prices for cots and extra beds are not included in the total price, and will have to be paid for separately during your stay. The number of extra beds and cots allowed is dependent on the option you choose. Please check your selected option for more information. All cots and extra beds are subject to availability."
+    },
+    {
+      "title": "Age restriction",
+      "content": "The minimum age for check-in is 18"
+    },
+    {
+      "title": "Pets",
+      "content": "Pets are not allowed."
+    },
+    {
+      "title": "Accepted payment methods",
+      "content": "Cash"
+    },
+    {
+      "title": "Parties",
+      "content": "Parties/events are not allowed"
+    }
+  ],
+  "highlights": [
+    {
+      "header": "Perfect for a 12-night stay!",
+      "contents": [
+        "Situated in the best rated area in Baku, this hotel has an excellent location score of 9.5",
+        "Popular with solo travellers"
+      ]
+    },
+    {
+      "header": "Breakfast info",
+      "contents": [
+        "Halal, Asian, Buffet"
+      ]
+    },
+    {
+      "header": "Rooms with:",
+      "contents": [
+        "Landmark view",
+        "Quiet street view",
+        "City view"
+      ]
+    }
+  ],
+  "facilities": [
+    {
+      "name": "Great for your stay",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": null,
+      "is_off_site": null
+    },
+    {
+      "name": "Toilet paper",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Towels",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bidet",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bath or shower",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Slippers",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private bathroom",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Toilet",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Free toiletries",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Hairdryer",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shower",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Linen",
+      "category": "Bedroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Wardrobe or closet",
+      "category": "Bedroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Outdoor furniture",
+      "category": "Outdoors",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "BBQ facilities",
+      "category": "Outdoors",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Terrace",
+      "category": "Outdoors",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Garden",
+      "category": "Outdoors",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Cleaning products",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Electric kettle",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Refrigerator",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Socket near the bed",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Clothes rack",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Live music/performance",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tour or class about local culture",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Themed dinner nights",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Walking tours",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Pub crawls",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Temporary art galleries",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Flat-screen TV",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Cable channels",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Satellite channels",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Radio",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Telephone",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "TV",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Coffee house on site",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Fruits",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Wine/champagne",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Kid-friendly buffet",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Kids' meals",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Special diet menus (on request)",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Snack bar",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Breakfast in the room",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bar",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Minibar",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Restaurant",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Internet services",
+      "category": "Internet",
+      "overview": "WiFi is available in all areas and is free of charge.",
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Electric vehicle charging station",
+      "category": "Parking",
+      "overview": "Public parking is possible at a location nearby (reservation is not needed) and charges may be applicable.",
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Public transport tickets",
+      "category": "Transport",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Invoice provided",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private check-in/check-out",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Luggage storage",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tour desk",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Currency exchange",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Express check-in/check-out",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "24-hour front desk",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Daily housekeeping",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Ironing service",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Laundry",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Fax/photocopying",
+      "category": "Business facilities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Fire extinguishers",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "CCTV outside property",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "CCTV in common areas",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Smoke alarms",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Security alarm",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Key access",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "24-hour security",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Safety deposit box",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shuttle service",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Carbon monoxide detector",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Grocery deliveries",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shared lounge/TV area",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Hypoallergenic",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking throughout",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Allergy-free room",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Mosquito net",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Wake-up service",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Hardwood or parquet floors",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Heating",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Soundproofing",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private entrance",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Packed lunches",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Carpeted",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Soundproof rooms",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Lift",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Family rooms",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Ironing facilities",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking rooms",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Room service",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Standard Triple Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "3 single beds OR 1 single bed OR 1 double bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "Room",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "194 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free toiletries",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Safety deposit box",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bidet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bath or shower",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hardwood or parquet floors",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Towels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Linen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Socket near the bed",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Cleaning products",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hypoallergenic",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private entrance",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Slippers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Refrigerator",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Mosquito net",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Telephone",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ironing facilities",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Satellite channels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Tea/Coffee maker",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Radio",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Heating",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hairdryer",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Carpeted",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Electric kettle",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Cable channels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wake-up service",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wardrobe or closet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Clothes rack",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet paper",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hand sanitiser",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Carbon monoxide detector",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Single-room air conditioning for guest accommodation",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air purifiers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1739.392287397152,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Superb breakfast US$9",
+            "Free cancellation before 20 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2329.24076268309,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Superb breakfast included",
+            "Free cancellation before 20 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Apartment with Sea View",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": "Bedroom 1",
+          "beds": [
+            "2 single beds"
+          ]
+        },
+        {
+          "room": "Bedroom 2",
+          "beds": [
+            "1 double bed"
+          ]
+        },
+        {
+          "room": "Living room",
+          "beds": [
+            "1 sofa bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "Entire apartment",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "1130 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private kitchen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Balcony",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Sea view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Lake view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Landmark view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dishwasher",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Terrace",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free toiletries",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Safety deposit box",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bidet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Washing machine",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Sofa",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bath or shower",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hardwood or parquet floors",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Towels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Linen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Socket near the bed",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Cleaning products",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hypoallergenic",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Desk",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Seating area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private entrance",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Slippers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Refrigerator",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Mosquito net",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Telephone",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ironing facilities",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Satellite channels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Tea/Coffee maker",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Iron",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Radio",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Interconnected room(s) available",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Microwave",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Heating",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hairdryer",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchenware",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchenette",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Carpeted",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Electric kettle",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Outdoor furniture",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Outdoor dining area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Cable channels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wake-up service",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wardrobe or closet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Oven",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Stovetop",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dining area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dining table",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Clothes rack",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet paper",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Sofa bed",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Carbon monoxide detector",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Single-room air conditioning for guest accommodation",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air purifiers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hand sanitiser",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "More",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1695.228751578365,
+          "currency": "US$-",
+          "persons": 4,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Superb breakfast US$9",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "We have 1 left"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Apartment with City View",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": "Bedroom 1",
+          "beds": [
+            "1 double bed"
+          ]
+        },
+        {
+          "room": "Bedroom 2",
+          "beds": [
+            "1 double bed"
+          ]
+        },
+        {
+          "room": "Living room",
+          "beds": [
+            "1 sofa bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "Entire apartment",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "1184 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private kitchen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Balcony",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Lake view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Landmark view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dishwasher",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Terrace",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free toiletries",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Safety deposit box",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bidet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Washing machine",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Sofa",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bath or shower",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hardwood or parquet floors",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Towels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Linen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Socket near the bed",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Cleaning products",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hypoallergenic",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Desk",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Seating area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private entrance",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Slippers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Refrigerator",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Mosquito net",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Telephone",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ironing facilities",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Satellite channels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Iron",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Radio",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Interconnected room(s) available",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Microwave",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Heating",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hairdryer",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchenware",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchenette",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Carpeted",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Electric kettle",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Outdoor furniture",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Outdoor dining area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Cable channels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wake-up service",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wardrobe or closet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Oven",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Stovetop",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dining area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dining table",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Upper floors accessible by stairs only",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Clothes rack",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet paper",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Sofa bed",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Carbon monoxide detector",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air purifiers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Single-room air conditioning for guest accommodation",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hand sanitiser",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "More",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1833.267445303637,
+          "currency": "US$-",
+          "persons": 4,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Superb breakfast US$9",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "We have 1 left"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Deluxe Suite with City view",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": "Bedroom 1",
+          "beds": [
+            "2 single beds"
+          ]
+        },
+        {
+          "room": "Bedroom 2",
+          "beds": [
+            "1 double bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "Private suite",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "291 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Landmark view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free toiletries",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Safety deposit box",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bidet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bath or shower",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hardwood or parquet floors",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Towels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Linen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Socket near the bed",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Cleaning products",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hypoallergenic",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Desk",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Seating area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private entrance",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Slippers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Refrigerator",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Mosquito net",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Telephone",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ironing facilities",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Satellite channels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Radio",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Interconnected room(s) available",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Heating",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hairdryer",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Carpeted",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Electric kettle",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Cable channels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wake-up service",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wardrobe or closet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Clothes rack",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet paper",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Single-room air conditioning for guest accommodation",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air purifiers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Carbon monoxide detector",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hand sanitiser",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "More",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 2070.356916993628,
+          "currency": "US$",
+          "persons": 4,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Superb breakfast US$9",
+            "Free cancellation before 20 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2856.82151155011,
+          "currency": "US$",
+          "persons": 4,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Superb breakfast included",
+            "Free cancellation before 20 August 2026",
+            "No prepayment needed – pay at the property"
+          ]
+        }
+      ]
+    }
+  ],
+  "raw": {
+    "order": 21,
+    "url": "https://www.booking.com/hotel/az/city-center-baku2.en-gb.html?checkout=2026-09-02&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-08-21&selected_currency=USD&group_adults=1&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+    "startUrlOrQuery": "Baku",
+    "name": "City Center Hotel & Restaurant",
+    "type": "hotel",
+    "description": "Sign in to unlock the members-only price for your selected dates at City Center Hotel & Restaurant\n\n\nGenius discounts at this property are subject to book dates, stay dates and other available deals.\n\nAbout this propertyComfortable Accommodations: City Center Hotel & Restaurant in Baku offers family rooms with air-conditioning, private bathrooms, and modern amenities. Each room includes a minibar, TV, and free WiFi, ensuring a pleasant stay.\n\nDining Experience: The hotel features a family-friendly restaurant serving Greek, Italian, and Middle Eastern cuisines. Guests can enjoy brunch, lunch, dinner, high tea, and cocktails in a traditional, modern, or romantic ambience.\n\nLeisure Facilities: The property offers a garden, terrace, and outdoor seating area. Additional amenities include a bar, coffee shop, and live music, providing entertainment options for all guests.\n\nConvenient Location: Located 25 km from Heydar Aliyev International Airport, the hotel is near an ice-skating rink. Guests can enjoy local specialities, fresh pastries, and a variety of beverages at the on-site restaurant.Solo travellers particularly like the location — they rated it 9.4 for a one-person stay.Distance in property description is calculated using © OpenStreetMap",
+    "stars": null,
+    "price": 1739.392287397152,
+    "currency": "US$",
+    "rating": 8.8,
+    "ratingLabel": "Fabulous",
+    "reviews": 646,
+    "breakfast": "Halal, Asian, Buffet",
+    "checkIn": "From 14:00You'll need to let the property know in advance what time you'll arrive.",
+    "checkOut": "Until 12:00",
+    "checkInDate": "2026-08-21",
+    "checkOutDate": "2026-09-02",
+    "location": {
+      "lat": "40.369460543149515",
+      "lng": "49.837576238592554"
+    },
+    "address": {
+      "full": "M.Ə. Rəsulzadə 8, Sabayil , AZ 1000 Baku, Azerbaijan",
+      "country": "az",
+      "city": "Baku"
+    },
+    "image": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/851810594.jpg?k=70dfb890ecaa57d2f7c0da45c86c023672528ad66a629b82a2219dcf202c5203&o=",
+    "rooms": [
+      {
+        "available": true,
+        "id": 1371623424,
+        "url": "https://www.booking.com/hotel/az/city-center-baku2.en-gb.html#room_1371623424",
+        "roomType": "Standard Triple Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "3 single beds OR 1 single bed OR 1 double bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "Room",
+          "194 feet²",
+          "Air conditioning",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi",
+          "Free toiletries",
+          "Safety deposit box",
+          "Bidet",
+          "Toilet",
+          "Bath or shower",
+          "Hardwood or parquet floors",
+          "Towels",
+          "Linen",
+          "Socket near the bed",
+          "Cleaning products",
+          "Hypoallergenic",
+          "Private entrance",
+          "TV",
+          "Slippers",
+          "Refrigerator",
+          "Mosquito net",
+          "Telephone",
+          "Ironing facilities",
+          "Satellite channels",
+          "Tea/Coffee maker",
+          "Radio",
+          "Heating",
+          "Hairdryer",
+          "Carpeted",
+          "Electric kettle",
+          "Cable channels",
+          "Wake-up service",
+          "Wardrobe or closet",
+          "Clothes rack",
+          "Toilet paper",
+          "Hand sanitiser",
+          "Carbon monoxide detector",
+          "Single-room air conditioning for guest accommodation",
+          "Air purifiers"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 1,
+        "options": [
+          {
+            "price": 1739.392287397152,
+            "displayedPrice": 139.271775673544,
+            "excludedTaxesPrice": 870.883869615458,
+            "discount": {
+              "discountedPrice": 1010.155645289002,
+              "text": "84% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1371623424_414508706_3_42_0_849558",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Superb breakfast US$9",
+              "Free cancellation before 20 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 2329.24076268309,
+            "displayedPrice": 429.57268375383,
+            "excludedTaxesPrice": 923.13808358386,
+            "discount": {
+              "discountedPrice": 1352.71076733769,
+              "text": "69% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1371623424_414508706_3_41_0_849558",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Superb breakfast included",
+              "Free cancellation before 20 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1371623432,
+        "url": "https://www.booking.com/hotel/az/city-center-baku2.en-gb.html#room_1371623432",
+        "roomType": "Apartment with Sea View",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": "Bedroom 1",
+            "beds": [
+              "2 single beds"
+            ]
+          },
+          {
+            "room": "Bedroom 2",
+            "beds": [
+              "1 double bed"
+            ]
+          },
+          {
+            "room": "Living room",
+            "beds": [
+              "1 sofa bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "Entire apartment",
+          "1130 feet²",
+          "Private kitchen",
+          "Ensuite bathroom",
+          "Balcony",
+          "Sea view",
+          "Lake view",
+          "Landmark view",
+          "City view",
+          "Air conditioning",
+          "Dishwasher",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Terrace",
+          "Minibar",
+          "Free WiFi",
+          "Free toiletries",
+          "Kitchen",
+          "Safety deposit box",
+          "Bidet",
+          "Washing machine",
+          "Toilet",
+          "Sofa",
+          "Bath or shower",
+          "Hardwood or parquet floors",
+          "Towels",
+          "Linen",
+          "Socket near the bed",
+          "Cleaning products",
+          "Hypoallergenic",
+          "Desk",
+          "Seating area",
+          "Private entrance",
+          "TV",
+          "Slippers",
+          "Refrigerator",
+          "Mosquito net",
+          "Telephone",
+          "Ironing facilities",
+          "Satellite channels",
+          "Tea/Coffee maker",
+          "Iron",
+          "Radio",
+          "Interconnected room(s) available",
+          "Microwave",
+          "Heating",
+          "Hairdryer",
+          "Kitchenware",
+          "Kitchenette",
+          "Carpeted",
+          "Electric kettle",
+          "Outdoor furniture",
+          "Outdoor dining area",
+          "Cable channels",
+          "Wake-up service",
+          "Wardrobe or closet",
+          "Oven",
+          "Stovetop",
+          "Dining area",
+          "Dining table",
+          "Clothes rack",
+          "Toilet paper",
+          "Sofa bed",
+          "Carbon monoxide detector",
+          "Single-room air conditioning for guest accommodation",
+          "Air purifiers",
+          "Hand sanitiser",
+          "More"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 1,
+        "options": [
+          {
+            "price": 1695.228751578365,
+            "displayedPrice": -231.40945481162,
+            "excludedTaxesPrice": 1086.0996094331,
+            "discount": {
+              "discountedPrice": 854.6901546214801,
+              "text": "138% off",
+              "description": "You’re getting 138% off the original price due to multiple deals and benefits."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1371623432_413158268_0_42_0_849558",
+            "persons": 4,
+            "currency": "US$-",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Superb breakfast US$9",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "We have 1 left"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1371623430,
+        "url": "https://www.booking.com/hotel/az/city-center-baku2.en-gb.html#room_1371623430",
+        "roomType": "Apartment with City View",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": "Bedroom 1",
+            "beds": [
+              "1 double bed"
+            ]
+          },
+          {
+            "room": "Bedroom 2",
+            "beds": [
+              "1 double bed"
+            ]
+          },
+          {
+            "room": "Living room",
+            "beds": [
+              "1 sofa bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "Entire apartment",
+          "1184 feet²",
+          "Private kitchen",
+          "Ensuite bathroom",
+          "Balcony",
+          "Lake view",
+          "Landmark view",
+          "City view",
+          "Air conditioning",
+          "Dishwasher",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Terrace",
+          "Minibar",
+          "Free WiFi",
+          "Free toiletries",
+          "Kitchen",
+          "Safety deposit box",
+          "Bidet",
+          "Washing machine",
+          "Toilet",
+          "Sofa",
+          "Bath or shower",
+          "Hardwood or parquet floors",
+          "Towels",
+          "Linen",
+          "Socket near the bed",
+          "Cleaning products",
+          "Hypoallergenic",
+          "Desk",
+          "Seating area",
+          "Private entrance",
+          "TV",
+          "Slippers",
+          "Refrigerator",
+          "Mosquito net",
+          "Telephone",
+          "Ironing facilities",
+          "Satellite channels",
+          "Iron",
+          "Radio",
+          "Interconnected room(s) available",
+          "Microwave",
+          "Heating",
+          "Hairdryer",
+          "Kitchenware",
+          "Kitchenette",
+          "Carpeted",
+          "Electric kettle",
+          "Outdoor furniture",
+          "Outdoor dining area",
+          "Cable channels",
+          "Wake-up service",
+          "Wardrobe or closet",
+          "Oven",
+          "Stovetop",
+          "Dining area",
+          "Dining table",
+          "Upper floors accessible by stairs only",
+          "Clothes rack",
+          "Toilet paper",
+          "Sofa bed",
+          "Carbon monoxide detector",
+          "Air purifiers",
+          "Single-room air conditioning for guest accommodation",
+          "Hand sanitiser",
+          "More"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 1,
+        "options": [
+          {
+            "price": 1833.267445303637,
+            "displayedPrice": -172.443287887171,
+            "excludedTaxesPrice": 1096.71353005219,
+            "discount": {
+              "discountedPrice": 924.270242165019,
+              "text": "123% off",
+              "description": "You’re getting 123% off the original price due to multiple deals and benefits."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1371623430_413158268_0_42_0_849558",
+            "persons": 4,
+            "currency": "US$-",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Superb breakfast US$9",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "We have 1 left"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1371623428,
+        "url": "https://www.booking.com/hotel/az/city-center-baku2.en-gb.html#room_1371623428",
+        "roomType": "Deluxe Suite with City view",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": "Bedroom 1",
+            "beds": [
+              "2 single beds"
+            ]
+          },
+          {
+            "room": "Bedroom 2",
+            "beds": [
+              "1 double bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "Private suite",
+          "291 feet²",
+          "Landmark view",
+          "City view",
+          "Air conditioning",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi",
+          "Free toiletries",
+          "Safety deposit box",
+          "Bidet",
+          "Toilet",
+          "Bath or shower",
+          "Hardwood or parquet floors",
+          "Towels",
+          "Linen",
+          "Socket near the bed",
+          "Cleaning products",
+          "Hypoallergenic",
+          "Desk",
+          "Seating area",
+          "Private entrance",
+          "TV",
+          "Slippers",
+          "Refrigerator",
+          "Mosquito net",
+          "Telephone",
+          "Ironing facilities",
+          "Satellite channels",
+          "Radio",
+          "Interconnected room(s) available",
+          "Heating",
+          "Hairdryer",
+          "Carpeted",
+          "Electric kettle",
+          "Cable channels",
+          "Wake-up service",
+          "Wardrobe or closet",
+          "Clothes rack",
+          "Toilet paper",
+          "Single-room air conditioning for guest accommodation",
+          "Air purifiers",
+          "Carbon monoxide detector",
+          "Hand sanitiser",
+          "More"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 1,
+        "options": [
+          {
+            "price": 2070.356916993628,
+            "displayedPrice": 63.2270773158664,
+            "excludedTaxesPrice": 1139.13414644953,
+            "discount": {
+              "discountedPrice": 1202.3612237653963,
+              "text": "93% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1371623428_414508706_4_42_0_849558",
+            "persons": 4,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Superb breakfast US$9",
+              "Free cancellation before 20 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          },
+          {
+            "price": 2856.82151155011,
+            "displayedPrice": 450.294915598147,
+            "excludedTaxesPrice": 1208.80639258263,
+            "discount": {
+              "discountedPrice": 1659.1013081807769,
+              "text": "73% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1371623428_414508706_4_41_0_849558",
+            "persons": 4,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Superb breakfast included",
+              "Free cancellation before 20 August 2026",
+              "No prepayment needed – pay at the property"
+            ]
+          }
+        ]
+      }
+    ],
+    "highlights": [
+      {
+        "header": "Perfect for a 12-night stay!",
+        "contents": [
+          "Situated in the best rated area in Baku, this hotel has an excellent location score of 9.5",
+          "Popular with solo travellers"
+        ]
+      },
+      {
+        "header": "Breakfast info",
+        "contents": [
+          "Halal, Asian, Buffet"
+        ]
+      },
+      {
+        "header": "Rooms with:",
+        "contents": [
+          "Landmark view",
+          "Quiet street view",
+          "City view"
+        ]
+      }
+    ],
+    "finePrint": "Please note that the 'Budget Single Room' and 'Budget Double Room' don't have windows.Please inform City Center Hotel & Restaurant in advance of your expected arrival time. You can use the Special Requests box when booking, or contact the property directly with the contact details provided in your confirmation.This property will not accommodate hen, stag or similar parties.",
+    "policies": [
+      {
+        "title": "Check-in",
+        "content": "From 14:00You'll need to let the property know in advance what time you'll arrive."
+      },
+      {
+        "title": "Check-out",
+        "content": "Until 12:00"
+      },
+      {
+        "title": "Cancellation/ prepayment",
+        "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+      },
+      {
+        "title": "Children and beds",
+        "content": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 2 years Extra bed upon request Cot upon request 3+ years Extra bed upon request Prices for cots and extra beds are not included in the total price, and will have to be paid for separately during your stay. The number of extra beds and cots allowed is dependent on the option you choose. Please check your selected option for more information. All cots and extra beds are subject to availability."
+      },
+      {
+        "title": "Age restriction",
+        "content": "The minimum age for check-in is 18"
+      },
+      {
+        "title": "Pets",
+        "content": "Pets are not allowed."
+      },
+      {
+        "title": "Accepted payment methods",
+        "content": "Cash"
+      },
+      {
+        "title": "Parties",
+        "content": "Parties/events are not allowed"
+      }
+    ],
+    "hotelChain": null,
+    "licenseInfo": null,
+    "hostInfo": null,
+    "traderInfo": {
+      "isBusiness": null,
+      "email": "citycenterhotel2026@gmail.com",
+      "phone": "+994559453999",
+      "companyName": null,
+      "firstName": "Ülvi",
+      "middleName": null,
+      "lastName": "İsmayil",
+      "registrationNumber": null,
+      "tradeRegisterName": null,
+      "address": {
+        "street": "M.Ə. Rəsulzadə 8",
+        "street2": "Səbail Rayonu",
+        "postalCode": "AZ 1001",
+        "city": "Baku",
+        "countryCode": "AZ",
+        "state": null
+      }
+    },
+    "hotelId": 13716234,
+    "facilities": [
+      {
+        "name": "Great for your stay",
+        "facilities": [],
+        "overview": null,
+        "id": null
+      },
+      {
+        "name": "Bathroom",
+        "overview": null,
+        "id": 5,
+        "facilities": [
+          {
+            "name": "Toilet paper",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 141
+          },
+          {
+            "name": "Towels",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 124
+          },
+          {
+            "name": "Bidet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 100
+          },
+          {
+            "name": "Bath or shower",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 69
+          },
+          {
+            "name": "Slippers",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 43
+          },
+          {
+            "name": "Private bathroom",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 38
+          },
+          {
+            "name": "Toilet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 31
+          },
+          {
+            "name": "Free toiletries",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 27
+          },
+          {
+            "name": "Hairdryer",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 12
+          },
+          {
+            "name": "Shower",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 4
+          }
+        ]
+      },
+      {
+        "name": "Bedroom",
+        "overview": null,
+        "id": 17,
+        "facilities": [
+          {
+            "name": "Linen",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 125
+          },
+          {
+            "name": "Wardrobe or closet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 95
+          }
+        ]
+      },
+      {
+        "name": "Outdoors",
+        "overview": null,
+        "id": 13,
+        "facilities": [
+          {
+            "name": "Outdoor furniture",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 222
+          },
+          {
+            "name": "BBQ facilities",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 72
+          },
+          {
+            "name": "Terrace",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 15
+          },
+          {
+            "name": "Garden",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 14
+          }
+        ]
+      },
+      {
+        "name": "Kitchen",
+        "overview": null,
+        "id": 12,
+        "facilities": [
+          {
+            "name": "Cleaning products",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 116
+          },
+          {
+            "name": "Electric kettle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 86
+          },
+          {
+            "name": "Refrigerator",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 22
+          }
+        ]
+      },
+      {
+        "name": "Room amenities",
+        "overview": null,
+        "id": 4,
+        "facilities": [
+          {
+            "name": "Socket near the bed",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 184
+          },
+          {
+            "name": "Clothes rack",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 138
+          }
+        ]
+      },
+      {
+        "name": "Activities",
+        "overview": null,
+        "id": 2,
+        "facilities": [
+          {
+            "name": "Live music/performance",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 410
+          },
+          {
+            "name": "Tour or class about local culture",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 408
+          },
+          {
+            "name": "Themed dinner nights",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 406
+          },
+          {
+            "name": "Walking tours",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 404
+          },
+          {
+            "name": "Pub crawls",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 401
+          },
+          {
+            "name": "Temporary art galleries",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 400
+          }
+        ]
+      },
+      {
+        "name": "Media & Technology",
+        "overview": null,
+        "id": 6,
+        "facilities": [
+          {
+            "name": "Flat-screen TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 75
+          },
+          {
+            "name": "Cable channels",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 68
+          },
+          {
+            "name": "Satellite channels",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 44
+          },
+          {
+            "name": "Radio",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 21
+          },
+          {
+            "name": "Telephone",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 9
+          },
+          {
+            "name": "TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 8
+          }
+        ]
+      },
+      {
+        "name": "Food & Drink",
+        "overview": null,
+        "id": 7,
+        "facilities": [
+          {
+            "name": "Coffee house on site",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 219
+          },
+          {
+            "name": "Fruits",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 205
+          },
+          {
+            "name": "Wine/champagne",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 203
+          },
+          {
+            "name": "Kid-friendly buffet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 177
+          },
+          {
+            "name": "Kids' meals",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 176
+          },
+          {
+            "name": "Special diet menus (on request)",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 133
+          },
+          {
+            "name": "Snack bar",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 117
+          },
+          {
+            "name": "Breakfast in the room",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 43
+          },
+          {
+            "name": "Bar",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 7
+          },
+          {
+            "name": "Minibar",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 3
+          },
+          {
+            "name": "Restaurant",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 3
+          }
+        ]
+      },
+      {
+        "name": "Internet",
+        "overview": "WiFi is available in all areas and is free of charge.",
+        "id": 11,
+        "facilities": [
+          {
+            "name": "Internet services",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 47
+          }
+        ]
+      },
+      {
+        "name": "Parking",
+        "overview": "Public parking is possible at a location nearby (reservation is not needed) and charges may be applicable.",
+        "id": 16,
+        "facilities": [
+          {
+            "name": "Electric vehicle charging station",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 2
+          }
+        ]
+      },
+      {
+        "name": "Transport",
+        "overview": null,
+        "id": 22,
+        "facilities": [
+          {
+            "name": "Public transport tickets",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 183
+          }
+        ]
+      },
+      {
+        "name": "Reception services",
+        "overview": null,
+        "id": 23,
+        "facilities": [
+          {
+            "name": "Invoice provided",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 465
+          },
+          {
+            "name": "Private check-in/check-out",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 127
+          },
+          {
+            "name": "Luggage storage",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 91
+          },
+          {
+            "name": "Tour desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 78
+          },
+          {
+            "name": "Currency exchange",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 53
+          },
+          {
+            "name": "Express check-in/check-out",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 49
+          },
+          {
+            "name": "24-hour front desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 8
+          }
+        ]
+      },
+      {
+        "name": "Cleaning services",
+        "overview": null,
+        "id": 26,
+        "facilities": [
+          {
+            "name": "Daily housekeeping",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 158
+          },
+          {
+            "name": "Ironing service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 44
+          },
+          {
+            "name": "Laundry",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 22
+          }
+        ]
+      },
+      {
+        "name": "Business facilities",
+        "overview": null,
+        "id": 27,
+        "facilities": [
+          {
+            "name": "Fax/photocopying",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 81
+          }
+        ]
+      },
+      {
+        "name": "Safety & security",
+        "overview": null,
+        "id": 34,
+        "facilities": [
+          {
+            "name": "Fire extinguishers",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 425
+          },
+          {
+            "name": "CCTV outside property",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 424
+          },
+          {
+            "name": "CCTV in common areas",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 423
+          },
+          {
+            "name": "Smoke alarms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 422
+          },
+          {
+            "name": "Security alarm",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 421
+          },
+          {
+            "name": "Key access",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 419
+          },
+          {
+            "name": "24-hour security",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 418
+          },
+          {
+            "name": "Safety deposit box",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 51
+          }
+        ]
+      },
+      {
+        "name": "General",
+        "overview": null,
+        "id": 1,
+        "facilities": [
+          {
+            "name": "Shuttle service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 304
+          },
+          {
+            "name": "Carbon monoxide detector",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 211
+          },
+          {
+            "name": "Grocery deliveries",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 159
+          },
+          {
+            "name": "Shared lounge/TV area",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 143
+          },
+          {
+            "name": "Hypoallergenic",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 115
+          },
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 109
+          },
+          {
+            "name": "Non-smoking throughout",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 108
+          },
+          {
+            "name": "Allergy-free room",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 101
+          },
+          {
+            "name": "Mosquito net",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 90
+          },
+          {
+            "name": "Wake-up service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 83
+          },
+          {
+            "name": "Hardwood or parquet floors",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 82
+          },
+          {
+            "name": "Heating",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 80
+          },
+          {
+            "name": "Soundproofing",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 79
+          },
+          {
+            "name": "Private entrance",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 76
+          },
+          {
+            "name": "Packed lunches",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 73
+          },
+          {
+            "name": "Carpeted",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 70
+          },
+          {
+            "name": "Soundproof rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 64
+          },
+          {
+            "name": "Lift",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 48
+          },
+          {
+            "name": "Family rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 28
+          },
+          {
+            "name": "Ironing facilities",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 25
+          },
+          {
+            "name": "Airport shuttle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 17
+          },
+          {
+            "name": "Non-smoking rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 16
+          },
+          {
+            "name": "Room service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 5
+          }
+        ]
+      }
+    ],
+    "timeOfScrapeISO": "2026-08-12T13:24:55.619Z"
+  },
+  "_review_summary": null
+}

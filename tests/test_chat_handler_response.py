@@ -312,3 +312,132 @@ def test_process_user_message_passes_previous_history_to_response_input(
         message.content != "Thanks"
         for message in captured["recent_messages"]
     )
+
+
+def test_process_user_message_logs_status_and_results_count_for_successful_search(
+    monkeypatch,
+):
+    result = {
+        "conversation_action": "start_search",
+        "status": "results",
+        "results": [
+            {
+                "result_id": "abc123",
+                "title": "Apartment STEL",
+                "score": 10.0,
+            }
+        ],
+        "request_summary": {"city": "Baku"},
+        "debug_notes": [],
+        "state": {
+            "city": "Baku",
+            "adults": 2,
+            "children": 0,
+            "rooms": 1,
+            "currency": "USD",
+            "constraints": [],
+        },
+    }
+
+    captured = {}
+
+    monkeypatch.setattr(
+        chat_handler,
+        "get_messages",
+        lambda: [],
+    )
+
+    monkeypatch.setattr(
+        chat_handler,
+        "append_message",
+        lambda *args, **kwargs: None,
+    )
+
+    monkeypatch.setattr(
+        chat_handler,
+        "get_search_state",
+        lambda: None,
+    )
+
+    async def fake_handle_user_message(**kwargs):
+        return result
+
+    async def fake_generate_conversation_response_with_llm(
+        response_input,
+        *,
+        trace=None,
+    ):
+        return ConversationResponseGenerationResult(
+            text="Here are some options.",
+            source="llm",
+        )
+
+    def fake_run_async(awaitable):
+        import asyncio
+
+        return asyncio.run(awaitable)
+
+    monkeypatch.setattr(
+        chat_handler,
+        "handle_user_message",
+        fake_handle_user_message,
+    )
+
+    monkeypatch.setattr(
+        chat_handler,
+        "run_async",
+        fake_run_async,
+    )
+
+    monkeypatch.setattr(
+        chat_handler.st,
+        "spinner",
+        lambda *_args, **_kwargs: nullcontext(),
+    )
+
+    monkeypatch.setattr(
+        chat_handler,
+        "build_conversation_response_input",
+        lambda *, user_message, result, recent_messages: object(),
+    )
+
+    monkeypatch.setattr(
+        chat_handler,
+        "generate_conversation_response_with_llm",
+        fake_generate_conversation_response_with_llm,
+    )
+
+    monkeypatch.setattr(
+        chat_handler,
+        "build_display_answer",
+        lambda _: ("ignored", {"top_results": []}),
+    )
+
+    def fake_save_telemetry_record(**kwargs):
+        captured["result_summary"] = kwargs.get(
+            "result_summary"
+        )
+        return {
+            "log_file": "fake.jsonl",
+            "attempt_number": 1,
+            "timestamp": "2026-01-01T00:00:00+00:00",
+        }
+
+    monkeypatch.setattr(
+        chat_handler,
+        "save_telemetry_record",
+        fake_save_telemetry_record,
+    )
+
+    monkeypatch.setattr(
+        chat_handler,
+        "set_search_state",
+        lambda _: None,
+    )
+
+    chat_handler.process_user_message(
+        "Find an apartment in Baku"
+    )
+
+    assert captured["result_summary"]["status"] == "results"
+    assert captured["result_summary"]["results_count"] == 1
