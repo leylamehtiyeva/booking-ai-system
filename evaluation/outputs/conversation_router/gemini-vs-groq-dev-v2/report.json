@@ -1,0 +1,720 @@
+{
+  "total_prediction_rows": 420,
+  "profiles": {
+    "gemini_default": {
+      "profile": "gemini_default",
+      "model": "gemini-2.5-flash-lite",
+      "runs": 210,
+      "successful_runs": 210,
+      "failed_runs": 0,
+      "success_rate": 1.0,
+      "correct_runs": 207,
+      "accuracy": 0.9857142857142858,
+      "macro_f1": 0.9839839839839839,
+      "case_level": {
+        "unique_cases": 70,
+        "majority_correct_cases": 69,
+        "majority_vote_accuracy": 0.9857142857142858,
+        "consistent_cases": 70,
+        "consistency_rate": 1.0,
+        "cases_without_majority": 0
+      },
+      "per_action": {
+        "start_search": {
+          "cases": 54,
+          "correct": 54,
+          "accuracy": 1.0
+        },
+        "update_search": {
+          "cases": 63,
+          "correct": 63,
+          "accuracy": 1.0
+        },
+        "listing_question": {
+          "cases": 51,
+          "correct": 51,
+          "accuracy": 1.0
+        },
+        "general_chat": {
+          "cases": 42,
+          "correct": 39,
+          "accuracy": 0.9285714285714286
+        }
+      },
+      "per_category": {
+        "add_constraint": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "add_facility_with_uncertainty": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "assistant_question": {
+          "cases": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "budget_correction": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "budget_update": {
+          "cases": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "cancel_conversation_no_restart": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "capability_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "capability_question_noisy": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "city_correction": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "city_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "conversation_end": {
+          "cases": 6,
+          "correct": 3,
+          "accuracy": 0.5
+        },
+        "date_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "explicit_new_search_context_switch": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "explicit_reset_with_correction": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "explicit_restart": {
+          "cases": 12,
+          "correct": 12,
+          "accuracy": 1.0
+        },
+        "explicit_restart_noisy": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "facility_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "first_search": {
+          "cases": 18,
+          "correct": 18,
+          "accuracy": 1.0
+        },
+        "first_search_fragmented": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "first_search_incomplete_details": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "first_search_multiple_constraints": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "first_search_noisy": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "first_search_with_negative_constraint": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "greeting": {
+          "cases": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "greeting_and_status": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "guest_count_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "language_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_availability_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_checkin_policy_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_detail_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_distance_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_explanation_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_facility_confirmation": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_facility_cost_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_facility_question": {
+          "cases": 9,
+          "correct": 9,
+          "accuracy": 1.0
+        },
+        "listing_facility_question_typo": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_location_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_match_explanation_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_policy_question": {
+          "cases": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "listing_price_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_review_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "location_preference_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "property_type_update": {
+          "cases": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "relax_location_constraint": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "relax_property_type_constraint": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "remove_constraint": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "remove_constraint_noisy": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "result_feedback_budget_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "result_feedback_property_filter": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "soft_budget_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "thanks": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "thanks_and_pause": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "thanks_plus_date_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "unrelated_chat": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        }
+      },
+      "confusion_matrix": {
+        "start_search": {
+          "start_search": 54,
+          "update_search": 0,
+          "listing_question": 0,
+          "general_chat": 0
+        },
+        "update_search": {
+          "start_search": 0,
+          "update_search": 63,
+          "listing_question": 0,
+          "general_chat": 0
+        },
+        "listing_question": {
+          "start_search": 0,
+          "update_search": 0,
+          "listing_question": 51,
+          "general_chat": 0
+        },
+        "general_chat": {
+          "start_search": 3,
+          "update_search": 0,
+          "listing_question": 0,
+          "general_chat": 39
+        }
+      },
+      "errors": {},
+      "latency_ms": {
+        "mean": 1051.7508095238097,
+        "median": 1009.395,
+        "p90": 1224.3020000000001,
+        "p95": 1267.3444999999997,
+        "min": 781.0,
+        "max": 3863.03
+      },
+      "cost_usd": {
+        "total": 0.0172871,
+        "mean_per_call": 8.231952380952381e-05,
+        "estimated_per_1000_calls": 0.08231952380952381
+      },
+      "llm_attempts": {
+        "total": 210,
+        "mean_per_run": 1.0
+      }
+    },
+    "groq_gpt_oss_20b": {
+      "profile": "groq_gpt_oss_20b",
+      "model": "groq/openai/gpt-oss-20b",
+      "runs": 210,
+      "successful_runs": 210,
+      "failed_runs": 0,
+      "success_rate": 1.0,
+      "correct_runs": 205,
+      "accuracy": 0.9761904761904762,
+      "macro_f1": 0.9731729055258467,
+      "case_level": {
+        "unique_cases": 70,
+        "majority_correct_cases": 68,
+        "majority_vote_accuracy": 0.9714285714285714,
+        "consistent_cases": 67,
+        "consistency_rate": 0.9571428571428572,
+        "cases_without_majority": 0
+      },
+      "per_action": {
+        "start_search": {
+          "cases": 54,
+          "correct": 54,
+          "accuracy": 1.0
+        },
+        "update_search": {
+          "cases": 63,
+          "correct": 63,
+          "accuracy": 1.0
+        },
+        "listing_question": {
+          "cases": 51,
+          "correct": 48,
+          "accuracy": 0.9411764705882353
+        },
+        "general_chat": {
+          "cases": 42,
+          "correct": 40,
+          "accuracy": 0.9523809523809523
+        }
+      },
+      "per_category": {
+        "add_constraint": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "add_facility_with_uncertainty": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "assistant_question": {
+          "cases": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "budget_correction": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "budget_update": {
+          "cases": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "cancel_conversation_no_restart": {
+          "cases": 3,
+          "correct": 1,
+          "accuracy": 0.3333333333333333
+        },
+        "capability_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "capability_question_noisy": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "city_correction": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "city_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "conversation_end": {
+          "cases": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "date_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "explicit_new_search_context_switch": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "explicit_reset_with_correction": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "explicit_restart": {
+          "cases": 12,
+          "correct": 12,
+          "accuracy": 1.0
+        },
+        "explicit_restart_noisy": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "facility_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "first_search": {
+          "cases": 18,
+          "correct": 18,
+          "accuracy": 1.0
+        },
+        "first_search_fragmented": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "first_search_incomplete_details": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "first_search_multiple_constraints": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "first_search_noisy": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "first_search_with_negative_constraint": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "greeting": {
+          "cases": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "greeting_and_status": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "guest_count_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "language_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_availability_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_checkin_policy_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_detail_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_distance_question": {
+          "cases": 3,
+          "correct": 2,
+          "accuracy": 0.6666666666666666
+        },
+        "listing_explanation_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_facility_confirmation": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_facility_cost_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_facility_question": {
+          "cases": 9,
+          "correct": 9,
+          "accuracy": 1.0
+        },
+        "listing_facility_question_typo": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_location_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_match_explanation_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_policy_question": {
+          "cases": 6,
+          "correct": 4,
+          "accuracy": 0.6666666666666666
+        },
+        "listing_price_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "listing_review_question": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "location_preference_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "property_type_update": {
+          "cases": 6,
+          "correct": 6,
+          "accuracy": 1.0
+        },
+        "relax_location_constraint": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "relax_property_type_constraint": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "remove_constraint": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "remove_constraint_noisy": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "result_feedback_budget_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "result_feedback_property_filter": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "soft_budget_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "thanks": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "thanks_and_pause": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "thanks_plus_date_update": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        },
+        "unrelated_chat": {
+          "cases": 3,
+          "correct": 3,
+          "accuracy": 1.0
+        }
+      },
+      "confusion_matrix": {
+        "start_search": {
+          "start_search": 54,
+          "update_search": 0,
+          "listing_question": 0,
+          "general_chat": 0
+        },
+        "update_search": {
+          "start_search": 0,
+          "update_search": 63,
+          "listing_question": 0,
+          "general_chat": 0
+        },
+        "listing_question": {
+          "start_search": 0,
+          "update_search": 0,
+          "listing_question": 48,
+          "general_chat": 3
+        },
+        "general_chat": {
+          "start_search": 2,
+          "update_search": 0,
+          "listing_question": 0,
+          "general_chat": 40
+        }
+      },
+      "errors": {},
+      "latency_ms": {
+        "mean": 618.1638095238098,
+        "median": 548.405,
+        "p90": 915.9219999999999,
+        "p95": 1157.8709999999999,
+        "min": 162.72,
+        "max": 2940.74
+      },
+      "cost_usd": {
+        "total": 0.012171825000000002,
+        "mean_per_call": 5.796107142857144e-05,
+        "estimated_per_1000_calls": 0.05796107142857144
+      },
+      "llm_attempts": {
+        "total": 210,
+        "mean_per_run": 1.0
+      }
+    }
+  },
+  "failures_count": 8
+}

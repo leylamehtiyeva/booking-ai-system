@@ -5,7 +5,6 @@ from app.observability.trace import RequestTrace
 from app.logic.intent_router import build_search_request_adk_async
 from app.logic.intent_update import update_search_state_async
 from app.logic.request_resolution import resolve_required_search_context
-from app.logic.conversation_router import route_conversation_async
 from app.logic.listing_signals import collect_listing_signals
 from app.schemas.query import SearchRequest
 from app.tools.orchestrate_search_tool import orchestrate_search
@@ -15,13 +14,36 @@ from app.logic.constraint_evidence_resolution import (
 )
 from app.schemas.fallback_policy import FallbackPolicy
 from app.config.settings import MAX_ITEMS_HARD_CAP
+from app.logic.conversation_router import (
+    ConversationRoutingError,
+    route_conversation_async,
+)
+from app.schemas.conversation_route import (
+    ConversationAction,
+    RouterInput,
+)
+import logging
 
+
+logger = logging.getLogger(__name__)
 
 
 def _build_state_payload(state: SearchRequest | None) -> dict[str, Any] | None:
     if state is None:
         return None
     return state.model_dump(mode="json", exclude_none=True)
+
+
+def _finalize_response(
+    response: Dict[str, Any],
+    *,
+    trace: RequestTrace,
+) -> Dict[str, Any]:
+    """
+    Attach request telemetry to every normal application response.
+    """
+    response["telemetry"] = trace.summary()
+    return response
 
 
 async def _answer_listing_question(
@@ -108,72 +130,108 @@ async def handle_user_message(
     shown_listing: dict[str, Any] | None = None,
     latest_result_context: dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
-    
-    route_debug: dict[str, Any] | None = None
-    previous_state_json: dict[str, Any] | None = _build_state_payload(previous_state)
+    previous_state_json = _build_state_payload(
+        previous_state
+    )
     trace = RequestTrace()
 
-    if previous_state is None:
-        with trace.step("initial_intent_extraction"):
-            state = await build_search_request_adk_async(
-            user_message,
-            trace=trace,
-            step="initial_intent_extraction",
-        )
-        route_debug = {"route": "initial_search"}
-        parsed_intent_debug = {
-            "router": route_debug,
-            "user_message": user_message,
-            "previous_state": None,
-            "constraint_count": len(state.constraints or []),
-            "constraints": [
-                {
-                    "normalized_text": c.normalized_text,
-                    "priority": c.priority.value,
-                    "mapping_status": c.mapping_status.value,
-                }
-                for c in (state.constraints or [])
-            ],
-        }
-    else:
+    router_input = RouterInput(
+        user_message=user_message,
+        current_search=previous_state,
+        latest_result_context=latest_result_context,
+    )
+
+    try:
         with trace.step("conversation_routing"):
-            route = await route_conversation_async(
-                user_message=user_message,
-                previous_state=previous_state,
-                latest_result_context=latest_result_context,
+            decision = await route_conversation_async(
+                router_input=router_input,
                 trace=trace,
             )
 
-        route_debug = route.model_dump(exclude_none=True)
+    except ConversationRoutingError as exc:
+        logger.exception(
+            "Conversation routing failed",
+            extra={
+                "routing_error_code": exc.code,
+            },
+        )
 
+        return _finalize_response(
+            {
+                "need_clarification": False,
+                "response_type": "routing_unavailable",
+                "answer": (
+                    "I couldn't process that message right now. "
+                    "Your current search has not been changed. "
+                    "Please try again."
+                ),
+                "state": previous_state_json,
+                "parsed_intent": {
+                    "router": {
+                        "status": "failed",
+                        "error_code": exc.code,
+                    },
+                    "user_message": user_message,
+                    "previous_state": previous_state_json,
+                },
+                "search_request": previous_state_json,
+            },
+            trace=trace,
+        )
 
-        if route.route == "listing_question":
-            return await _answer_listing_question(
-                user_message=user_message,
-                shown_listing=shown_listing,
-                previous_state=previous_state,
-                route_debug=route_debug,
-            )
+    route_debug = decision.model_dump(
+        mode="json",
+        exclude_none=True,
+    )
 
-        if route.route == "new_search":
-            with trace.step("new_search_intent_extraction"):
-                state = await build_search_request_adk_async(
-                user_message,
-                trace=trace,
-                step="new_search_intent_extraction",
-            )
-        elif route.route == "search_update":
-            with trace.step("search_state_update"):
-                state = await update_search_state_async(
-                previous_state,
-                user_message,
-                trace=trace,
-            )
-        else:
-            return {
+    effective_action = decision.action
+
+    if (
+        effective_action
+        == ConversationAction.UPDATE_SEARCH
+        and previous_state is None
+    ):
+        effective_action = (
+            ConversationAction.START_SEARCH
+        )
+
+        route_debug["effective_action"] = (
+            effective_action.value
+        )
+        route_debug["normalization_reason"] = (
+            "update_search cannot be executed "
+            "without an existing search"
+        )
+
+    if (
+        effective_action
+        == ConversationAction.LISTING_QUESTION
+    ):
+        response = await _answer_listing_question(
+            user_message=user_message,
+            shown_listing=shown_listing,
+            previous_state=previous_state,
+            route_debug=route_debug,
+        )
+
+        return _finalize_response(
+            response,
+            trace=trace,
+        )
+
+    if (
+        effective_action
+        == ConversationAction.GENERAL_CHAT
+    ):
+        return _finalize_response(
+            {
                 "need_clarification": False,
                 "response_type": "other",
-                "answer": "I can help with a new search, updating the current search, or answering questions about a shown listing.",
+                "answer": (
+                    "Hello! I can help you search for "
+                    "accommodation, update an existing search, "
+                    "or answer questions about shown options."
+                ),
                 "state": previous_state_json,
                 "parsed_intent": {
                     "router": route_debug,
@@ -181,36 +239,86 @@ async def handle_user_message(
                     "previous_state": previous_state_json,
                 },
                 "search_request": previous_state_json,
+            },
+            trace=trace,
+        )
+
+    if (
+        effective_action
+        == ConversationAction.START_SEARCH
+    ):
+        with trace.step("search_intent_extraction"):
+            state = await build_search_request_adk_async(
+                user_message,
+                trace=trace,
+                step="search_intent_extraction",
+            )
+
+    elif (
+        effective_action
+        == ConversationAction.UPDATE_SEARCH
+    ):
+        if previous_state is None:
+            raise RuntimeError(
+                "update_search requires an existing "
+                "SearchRequest"
+            )
+
+        with trace.step("search_state_update"):
+            state = await update_search_state_async(
+                previous_state,
+                user_message,
+                trace=trace,
+            )
+
+    else:
+        raise RuntimeError(
+            "Unsupported conversation action: "
+            f"{effective_action}"
+        )
+
+    parsed_intent_debug = {
+        "router": route_debug,
+        "user_message": user_message,
+        "previous_state": previous_state_json,
+        "constraint_count": len(
+            state.constraints or []
+        ),
+        "constraints": [
+            {
+                "normalized_text": (
+                    constraint.normalized_text
+                ),
+                "priority": constraint.priority.value,
+                "mapping_status": (
+                    constraint.mapping_status.value
+                ),
             }
+            for constraint in (
+                state.constraints or []
+            )
+        ],
+    }
 
-        parsed_intent_debug = {
-            "router": route_debug,
-            "user_message": user_message,
-            "previous_state": previous_state_json,
-            "constraint_count": len(state.constraints or []),
-            "constraints": [
-                {
-                    "normalized_text": c.normalized_text,
-                    "priority": c.priority.value,
-                    "mapping_status": c.mapping_status.value,
-                }
-                for c in (state.constraints or [])
-            ],
-        }
+    state_json = _build_orchestrate_intent_payload(
+        state
+    )
 
-    state_json = _build_orchestrate_intent_payload(state)
-
-
-    resolved = resolve_required_search_context(state)
+    resolved = resolve_required_search_context(
+        state
+    )
 
     if resolved.need_clarification:
-        return {
-            "need_clarification": True,
-            "questions": resolved.questions,
-            "state": state_json,
-            "parsed_intent": parsed_intent_debug,
-            "search_request": state_json,
-        }
+        return _finalize_response(
+            {
+                "need_clarification": True,
+                "questions": resolved.questions,
+                "state": state_json,
+                "parsed_intent": parsed_intent_debug,
+                "search_request": state_json,
+            },
+            trace=trace,
+        )
 
     result = await orchestrate_search(
         user_text=user_message,
@@ -225,6 +333,8 @@ async def handle_user_message(
     result["state"] = state_json
     result["parsed_intent"] = parsed_intent_debug
     result["search_request"] = state_json
-    result["telemetry"] = trace.summary()
 
-    return result
+    return _finalize_response(
+        result,
+        trace=trace,
+    )
