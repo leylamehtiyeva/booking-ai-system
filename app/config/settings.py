@@ -1,6 +1,8 @@
 import os
-from app.config.llm import DEFAULT_LLM_PROFILE_NAME
-
+from app.config.llm import (
+    DEFAULT_LLM_PROFILE_NAME,
+    GEMINI_2_5_FLASH_LITE_PROFILE_NAME,
+)
 
 MAX_ITEMS_HARD_CAP = 40
 TOP_N_DEFAULT = 2  # how many results to return for each search request (default: 2)
@@ -11,6 +13,11 @@ FX_BASE_CURRENCY = os.getenv("FX_BASE_CURRENCY", "USD")
 FX_CACHE_TTL_DAYS = int(os.getenv("FX_CACHE_TTL_DAYS", "10"))
 FX_CACHE_PATH = os.getenv("FX_CACHE_PATH", "app/resources/fx_rates_usd.json")
 FX_API_URL = os.getenv("FX_API_URL", "https://api.frankfurter.dev/v2/rates?base=USD")
+
+CONVERSATION_RESPONSE_LLM_PROFILE = os.getenv(
+    "CONVERSATION_RESPONSE_LLM_PROFILE",
+    GEMINI_2_5_FLASH_LITE_PROFILE_NAME,
+)
 
 
 DEFAULT_LLM_PROFILE = os.getenv(

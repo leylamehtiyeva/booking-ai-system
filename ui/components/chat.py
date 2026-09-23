@@ -86,7 +86,11 @@ def render_messages() -> None:
                             language="json",
                         )
 
-                        top_results = answer_payload.get("top_results") or []
+                        top_results = (
+                            answer_payload.get("top_results") or []
+                            if answer_payload is not None
+                            else []
+                        )
                         if top_results:
                             st.markdown("**Selection summary by result**")
                             for idx, result in enumerate(top_results, start=1):
