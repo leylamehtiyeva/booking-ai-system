@@ -1,0 +1,2586 @@
+{
+  "id": "1014997",
+  "city": "Barcelona",
+  "address": "Paseo de Gracia, 3, Eixample, 08007 Barcelona, Spain",
+  "name": "LetsGo Paseo de Gracia",
+  "url": "https://www.booking.com/hotel/es/paseo-de-gracia-3.en-gb.html?checkout=2026-06-20&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-06-15&selected_currency=USD&group_adults=2&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+  "price": 2096.99101153345,
+  "currency": "US$",
+  "rating": 8.1,
+  "stars": null,
+  "property_type": "apartment",
+  "room_type": null,
+  "max_occupancy": null,
+  "description": "You might be eligible for a Genius discount at LetsGo Paseo de Gracia. To check if a Genius discount is available for your selected dates sign in.\n\n\nGenius discounts at this property are subject to book dates, stay dates and other available deals.\n\nApartament Paseo de Gracia offers self-catering accommodation with free Wi-Fi in the heart of Barcelona, just 40 metres from Plaza Catalunya. Barcelona’s La Rambla is 5 minutes’ walk away.\n\nThese modern apartments feature stylish dècor and come with 1 or 2 bedrooms and a bathroom with a hairdryer and free toiletries. Their living areas include flat-screen satellite TV and sofas. Their kitchenettes are equipped with a microwave, washing machine and dishwasher.  Some come with a terrace.\n\nCentrally located, you will find many bars, restaurants and supermarkets in the surrounding streets.\n\nDirect buses to Barcelona Airport depart from Plaza Catalunya and Sagrada Familia is 2.5 km from Apartament Paseo de Gracia. A 25-minute walk will take you to Barceloneta Beach.Couples particularly like the location — they rated it 9.9 for a two-person trip.Distance in property description is calculated using © OpenStreetMap",
+  "fine_print": "This property will not accommodate hen, stag or similar parties.Quiet hours are between 22:00:00 and 08:00:00.In response to Coronavirus (COVID-19), additional safety and sanitation measures are in effect at this property.In accordance with government guidelines to minimise transmission of the Coronavirus (COVID-19), this property may request additional documentation from guests to validate identity, travel itinerary and other relevant information, during dates where such guidelines exist.A damage deposit of € 150 is required on arrival. This will be collected as a cash payment. You should be reimbursed on check-out. Your deposit will be refunded in full in cash, subject to an inspection of the property.License number: ESFCTU00000805600055006100000000000000000HUTB-0524511, ESFCTU00000805600055026900000000000000000HUTB-0004334, ESFCTU00000805600055027600000000000000000HUTB-0172581, HUTB-000433, HUTB-017258, HUTB-052451",
+  "policies": [
+    {
+      "title": "Check-in",
+      "content": "From 15:00 to 23:30You'll need to let the property know in advance what time you'll arrive."
+    },
+    {
+      "title": "Check-out",
+      "content": "From 04:30 to 12:00"
+    },
+    {
+      "title": "Cancellation/ prepayment",
+      "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+    },
+    {
+      "title": "Refundable damage deposit",
+      "content": "A damage deposit of € 150 is required on arrival. That's about US$175. This will be collected as a cash payment. You should be reimbursed on check-out. Your deposit will be refunded in full in cash, subject to an inspection of the property."
+    },
+    {
+      "title": "Children and beds",
+      "content": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 2 years Cot upon request Prices for cots are not included in the total price, and will have to be paid for separately during your stay. The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability."
+    },
+    {
+      "title": "Age restriction",
+      "content": "The minimum age for check-in is 21"
+    },
+    {
+      "title": "Groups",
+      "content": "When booking more than 2 rooms, different policies and additional supplements may apply."
+    },
+    {
+      "title": "Cards accepted at this property",
+      "content": "Cash is not accepted"
+    },
+    {
+      "title": "Smoking",
+      "content": "Smoking is not allowed."
+    },
+    {
+      "title": "Parties",
+      "content": "Parties/events are not allowed"
+    },
+    {
+      "title": "Quiet hours",
+      "content": "Guests must be quiet between 22:00 and 08:00."
+    },
+    {
+      "title": "Pets",
+      "content": "Pets are allowed on request. Charges may be applicable."
+    }
+  ],
+  "highlights": [
+    {
+      "header": "Perfect for a 5-night stay!",
+      "contents": [
+        "Situated in the real heart of Barcelona, this property has an excellent location score of 9.8"
+      ]
+    },
+    {
+      "header": "Apartments with:",
+      "contents": [
+        "Inner courtyard view",
+        "Garden view",
+        "Terrace"
+      ]
+    }
+  ],
+  "facilities": [
+    {
+      "name": "Pets allowed",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private bathroom",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "View",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Free WiFi",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Family rooms",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Kitchen",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Flat-screen TV",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Washing machine",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Parking",
+      "category": "Parking",
+      "overview": "No parking available.",
+      "requires_additional_charge": null,
+      "is_off_site": null
+    },
+    {
+      "name": "Internet services",
+      "category": "Internet",
+      "overview": "WiFi is available in all areas and is free of charge.",
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Children's high chair",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Dining table",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Coffee machine",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Cleaning products",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Toaster",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Stovetop",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Oven",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tumble dryer",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Kitchenware",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Electric kettle",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Kitchen",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Washing machine",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Dishwasher",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Microwave",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Refrigerator",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Linen",
+      "category": "Bedroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Wardrobe or closet",
+      "category": "Bedroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Toilet paper",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Towels",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bidet",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private bathroom",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Toilet",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Hairdryer",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shower",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Dining area",
+      "category": "Living Area",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Sofa",
+      "category": "Living Area",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Seating Area",
+      "category": "Living Area",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Desk",
+      "category": "Living Area",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Streaming service (like Netflix)",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Flat-screen TV",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "TV",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Socket near the bed",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Sofa bed",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Drying rack for clothing",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Clothes rack",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Hardwood or parquet floors",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private entrance",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Ironing facilities",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Iron",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Pets",
+      "category": "Pets",
+      "overview": "Pets are allowed on request. Charges may be applicable.",
+      "requires_additional_charge": null,
+      "is_off_site": null
+    },
+    {
+      "name": "Entire unit wheelchair accessible",
+      "category": "Accessibility",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Upper floors accessible by elevator",
+      "category": "Accessibility",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Outdoor furniture",
+      "category": "Outdoors",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Sun terrace",
+      "category": "Outdoors",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Terrace",
+      "category": "Outdoors",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shared lounge/TV area",
+      "category": "Common areas",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tea/Coffee maker",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Inner courtyard view",
+      "category": "Outdoor & View",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Garden view",
+      "category": "Outdoor & View",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "View",
+      "category": "Outdoor & View",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private apartment in building",
+      "category": "Building characteristics",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shuttle service",
+      "category": "Transport",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle",
+      "category": "Transport",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Invoice provided",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private check-in/check-out",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Concierge service",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Express check-in/check-out",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Daily housekeeping",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Ironing service",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Designated smoking area",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking throughout",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Heating",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Lift",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Family rooms",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Superior One-Bedroom Apartment with Terrace",
+      "available": true,
+      "persons": 2,
+      "bed_types": [
+        {
+          "room": "Bedroom 1",
+          "beds": [
+            "1 large double bed"
+          ]
+        },
+        {
+          "room": "Living room",
+          "beds": [
+            "1 sofa bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "Entire apartment",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "60 m²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private kitchen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Balcony",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Garden view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Inner courtyard view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bath",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Patio",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dishwasher",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Terrace",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Coffee machine",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hot tub",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Shower",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bidet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Washing machine",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Streaming service (like Netflix)",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Sofa",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hardwood or parquet floors",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Towels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Linen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Socket near the bed",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Cleaning products",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Desk",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Children's high chair",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Seating Area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private entrance",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Refrigerator",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ironing facilities",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Tea/Coffee maker",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Iron",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Microwave",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Heating",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hairdryer",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchenware",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Extra long beds (> 2 metres)",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Electric kettle",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Outdoor furniture",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Outdoor dining area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Tumble dryer",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wardrobe or closet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Oven",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Stovetop",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toaster",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dining area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dining table",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Upper floors accessible by elevator",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private apartment in building",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Clothes rack",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Drying rack for clothing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet paper",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Sofa bed",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Entire unit wheelchair accessible",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Single-room air conditioning for guest accommodation",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air purifiers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hand sanitiser",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 2096.99101153345,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "non_refundable",
+          "free_cancellation": false,
+          "choices": [
+            "Non-refundable",
+            "Pay online",
+            "discount may be available",
+            "Enjoy a free private taxi from the airport to your accommodation. This offer is available for bookings up to 6 people and is provided and paid for by Booking.com. Cannot be combined with other offers, such as Partner offer. Free private taxi from the airport to this property"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2300.80501265443,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Free cancellation before 8 June 2026",
+            "Pay nothing until 6 June 2026",
+            "discount may be available",
+            "Enjoy a free private taxi from the airport to your accommodation. This offer is available for bookings up to 6 people and is provided and paid for by Booking.com. Cannot be combined with other offers, such as Partner offer. Free private taxi from the airport to this property"
+          ]
+        }
+      ]
+    }
+  ],
+  "raw": {
+    "order": 2,
+    "url": "https://www.booking.com/hotel/es/paseo-de-gracia-3.en-gb.html?checkout=2026-06-20&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-06-15&selected_currency=USD&group_adults=2&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+    "startUrlOrQuery": "Barcelona",
+    "name": "LetsGo Paseo de Gracia",
+    "type": "apartment",
+    "description": "You might be eligible for a Genius discount at LetsGo Paseo de Gracia. To check if a Genius discount is available for your selected dates sign in.\n\n\nGenius discounts at this property are subject to book dates, stay dates and other available deals.\n\nApartament Paseo de Gracia offers self-catering accommodation with free Wi-Fi in the heart of Barcelona, just 40 metres from Plaza Catalunya. Barcelona’s La Rambla is 5 minutes’ walk away.\n\nThese modern apartments feature stylish dècor and come with 1 or 2 bedrooms and a bathroom with a hairdryer and free toiletries. Their living areas include flat-screen satellite TV and sofas. Their kitchenettes are equipped with a microwave, washing machine and dishwasher.  Some come with a terrace.\n\nCentrally located, you will find many bars, restaurants and supermarkets in the surrounding streets.\n\nDirect buses to Barcelona Airport depart from Plaza Catalunya and Sagrada Familia is 2.5 km from Apartament Paseo de Gracia. A 25-minute walk will take you to Barceloneta Beach.Couples particularly like the location — they rated it 9.9 for a two-person trip.Distance in property description is calculated using © OpenStreetMap",
+    "stars": null,
+    "price": 2096.99101153345,
+    "currency": "US$",
+    "rating": 8.1,
+    "ratingLabel": "Very good",
+    "reviews": 286,
+    "breakfast": null,
+    "checkIn": "From 15:00 to 23:30You'll need to let the property know in advance what time you'll arrive.",
+    "checkOut": "From 04:30 to 12:00",
+    "checkInDate": "2026-06-15",
+    "checkOutDate": "2026-06-20",
+    "location": {
+      "lat": "41.38822411914095",
+      "lng": "2.169844448514141"
+    },
+    "address": {
+      "full": "Paseo de Gracia, 3, Eixample, 08007 Barcelona, Spain",
+      "country": "es",
+      "city": "Barcelona"
+    },
+    "image": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/71004209.jpg?k=c328e3e3041728d74cff696408ed2321090200afe08ac25e7c1afc0c4a624fcb&o=",
+    "rooms": [
+      {
+        "available": true,
+        "id": 101499702,
+        "url": "https://www.booking.com/hotel/es/paseo-de-gracia-3.en-gb.html#room_101499702",
+        "roomType": "Superior One-Bedroom Apartment with Terrace",
+        "persons": 2,
+        "bedTypes": [
+          {
+            "room": "Bedroom 1",
+            "beds": [
+              "1 large double bed"
+            ]
+          },
+          {
+            "room": "Living room",
+            "beds": [
+              "1 sofa bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "Entire apartment",
+          "60 m²",
+          "Private kitchen",
+          "Ensuite bathroom",
+          "Balcony",
+          "Garden view",
+          "Inner courtyard view",
+          "Bath",
+          "Air conditioning",
+          "Patio",
+          "Dishwasher",
+          "Flat-screen TV",
+          "Terrace",
+          "Coffee machine",
+          "Free WiFi",
+          "Hot tub",
+          "Shower",
+          "Kitchen",
+          "Bidet",
+          "Washing machine",
+          "Streaming service (like Netflix)",
+          "Toilet",
+          "Sofa",
+          "Hardwood or parquet floors",
+          "Towels",
+          "Linen",
+          "Socket near the bed",
+          "Cleaning products",
+          "Desk",
+          "Children's high chair",
+          "Seating Area",
+          "Private entrance",
+          "TV",
+          "Refrigerator",
+          "Ironing facilities",
+          "Tea/Coffee maker",
+          "Iron",
+          "Microwave",
+          "Heating",
+          "Hairdryer",
+          "Kitchenware",
+          "Extra long beds (> 2 metres)",
+          "Electric kettle",
+          "Outdoor furniture",
+          "Outdoor dining area",
+          "Tumble dryer",
+          "Wardrobe or closet",
+          "Oven",
+          "Stovetop",
+          "Toaster",
+          "Dining area",
+          "Dining table",
+          "Upper floors accessible by elevator",
+          "Private apartment in building",
+          "Clothes rack",
+          "Drying rack for clothing",
+          "Toilet paper",
+          "Sofa bed",
+          "Entire unit wheelchair accessible",
+          "Single-room air conditioning for guest accommodation",
+          "Air purifiers",
+          "Hand sanitiser"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 1,
+        "options": [
+          {
+            "price": 2096.99101153345,
+            "displayedPrice": 2096.99101153345,
+            "excludedTaxesPrice": 0,
+            "discount": null,
+            "id": "101499702_122220670_2_0_0",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "non_refundable",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Non-refundable",
+              "Pay online",
+              "discount may be available",
+              "Enjoy a free private taxi from the airport to your accommodation. This offer is available for bookings up to 6 people and is provided and paid for by Booking.com. Cannot be combined with other offers, such as Partner offer. Free private taxi from the airport to this property"
+            ]
+          },
+          {
+            "price": 2300.80501265443,
+            "displayedPrice": 2300.80501265443,
+            "excludedTaxesPrice": 0,
+            "discount": null,
+            "id": "101499702_414479874_2_0_0",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Free cancellation before 8 June 2026",
+              "Pay nothing until 6 June 2026",
+              "discount may be available",
+              "Enjoy a free private taxi from the airport to your accommodation. This offer is available for bookings up to 6 people and is provided and paid for by Booking.com. Cannot be combined with other offers, such as Partner offer. Free private taxi from the airport to this property"
+            ]
+          }
+        ]
+      }
+    ],
+    "highlights": [
+      {
+        "header": "Perfect for a 5-night stay!",
+        "contents": [
+          "Situated in the real heart of Barcelona, this property has an excellent location score of 9.8"
+        ]
+      },
+      {
+        "header": "Apartments with:",
+        "contents": [
+          "Inner courtyard view",
+          "Garden view",
+          "Terrace"
+        ]
+      }
+    ],
+    "finePrint": "This property will not accommodate hen, stag or similar parties.Quiet hours are between 22:00:00 and 08:00:00.In response to Coronavirus (COVID-19), additional safety and sanitation measures are in effect at this property.In accordance with government guidelines to minimise transmission of the Coronavirus (COVID-19), this property may request additional documentation from guests to validate identity, travel itinerary and other relevant information, during dates where such guidelines exist.A damage deposit of € 150 is required on arrival. This will be collected as a cash payment. You should be reimbursed on check-out. Your deposit will be refunded in full in cash, subject to an inspection of the property.License number: ESFCTU00000805600055006100000000000000000HUTB-0524511, ESFCTU00000805600055026900000000000000000HUTB-0004334, ESFCTU00000805600055027600000000000000000HUTB-0172581, HUTB-000433, HUTB-017258, HUTB-052451",
+    "policies": [
+      {
+        "title": "Check-in",
+        "content": "From 15:00 to 23:30You'll need to let the property know in advance what time you'll arrive."
+      },
+      {
+        "title": "Check-out",
+        "content": "From 04:30 to 12:00"
+      },
+      {
+        "title": "Cancellation/ prepayment",
+        "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+      },
+      {
+        "title": "Refundable damage deposit",
+        "content": "A damage deposit of € 150 is required on arrival. That's about US$175. This will be collected as a cash payment. You should be reimbursed on check-out. Your deposit will be refunded in full in cash, subject to an inspection of the property."
+      },
+      {
+        "title": "Children and beds",
+        "content": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 2 years Cot upon request Prices for cots are not included in the total price, and will have to be paid for separately during your stay. The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability."
+      },
+      {
+        "title": "Age restriction",
+        "content": "The minimum age for check-in is 21"
+      },
+      {
+        "title": "Groups",
+        "content": "When booking more than 2 rooms, different policies and additional supplements may apply."
+      },
+      {
+        "title": "Cards accepted at this property",
+        "content": "Cash is not accepted"
+      },
+      {
+        "title": "Smoking",
+        "content": "Smoking is not allowed."
+      },
+      {
+        "title": "Parties",
+        "content": "Parties/events are not allowed"
+      },
+      {
+        "title": "Quiet hours",
+        "content": "Guests must be quiet between 22:00 and 08:00."
+      },
+      {
+        "title": "Pets",
+        "content": "Pets are allowed on request. Charges may be applicable."
+      }
+    ],
+    "images": [
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/71004209.jpg?k=c328e3e3041728d74cff696408ed2321090200afe08ac25e7c1afc0c4a624fcb&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799703.jpg?k=0371c97b3542637aa6cef29ba5335462c1523cea421f3c317c58f7199c1d3f4d&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63236524.jpg?k=67d5426b7ad8f22369adef0074cdf686fffa2943277adf7dc7f977f6721a3f68&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/463573597.jpg?k=68483baca51bda83769a8b726c089016aa664c15c48af49b8238d856a3ae9469&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28656751.jpg?k=54dcc90de77991437e5e07d13facff6b1bd3794377edad4304e8ec72a3726413&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28654998.jpg?k=4d75cb378b052a0cb362453ed8e5d453902ee582159bf5bc82fa98cfd34e2d9b&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28655000.jpg?k=2044c7aafa22ed0dd0becfdd3aa76553489b7119d92328656714dd0fd37690d3&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28655025.jpg?k=f3f5842c8df724e09fd816958c9b7c1cafe91bd452d28f922924bfdedea9500a&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28656742.jpg?k=1f9d11aa9775c0f1e40a1bbef721bed68832ea9455ff1e8998e78e92dd69e9d9&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28656752.jpg?k=f09e34ee4be3525e59d79ec7b55f0140070acf8a9264ac95087331085d0b8e8a&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28656749.jpg?k=f5237efa363d248395cb1ead8f557bb02d5787f6cc253f1779dd4cc20a5ea227&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28632782.jpg?k=e35a4c8731728a0370261ae3297723f3278ca54e99766ae00cb96a1bdea18c30&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28632784.jpg?k=a0dd0173456a0302abdddf0da265557e5d542442f65aae25dbc59e8331bd1da5&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28632788.jpg?k=8bf3562cd45404b2d8ca822de8b46724478e6747258ba1ced5c6359f5089ea64&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28632796.jpg?k=c150a61810c5a97b392125dae0bf55f54473804d66cf44e13e30e6845ec698a7&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28655023.jpg?k=8a45fb8fb9c6b8c60556a0edbd0b711352373ec1e055d9291140abb5c5d2dd30&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28656382.jpg?k=8f7fe0322a9c6da9d865842d8d79d295321d5bdc512489ac2b0218fd5a3e1ded&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28655567.jpg?k=f4dbc8c142b1cdd0e95fdb8da301c88415b7182bb48c21542529ff0561d9f376&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63236515.jpg?k=7f98d7d806f21e2c0fd45cc2980b32ccf8c73e53ebf76218b82c5fa1840ca5d7&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63236521.jpg?k=b57391722124af0fc41002cbed685afc6bf91df668a03a8cd8cee09dff0bf4af&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63236526.jpg?k=ff3393bffb5a99558f817ab03067c12b710ca5a450f0fa78a03e73e29162533f&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63236528.jpg?k=44d0013cb28e3bfc0e35a7feee1506fba7072ecfa71fdc8ff5ca430a9d1edfbd&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63236529.jpg?k=2bcbb8c923a40b317a188541f2c375aa505a9ef6a6a0a3aaf56bdee7e3411000&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799672.jpg?k=44e7e1e0f0773b5bc59c38d39a754633d14aa38e050e79bd5c20ad19c97ce55b&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799674.jpg?k=3efda1b3bee772024943b732393ac78571550ee4d5bd640342737f48d98d82ff&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799676.jpg?k=c4c97295c135c4fc61c87a9351daa573a7f8bc13dcb8852f135b786b965037a4&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799677.jpg?k=adfb4ef3e87330a7bd6cb1464add84800a5ddba64ed8143fc2da60630a5ff2bf&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799679.jpg?k=907dd23fdb6341d6b5953234459120c36ac158b62abd0e756e883d177f0b7091&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799681.jpg?k=b336f9d142f17039a06b5917a09fc105045fea6a1585082da91f486de7581a87&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799682.jpg?k=92f7cf4a55524e8f8ea9e4abf6a876be007eddb0b0032ee06b312b69038cb4a0&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799684.jpg?k=a519e4e2efb717133567235a0e3929fcde3f8e191d68ab360f6a25570e896337&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799685.jpg?k=7e2bf631ad16e0883d454dcef4e641dc43e2333fb5560325f6578e6f46135149&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799687.jpg?k=97d9cde4188c60046285bc14536bad899b928bfbd4154aaecbcddab2b08f02ea&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799689.jpg?k=91a28ce73da541dd23b084c7f89d20cd1094734915f9b1e4e1af129640d460b9&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799690.jpg?k=72c47c1bd2d99b17cd1e762b63347fe5e37cc39b29456ad1c85f6f6d17b58acb&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799691.jpg?k=4e881c8048b78b2c65e6e6ee3dd088c7f4842d17963738fabe52386e9cea379d&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799692.jpg?k=ed6f57e4169f9481fe4d6a9503b310d58a8616f739223af2cc4be66f56447cff&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799696.jpg?k=2a96d0a35dff1d86658824319419c0d74b1c7919d58eee132c797f9a9b7337c9&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799697.jpg?k=dadcb4aaad9ecbff1643b1a01d007bf0c7d4651447b71a385e7add86b2070760&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799699.jpg?k=51331d463ff267dd513182f77d7c1d9bb4ef670b58639c23d8728ad8a2bb00a0&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799701.jpg?k=fc489caf84f5c3ff62ddd27675bff80e62fbc2ed1daa100d171b34348f3de8ca&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799702.jpg?k=6c824065495b3933e6a6b343aed0c19e39c6c083060d8d99e6b9d7aaf173921e&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/69428077.jpg?k=ea44786b7eaf9712f9b6b1db969b964a1238facf522145b9555635abdeed7e64&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/69428079.jpg?k=41b66a7a81dbdc6de1ce703b95f8d66a707752efdb18282166dbf6ce91c0e72c&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/69428093.jpg?k=500cf59079f35fbaec8e5b3a1bae2a2bd61b9f3d01dd84ade417f9e127bde61e&o=&hp=1"
+    ],
+    "roomImages": [
+      {
+        "id": "28654998",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/28654998.jpg?k=4d75cb378b052a0cb362453ed8e5d453902ee582159bf5bc82fa98cfd34e2d9b&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28654998.jpg?k=4d75cb378b052a0cb362453ed8e5d453902ee582159bf5bc82fa98cfd34e2d9b&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702",
+          "101499703"
+        ],
+        "orientation": "landscape",
+        "created": "2014-04-01 17:13:44",
+        "grid": {
+          "photoWidth": 2600,
+          "photoHeight": 1734
+        }
+      },
+      {
+        "id": "28655025",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/28655025.jpg?k=f3f5842c8df724e09fd816958c9b7c1cafe91bd452d28f922924bfdedea9500a&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/28655025.jpg?k=f3f5842c8df724e09fd816958c9b7c1cafe91bd452d28f922924bfdedea9500a&o=&hp=1",
+        "associatedRoomIds": [
+          "101499703"
+        ],
+        "orientation": "landscape",
+        "created": "2014-04-01 17:14:00",
+        "grid": {
+          "photoWidth": 2600,
+          "photoHeight": 1733
+        }
+      },
+      {
+        "id": "63236515",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63236515.jpg?k=7f98d7d806f21e2c0fd45cc2980b32ccf8c73e53ebf76218b82c5fa1840ca5d7&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63236515.jpg?k=7f98d7d806f21e2c0fd45cc2980b32ccf8c73e53ebf76218b82c5fa1840ca5d7&o=&hp=1",
+        "associatedRoomIds": [
+          "101499701"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-20 17:25:51",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1602
+        }
+      },
+      {
+        "id": "63236529",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63236529.jpg?k=2bcbb8c923a40b317a188541f2c375aa505a9ef6a6a0a3aaf56bdee7e3411000&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63236529.jpg?k=2bcbb8c923a40b317a188541f2c375aa505a9ef6a6a0a3aaf56bdee7e3411000&o=&hp=1",
+        "associatedRoomIds": [
+          "101499701"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-20 17:25:59",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1602
+        }
+      },
+      {
+        "id": "63799672",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799672.jpg?k=44e7e1e0f0773b5bc59c38d39a754633d14aa38e050e79bd5c20ad19c97ce55b&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799672.jpg?k=44e7e1e0f0773b5bc59c38d39a754633d14aa38e050e79bd5c20ad19c97ce55b&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:49",
+        "grid": {
+          "photoWidth": 2380,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799676",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799676.jpg?k=c4c97295c135c4fc61c87a9351daa573a7f8bc13dcb8852f135b786b965037a4&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799676.jpg?k=c4c97295c135c4fc61c87a9351daa573a7f8bc13dcb8852f135b786b965037a4&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:50",
+        "grid": {
+          "photoWidth": 2370,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799677",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799677.jpg?k=adfb4ef3e87330a7bd6cb1464add84800a5ddba64ed8143fc2da60630a5ff2bf&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799677.jpg?k=adfb4ef3e87330a7bd6cb1464add84800a5ddba64ed8143fc2da60630a5ff2bf&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:50",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799681",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799681.jpg?k=b336f9d142f17039a06b5917a09fc105045fea6a1585082da91f486de7581a87&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799681.jpg?k=b336f9d142f17039a06b5917a09fc105045fea6a1585082da91f486de7581a87&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:52",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799682",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799682.jpg?k=92f7cf4a55524e8f8ea9e4abf6a876be007eddb0b0032ee06b312b69038cb4a0&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799682.jpg?k=92f7cf4a55524e8f8ea9e4abf6a876be007eddb0b0032ee06b312b69038cb4a0&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:53",
+        "grid": {
+          "photoWidth": 2209,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799684",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799684.jpg?k=a519e4e2efb717133567235a0e3929fcde3f8e191d68ab360f6a25570e896337&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799684.jpg?k=a519e4e2efb717133567235a0e3929fcde3f8e191d68ab360f6a25570e896337&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:54",
+        "grid": {
+          "photoWidth": 2393,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799685",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799685.jpg?k=7e2bf631ad16e0883d454dcef4e641dc43e2333fb5560325f6578e6f46135149&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799685.jpg?k=7e2bf631ad16e0883d454dcef4e641dc43e2333fb5560325f6578e6f46135149&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:54",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799687",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799687.jpg?k=97d9cde4188c60046285bc14536bad899b928bfbd4154aaecbcddab2b08f02ea&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799687.jpg?k=97d9cde4188c60046285bc14536bad899b928bfbd4154aaecbcddab2b08f02ea&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:55",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1598
+        }
+      },
+      {
+        "id": "63799689",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799689.jpg?k=91a28ce73da541dd23b084c7f89d20cd1094734915f9b1e4e1af129640d460b9&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799689.jpg?k=91a28ce73da541dd23b084c7f89d20cd1094734915f9b1e4e1af129640d460b9&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:57",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799690",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799690.jpg?k=72c47c1bd2d99b17cd1e762b63347fe5e37cc39b29456ad1c85f6f6d17b58acb&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799690.jpg?k=72c47c1bd2d99b17cd1e762b63347fe5e37cc39b29456ad1c85f6f6d17b58acb&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:58",
+        "grid": {
+          "photoWidth": 2326,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799691",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799691.jpg?k=4e881c8048b78b2c65e6e6ee3dd088c7f4842d17963738fabe52386e9cea379d&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799691.jpg?k=4e881c8048b78b2c65e6e6ee3dd088c7f4842d17963738fabe52386e9cea379d&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:58",
+        "grid": {
+          "photoWidth": 2231,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799692",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799692.jpg?k=ed6f57e4169f9481fe4d6a9503b310d58a8616f739223af2cc4be66f56447cff&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799692.jpg?k=ed6f57e4169f9481fe4d6a9503b310d58a8616f739223af2cc4be66f56447cff&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:20:59",
+        "grid": {
+          "photoWidth": 2399,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799696",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799696.jpg?k=2a96d0a35dff1d86658824319419c0d74b1c7919d58eee132c797f9a9b7337c9&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799696.jpg?k=2a96d0a35dff1d86658824319419c0d74b1c7919d58eee132c797f9a9b7337c9&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:21:00",
+        "grid": {
+          "photoWidth": 2268,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799697",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799697.jpg?k=dadcb4aaad9ecbff1643b1a01d007bf0c7d4651447b71a385e7add86b2070760&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799697.jpg?k=dadcb4aaad9ecbff1643b1a01d007bf0c7d4651447b71a385e7add86b2070760&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:21:00",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799699",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799699.jpg?k=51331d463ff267dd513182f77d7c1d9bb4ef670b58639c23d8728ad8a2bb00a0&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799699.jpg?k=51331d463ff267dd513182f77d7c1d9bb4ef670b58639c23d8728ad8a2bb00a0&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:21:01",
+        "grid": {
+          "photoWidth": 2282,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799701",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799701.jpg?k=fc489caf84f5c3ff62ddd27675bff80e62fbc2ed1daa100d171b34348f3de8ca&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799701.jpg?k=fc489caf84f5c3ff62ddd27675bff80e62fbc2ed1daa100d171b34348f3de8ca&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:21:01",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "63799702",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799702.jpg?k=6c824065495b3933e6a6b343aed0c19e39c6c083060d8d99e6b9d7aaf173921e&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799702.jpg?k=6c824065495b3933e6a6b343aed0c19e39c6c083060d8d99e6b9d7aaf173921e&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:21:01",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1561
+        }
+      },
+      {
+        "id": "63799703",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/63799703.jpg?k=0371c97b3542637aa6cef29ba5335462c1523cea421f3c317c58f7199c1d3f4d&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/63799703.jpg?k=0371c97b3542637aa6cef29ba5335462c1523cea421f3c317c58f7199c1d3f4d&o=&hp=1",
+        "associatedRoomIds": [
+          "101499702"
+        ],
+        "orientation": "landscape",
+        "created": "2016-02-29 15:21:02",
+        "grid": {
+          "photoWidth": 2400,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "71004209",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/71004209.jpg?k=c328e3e3041728d74cff696408ed2321090200afe08ac25e7c1afc0c4a624fcb&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/71004209.jpg?k=c328e3e3041728d74cff696408ed2321090200afe08ac25e7c1afc0c4a624fcb&o=&hp=1",
+        "associatedRoomIds": [
+          "101499703"
+        ],
+        "orientation": "landscape",
+        "created": "2016-06-04 16:28:38",
+        "grid": {
+          "photoWidth": 2376,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "463573597",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/463573597.jpg?k=68483baca51bda83769a8b726c089016aa664c15c48af49b8238d856a3ae9469&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/463573597.jpg?k=68483baca51bda83769a8b726c089016aa664c15c48af49b8238d856a3ae9469&o=&hp=1",
+        "associatedRoomIds": [
+          "101499701"
+        ],
+        "orientation": "landscape",
+        "created": "2023-05-27 10:03:27",
+        "grid": {
+          "photoWidth": 2600,
+          "photoHeight": 1733
+        }
+      }
+    ],
+    "categoryReviews": [
+      {
+        "title": "Staff",
+        "score": 8.8
+      },
+      {
+        "title": "Facilities",
+        "score": 7.9
+      },
+      {
+        "title": "Cleanliness",
+        "score": 8
+      },
+      {
+        "title": "Comfort",
+        "score": 7.9
+      },
+      {
+        "title": "Value for money",
+        "score": 7.8
+      },
+      {
+        "title": "Location",
+        "score": 9.8
+      },
+      {
+        "title": "Free WiFi",
+        "score": 7.3
+      }
+    ],
+    "hotelChain": null,
+    "licenseInfo": {
+      "numbers": [
+        "ESFCTU00000805600055006100000000000000000HUTB-0524511",
+        "ESFCTU00000805600055026900000000000000000HUTB-0004334",
+        "ESFCTU00000805600055027600000000000000000HUTB-0172581",
+        "HUTB-000433",
+        "HUTB-017258",
+        "HUTB-052451"
+      ],
+      "phrases": [
+        "License number: ESFCTU00000805600055006100000000000000000HUTB-0524511, ESFCTU00000805600055026900000000000000000HUTB-0004334, ESFCTU00000805600055027600000000000000000HUTB-0172581, HUTB-000433, HUTB-017258, HUTB-052451"
+      ]
+    },
+    "hostInfo": {
+      "name": "Company Logo",
+      "imageUrl": "https://cf.bstatic.com/xdata/images/xphoto/max500_ao/4250431.jpg?k=20daac7344f955f425e67b01ffeb4563b24c91c454b87986a61585c4fc3b2a9c&o=",
+      "reviewsCount": 542,
+      "reviewsScore": 9,
+      "yearsOnWebsite": 12,
+      "managedProperties": 7,
+      "welcomeMessage": "Located on the Paseo de Gracia, all apartments are faced toward the beautifull patio on the inside of the building. two of them have a terreace. Very hard to find in the centre of Barcelona. No traffic noise at all and 50 meters from the Plaza Catalunya where you will find all principal metro/tube stations as well as the special \"Aerobus\". The Apple Store and Adidas are your neighbours.",
+      "ownerInfo": "I love to practice outdoor sports like sea swimming in the Barceloneta, running and biking.",
+      "neighboorhoodInfo": "Passeig de Gracia - Paseo de Gracia - is Barcelona's most famous shopping street. It is the most expensive street in Barcelona and in Spain and Barcelona's most elegant and fashionable shopping street with all the top designer brands\n\nThe Passeig de Gracia starts at Plaza Catalunya and ends at Gracia and is a lovely stroll at any time of year. It is not a long street and and so don't miss a stroll down this famous boulevard. If you want a break take a seat one one of the 32 lovely modernist trencadis benches which also are the base of street lamps which were designed by modernist architecht Pere Falqués i Urpí in 1906.\n\nHighlights of this famous boulevard are the Gaudi modernist creations \"Casa Batllo\" and \"La Pedrera\" and also open to the public don't miss modernist Casa Amatller. There are several top restaurants on Passeig de Gracia in hotels Casa Fuster, Hotel Omm with Michelin starred Restaurant Moo, Hotel Oriental Mandarin with Michelin restaurant Moments. The Passeig de Gracia is fabulous for shopping any day, but Christmas shopping is a treat. Christmas in Barcelona and on Passeig de Gracia opens with the Barcelona Shopping Night event every year at the start of Dec.",
+      "familyTips": null,
+      "language": "en",
+      "spokenLanguages": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "it",
+        "nl",
+        "pt"
+      ]
+    },
+    "traderInfo": {
+      "isBusiness": null,
+      "email": "bookingbarcelona@hotmail.com",
+      "phone": "+34673084287",
+      "companyName": "LETSGOBARCELONA SL.",
+      "firstName": null,
+      "middleName": null,
+      "lastName": null,
+      "registrationNumber": "B66189184",
+      "tradeRegisterName": "Letsgobarcelona SL",
+      "address": {
+        "street": "Calle Sardenya 298",
+        "street2": "Entresuelo 1-a",
+        "postalCode": "08013",
+        "city": "Barcelona",
+        "countryCode": "ES",
+        "state": "Barcelona"
+      }
+    },
+    "breadcrumbs": [
+      {
+        "name": "Home",
+        "fullName": "Booking.com",
+        "link": "https://www.booking.com/index.en-gb.html?aid=304142&label=gen173nr-10CAsoRkIRcGFzZW8tZGUtZ3JhY2lhLTNICVgEaEaIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Arurzc8GwAIB0gIkMzhiYzNjZmItMWJkZC00OWYzLTk5ZjUtOWZjNzczOWEwM2Uw2AIB4AIB",
+        "altLink": null
+      },
+      {
+        "name": "Hotels",
+        "fullName": "Hotels on Booking.com",
+        "link": "https://www.booking.com/hotel/index.en-gb.html?aid=304142&label=gen173nr-10CAsoRkIRcGFzZW8tZGUtZ3JhY2lhLTNICVgEaEaIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Arurzc8GwAIB0gIkMzhiYzNjZmItMWJkZC00OWYzLTk5ZjUtOWZjNzczOWEwM2Uw2AIB4AIB",
+        "altLink": null
+      },
+      {
+        "name": "All apartments",
+        "fullName": "Apartments on Booking.com",
+        "link": "https://www.booking.com/apartments/index.en-gb.html?aid=304142&label=gen173nr-10CAsoRkIRcGFzZW8tZGUtZ3JhY2lhLTNICVgEaEaIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Arurzc8GwAIB0gIkMzhiYzNjZmItMWJkZC00OWYzLTk5ZjUtOWZjNzczOWEwM2Uw2AIB4AIB",
+        "altLink": null
+      },
+      {
+        "name": "Spain",
+        "fullName": "Apartments in Spain",
+        "link": "https://www.booking.com/searchresults.en-gb.html?aid=304142&label=gen173nr-10CAsoRkIRcGFzZW8tZGUtZ3JhY2lhLTNICVgEaEaIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Arurzc8GwAIB0gIkMzhiYzNjZmItMWJkZC00OWYzLTk5ZjUtOWZjNzczOWEwM2Uw2AIB4AIB&dest_id=197&dest_type=country&nflt=sth%3D1",
+        "altLink": "https://www.booking.com/country/es.html"
+      },
+      {
+        "name": "Catalonia",
+        "fullName": "Apartments in Catalonia",
+        "link": "https://www.booking.com/searchresults.en-gb.html?aid=304142&label=gen173nr-10CAsoRkIRcGFzZW8tZGUtZ3JhY2lhLTNICVgEaEaIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Arurzc8GwAIB0gIkMzhiYzNjZmItMWJkZC00OWYzLTk5ZjUtOWZjNzczOWEwM2Uw2AIB4AIB&dest_id=734&dest_type=region&nflt=sth%3D1",
+        "altLink": null
+      },
+      {
+        "name": "Barcelona",
+        "fullName": "Apartments in Barcelona",
+        "link": "https://www.booking.com/searchresults.en-gb.html?aid=304142&label=gen173nr-10CAsoRkIRcGFzZW8tZGUtZ3JhY2lhLTNICVgEaEaIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Arurzc8GwAIB0gIkMzhiYzNjZmItMWJkZC00OWYzLTk5ZjUtOWZjNzczOWEwM2Uw2AIB4AIB&dest_id=-372490&dest_type=city&nflt=sth%3D1",
+        "altLink": null
+      },
+      {
+        "name": "LetsGo Paseo de Gracia (Apartment) (Spain) deals",
+        "fullName": "LetsGo Paseo de Gracia (Apartment) (Spain) deals",
+        "link": null,
+        "altLink": null
+      }
+    ],
+    "hotelId": 1014997,
+    "facilities": [
+      {
+        "name": "Great for your stay",
+        "facilities": [
+          {
+            "name": "Pets allowed",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Private bathroom",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 38
+          },
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 11
+          },
+          {
+            "name": "View",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 81
+          },
+          {
+            "name": "Free WiFi",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Family rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 28
+          },
+          {
+            "name": "Kitchen",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 45
+          },
+          {
+            "name": "Airport shuttle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Flat-screen TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 75
+          },
+          {
+            "name": "Washing machine",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 34
+          }
+        ],
+        "overview": null,
+        "id": null
+      },
+      {
+        "name": "Parking",
+        "overview": "No parking available.",
+        "id": 16,
+        "facilities": []
+      },
+      {
+        "name": "Internet",
+        "overview": "WiFi is available in all areas and is free of charge.",
+        "id": 11,
+        "facilities": [
+          {
+            "name": "Internet services",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 47
+          }
+        ]
+      },
+      {
+        "name": "Kitchen",
+        "overview": null,
+        "id": 12,
+        "facilities": [
+          {
+            "name": "Children's high chair",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 127
+          },
+          {
+            "name": "Dining table",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 126
+          },
+          {
+            "name": "Coffee machine",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 120
+          },
+          {
+            "name": "Cleaning products",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 116
+          },
+          {
+            "name": "Toaster",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 98
+          },
+          {
+            "name": "Stovetop",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 97
+          },
+          {
+            "name": "Oven",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 96
+          },
+          {
+            "name": "Tumble dryer",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 94
+          },
+          {
+            "name": "Kitchenware",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 89
+          },
+          {
+            "name": "Electric kettle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 86
+          },
+          {
+            "name": "Kitchen",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 45
+          },
+          {
+            "name": "Washing machine",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 34
+          },
+          {
+            "name": "Dishwasher",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 33
+          },
+          {
+            "name": "Microwave",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 32
+          },
+          {
+            "name": "Refrigerator",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 22
+          }
+        ]
+      },
+      {
+        "name": "Bedroom",
+        "overview": null,
+        "id": 17,
+        "facilities": [
+          {
+            "name": "Linen",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 125
+          },
+          {
+            "name": "Wardrobe or closet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 95
+          }
+        ]
+      },
+      {
+        "name": "Private bathroom",
+        "overview": null,
+        "id": 5,
+        "facilities": [
+          {
+            "name": "Toilet paper",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 141
+          },
+          {
+            "name": "Towels",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 124
+          },
+          {
+            "name": "Bidet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 100
+          },
+          {
+            "name": "Private bathroom",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 38
+          },
+          {
+            "name": "Toilet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 31
+          },
+          {
+            "name": "Hairdryer",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 12
+          },
+          {
+            "name": "Shower",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 4
+          }
+        ]
+      },
+      {
+        "name": "Living Area",
+        "overview": null,
+        "id": 15,
+        "facilities": [
+          {
+            "name": "Dining area",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 85
+          },
+          {
+            "name": "Sofa",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 77
+          },
+          {
+            "name": "Seating Area",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 26
+          },
+          {
+            "name": "Desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 23
+          }
+        ]
+      },
+      {
+        "name": "Media & Technology",
+        "overview": null,
+        "id": 6,
+        "facilities": [
+          {
+            "name": "Streaming service (like Netflix)",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 199
+          },
+          {
+            "name": "Flat-screen TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 75
+          },
+          {
+            "name": "TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 8
+          }
+        ]
+      },
+      {
+        "name": "Room amenities",
+        "overview": null,
+        "id": 4,
+        "facilities": [
+          {
+            "name": "Socket near the bed",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 184
+          },
+          {
+            "name": "Sofa bed",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 146
+          },
+          {
+            "name": "Drying rack for clothing",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 140
+          },
+          {
+            "name": "Clothes rack",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 138
+          },
+          {
+            "name": "Hardwood or parquet floors",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 82
+          },
+          {
+            "name": "Private entrance",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 76
+          },
+          {
+            "name": "Ironing facilities",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 25
+          },
+          {
+            "name": "Iron",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 15
+          }
+        ]
+      },
+      {
+        "name": "Pets",
+        "overview": "Pets are allowed on request. Charges may be applicable.",
+        "id": -2,
+        "facilities": []
+      },
+      {
+        "name": "Accessibility",
+        "overview": null,
+        "id": 19,
+        "facilities": [
+          {
+            "name": "Entire unit wheelchair accessible",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 134
+          },
+          {
+            "name": "Upper floors accessible by elevator",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 132
+          }
+        ]
+      },
+      {
+        "name": "Outdoors",
+        "overview": null,
+        "id": 13,
+        "facilities": [
+          {
+            "name": "Outdoor furniture",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 222
+          },
+          {
+            "name": "Sun terrace",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 118
+          },
+          {
+            "name": "Terrace",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 15
+          }
+        ]
+      },
+      {
+        "name": "Common areas",
+        "overview": null,
+        "id": 24,
+        "facilities": [
+          {
+            "name": "Shared lounge/TV area",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 143
+          }
+        ]
+      },
+      {
+        "name": "Food & Drink",
+        "overview": null,
+        "id": 7,
+        "facilities": [
+          {
+            "name": "Tea/Coffee maker",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 1
+          }
+        ]
+      },
+      {
+        "name": "Outdoor & View",
+        "overview": null,
+        "id": 9,
+        "facilities": [
+          {
+            "name": "Inner courtyard view",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 190
+          },
+          {
+            "name": "Garden view",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 110
+          },
+          {
+            "name": "View",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 81
+          }
+        ]
+      },
+      {
+        "name": "Building characteristics",
+        "overview": null,
+        "id": 20,
+        "facilities": [
+          {
+            "name": "Private apartment in building",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 137
+          }
+        ]
+      },
+      {
+        "name": "Transport",
+        "overview": null,
+        "id": 22,
+        "facilities": [
+          {
+            "name": "Shuttle service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 304
+          },
+          {
+            "name": "Airport shuttle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 17
+          }
+        ]
+      },
+      {
+        "name": "Reception services",
+        "overview": null,
+        "id": 23,
+        "facilities": [
+          {
+            "name": "Invoice provided",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 465
+          },
+          {
+            "name": "Private check-in/check-out",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 127
+          },
+          {
+            "name": "Concierge service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 124
+          },
+          {
+            "name": "Express check-in/check-out",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 49
+          }
+        ]
+      },
+      {
+        "name": "Cleaning services",
+        "overview": null,
+        "id": 26,
+        "facilities": [
+          {
+            "name": "Daily housekeeping",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 158
+          },
+          {
+            "name": "Ironing service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 44
+          }
+        ]
+      },
+      {
+        "name": "Miscellaneous",
+        "overview": null,
+        "id": 29,
+        "facilities": [
+          {
+            "name": "Designated smoking area",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 110
+          },
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 109
+          },
+          {
+            "name": "Non-smoking throughout",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 108
+          },
+          {
+            "name": "Heating",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 80
+          },
+          {
+            "name": "Lift",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 48
+          },
+          {
+            "name": "Family rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 28
+          }
+        ]
+      }
+    ],
+    "timeOfScrapeISO": "2026-04-30T13:14:53.586Z"
+  },
+  "_review_summary": null
+}

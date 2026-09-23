@@ -1,0 +1,517 @@
+{
+  "checkpoint_v1": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/evidence_retrieval_checkpoint_report.json",
+      "raw_section_omitted": "pairs",
+      "n_omitted": 16,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "n_pairs_total": 16,
+    "n_pairs_with_evidence": 9,
+    "n_pairs_no_evidence": 7,
+    "recall_at_k": {
+      "recall@1": 0.5556,
+      "recall@3": 0.5556,
+      "recall@5": 0.5556
+    },
+    "score_distributions": {
+      "gold_evidence": {
+        "n": 28,
+        "min": 0.5573,
+        "max": 0.7977,
+        "mean": 0.6541,
+        "median": 0.6688,
+        "stdev": 0.0661,
+        "sorted_scores": [
+          0.5573,
+          0.5866,
+          0.5869,
+          0.5869,
+          0.5891,
+          0.5917,
+          0.5917,
+          0.5917,
+          0.5917,
+          0.5917,
+          0.5917,
+          0.6151,
+          0.6584,
+          0.6688,
+          0.6688,
+          0.6688,
+          0.6688,
+          0.6847,
+          0.6855,
+          0.6918,
+          0.6918,
+          0.6918,
+          0.6918,
+          0.7082,
+          0.7183,
+          0.7489,
+          0.7977,
+          0.7977
+        ]
+      },
+      "irrelevant_topk_with_evidence": {
+        "n": 30,
+        "min": 0.6181,
+        "max": 0.7472,
+        "mean": 0.6397,
+        "median": 0.6367,
+        "stdev": 0.0238,
+        "sorted_scores": [
+          0.6181,
+          0.6181,
+          0.6214,
+          0.6214,
+          0.6236,
+          0.6236,
+          0.6263,
+          0.6284,
+          0.6284,
+          0.6291,
+          0.6299,
+          0.6311,
+          0.6313,
+          0.633,
+          0.6367,
+          0.6367,
+          0.6377,
+          0.6377,
+          0.6378,
+          0.6378,
+          0.6384,
+          0.6384,
+          0.6399,
+          0.649,
+          0.6533,
+          0.6595,
+          0.6595,
+          0.6595,
+          0.6595,
+          0.7472
+        ]
+      },
+      "topk_no_evidence": {
+        "n": 35,
+        "min": 0.606,
+        "max": 0.7364,
+        "mean": 0.63,
+        "median": 0.6179,
+        "stdev": 0.031,
+        "sorted_scores": [
+          0.606,
+          0.606,
+          0.606,
+          0.6081,
+          0.6081,
+          0.609,
+          0.609,
+          0.6099,
+          0.6099,
+          0.612,
+          0.6135,
+          0.6139,
+          0.6166,
+          0.6166,
+          0.617,
+          0.617,
+          0.617,
+          0.6179,
+          0.6179,
+          0.6196,
+          0.6209,
+          0.6233,
+          0.6263,
+          0.628,
+          0.628,
+          0.6311,
+          0.6315,
+          0.6315,
+          0.6379,
+          0.6603,
+          0.6769,
+          0.6769,
+          0.6769,
+          0.7143,
+          0.7364
+        ]
+      }
+    },
+    "errors": [
+      {
+        "pair_id": "apt_city_center__family_friendly",
+        "constraint_text": "family-friendly",
+        "gold_chunk_ids": [
+          "12895996::111"
+        ],
+        "gold_texts": [
+          "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 2 years Cot upon request Prices for cots are not included in the total price, and will have to be paid for separately during your stay. The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability."
+        ],
+        "top_5_retrieved": [
+          {
+            "chunk_id": "12895996::112",
+            "score": 0.6595,
+            "text": "No age restriction"
+          },
+          {
+            "chunk_id": "12895996::103",
+            "score": 0.6533,
+            "text": "Parking available on-site"
+          },
+          {
+            "chunk_id": "12895996::58",
+            "score": 0.6384,
+            "text": "Non-smoking throughout"
+          },
+          {
+            "chunk_id": "12895996::52",
+            "score": 0.633,
+            "text": "Pets are allowed. No extra charges."
+          },
+          {
+            "chunk_id": "12895996::99",
+            "score": 0.6291,
+            "text": "Perfect for a 12-night stay!"
+          }
+        ]
+      },
+      {
+        "pair_id": "fermaart_hotel__good_for_remote_work",
+        "constraint_text": "good for remote work",
+        "gold_chunk_ids": [
+          "16084035::148",
+          "16084035::228",
+          "16084035::298",
+          "16084035::4",
+          "16084035::56"
+        ],
+        "gold_texts": [
+          "Desk",
+          "Each room includes a work desk, minibar, and free WiFi.",
+          "Desk",
+          "Desk",
+          "Desk"
+        ],
+        "top_5_retrieved": [
+          {
+            "chunk_id": "16084035::351",
+            "score": 0.6313,
+            "text": "Rooms with:"
+          },
+          {
+            "chunk_id": "16084035::352",
+            "score": 0.6284,
+            "text": "Quiet street view"
+          },
+          {
+            "chunk_id": "16084035::347",
+            "score": 0.6236,
+            "text": "Perfect for a 3-night stay!"
+          },
+          {
+            "chunk_id": "16084035::100",
+            "score": 0.6181,
+            "text": "Hypoallergenic"
+          },
+          {
+            "chunk_id": "16084035::147",
+            "score": 0.6181,
+            "text": "Hypoallergenic"
+          }
+        ]
+      },
+      {
+        "pair_id": "modern_apt_nizami__good_for_remote_work",
+        "constraint_text": "good for remote work",
+        "gold_chunk_ids": [
+          "16578874::112",
+          "16578874::39"
+        ],
+        "gold_texts": [
+          "Desk",
+          "Desk"
+        ],
+        "top_5_retrieved": [
+          {
+            "chunk_id": "16578874::11",
+            "score": 0.7472,
+            "text": "Great for your stay"
+          },
+          {
+            "chunk_id": "16578874::160",
+            "score": 0.6284,
+            "text": "Quiet street view"
+          },
+          {
+            "chunk_id": "16578874::154",
+            "score": 0.6236,
+            "text": "Perfect for a 3-night stay!"
+          },
+          {
+            "chunk_id": "16578874::74",
+            "score": 0.6214,
+            "text": "Detached"
+          },
+          {
+            "chunk_id": "16578874::138",
+            "score": 0.6214,
+            "text": "Detached"
+          }
+        ]
+      },
+      {
+        "pair_id": "modern_apt_nizami__family_friendly",
+        "constraint_text": "family-friendly",
+        "gold_chunk_ids": [
+          "16578874::169"
+        ],
+        "gold_texts": [
+          "Child policies Children of any age are welcome. Children 18 years and above will be charged as adults at this property. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 3 years Cot upon request The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property. All cots are subject to availability."
+        ],
+        "top_5_retrieved": [
+          {
+            "chunk_id": "16578874::170",
+            "score": 0.6595,
+            "text": "No age restriction"
+          },
+          {
+            "chunk_id": "16578874::11",
+            "score": 0.6399,
+            "text": "Great for your stay"
+          },
+          {
+            "chunk_id": "16578874::38",
+            "score": 0.6378,
+            "text": "Seating area"
+          },
+          {
+            "chunk_id": "16578874::113",
+            "score": 0.6378,
+            "text": "Seating area"
+          },
+          {
+            "chunk_id": "16578874::160",
+            "score": 0.6299,
+            "text": "Quiet street view"
+          }
+        ]
+      }
+    ],
+    "n_errors": 4
+  },
+  "checkpoint_v2": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/evidence_retrieval_checkpoint_v2_report.json",
+      "raw_section_omitted": "subclaims",
+      "n_omitted": 32,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "n_subclaims_total": 32,
+    "n_subclaims_supported": 14,
+    "n_subclaims_no_evidence": 18,
+    "recall_at_k": {
+      "recall@1": 0.9286,
+      "recall@3": 1.0,
+      "recall@5": 1.0
+    },
+    "score_distributions": {
+      "gold_evidence": {
+        "n": 40,
+        "min": 0.5808,
+        "max": 0.8186,
+        "mean": 0.7402,
+        "median": 0.7229,
+        "stdev": 0.0571,
+        "sorted_scores": [
+          0.5808,
+          0.6688,
+          0.6688,
+          0.6688,
+          0.6688,
+          0.6691,
+          0.6713,
+          0.6847,
+          0.6995,
+          0.704,
+          0.704,
+          0.7045,
+          0.7076,
+          0.7076,
+          0.7195,
+          0.7195,
+          0.7195,
+          0.7195,
+          0.7195,
+          0.7195,
+          0.7263,
+          0.7622,
+          0.7679,
+          0.7805,
+          0.7805,
+          0.7805,
+          0.7805,
+          0.7805,
+          0.7805,
+          0.7805,
+          0.7805,
+          0.7805,
+          0.8066,
+          0.8066,
+          0.8066,
+          0.8066,
+          0.8186,
+          0.8186,
+          0.8186,
+          0.8186
+        ]
+      },
+      "irrelevant_topk_with_evidence": {
+        "n": 33,
+        "min": 0.6391,
+        "max": 0.7977,
+        "mean": 0.6768,
+        "median": 0.6695,
+        "stdev": 0.0277,
+        "sorted_scores": [
+          0.6391,
+          0.6492,
+          0.6531,
+          0.6546,
+          0.6602,
+          0.6602,
+          0.6602,
+          0.6622,
+          0.6668,
+          0.6668,
+          0.6668,
+          0.6668,
+          0.6682,
+          0.6682,
+          0.6695,
+          0.6695,
+          0.6695,
+          0.6695,
+          0.6708,
+          0.673,
+          0.6765,
+          0.6787,
+          0.6787,
+          0.6787,
+          0.6787,
+          0.68,
+          0.68,
+          0.6918,
+          0.6918,
+          0.6918,
+          0.721,
+          0.7232,
+          0.7977
+        ]
+      },
+      "topk_no_evidence": {
+        "n": 90,
+        "min": 0.5994,
+        "max": 0.7977,
+        "mean": 0.6469,
+        "median": 0.6477,
+        "stdev": 0.0337,
+        "sorted_scores": [
+          0.5994,
+          0.606,
+          0.606,
+          0.606,
+          0.6061,
+          0.6061,
+          0.6066,
+          0.6066,
+          0.6066,
+          0.6067,
+          0.6067,
+          0.6099,
+          0.6099,
+          0.612,
+          0.6133,
+          0.6166,
+          0.6166,
+          0.617,
+          0.617,
+          0.617,
+          0.6186,
+          0.6186,
+          0.6196,
+          0.6209,
+          0.6233,
+          0.6263,
+          0.6263,
+          0.628,
+          0.628,
+          0.6311,
+          0.6311,
+          0.6329,
+          0.6329,
+          0.6329,
+          0.6363,
+          0.6367,
+          0.6367,
+          0.6377,
+          0.6377,
+          0.6377,
+          0.6379,
+          0.6408,
+          0.6408,
+          0.6476,
+          0.6476,
+          0.6478,
+          0.6478,
+          0.6478,
+          0.6478,
+          0.6504,
+          0.6505,
+          0.6517,
+          0.6517,
+          0.6552,
+          0.6552,
+          0.6552,
+          0.6552,
+          0.6552,
+          0.6552,
+          0.6552,
+          0.6552,
+          0.6567,
+          0.6584,
+          0.6602,
+          0.6602,
+          0.6603,
+          0.6622,
+          0.6641,
+          0.6641,
+          0.6641,
+          0.6641,
+          0.6662,
+          0.6662,
+          0.6669,
+          0.6669,
+          0.6761,
+          0.6765,
+          0.6765,
+          0.6769,
+          0.6769,
+          0.6769,
+          0.6825,
+          0.6825,
+          0.6825,
+          0.6825,
+          0.7143,
+          0.7183,
+          0.7364,
+          0.7489,
+          0.7977
+        ]
+      }
+    },
+    "errors": [],
+    "n_errors": 0
+  }
+}

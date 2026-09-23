@@ -19,6 +19,11 @@ from app.schemas.conversation_route import (
 )
 from app.schemas.fields import Field
 from app.schemas.query import SearchRequest
+from app.schemas.search_response import (
+    NormalizedSearchResponse,
+    NormalizedSearchResult,
+    SearchStatus,
+)
 
 
 def kitchen_constraint() -> UserConstraint:
@@ -71,14 +76,16 @@ async def test_conversation_flow_first_turn_builds_state_and_searches(
         assert isinstance(req, SearchRequest)
         assert req.city == "Baku"
 
-        return {
-            "need_clarification": False,
-            "results": [
-                {
-                    "title": "Large Family Apartment",
-                }
+        return NormalizedSearchResponse(
+            status=SearchStatus.RESULTS,
+            results=[
+                NormalizedSearchResult(
+                    result_id="apt-1",
+                    title="Large Family Apartment",
+                    score=0.0,
+                )
             ],
-        }
+        )
 
     async def _fake_route(**kwargs):
         return ConversationActionDecision(
@@ -106,7 +113,7 @@ async def test_conversation_flow_first_turn_builds_state_and_searches(
         "any query"
     )
 
-    assert out["need_clarification"] is False
+    assert out["status"] == "results"
     assert (
         out["results"][0]["title"]
         == "Large Family Apartment"
@@ -150,10 +157,16 @@ async def test_conversation_flow_followup_updates_existing_state(
     ):
         assert isinstance(req, SearchRequest)
 
-        return {
-            "need_clarification": False,
-            "results": [{"title": "OK"}],
-        }
+        return NormalizedSearchResponse(
+            status=SearchStatus.RESULTS,
+            results=[
+                NormalizedSearchResult(
+                    result_id="ok-1",
+                    title="OK",
+                    score=0.0,
+                )
+            ],
+        )
 
     monkeypatch.setattr(
         conversation_flow,
@@ -491,10 +504,10 @@ async def test_update_without_existing_state_starts_search(
     )
 
     search_mock = AsyncMock(
-        return_value={
-            "need_clarification": False,
-            "results": [],
-        }
+        return_value=NormalizedSearchResponse(
+            status=SearchStatus.NO_RESULTS,
+            results=[],
+        )
     )
 
     update_mock = AsyncMock()

@@ -1,0 +1,2739 @@
+{
+  "id": "15011940",
+  "city": "Baku",
+  "address": "14 Tərlan Əliyarbəyov, AZ1000 Baku, Azerbaijan",
+  "name": "WALKER Apartment",
+  "url": "https://www.booking.com/hotel/az/walker-apartment.en-gb.html?checkout=2026-06-15&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-06-10&selected_currency=USD&group_adults=2&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+  "price": 469.55246195159555,
+  "currency": "US$",
+  "rating": 8.5,
+  "stars": null,
+  "property_type": "apartment",
+  "room_type": null,
+  "max_occupancy": null,
+  "description": "About this propertySpacious Accommodation: WALKER Apartment in Baku offers a spacious apartment with three bedrooms and two bathrooms. The living room includes a sofa bed and a dining area, ensuring comfort for all guests.\n\nModern Amenities: Guests enjoy free WiFi, air-conditioning, and a balcony with city views. The apartment features a fully equipped kitchen, washing machine, and streaming services. Additional amenities include a work desk, microwave, and dining table.\n\nConvenient Location: Located 25 km from Heydar Aliyev International Airport, the apartment is an 8-minute walk from Maiden Tower and less than 1 km from Palace of The Shirvanshahs. Nearby attractions include Fountains Square and Upland Park.\n\nComfortable Services: The property provides a free airport shuttle service, private check-in and check-out, and a 24-hour front desk. Additional services include a minimarket, hairdresser, and luggage storage.Distance in property description is calculated using © OpenStreetMap",
+  "fine_print": "This property will not accommodate hen, stag or similar parties.",
+  "policies": [
+    {
+      "title": "Check-in",
+      "content": "Available 24 hoursYou'll need to let the property know in advance what time you'll arrive."
+    },
+    {
+      "title": "Check-out",
+      "content": "From 11:00 to 12:00"
+    },
+    {
+      "title": "Cancellation/ prepayment",
+      "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+    },
+    {
+      "title": "Children and beds",
+      "content": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies Cots and extra beds are not available at this property."
+    },
+    {
+      "title": "No age restriction",
+      "content": "There is no age requirement for check-in"
+    },
+    {
+      "title": "Cash only",
+      "content": "This property only accepts cash payments."
+    },
+    {
+      "title": "Smoking",
+      "content": "Smoking is not allowed."
+    },
+    {
+      "title": "Parties",
+      "content": "Parties/events are not allowed"
+    },
+    {
+      "title": "Pets",
+      "content": "Free!Pets are allowed. No extra charges."
+    }
+  ],
+  "highlights": [
+    {
+      "header": "Perfect for a 5-night stay!",
+      "contents": [
+        "Top location: Highly rated by recent guests (9.3)"
+      ]
+    },
+    {
+      "header": "Apartments with:",
+      "contents": [
+        "City view",
+        "Quiet street view"
+      ]
+    }
+  ],
+  "facilities": [
+    {
+      "name": "Parking",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Balcony",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Pets allowed",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private bathroom",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "View",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Free WiFi",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Family rooms",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Kitchen",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle (free)",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Parking",
+      "category": "Parking",
+      "overview": "Public parking is possible at a location nearby (reservation is not needed) and costs AZN 1 per hour.",
+      "requires_additional_charge": true,
+      "is_off_site": true
+    },
+    {
+      "name": "Internet services",
+      "category": "Internet",
+      "overview": "WiFi is available in all areas and is free of charge.",
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Dining table",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Oven",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Kitchenware",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Electric kettle",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Kitchen",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Washing machine",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Microwave",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Refrigerator",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Linen",
+      "category": "Bedroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Wardrobe or closet",
+      "category": "Bedroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Dressing room",
+      "category": "Bedroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Toilet paper",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Towels",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bath or shower",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Slippers",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private bathroom",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Toilet",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Hairdryer",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shower",
+      "category": "Private bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Dining area",
+      "category": "Living Area",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Desk",
+      "category": "Living Area",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Streaming service (like Netflix)",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Flat-screen TV",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Cable channels",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Satellite channels",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "CD player",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "DVD player",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Radio",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "TV",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Sofa bed",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Drying rack for clothing",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Clothes rack",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private entrance",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Ironing facilities",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Iron",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Pets",
+      "category": "Pets",
+      "overview": "Pets are allowed. No extra charges.",
+      "requires_additional_charge": null,
+      "is_off_site": null
+    },
+    {
+      "name": "Hearing accessible",
+      "category": "Accessibility",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Entire unit wheelchair accessible",
+      "category": "Accessibility",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Entire unit located on ground floor",
+      "category": "Accessibility",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Patio",
+      "category": "Outdoors",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Balcony",
+      "category": "Outdoors",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tea/Coffee maker",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "City view",
+      "category": "Outdoor & View",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "View",
+      "category": "Outdoor & View",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private apartment in building",
+      "category": "Building characteristics",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Detached",
+      "category": "Building characteristics",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shuttle service",
+      "category": "Transport",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle",
+      "category": "Transport",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Invoice provided",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private check-in/check-out",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Luggage storage",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Currency exchange",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Express check-in/check-out",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "24-hour front desk",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Minimarket on site",
+      "category": "Shops",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Barber/beauty shop",
+      "category": "Shops",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking throughout",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Heating",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Lift",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Family rooms",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking rooms",
+      "category": "Miscellaneous",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Fire extinguishers",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "CCTV outside property",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "CCTV in common areas",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Smoke alarms",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Security alarm",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Key access",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Carbon monoxide detector",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Three-Bedroom Apartment with Balcony",
+      "available": true,
+      "persons": 8,
+      "bed_types": [
+        {
+          "room": "Bedroom 1",
+          "beds": [
+            "1 extra-large double bed"
+          ]
+        },
+        {
+          "room": "Bedroom 2",
+          "beds": [
+            "1 extra-large double bed"
+          ]
+        },
+        {
+          "room": "Bedroom 3",
+          "beds": [
+            "1 single bed",
+            "1 extra-large double bed"
+          ]
+        },
+        {
+          "room": "Living room",
+          "beds": [
+            "1 sofa bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "Entire apartment",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "1572 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private kitchen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Balcony",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Patio",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Washing machine",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Streaming service (like Netflix)",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Bath or shower",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Towels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Linen",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Desk",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private entrance",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Slippers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Refrigerator",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ironing facilities",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Satellite channels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Tea/Coffee maker",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Iron",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Radio",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Microwave",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Heating",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hairdryer",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Kitchenware",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "DVD player",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dressing room",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "CD player",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Electric kettle",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Cable channels",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Wardrobe or closet",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Oven",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dining area",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Dining table",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Entire unit located on ground floor",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Detached",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Private apartment in building",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Clothes rack",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Drying rack for clothing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Toilet paper",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Sofa bed",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Entire unit wheelchair accessible",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hearing accessible",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Single-room air conditioning for guest accommodation",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air purifiers",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Hand sanitiser",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Carbon monoxide detector",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 469.55246195159555,
+          "currency": "US$",
+          "persons": 8,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Free cancellation before 9 June 2026",
+            "No prepayment needed – pay at the property",
+            "No credit card needed",
+            "Enjoy a free private taxi from the airport to your accommodation. This offer is available for bookings up to 6 people and is provided and paid for by Booking.com. Cannot be combined with other offers, such as Partner offer. Free private taxi from the airport to this property"
+          ]
+        }
+      ]
+    }
+  ],
+  "raw": {
+    "order": 7,
+    "url": "https://www.booking.com/hotel/az/walker-apartment.en-gb.html?checkout=2026-06-15&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-06-10&selected_currency=USD&group_adults=2&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+    "startUrlOrQuery": "Baku",
+    "name": "WALKER Apartment",
+    "type": "apartment",
+    "description": "About this propertySpacious Accommodation: WALKER Apartment in Baku offers a spacious apartment with three bedrooms and two bathrooms. The living room includes a sofa bed and a dining area, ensuring comfort for all guests.\n\nModern Amenities: Guests enjoy free WiFi, air-conditioning, and a balcony with city views. The apartment features a fully equipped kitchen, washing machine, and streaming services. Additional amenities include a work desk, microwave, and dining table.\n\nConvenient Location: Located 25 km from Heydar Aliyev International Airport, the apartment is an 8-minute walk from Maiden Tower and less than 1 km from Palace of The Shirvanshahs. Nearby attractions include Fountains Square and Upland Park.\n\nComfortable Services: The property provides a free airport shuttle service, private check-in and check-out, and a 24-hour front desk. Additional services include a minimarket, hairdresser, and luggage storage.Distance in property description is calculated using © OpenStreetMap",
+    "stars": null,
+    "price": 469.55246195159555,
+    "currency": "US$",
+    "rating": 8.5,
+    "ratingLabel": "Very good",
+    "reviews": 9,
+    "breakfast": null,
+    "checkIn": "Available 24 hoursYou'll need to let the property know in advance what time you'll arrive.",
+    "checkOut": "From 11:00 to 12:00",
+    "checkInDate": "2026-06-10",
+    "checkOutDate": "2026-06-15",
+    "location": {
+      "lat": "40.3704022227012",
+      "lng": "49.8376467622043"
+    },
+    "address": {
+      "full": "14 Tərlan Əliyarbəyov, AZ1000 Baku, Azerbaijan",
+      "country": "az",
+      "city": "Baku"
+    },
+    "image": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/755330613.jpg?k=d247659df54f43b2e6734d1a7c3c146daa21fef0cdd048305fbfb818bbebee92&o=",
+    "rooms": [
+      {
+        "available": true,
+        "id": 1501194001,
+        "url": "https://www.booking.com/hotel/az/walker-apartment.en-gb.html#room_1501194001",
+        "roomType": "Three-Bedroom Apartment with Balcony",
+        "persons": 8,
+        "bedTypes": [
+          {
+            "room": "Bedroom 1",
+            "beds": [
+              "1 extra-large double bed"
+            ]
+          },
+          {
+            "room": "Bedroom 2",
+            "beds": [
+              "1 extra-large double bed"
+            ]
+          },
+          {
+            "room": "Bedroom 3",
+            "beds": [
+              "1 single bed",
+              "1 extra-large double bed"
+            ]
+          },
+          {
+            "room": "Living room",
+            "beds": [
+              "1 sofa bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "Entire apartment",
+          "1572 feet²",
+          "Private kitchen",
+          "Private bathroom",
+          "Balcony",
+          "City view",
+          "Air conditioning",
+          "Patio",
+          "Flat-screen TV",
+          "Free WiFi",
+          "Kitchen",
+          "Washing machine",
+          "Streaming service (like Netflix)",
+          "Toilet",
+          "Bath or shower",
+          "Towels",
+          "Linen",
+          "Desk",
+          "Private entrance",
+          "TV",
+          "Slippers",
+          "Refrigerator",
+          "Ironing facilities",
+          "Satellite channels",
+          "Tea/Coffee maker",
+          "Iron",
+          "Radio",
+          "Microwave",
+          "Heating",
+          "Hairdryer",
+          "Kitchenware",
+          "DVD player",
+          "Dressing room",
+          "CD player",
+          "Electric kettle",
+          "Cable channels",
+          "Wardrobe or closet",
+          "Oven",
+          "Dining area",
+          "Dining table",
+          "Entire unit located on ground floor",
+          "Detached",
+          "Private apartment in building",
+          "Clothes rack",
+          "Drying rack for clothing",
+          "Toilet paper",
+          "Sofa bed",
+          "Entire unit wheelchair accessible",
+          "Hearing accessible",
+          "Single-room air conditioning for guest accommodation",
+          "Air purifiers",
+          "Hand sanitiser",
+          "Carbon monoxide detector"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 1,
+        "options": [
+          {
+            "price": 469.55246195159555,
+            "displayedPrice": 397.925814218402,
+            "excludedTaxesPrice": 71.6266477331935,
+            "discount": null,
+            "id": "1501194001_421794328_8_0_0",
+            "persons": 8,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Free cancellation before 9 June 2026",
+              "No prepayment needed – pay at the property",
+              "No credit card needed",
+              "Enjoy a free private taxi from the airport to your accommodation. This offer is available for bookings up to 6 people and is provided and paid for by Booking.com. Cannot be combined with other offers, such as Partner offer. Free private taxi from the airport to this property"
+            ]
+          }
+        ]
+      }
+    ],
+    "highlights": [
+      {
+        "header": "Perfect for a 5-night stay!",
+        "contents": [
+          "Top location: Highly rated by recent guests (9.3)"
+        ]
+      },
+      {
+        "header": "Apartments with:",
+        "contents": [
+          "City view",
+          "Quiet street view"
+        ]
+      }
+    ],
+    "finePrint": "This property will not accommodate hen, stag or similar parties.",
+    "policies": [
+      {
+        "title": "Check-in",
+        "content": "Available 24 hoursYou'll need to let the property know in advance what time you'll arrive."
+      },
+      {
+        "title": "Check-out",
+        "content": "From 11:00 to 12:00"
+      },
+      {
+        "title": "Cancellation/ prepayment",
+        "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+      },
+      {
+        "title": "Children and beds",
+        "content": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies Cots and extra beds are not available at this property."
+      },
+      {
+        "title": "No age restriction",
+        "content": "There is no age requirement for check-in"
+      },
+      {
+        "title": "Cash only",
+        "content": "This property only accepts cash payments."
+      },
+      {
+        "title": "Smoking",
+        "content": "Smoking is not allowed."
+      },
+      {
+        "title": "Parties",
+        "content": "Parties/events are not allowed"
+      },
+      {
+        "title": "Pets",
+        "content": "Free!Pets are allowed. No extra charges."
+      }
+    ],
+    "images": [
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/755330613.jpg?k=d247659df54f43b2e6734d1a7c3c146daa21fef0cdd048305fbfb818bbebee92&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823283.jpg?k=7c850a86e70646b44adede03c76e9b8e8031dc65a10d3540939d759b9635b102&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823297.jpg?k=edbb69e63ee5e49b124eedd17e65475856135139c13a85e67eb63930533a84ef&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823269.jpg?k=487220bbcd8aec3c980b70c2443a2f7a4f6adfdf982256d69e2f26fa69e713db&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823270.jpg?k=2ce7687fa0839cc4d6ec9f46f3b7828a90bd714fdaa7c4cdf60bd3d089712149&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/755330643.jpg?k=3ad7d9342770a58ce88f5efb91e20ee2be60501aa748b04f0bb8d477d89efed1&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823291.jpg?k=bfc8beea40822b53ff941d5ede730578b417541449cdbd8f30d1ac8300be3747&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823298.jpg?k=1c8563d93df7746e0a203671c95772a7f3eaadfceb0ae95bcb6818f349b96a3b&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/755330641.jpg?k=c2b89fad004575fe840109493068c4de796fd033d914c26b89a9d4e6370a87df&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823261.jpg?k=0a0f4284ad3480febf629b2007e280600cb73dae7c61d97462710dde402a0671&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823259.jpg?k=7798240bc68fb8b803988ff89030f4e87c9057bd7071f26d8ada514b5da94e58&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823255.jpg?k=88529e22301e23647a85b6d4ffa7319698693f66d46aeed116847955182312d8&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823266.jpg?k=5ab18780f2456b060e55dfbf19803f02de80d8ec8e2e0cf439fed783a252a45b&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823251.jpg?k=130e20a8179b0183262122c8ce7ed27607408ef818f7ed86831c817197acb7c0&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823263.jpg?k=3265ce36de1bae87986bd31c4e7fa2075657d84de50f092eaafaa8f340e14dbe&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823268.jpg?k=f016b2c8e06ee306840bb8725945b91b684a0e7afccacab01c6f05272672a2e1&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823265.jpg?k=30230408140a9b1605bee838cbec14279ff12abd0cedbd1963b0f2ba1cc545e4&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823271.jpg?k=43b5bf6eea19ac9eab7b8bc3167a2b7546efd5338467386bdc8aff06cc54a700&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823273.jpg?k=08f2eb80b1dfd84edfda8d4ca30f704a15bebaf2416fdd506a52088501ad0b80&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823280.jpg?k=78cb43d27326866aaf66e146cab6e8075fd628575e5a69bccb216f4ae74edec4&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823278.jpg?k=742001641e5e37e5eb2eb7527c4189529d3f3eac64f564b7feb58ea8dcf0fcac&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823272.jpg?k=34b62e9a58d741e3caf8b042eb462711823fe1cd2c9af274f613111b7e17bf14&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823277.jpg?k=9720d73c873583129156abf3d28bd4c724a6b728d43586b574b1c6d67525cb9c&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823281.jpg?k=d51387c33970e2632e8003695c927897d5eb8bcdb2acb835b968bad03a38aac3&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823274.jpg?k=f0a0c29a58af2c71fbb93c2f5bf67d2a692d8dd7484b22b47209ddd8ba004752&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823279.jpg?k=8caa34d3c5a244c096961b55879ede25cbdd0cb3e2496aa3fa0fcf46cd953d96&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823284.jpg?k=f55ad8085fd63614117199778d13ad0c234cee44d14cc03837c7f272ece3896f&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823285.jpg?k=a98aadde6548b4ffcc0b6d9bca480362728937a02c62d0c5eaaa59bef934a114&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823286.jpg?k=cf4912e5229529bca82b93330738cb4893ec52c6aaf34ef224041a6d202f09d2&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823294.jpg?k=7b799407b3b2c02bfb89ec276cbbb0fa576e01825e5cb6c1281c8072e216a4bf&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823289.jpg?k=b410c1d726dbdb82ea4289e80d4b951231cd62cf72d0e0c475c34245ac120b3d&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823292.jpg?k=d68b3fcdfb4dcce48aa92146e3eba3cbc2ddcc7843d18806a6bdc8aed6cc317a&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823296.jpg?k=eae39e8fa26c9992c774b8dc7583260ab74795d0f7dc0103f5bf0d54d543ba1f&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823295.jpg?k=379daedcc92b534937725b6a6ee2a36695ad5bb0675bb272b5b4ccb3e947baca&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823300.jpg?k=e30c2fd4dc3bece6e3b15050f3eca1000e9deb4306947a15de613e8086a922d0&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823303.jpg?k=5443bde69a11662b09bbdb21a80fcb074276a54a08a119803b83f9006e292562&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823307.jpg?k=5b89f49c4ffe43daa08ed967e758bd06a943a8e3edb4af870f50a2e348970238&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823304.jpg?k=40547ca278656533c55fe157f9211ac1324b1624c56eeb3967d6d658fef08db7&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823306.jpg?k=52552f150b8b9f0f6a7805a02550c765b2892be2d7ea3456284d41f654c810d9&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823301.jpg?k=5c853105b40f7a31345561a76ef5a89773822069e1643b47974bdaf154bae943&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823302.jpg?k=4d4b88ff33542df653fde0578510a5f62dad30586d4deed4dbbe8502f08a4022&o=&hp=1",
+      "https://cf.bstatic.com/xdata/images/hotel/max1024x768/755330642.jpg?k=65da5141de235473ac9bb01a93b6f1709cad7af59d5950c0f32653ed7e9402b4&o=&hp=1"
+    ],
+    "roomImages": [
+      {
+        "id": "755330613",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/755330613.jpg?k=d247659df54f43b2e6734d1a7c3c146daa21fef0cdd048305fbfb818bbebee92&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/755330613.jpg?k=d247659df54f43b2e6734d1a7c3c146daa21fef0cdd048305fbfb818bbebee92&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2025-09-28 15:56:09",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "755330641",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/755330641.jpg?k=c2b89fad004575fe840109493068c4de796fd033d914c26b89a9d4e6370a87df&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/755330641.jpg?k=c2b89fad004575fe840109493068c4de796fd033d914c26b89a9d4e6370a87df&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2025-09-28 15:56:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "755330642",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/755330642.jpg?k=65da5141de235473ac9bb01a93b6f1709cad7af59d5950c0f32653ed7e9402b4&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/755330642.jpg?k=65da5141de235473ac9bb01a93b6f1709cad7af59d5950c0f32653ed7e9402b4&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2025-09-28 15:56:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "755330643",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/755330643.jpg?k=3ad7d9342770a58ce88f5efb91e20ee2be60501aa748b04f0bb8d477d89efed1&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/755330643.jpg?k=3ad7d9342770a58ce88f5efb91e20ee2be60501aa748b04f0bb8d477d89efed1&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2025-09-28 15:56:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823251",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823251.jpg?k=130e20a8179b0183262122c8ce7ed27607408ef818f7ed86831c817197acb7c0&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823251.jpg?k=130e20a8179b0183262122c8ce7ed27607408ef818f7ed86831c817197acb7c0&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:09",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823255",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823255.jpg?k=88529e22301e23647a85b6d4ffa7319698693f66d46aeed116847955182312d8&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823255.jpg?k=88529e22301e23647a85b6d4ffa7319698693f66d46aeed116847955182312d8&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "portrait",
+        "created": "2026-02-08 13:46:09",
+        "grid": {
+          "photoWidth": 1066,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "819823259",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823259.jpg?k=7798240bc68fb8b803988ff89030f4e87c9057bd7071f26d8ada514b5da94e58&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823259.jpg?k=7798240bc68fb8b803988ff89030f4e87c9057bd7071f26d8ada514b5da94e58&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:10",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823261",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823261.jpg?k=0a0f4284ad3480febf629b2007e280600cb73dae7c61d97462710dde402a0671&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823261.jpg?k=0a0f4284ad3480febf629b2007e280600cb73dae7c61d97462710dde402a0671&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:10",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823263",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823263.jpg?k=3265ce36de1bae87986bd31c4e7fa2075657d84de50f092eaafaa8f340e14dbe&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823263.jpg?k=3265ce36de1bae87986bd31c4e7fa2075657d84de50f092eaafaa8f340e14dbe&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823265",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823265.jpg?k=30230408140a9b1605bee838cbec14279ff12abd0cedbd1963b0f2ba1cc545e4&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823265.jpg?k=30230408140a9b1605bee838cbec14279ff12abd0cedbd1963b0f2ba1cc545e4&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823266",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823266.jpg?k=5ab18780f2456b060e55dfbf19803f02de80d8ec8e2e0cf439fed783a252a45b&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823266.jpg?k=5ab18780f2456b060e55dfbf19803f02de80d8ec8e2e0cf439fed783a252a45b&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823268",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823268.jpg?k=f016b2c8e06ee306840bb8725945b91b684a0e7afccacab01c6f05272672a2e1&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823268.jpg?k=f016b2c8e06ee306840bb8725945b91b684a0e7afccacab01c6f05272672a2e1&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823269",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823269.jpg?k=487220bbcd8aec3c980b70c2443a2f7a4f6adfdf982256d69e2f26fa69e713db&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823269.jpg?k=487220bbcd8aec3c980b70c2443a2f7a4f6adfdf982256d69e2f26fa69e713db&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823270",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823270.jpg?k=2ce7687fa0839cc4d6ec9f46f3b7828a90bd714fdaa7c4cdf60bd3d089712149&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823270.jpg?k=2ce7687fa0839cc4d6ec9f46f3b7828a90bd714fdaa7c4cdf60bd3d089712149&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823271",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823271.jpg?k=43b5bf6eea19ac9eab7b8bc3167a2b7546efd5338467386bdc8aff06cc54a700&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823271.jpg?k=43b5bf6eea19ac9eab7b8bc3167a2b7546efd5338467386bdc8aff06cc54a700&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823272",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823272.jpg?k=34b62e9a58d741e3caf8b042eb462711823fe1cd2c9af274f613111b7e17bf14&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823272.jpg?k=34b62e9a58d741e3caf8b042eb462711823fe1cd2c9af274f613111b7e17bf14&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823273",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823273.jpg?k=08f2eb80b1dfd84edfda8d4ca30f704a15bebaf2416fdd506a52088501ad0b80&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823273.jpg?k=08f2eb80b1dfd84edfda8d4ca30f704a15bebaf2416fdd506a52088501ad0b80&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:11",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823274",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823274.jpg?k=f0a0c29a58af2c71fbb93c2f5bf67d2a692d8dd7484b22b47209ddd8ba004752&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823274.jpg?k=f0a0c29a58af2c71fbb93c2f5bf67d2a692d8dd7484b22b47209ddd8ba004752&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823277",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823277.jpg?k=9720d73c873583129156abf3d28bd4c724a6b728d43586b574b1c6d67525cb9c&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823277.jpg?k=9720d73c873583129156abf3d28bd4c724a6b728d43586b574b1c6d67525cb9c&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823278",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823278.jpg?k=742001641e5e37e5eb2eb7527c4189529d3f3eac64f564b7feb58ea8dcf0fcac&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823278.jpg?k=742001641e5e37e5eb2eb7527c4189529d3f3eac64f564b7feb58ea8dcf0fcac&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823279",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823279.jpg?k=8caa34d3c5a244c096961b55879ede25cbdd0cb3e2496aa3fa0fcf46cd953d96&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823279.jpg?k=8caa34d3c5a244c096961b55879ede25cbdd0cb3e2496aa3fa0fcf46cd953d96&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823280",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823280.jpg?k=78cb43d27326866aaf66e146cab6e8075fd628575e5a69bccb216f4ae74edec4&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823280.jpg?k=78cb43d27326866aaf66e146cab6e8075fd628575e5a69bccb216f4ae74edec4&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823281",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823281.jpg?k=d51387c33970e2632e8003695c927897d5eb8bcdb2acb835b968bad03a38aac3&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823281.jpg?k=d51387c33970e2632e8003695c927897d5eb8bcdb2acb835b968bad03a38aac3&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823283",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823283.jpg?k=7c850a86e70646b44adede03c76e9b8e8031dc65a10d3540939d759b9635b102&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823283.jpg?k=7c850a86e70646b44adede03c76e9b8e8031dc65a10d3540939d759b9635b102&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823284",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823284.jpg?k=f55ad8085fd63614117199778d13ad0c234cee44d14cc03837c7f272ece3896f&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823284.jpg?k=f55ad8085fd63614117199778d13ad0c234cee44d14cc03837c7f272ece3896f&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "portrait",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1066,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "819823285",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823285.jpg?k=a98aadde6548b4ffcc0b6d9bca480362728937a02c62d0c5eaaa59bef934a114&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823285.jpg?k=a98aadde6548b4ffcc0b6d9bca480362728937a02c62d0c5eaaa59bef934a114&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823286",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823286.jpg?k=cf4912e5229529bca82b93330738cb4893ec52c6aaf34ef224041a6d202f09d2&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823286.jpg?k=cf4912e5229529bca82b93330738cb4893ec52c6aaf34ef224041a6d202f09d2&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "portrait",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1066,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "819823289",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823289.jpg?k=b410c1d726dbdb82ea4289e80d4b951231cd62cf72d0e0c475c34245ac120b3d&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823289.jpg?k=b410c1d726dbdb82ea4289e80d4b951231cd62cf72d0e0c475c34245ac120b3d&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823291",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823291.jpg?k=bfc8beea40822b53ff941d5ede730578b417541449cdbd8f30d1ac8300be3747&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823291.jpg?k=bfc8beea40822b53ff941d5ede730578b417541449cdbd8f30d1ac8300be3747&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823292",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823292.jpg?k=d68b3fcdfb4dcce48aa92146e3eba3cbc2ddcc7843d18806a6bdc8aed6cc317a&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823292.jpg?k=d68b3fcdfb4dcce48aa92146e3eba3cbc2ddcc7843d18806a6bdc8aed6cc317a&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823294",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823294.jpg?k=7b799407b3b2c02bfb89ec276cbbb0fa576e01825e5cb6c1281c8072e216a4bf&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823294.jpg?k=7b799407b3b2c02bfb89ec276cbbb0fa576e01825e5cb6c1281c8072e216a4bf&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:12",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823295",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823295.jpg?k=379daedcc92b534937725b6a6ee2a36695ad5bb0675bb272b5b4ccb3e947baca&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823295.jpg?k=379daedcc92b534937725b6a6ee2a36695ad5bb0675bb272b5b4ccb3e947baca&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823296",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823296.jpg?k=eae39e8fa26c9992c774b8dc7583260ab74795d0f7dc0103f5bf0d54d543ba1f&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823296.jpg?k=eae39e8fa26c9992c774b8dc7583260ab74795d0f7dc0103f5bf0d54d543ba1f&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823297",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823297.jpg?k=edbb69e63ee5e49b124eedd17e65475856135139c13a85e67eb63930533a84ef&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823297.jpg?k=edbb69e63ee5e49b124eedd17e65475856135139c13a85e67eb63930533a84ef&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "portrait",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1066,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "819823298",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823298.jpg?k=1c8563d93df7746e0a203671c95772a7f3eaadfceb0ae95bcb6818f349b96a3b&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823298.jpg?k=1c8563d93df7746e0a203671c95772a7f3eaadfceb0ae95bcb6818f349b96a3b&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "portrait",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1066,
+          "photoHeight": 1600
+        }
+      },
+      {
+        "id": "819823300",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823300.jpg?k=e30c2fd4dc3bece6e3b15050f3eca1000e9deb4306947a15de613e8086a922d0&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823300.jpg?k=e30c2fd4dc3bece6e3b15050f3eca1000e9deb4306947a15de613e8086a922d0&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823301",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823301.jpg?k=5c853105b40f7a31345561a76ef5a89773822069e1643b47974bdaf154bae943&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823301.jpg?k=5c853105b40f7a31345561a76ef5a89773822069e1643b47974bdaf154bae943&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823302",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823302.jpg?k=4d4b88ff33542df653fde0578510a5f62dad30586d4deed4dbbe8502f08a4022&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823302.jpg?k=4d4b88ff33542df653fde0578510a5f62dad30586d4deed4dbbe8502f08a4022&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823303",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823303.jpg?k=5443bde69a11662b09bbdb21a80fcb074276a54a08a119803b83f9006e292562&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823303.jpg?k=5443bde69a11662b09bbdb21a80fcb074276a54a08a119803b83f9006e292562&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823304",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823304.jpg?k=40547ca278656533c55fe157f9211ac1324b1624c56eeb3967d6d658fef08db7&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823304.jpg?k=40547ca278656533c55fe157f9211ac1324b1624c56eeb3967d6d658fef08db7&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823306",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823306.jpg?k=52552f150b8b9f0f6a7805a02550c765b2892be2d7ea3456284d41f654c810d9&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823306.jpg?k=52552f150b8b9f0f6a7805a02550c765b2892be2d7ea3456284d41f654c810d9&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      },
+      {
+        "id": "819823307",
+        "thumbUrl": "https://cf.bstatic.com/xdata/images/hotel/max200/819823307.jpg?k=5b89f49c4ffe43daa08ed967e758bd06a943a8e3edb4af870f50a2e348970238&o=&hp=1",
+        "largeUrl": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/819823307.jpg?k=5b89f49c4ffe43daa08ed967e758bd06a943a8e3edb4af870f50a2e348970238&o=&hp=1",
+        "associatedRoomIds": [
+          "1501194001"
+        ],
+        "orientation": "landscape",
+        "created": "2026-02-08 13:46:13",
+        "grid": {
+          "photoWidth": 1600,
+          "photoHeight": 1066
+        }
+      }
+    ],
+    "categoryReviews": [
+      {
+        "title": "Staff",
+        "score": 8.2
+      },
+      {
+        "title": "Facilities",
+        "score": 8.8
+      },
+      {
+        "title": "Cleanliness",
+        "score": 8.5
+      },
+      {
+        "title": "Comfort",
+        "score": 8.8
+      },
+      {
+        "title": "Value for money",
+        "score": 9
+      },
+      {
+        "title": "Location",
+        "score": 9.3
+      }
+    ],
+    "hotelChain": null,
+    "licenseInfo": null,
+    "hostInfo": null,
+    "traderInfo": null,
+    "breadcrumbs": [
+      {
+        "name": "Home",
+        "fullName": "Booking.com",
+        "link": "https://www.booking.com/index.en-gb.html?aid=304142&label=gen173nr-10CAsoEUIQd2Fsa2VyLWFwYXJ0bWVudEgJWARokwKIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Asfw0s8GwAIB0gIkOWU4ZWUyYzYtZTI4My00M2NmLTk0NzctYTZiMzFkNGZlM2Vl2AIB4AIB",
+        "altLink": null
+      },
+      {
+        "name": "Hotels",
+        "fullName": "Hotels on Booking.com",
+        "link": "https://www.booking.com/hotel/index.en-gb.html?aid=304142&label=gen173nr-10CAsoEUIQd2Fsa2VyLWFwYXJ0bWVudEgJWARokwKIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Asfw0s8GwAIB0gIkOWU4ZWUyYzYtZTI4My00M2NmLTk0NzctYTZiMzFkNGZlM2Vl2AIB4AIB",
+        "altLink": null
+      },
+      {
+        "name": "All apartments",
+        "fullName": "Apartments on Booking.com",
+        "link": "https://www.booking.com/apartments/index.en-gb.html?aid=304142&label=gen173nr-10CAsoEUIQd2Fsa2VyLWFwYXJ0bWVudEgJWARokwKIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Asfw0s8GwAIB0gIkOWU4ZWUyYzYtZTI4My00M2NmLTk0NzctYTZiMzFkNGZlM2Vl2AIB4AIB",
+        "altLink": null
+      },
+      {
+        "name": "Azerbaijan",
+        "fullName": "Apartments in Azerbaijan",
+        "link": "https://www.booking.com/searchresults.en-gb.html?aid=304142&label=gen173nr-10CAsoEUIQd2Fsa2VyLWFwYXJ0bWVudEgJWARokwKIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Asfw0s8GwAIB0gIkOWU4ZWUyYzYtZTI4My00M2NmLTk0NzctYTZiMzFkNGZlM2Vl2AIB4AIB&dest_id=15&dest_type=country&nflt=sth%3D1",
+        "altLink": "https://www.booking.com/country/az.html"
+      },
+      {
+        "name": "Baku",
+        "fullName": "Apartments in Baku",
+        "link": "https://www.booking.com/searchresults.en-gb.html?aid=304142&label=gen173nr-10CAsoEUIQd2Fsa2VyLWFwYXJ0bWVudEgJWARokwKIAQGYATO4AQfIAQzYAQPoAQH4AQGIAgGoAgG4Asfw0s8GwAIB0gIkOWU4ZWUyYzYtZTI4My00M2NmLTk0NzctYTZiMzFkNGZlM2Vl2AIB4AIB&dest_id=-2705195&dest_type=city&nflt=sth%3D1",
+        "altLink": null
+      },
+      {
+        "name": "WALKER Apartment (Apartment) (Azerbaijan) deals",
+        "fullName": "WALKER Apartment (Apartment) (Azerbaijan) deals",
+        "link": null,
+        "altLink": null
+      }
+    ],
+    "hotelId": 15011940,
+    "facilities": [
+      {
+        "name": "Great for your stay",
+        "facilities": [
+          {
+            "name": "Parking",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 2
+          },
+          {
+            "name": "Balcony",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 17
+          },
+          {
+            "name": "Pets allowed",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Private bathroom",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 38
+          },
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 11
+          },
+          {
+            "name": "View",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 81
+          },
+          {
+            "name": "Free WiFi",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Family rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 28
+          },
+          {
+            "name": "Kitchen",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 45
+          },
+          {
+            "name": "Airport shuttle (free)",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          }
+        ],
+        "overview": null,
+        "id": null
+      },
+      {
+        "name": "Parking",
+        "overview": "Public parking is possible at a location nearby (reservation is not needed) and costs AZN 1 per hour.",
+        "id": 16,
+        "facilities": [
+          {
+            "name": "Parking",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": true
+            },
+            "id": 2
+          }
+        ]
+      },
+      {
+        "name": "Internet",
+        "overview": "WiFi is available in all areas and is free of charge.",
+        "id": 11,
+        "facilities": [
+          {
+            "name": "Internet services",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 47
+          }
+        ]
+      },
+      {
+        "name": "Kitchen",
+        "overview": null,
+        "id": 12,
+        "facilities": [
+          {
+            "name": "Dining table",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 126
+          },
+          {
+            "name": "Oven",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 96
+          },
+          {
+            "name": "Kitchenware",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 89
+          },
+          {
+            "name": "Electric kettle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 86
+          },
+          {
+            "name": "Kitchen",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 45
+          },
+          {
+            "name": "Washing machine",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 34
+          },
+          {
+            "name": "Microwave",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 32
+          },
+          {
+            "name": "Refrigerator",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 22
+          }
+        ]
+      },
+      {
+        "name": "Bedroom",
+        "overview": null,
+        "id": 17,
+        "facilities": [
+          {
+            "name": "Linen",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 125
+          },
+          {
+            "name": "Wardrobe or closet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 95
+          },
+          {
+            "name": "Dressing room",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 41
+          }
+        ]
+      },
+      {
+        "name": "Private bathroom",
+        "overview": null,
+        "id": 5,
+        "facilities": [
+          {
+            "name": "Toilet paper",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 141
+          },
+          {
+            "name": "Towels",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 124
+          },
+          {
+            "name": "Bath or shower",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 69
+          },
+          {
+            "name": "Slippers",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 43
+          },
+          {
+            "name": "Private bathroom",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 38
+          },
+          {
+            "name": "Toilet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 31
+          },
+          {
+            "name": "Hairdryer",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 12
+          },
+          {
+            "name": "Shower",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 4
+          }
+        ]
+      },
+      {
+        "name": "Living Area",
+        "overview": null,
+        "id": 15,
+        "facilities": [
+          {
+            "name": "Dining area",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 85
+          },
+          {
+            "name": "Desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 23
+          }
+        ]
+      },
+      {
+        "name": "Media & Technology",
+        "overview": null,
+        "id": 6,
+        "facilities": [
+          {
+            "name": "Streaming service (like Netflix)",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 199
+          },
+          {
+            "name": "Flat-screen TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 75
+          },
+          {
+            "name": "Cable channels",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 68
+          },
+          {
+            "name": "Satellite channels",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 44
+          },
+          {
+            "name": "CD player",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 29
+          },
+          {
+            "name": "DVD player",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 28
+          },
+          {
+            "name": "Radio",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 21
+          },
+          {
+            "name": "TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 8
+          }
+        ]
+      },
+      {
+        "name": "Room amenities",
+        "overview": null,
+        "id": 4,
+        "facilities": [
+          {
+            "name": "Sofa bed",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 146
+          },
+          {
+            "name": "Drying rack for clothing",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 140
+          },
+          {
+            "name": "Clothes rack",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 138
+          },
+          {
+            "name": "Private entrance",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 76
+          },
+          {
+            "name": "Ironing facilities",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 25
+          },
+          {
+            "name": "Iron",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 15
+          }
+        ]
+      },
+      {
+        "name": "Pets",
+        "overview": "Pets are allowed. No extra charges.",
+        "id": -2,
+        "facilities": []
+      },
+      {
+        "name": "Accessibility",
+        "overview": null,
+        "id": 19,
+        "facilities": [
+          {
+            "name": "Hearing accessible",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 232
+          },
+          {
+            "name": "Entire unit wheelchair accessible",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 134
+          },
+          {
+            "name": "Entire unit located on ground floor",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 131
+          }
+        ]
+      },
+      {
+        "name": "Outdoors",
+        "overview": null,
+        "id": 13,
+        "facilities": [
+          {
+            "name": "Patio",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 37
+          },
+          {
+            "name": "Balcony",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 17
+          }
+        ]
+      },
+      {
+        "name": "Food & Drink",
+        "overview": null,
+        "id": 7,
+        "facilities": [
+          {
+            "name": "Tea/Coffee maker",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 1
+          }
+        ]
+      },
+      {
+        "name": "Outdoor & View",
+        "overview": null,
+        "id": 9,
+        "facilities": [
+          {
+            "name": "City view",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 121
+          },
+          {
+            "name": "View",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 81
+          }
+        ]
+      },
+      {
+        "name": "Building characteristics",
+        "overview": null,
+        "id": 20,
+        "facilities": [
+          {
+            "name": "Private apartment in building",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 137
+          },
+          {
+            "name": "Detached",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 135
+          }
+        ]
+      },
+      {
+        "name": "Transport",
+        "overview": null,
+        "id": 22,
+        "facilities": [
+          {
+            "name": "Shuttle service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 304
+          },
+          {
+            "name": "Airport shuttle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 17
+          }
+        ]
+      },
+      {
+        "name": "Reception services",
+        "overview": null,
+        "id": 23,
+        "facilities": [
+          {
+            "name": "Invoice provided",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 465
+          },
+          {
+            "name": "Private check-in/check-out",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 127
+          },
+          {
+            "name": "Luggage storage",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 91
+          },
+          {
+            "name": "Currency exchange",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 53
+          },
+          {
+            "name": "Express check-in/check-out",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 49
+          },
+          {
+            "name": "24-hour front desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 8
+          }
+        ]
+      },
+      {
+        "name": "Shops",
+        "overview": null,
+        "id": 28,
+        "facilities": [
+          {
+            "name": "Minimarket on site",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 145
+          },
+          {
+            "name": "Barber/beauty shop",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 27
+          }
+        ]
+      },
+      {
+        "name": "Miscellaneous",
+        "overview": null,
+        "id": 29,
+        "facilities": [
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 109
+          },
+          {
+            "name": "Non-smoking throughout",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 108
+          },
+          {
+            "name": "Heating",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 80
+          },
+          {
+            "name": "Lift",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 48
+          },
+          {
+            "name": "Family rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 28
+          },
+          {
+            "name": "Non-smoking rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 16
+          }
+        ]
+      },
+      {
+        "name": "Safety & security",
+        "overview": null,
+        "id": 34,
+        "facilities": [
+          {
+            "name": "Fire extinguishers",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 425
+          },
+          {
+            "name": "CCTV outside property",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 424
+          },
+          {
+            "name": "CCTV in common areas",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 423
+          },
+          {
+            "name": "Smoke alarms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 422
+          },
+          {
+            "name": "Security alarm",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 421
+          },
+          {
+            "name": "Key access",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 419
+          },
+          {
+            "name": "Carbon monoxide detector",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 211
+          }
+        ]
+      }
+    ],
+    "timeOfScrapeISO": "2026-05-01T14:27:37.197Z"
+  },
+  "_review_summary": null
+}

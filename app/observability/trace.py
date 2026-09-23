@@ -24,6 +24,8 @@ class LLMCallTrace:
     estimated_cost_usd: float | None = None
     success: bool = True
     error: str | None = None
+    latency_ms: float | None = None
+    parse_failure: bool = False
 
 
 @dataclass
@@ -43,6 +45,17 @@ class RequestTrace:
     steps: list[StepTrace] = field(default_factory=list)
     llm_calls: list[LLMCallTrace] = field(default_factory=list)
     external_calls: list[ExternalCallTrace] = field(default_factory=list)
+
+    # Soft-evidence shadow pipeline (Phase B) - internal/telemetry only,
+    # never part of the public NormalizedSearchResponse. Typed loosely
+    # (plain dicts, not the pydantic domain schema types) on purpose:
+    # this observability module stays independent of app.schemas.soft_evidence -
+    # callers pass already-serialized data (.model_dump(mode="json")),
+    # the same pattern already used for constraint_resolution_results
+    # elsewhere in the codebase.
+    soft_evidence_summary: dict[str, Any] | None = None
+    soft_evidence_shadow_detail: list[dict[str, Any]] | None = None
+    soft_evidence_claim_assignments: list[dict[str, Any]] | None = None
 
     @contextmanager
     def step(self, name: str, **metadata: Any):
@@ -64,6 +77,17 @@ class RequestTrace:
 
     def add_external_call(self, call: ExternalCallTrace) -> None:
         self.external_calls.append(call)
+
+    def set_soft_evidence_shadow_data(
+        self,
+        *,
+        summary: dict[str, Any] | None = None,
+        shadow_detail: list[dict[str, Any]] | None = None,
+        claim_assignments: list[dict[str, Any]] | None = None,
+    ) -> None:
+        self.soft_evidence_summary = summary
+        self.soft_evidence_shadow_detail = shadow_detail
+        self.soft_evidence_claim_assignments = claim_assignments
 
     def summary(self) -> dict[str, Any]:
         total_latency_ms = sum(step.latency_ms for step in self.steps)
@@ -99,6 +123,12 @@ class RequestTrace:
             "scenario": {
                 "used_apify": any(c.provider == "apify" for c in self.external_calls),
                 "used_fallback": any(c.step == "constraint_textual_fallback" for c in self.llm_calls),
+                "used_semantic_evidence_verifier": any(
+                    c.step == "semantic_evidence_verifier" for c in self.llm_calls
+                ),
+                "used_soft_evidence_embedding": any(
+                    c.provider == "gemini_embedding" for c in self.external_calls
+                ),
                 "used_intent_extraction": any(
                         c.step in {
                             "initial_intent_extraction",
@@ -131,4 +161,7 @@ class RequestTrace:
                 "calls_count": len(self.external_calls),
                 "calls": [call.__dict__ for call in self.external_calls],
             },
+            "soft_evidence_summary": self.soft_evidence_summary,
+            "soft_evidence_shadow_detail": self.soft_evidence_shadow_detail,
+            "soft_evidence_claim_assignments": self.soft_evidence_claim_assignments,
         }

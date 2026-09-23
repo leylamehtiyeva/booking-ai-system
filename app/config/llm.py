@@ -9,6 +9,8 @@ from pydantic import BaseModel, ConfigDict, Field
 DEFAULT_GEMINI_MODEL = "gemini-2.5-flash"
 DEFAULT_LLM_PROFILE_NAME = "gemini_default"
 
+DEFAULT_SEMANTIC_VERIFIER_MODEL = "gemini-2.5-flash"
+
 DEFAULT_GROQ_MODEL = "groq/openai/gpt-oss-20b"
 GROQ_GPT_OSS_20B_PROFILE_NAME = "groq_gpt_oss_20b"
 
@@ -64,6 +66,24 @@ def get_gemini_model() -> str:
         return model.strip().strip('"')
 
     return DEFAULT_GEMINI_MODEL
+
+
+def get_semantic_verifier_model() -> str:
+    """
+    Return the configured model for the semantic evidence verifier
+    (app.logic.semantic_evidence_verification).
+
+    Deliberately independent of get_gemini_model()/GEMINI_MODEL: the
+    verifier must run the exact model family validated in
+    evaluation/experiments/verifier_comparison, regardless of what
+    GEMINI_MODEL is set to for unrelated LLM usage elsewhere in the app.
+    """
+    model = os.getenv("SEMANTIC_VERIFIER_MODEL")
+
+    if model:
+        return model.strip().strip('"')
+
+    return DEFAULT_SEMANTIC_VERIFIER_MODEL
 
 
 def get_gemini_fallback_models() -> list[str]:

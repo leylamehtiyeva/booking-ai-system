@@ -1,0 +1,3044 @@
+{
+  "id": "14498961",
+  "city": "Baku",
+  "address": "8 Mirzə İbrahimov, Nasimi, AZ1005 Baku, Azerbaijan",
+  "name": "The Nest Hotel Baku",
+  "url": "https://www.booking.com/hotel/az/the-nest-baku.en-gb.html?checkout=2026-09-04&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-08-21&selected_currency=USD&group_adults=1&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+  "price": 1431.064647369337,
+  "currency": "US$",
+  "rating": 8.8,
+  "stars": null,
+  "property_type": "hotel",
+  "room_type": null,
+  "max_occupancy": null,
+  "description": "Sign in to unlock the members-only price for your selected dates at The Nest Hotel Baku\n\n\nGenius discounts at this property are subject to book dates, stay dates and other available deals.\n\nAbout this propertyComfortable Accommodations: The Nest Hotel Baku in Baku offers family rooms with air-conditioning, private bathrooms, and modern amenities. Each room includes a work desk, minibar, and free WiFi.\n\nConvenient Facilities: Guests benefit from private check-in and check-out, a 24-hour front desk, daily housekeeping, and a tour desk. Additional services include bike hire, room service, and luggage storage.\n\nDining Options: A variety of breakfast options are available, including continental, buffet, vegan, and halal. Breakfast includes local specialities, fresh pastries, pancakes, cheese, and juice.\n\nPrime Location: Located 2 km from Baku Railway Station and less than 1 km from Maiden Tower, the hotel is near attractions such as the Azerbaijan Carpet Museum and Palace of The Shirvanshahs. Heydar Aliyev International Airport is 24 km away.Solo travellers particularly like the location — they rated it 9.2 for a one-person stay.Distance in property description is calculated using © OpenStreetMap",
+  "fine_print": "Guests are required to show a photo identification and credit card upon check-in. Please note that all Special Requests are subject to availability and additional charges may apply.Please inform The Nest Hotel Baku in advance of your expected arrival time. You can use the Special Requests box when booking, or contact the property directly with the contact details provided in your confirmation.This property will not accommodate hen, stag or similar parties.Guests under the age of 18 can only check in with a parent or official guardian.",
+  "policies": [
+    {
+      "title": "Check-in",
+      "content": "From 14:00Guests are required to show a photo identification and credit card upon check-inYou'll need to let the property know in advance what time you'll arrive."
+    },
+    {
+      "title": "Check-out",
+      "content": "Until 12:00"
+    },
+    {
+      "title": "Cancellation/ prepayment",
+      "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+    },
+    {
+      "title": "Children and beds",
+      "content": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 6 years Cot always available The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property."
+    },
+    {
+      "title": "No age restriction",
+      "content": "There is no age requirement for check-in"
+    },
+    {
+      "title": "Pets",
+      "content": "Pets are not allowed."
+    },
+    {
+      "title": "Groups",
+      "content": "When booking more than 3 rooms, different policies and additional supplements may apply."
+    },
+    {
+      "title": "Accepted payment methods",
+      "content": "Cash"
+    },
+    {
+      "title": "Parties",
+      "content": "Parties/events are not allowed"
+    }
+  ],
+  "highlights": [
+    {
+      "header": "Perfect for a 2-week stay!",
+      "contents": [
+        "Situated in the best rated area in Baku, this hotel has an excellent location score of 9.4",
+        "Popular with solo travellers"
+      ]
+    },
+    {
+      "header": "Breakfast info",
+      "contents": [
+        "Continental, Vegan, Halal, Buffet"
+      ]
+    },
+    {
+      "header": "Rooms with:",
+      "contents": [
+        "Inner courtyard view",
+        "City view",
+        "Quiet street view"
+      ]
+    }
+  ],
+  "facilities": [
+    {
+      "name": "Parking",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private bathroom",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Free WiFi",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Family rooms",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Room service",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Flat-screen TV",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking rooms",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tour desk",
+      "category": "Great for your stay",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Toilet paper",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Towels",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bidet",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bath or shower",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Slippers",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private bathroom",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Toilet",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Hairdryer",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shower",
+      "category": "Bathroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Linen",
+      "category": "Bedroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Wardrobe or closet",
+      "category": "Bedroom",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Electric kettle",
+      "category": "Kitchen",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Socket near the bed",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Clothes rack",
+      "category": "Room amenities",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Bicycle rental",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Walking tours",
+      "category": "Activities",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Desk",
+      "category": "Living Area",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Flat-screen TV",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Cable channels",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Satellite channels",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Telephone",
+      "category": "Media & Technology",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Minibar",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tea/Coffee maker",
+      "category": "Food & Drink",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Internet services",
+      "category": "Internet",
+      "overview": "WiFi is available in all areas and is free of charge.",
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Street parking",
+      "category": "Parking",
+      "overview": "Public parking is possible at a location nearby (reservation is not possible) and costs AZN 1 per hour.",
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Invoice provided",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Private check-in/check-out",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Luggage storage",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Tour desk",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Currency exchange",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Express check-in/check-out",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "24-hour front desk",
+      "category": "Reception services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Family rooms",
+      "category": "Family friendly",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Daily housekeeping",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Ironing service",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Laundry",
+      "category": "Cleaning services",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Fire extinguishers",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "CCTV outside property",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "CCTV in common areas",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Key access",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Safety deposit box",
+      "category": "Safety & security",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Shuttle service",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Carbon monoxide detector",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Grocery deliveries",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Hypoallergenic",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Designated smoking area",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Air conditioning",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking throughout",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Mosquito net",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Wake-up service",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Heating",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Soundproofing",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Car hire",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Carpeted",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Soundproof rooms",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Ironing facilities",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Airport shuttle",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": true,
+      "is_off_site": false
+    },
+    {
+      "name": "Non-smoking rooms",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Iron",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Wake up service/Alarm clock",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    },
+    {
+      "name": "Room service",
+      "category": "General",
+      "overview": null,
+      "requires_additional_charge": false,
+      "is_off_site": false
+    }
+  ],
+  "rooms": [
+    {
+      "name": "Budget Double Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "1 single bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "172 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "View",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1431.064647369337,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "non_refundable",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Non-refundable Lower price for fixed dates",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1450.9483733070049,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1629.823719307884,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "special_condition",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Partially refundable",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1716.444456599087,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation before 19 August 2026",
+            "Pay the property before arrival",
+            "Fully refundable during free cancellation"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1987.589425267863,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1590.071222567228,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "non_refundable",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Non-refundable Lower price for fixed dates",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1612.156243632302,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1810.914492041434,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "special_condition",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Partially refundable",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1907.1605334761189,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation before 19 August 2026",
+            "Pay the property before arrival",
+            "Fully refundable during free cancellation"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2208.432694742069,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Double Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "1 double bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "215 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1596.6565645794421,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "non_refundable",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Non-refundable Lower price for fixed dates",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1618.870226722029,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1818.414585803704,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "special_condition",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Partially refundable",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1946.433537691557,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation before 19 August 2026",
+            "Pay the property before arrival",
+            "Fully refundable during free cancellation"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2217.578506360333,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1774.0624050882582,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "non_refundable",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Non-refundable Lower price for fixed dates",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1798.7029107144929,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2020.46004958582,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "special_condition",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Partially refundable",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2162.703930768406,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation before 19 August 2026",
+            "Pay the property before arrival",
+            "Fully refundable during free cancellation"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2463.976092034355,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Twin Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "2 single beds"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "210 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Inner courtyard view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 1659.4070694293368,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "non_refundable",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Non-refundable Lower price for fixed dates",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1889.880686915437,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "special_condition",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Partially refundable",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2033.587265015763,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation before 19 August 2026",
+            "Pay the property before arrival",
+            "Fully refundable during free cancellation"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2304.732233684539,
+          "currency": "US$",
+          "persons": 1,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1843.785939888807,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "non_refundable",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Non-refundable Lower price for fixed dates",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 1869.393753596407,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2099.867312258987,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "special_condition",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Partially refundable",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2259.54138596523,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation before 19 August 2026",
+            "Pay the property before arrival",
+            "Fully refundable during free cancellation"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2560.813606054709,
+          "currency": "US$",
+          "persons": 2,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Triple Room",
+      "available": true,
+      "persons": null,
+      "bed_types": [
+        {
+          "room": null,
+          "beds": [
+            "2 single beds",
+            "1 sofa bed"
+          ]
+        }
+      ],
+      "facilities": [
+        {
+          "name": "226 feet²",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "City view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Inner courtyard view",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Air conditioning",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Ensuite bathroom",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Flat-screen TV",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Soundproofing",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Minibar",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        },
+        {
+          "name": "Free WiFi",
+          "category": null,
+          "overview": null,
+          "requires_additional_charge": null,
+          "is_off_site": null
+        }
+      ],
+      "options": [
+        {
+          "name": null,
+          "price": 2342.499013564242,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "non_refundable",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Non-refundable Lower price for fixed dates",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2375.0630197348532,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        },
+        {
+          "name": null,
+          "price": 2667.8460742716943,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "special_condition",
+          "free_cancellation": false,
+          "choices": [
+            "Very good breakfast included",
+            "Partially refundable",
+            "Pay the property before arrival"
+          ]
+        },
+        {
+          "name": null,
+          "price": 3253.47060707452,
+          "currency": "US$",
+          "persons": 3,
+          "cancellation_type": "free_cancellation",
+          "free_cancellation": true,
+          "choices": [
+            "Very good breakfast included",
+            "Free cancellation anytime",
+            "No prepayment needed – pay at the property",
+            "No credit card needed"
+          ]
+        }
+      ]
+    }
+  ],
+  "raw": {
+    "order": 15,
+    "url": "https://www.booking.com/hotel/az/the-nest-baku.en-gb.html?checkout=2026-09-04&lang=en-gb&group_children=0&soz=1&explicit_lang_change=1&checkin=2026-08-21&selected_currency=USD&group_adults=1&no_rooms=1&lang_changed=1&explicit_curr_change=1",
+    "startUrlOrQuery": "Baku",
+    "name": "The Nest Hotel Baku",
+    "type": "hotel",
+    "description": "Sign in to unlock the members-only price for your selected dates at The Nest Hotel Baku\n\n\nGenius discounts at this property are subject to book dates, stay dates and other available deals.\n\nAbout this propertyComfortable Accommodations: The Nest Hotel Baku in Baku offers family rooms with air-conditioning, private bathrooms, and modern amenities. Each room includes a work desk, minibar, and free WiFi.\n\nConvenient Facilities: Guests benefit from private check-in and check-out, a 24-hour front desk, daily housekeeping, and a tour desk. Additional services include bike hire, room service, and luggage storage.\n\nDining Options: A variety of breakfast options are available, including continental, buffet, vegan, and halal. Breakfast includes local specialities, fresh pastries, pancakes, cheese, and juice.\n\nPrime Location: Located 2 km from Baku Railway Station and less than 1 km from Maiden Tower, the hotel is near attractions such as the Azerbaijan Carpet Museum and Palace of The Shirvanshahs. Heydar Aliyev International Airport is 24 km away.Solo travellers particularly like the location — they rated it 9.2 for a one-person stay.Distance in property description is calculated using © OpenStreetMap",
+    "stars": null,
+    "price": 1431.064647369337,
+    "currency": "US$",
+    "rating": 8.8,
+    "ratingLabel": "Fabulous",
+    "reviews": 131,
+    "breakfast": "Continental, Vegan, Halal, Buffet",
+    "checkIn": "From 14:00Guests are required to show a photo identification and credit card upon check-inYou'll need to let the property know in advance what time you'll arrive.",
+    "checkOut": "Until 12:00",
+    "checkInDate": "2026-08-21",
+    "checkOutDate": "2026-09-04",
+    "location": {
+      "lat": "40.3725476711143",
+      "lng": "49.8357300210723"
+    },
+    "address": {
+      "full": "8 Mirzə İbrahimov, Nasimi, AZ1005 Baku, Azerbaijan",
+      "country": "az",
+      "city": "Baku"
+    },
+    "image": "https://cf.bstatic.com/xdata/images/hotel/max1024x768/776303054.jpg?k=684269ec7a9cfd9487d01bb66bd764c3aba6febf7d34e6c5c3a11186fe339ebf&o=",
+    "rooms": [
+      {
+        "available": true,
+        "id": 1449896103,
+        "url": "https://www.booking.com/hotel/az/the-nest-baku.en-gb.html#room_1449896103",
+        "roomType": "Budget Double Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "1 single bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "172 feet²",
+          "View",
+          "Air conditioning",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 1,
+        "options": [
+          {
+            "price": 1431.064647369337,
+            "displayedPrice": 583.459650437347,
+            "excludedTaxesPrice": 105.022765314017,
+            "discount": {
+              "discountedPrice": 688.482415751364,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896103_440824544_1_1_0_1463262",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "non_refundable",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Non-refundable Lower price for fixed dates",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 1450.9483733070049,
+            "displayedPrice": 591.565297543106,
+            "excludedTaxesPrice": 106.481765322465,
+            "discount": {
+              "discountedPrice": 698.047062865571,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896103_439750654_1_1_0_1455818",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          },
+          {
+            "price": 1629.823719307884,
+            "displayedPrice": 664.496533259532,
+            "excludedTaxesPrice": 119.609353633774,
+            "discount": {
+              "discountedPrice": 784.1058868933061,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896103_439751248_1_1_0_1242568",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "special_condition",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Partially refundable",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 1716.444456599087,
+            "displayedPrice": 699.810592287547,
+            "excludedTaxesPrice": 125.965883082347,
+            "discount": {
+              "discountedPrice": 825.776475369894,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896103_439127059_1_1_0_1455818",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation before 19 August 2026",
+              "Pay the property before arrival",
+              "Fully refundable during free cancellation"
+            ]
+          },
+          {
+            "price": 1987.589425267863,
+            "displayedPrice": 810.358945868854,
+            "excludedTaxesPrice": 145.864589079923,
+            "discount": {
+              "discountedPrice": 956.223534948777,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896103_439750654_1_1_0_1242568",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          },
+          {
+            "price": 1590.071222567228,
+            "displayedPrice": 648.285180224484,
+            "excludedTaxesPrice": 116.691353616878,
+            "discount": {
+              "discountedPrice": 764.976533841362,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896103_440824544_2_1_0_1463262",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "non_refundable",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Non-refundable Lower price for fixed dates",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 1612.156243632302,
+            "displayedPrice": 657.293121453115,
+            "excludedTaxesPrice": 118.312765390972,
+            "discount": {
+              "discountedPrice": 775.605886844087,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896103_439750654_2_1_0_1455818",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          },
+          {
+            "price": 1810.914492041434,
+            "displayedPrice": 738.325063098801,
+            "excludedTaxesPrice": 132.898530181314,
+            "discount": {
+              "discountedPrice": 871.223593280115,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896103_439751248_2_1_0_1242568",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "special_condition",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Partially refundable",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 1907.1605334761189,
+            "displayedPrice": 777.56729862015,
+            "excludedTaxesPrice": 139.962118457509,
+            "discount": {
+              "discountedPrice": 917.529417077659,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896103_439127059_2_1_0_1455818",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation before 19 August 2026",
+              "Pay the property before arrival",
+              "Fully refundable during free cancellation"
+            ]
+          },
+          {
+            "price": 2208.432694742069,
+            "displayedPrice": 900.398828743171,
+            "excludedTaxesPrice": 162.071765644359,
+            "discount": {
+              "discountedPrice": 1062.47059438753,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896103_439750654_2_1_0_1242568",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1449896101,
+        "url": "https://www.booking.com/hotel/az/the-nest-baku.en-gb.html#room_1449896101",
+        "roomType": "Double Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "1 double bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "215 feet²",
+          "City view",
+          "Air conditioning",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 1,
+        "options": [
+          {
+            "price": 1596.6565645794421,
+            "displayedPrice": 650.972121416513,
+            "excludedTaxesPrice": 117.175000678502,
+            "discount": {
+              "discountedPrice": 768.147122095015,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896101_440824544_1_1_0_1463262",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "non_refundable",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Non-refundable Lower price for fixed dates",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 1618.870226722029,
+            "displayedPrice": 660.029944998374,
+            "excludedTaxesPrice": 118.805412452649,
+            "discount": {
+              "discountedPrice": 778.835357451023,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896101_439750654_1_1_0_1455818",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          },
+          {
+            "price": 1818.414585803704,
+            "displayedPrice": 741.385827822406,
+            "excludedTaxesPrice": 133.449471360974,
+            "discount": {
+              "discountedPrice": 874.83529918338,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896101_439751248_1_1_0_1242568",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "special_condition",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Partially refundable",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 1946.433537691557,
+            "displayedPrice": 793.579298712868,
+            "excludedTaxesPrice": 142.844294944787,
+            "discount": {
+              "discountedPrice": 936.4235936576549,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896101_439127059_1_1_0_1455818",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation before 19 August 2026",
+              "Pay the property before arrival",
+              "Fully refundable during free cancellation"
+            ]
+          },
+          {
+            "price": 2217.578506360333,
+            "displayedPrice": 904.127652294175,
+            "excludedTaxesPrice": 162.743000942363,
+            "discount": {
+              "discountedPrice": 1066.8706532365381,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896101_439750654_1_1_0_1242568",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          },
+          {
+            "price": 1774.0624050882582,
+            "displayedPrice": 723.300121835328,
+            "excludedTaxesPrice": 130.194000753888,
+            "discount": {
+              "discountedPrice": 853.494122589216,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896101_440824544_2_1_0_1463262",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "non_refundable",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Non-refundable Lower price for fixed dates",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 1798.7029107144929,
+            "displayedPrice": 733.349945422934,
+            "excludedTaxesPrice": 132.003000764363,
+            "discount": {
+              "discountedPrice": 865.352946187297,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896101_439750654_2_1_0_1455818",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          },
+          {
+            "price": 2020.46004958582,
+            "displayedPrice": 823.758710652328,
+            "excludedTaxesPrice": 148.27658909389,
+            "discount": {
+              "discountedPrice": 972.035299746218,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896101_439751248_2_1_0_1242568",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "special_condition",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Partially refundable",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 2162.703930768406,
+            "displayedPrice": 881.754769811683,
+            "excludedTaxesPrice": 158.715883271986,
+            "discount": {
+              "discountedPrice": 1040.470653083669,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896101_439127059_2_1_0_1455818",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation before 19 August 2026",
+              "Pay the property before arrival",
+              "Fully refundable during free cancellation"
+            ]
+          },
+          {
+            "price": 2463.976092034355,
+            "displayedPrice": 1004.58624111117,
+            "excludedTaxesPrice": 180.825530458835,
+            "discount": {
+              "discountedPrice": 1185.411771570005,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896101_439750654_2_1_0_1242568",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1449896102,
+        "url": "https://www.booking.com/hotel/az/the-nest-baku.en-gb.html#room_1449896102",
+        "roomType": "Twin Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "2 single beds"
+            ]
+          }
+        ],
+        "facilities": [
+          "210 feet²",
+          "City view",
+          "Inner courtyard view",
+          "Air conditioning",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 2,
+        "options": [
+          {
+            "price": 1659.4070694293368,
+            "displayedPrice": 676.55535685877,
+            "excludedTaxesPrice": 121.779941881637,
+            "discount": {
+              "discountedPrice": 798.335298740407,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896102_440824544_1_1_0_1463262",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "non_refundable",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Non-refundable Lower price for fixed dates",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 1889.880686915437,
+            "displayedPrice": 770.523416226422,
+            "excludedTaxesPrice": 138.694236097227,
+            "discount": {
+              "discountedPrice": 909.217652323649,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896102_439751248_1_1_0_1242568",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "special_condition",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Partially refundable",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 2033.587265015763,
+            "displayedPrice": 829.1126518598,
+            "excludedTaxesPrice": 149.240294981823,
+            "discount": {
+              "discountedPrice": 978.3529468416231,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896102_439127059_1_1_0_1455818",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation before 19 August 2026",
+              "Pay the property before arrival",
+              "Fully refundable during free cancellation"
+            ]
+          },
+          {
+            "price": 2304.732233684539,
+            "displayedPrice": 939.661005441107,
+            "excludedTaxesPrice": 169.139000979399,
+            "discount": {
+              "discountedPrice": 1108.800006420506,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896102_439750654_1_1_0_1242568",
+            "persons": 1,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          },
+          {
+            "price": 1843.785939888807,
+            "displayedPrice": 751.729827882303,
+            "excludedTaxesPrice": 135.311353724697,
+            "discount": {
+              "discountedPrice": 887.041181607,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896102_440824544_2_1_0_1463262",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "non_refundable",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Non-refundable Lower price for fixed dates",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 1869.393753596407,
+            "displayedPrice": 762.168533825102,
+            "excludedTaxesPrice": 137.190353735577,
+            "discount": {
+              "discountedPrice": 899.358887560679,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896102_439750654_0_1_0_1455818",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          },
+          {
+            "price": 2099.867312258987,
+            "displayedPrice": 856.136593192753,
+            "excludedTaxesPrice": 154.104589127637,
+            "discount": {
+              "discountedPrice": 1010.2411823203901,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896102_439751248_2_1_0_1242568",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "special_condition",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Partially refundable",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 2259.54138596523,
+            "displayedPrice": 921.236299452066,
+            "excludedTaxesPrice": 165.82253037196,
+            "discount": {
+              "discountedPrice": 1087.058829824026,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896102_439127059_2_1_0_1455818",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation before 19 August 2026",
+              "Pay the property before arrival",
+              "Fully refundable during free cancellation"
+            ]
+          },
+          {
+            "price": 2560.813606054709,
+            "displayedPrice": 1044.06782957509,
+            "excludedTaxesPrice": 187.932236382339,
+            "discount": {
+              "discountedPrice": 1232.000065957429,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896102_439750654_2_1_0_1242568",
+            "persons": 2,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          }
+        ]
+      },
+      {
+        "available": true,
+        "id": 1449896106,
+        "url": "https://www.booking.com/hotel/az/the-nest-baku.en-gb.html#room_1449896106",
+        "roomType": "Triple Room",
+        "persons": null,
+        "bedTypes": [
+          {
+            "room": null,
+            "beds": [
+              "2 single beds",
+              "1 sofa bed"
+            ]
+          }
+        ],
+        "facilities": [
+          "226 feet²",
+          "City view",
+          "Inner courtyard view",
+          "Air conditioning",
+          "Ensuite bathroom",
+          "Flat-screen TV",
+          "Soundproofing",
+          "Minibar",
+          "Free WiFi"
+        ],
+        "isPartnerOfferRoom": false,
+        "roomsLeft": 1,
+        "options": [
+          {
+            "price": 2342.499013564242,
+            "displayedPrice": 955.059829059686,
+            "excludedTaxesPrice": 171.910765701332,
+            "discount": {
+              "discountedPrice": 1126.970594761018,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896106_440824544_3_1_0_1463262",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "non_refundable",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Non-refundable Lower price for fixed dates",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 2375.0630197348532,
+            "displayedPrice": 968.335005607144,
+            "excludedTaxesPrice": 174.300295126933,
+            "discount": {
+              "discountedPrice": 1142.635300734077,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896106_439750654_3_1_0_1455818",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          },
+          {
+            "price": 2667.8460742716943,
+            "displayedPrice": 1087.70688865131,
+            "excludedTaxesPrice": 195.787236427824,
+            "discount": {
+              "discountedPrice": 1283.494125079134,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896106_439751248_3_1_0_1242568",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "special_condition",
+            "freeCancellation": false,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Partially refundable",
+              "Pay the property before arrival"
+            ]
+          },
+          {
+            "price": 3253.47060707452,
+            "displayedPrice": 1326.47059591622,
+            "excludedTaxesPrice": 238.76470726492,
+            "discount": {
+              "discountedPrice": 1565.23530318114,
+              "text": "56% off",
+              "description": "You’re getting a reduced rate because this property is offering a Getaway Deal."
+            },
+            "hasGeniusDiscount": false,
+            "geniusDiscountText": null,
+            "id": "1449896106_439750654_3_1_0_1242568",
+            "persons": 3,
+            "currency": "US$",
+            "cancellationType": "free_cancellation",
+            "freeCancellation": true,
+            "yourChoices": [
+              "Very good breakfast included",
+              "Free cancellation anytime",
+              "No prepayment needed – pay at the property",
+              "No credit card needed"
+            ]
+          }
+        ]
+      }
+    ],
+    "highlights": [
+      {
+        "header": "Perfect for a 2-week stay!",
+        "contents": [
+          "Situated in the best rated area in Baku, this hotel has an excellent location score of 9.4",
+          "Popular with solo travellers"
+        ]
+      },
+      {
+        "header": "Breakfast info",
+        "contents": [
+          "Continental, Vegan, Halal, Buffet"
+        ]
+      },
+      {
+        "header": "Rooms with:",
+        "contents": [
+          "Inner courtyard view",
+          "City view",
+          "Quiet street view"
+        ]
+      }
+    ],
+    "finePrint": "Guests are required to show a photo identification and credit card upon check-in. Please note that all Special Requests are subject to availability and additional charges may apply.Please inform The Nest Hotel Baku in advance of your expected arrival time. You can use the Special Requests box when booking, or contact the property directly with the contact details provided in your confirmation.This property will not accommodate hen, stag or similar parties.Guests under the age of 18 can only check in with a parent or official guardian.",
+    "policies": [
+      {
+        "title": "Check-in",
+        "content": "From 14:00Guests are required to show a photo identification and credit card upon check-inYou'll need to let the property know in advance what time you'll arrive."
+      },
+      {
+        "title": "Check-out",
+        "content": "Until 12:00"
+      },
+      {
+        "title": "Cancellation/ prepayment",
+        "content": "Cancellation and prepayment policies vary according to accommodation type. Please check what conditions may apply to each option when making your selection."
+      },
+      {
+        "title": "Children and beds",
+        "content": "Child policies Children of any age are welcome. To see correct prices and occupancy information, please add the number of children in your group and their ages to your search. Cot and extra bed policies 0 - 6 years Cot always available The number of cots allowed is dependent on the option you choose. Please check your selected option for more information. There are no extra beds available at this property."
+      },
+      {
+        "title": "No age restriction",
+        "content": "There is no age requirement for check-in"
+      },
+      {
+        "title": "Pets",
+        "content": "Pets are not allowed."
+      },
+      {
+        "title": "Groups",
+        "content": "When booking more than 3 rooms, different policies and additional supplements may apply."
+      },
+      {
+        "title": "Accepted payment methods",
+        "content": "Cash"
+      },
+      {
+        "title": "Parties",
+        "content": "Parties/events are not allowed"
+      }
+    ],
+    "reviewSummary": {
+      "summary": "",
+      "pros": [
+        {
+          "description": "<b>Location</b>: Short walk to Nizami Street, Fountain Square, and the Old City.",
+          "numberOfMentions": 18,
+          "sentiment": "POSITIVE"
+        },
+        {
+          "description": "<b>Staff</b>: Friendly team provides warm service and helpful local advice.",
+          "numberOfMentions": 11,
+          "sentiment": "POSITIVE"
+        }
+      ],
+      "cons": [
+        {
+          "description": "<b>Room Cleanliness</b>: Generally tidy, though some guests report floor stains, dust, and ants.",
+          "numberOfMentions": 13,
+          "sentiment": "MIXED"
+        },
+        {
+          "description": "<b>Room Soundproofing</b>: Disturbance from street traffic, loud music, and internal ventilation noise.",
+          "numberOfMentions": 4,
+          "sentiment": "NEGATIVE"
+        },
+        {
+          "description": "<b>Breakfast</b>: Varied sweet and savory options, but served in a small, crowded room.",
+          "numberOfMentions": 9,
+          "sentiment": "MIXED"
+        }
+      ],
+      "language": "en",
+      "numReviews": 27
+    },
+    "hotelChain": null,
+    "licenseInfo": null,
+    "hostInfo": null,
+    "traderInfo": null,
+    "hotelId": 14498961,
+    "facilities": [
+      {
+        "name": "Great for your stay",
+        "facilities": [
+          {
+            "name": "Parking",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 2
+          },
+          {
+            "name": "Private bathroom",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 38
+          },
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 11
+          },
+          {
+            "name": "Free WiFi",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Family rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 28
+          },
+          {
+            "name": "Airport shuttle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            }
+          },
+          {
+            "name": "Room service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 5
+          },
+          {
+            "name": "Flat-screen TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 75
+          },
+          {
+            "name": "Non-smoking rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 16
+          },
+          {
+            "name": "Tour desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 78
+          }
+        ],
+        "overview": null,
+        "id": null
+      },
+      {
+        "name": "Bathroom",
+        "overview": null,
+        "id": 5,
+        "facilities": [
+          {
+            "name": "Toilet paper",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 141
+          },
+          {
+            "name": "Towels",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 124
+          },
+          {
+            "name": "Bidet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 100
+          },
+          {
+            "name": "Bath or shower",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 69
+          },
+          {
+            "name": "Slippers",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 43
+          },
+          {
+            "name": "Private bathroom",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 38
+          },
+          {
+            "name": "Toilet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 31
+          },
+          {
+            "name": "Hairdryer",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 12
+          },
+          {
+            "name": "Shower",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 4
+          }
+        ]
+      },
+      {
+        "name": "Bedroom",
+        "overview": null,
+        "id": 17,
+        "facilities": [
+          {
+            "name": "Linen",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 125
+          },
+          {
+            "name": "Wardrobe or closet",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 95
+          }
+        ]
+      },
+      {
+        "name": "Kitchen",
+        "overview": null,
+        "id": 12,
+        "facilities": [
+          {
+            "name": "Electric kettle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 86
+          }
+        ]
+      },
+      {
+        "name": "Room amenities",
+        "overview": null,
+        "id": 4,
+        "facilities": [
+          {
+            "name": "Socket near the bed",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 184
+          },
+          {
+            "name": "Clothes rack",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 138
+          }
+        ]
+      },
+      {
+        "name": "Activities",
+        "overview": null,
+        "id": 2,
+        "facilities": [
+          {
+            "name": "Bicycle rental",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 447
+          },
+          {
+            "name": "Walking tours",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 404
+          }
+        ]
+      },
+      {
+        "name": "Living Area",
+        "overview": null,
+        "id": 15,
+        "facilities": [
+          {
+            "name": "Desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 23
+          }
+        ]
+      },
+      {
+        "name": "Media & Technology",
+        "overview": null,
+        "id": 6,
+        "facilities": [
+          {
+            "name": "Flat-screen TV",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 75
+          },
+          {
+            "name": "Cable channels",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 68
+          },
+          {
+            "name": "Satellite channels",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 44
+          },
+          {
+            "name": "Telephone",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 9
+          }
+        ]
+      },
+      {
+        "name": "Food & Drink",
+        "overview": null,
+        "id": 7,
+        "facilities": [
+          {
+            "name": "Minibar",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 3
+          },
+          {
+            "name": "Tea/Coffee maker",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 1
+          }
+        ]
+      },
+      {
+        "name": "Internet",
+        "overview": "WiFi is available in all areas and is free of charge.",
+        "id": 11,
+        "facilities": [
+          {
+            "name": "Internet services",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 47
+          }
+        ]
+      },
+      {
+        "name": "Parking",
+        "overview": "Public parking is possible at a location nearby (reservation is not possible) and costs AZN 1 per hour.",
+        "id": 16,
+        "facilities": [
+          {
+            "name": "Street parking",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 2
+          }
+        ]
+      },
+      {
+        "name": "Reception services",
+        "overview": null,
+        "id": 23,
+        "facilities": [
+          {
+            "name": "Invoice provided",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 465
+          },
+          {
+            "name": "Private check-in/check-out",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 127
+          },
+          {
+            "name": "Luggage storage",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 91
+          },
+          {
+            "name": "Tour desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 78
+          },
+          {
+            "name": "Currency exchange",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 53
+          },
+          {
+            "name": "Express check-in/check-out",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 49
+          },
+          {
+            "name": "24-hour front desk",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 8
+          }
+        ]
+      },
+      {
+        "name": "Family friendly",
+        "overview": null,
+        "id": 25,
+        "facilities": [
+          {
+            "name": "Family rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 28
+          }
+        ]
+      },
+      {
+        "name": "Cleaning services",
+        "overview": null,
+        "id": 26,
+        "facilities": [
+          {
+            "name": "Daily housekeeping",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 158
+          },
+          {
+            "name": "Ironing service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 44
+          },
+          {
+            "name": "Laundry",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 22
+          }
+        ]
+      },
+      {
+        "name": "Safety & security",
+        "overview": null,
+        "id": 34,
+        "facilities": [
+          {
+            "name": "Fire extinguishers",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 425
+          },
+          {
+            "name": "CCTV outside property",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 424
+          },
+          {
+            "name": "CCTV in common areas",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 423
+          },
+          {
+            "name": "Key access",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 419
+          },
+          {
+            "name": "Safety deposit box",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 51
+          }
+        ]
+      },
+      {
+        "name": "General",
+        "overview": null,
+        "id": 1,
+        "facilities": [
+          {
+            "name": "Shuttle service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 304
+          },
+          {
+            "name": "Carbon monoxide detector",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 211
+          },
+          {
+            "name": "Grocery deliveries",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 159
+          },
+          {
+            "name": "Hypoallergenic",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 115
+          },
+          {
+            "name": "Designated smoking area",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 110
+          },
+          {
+            "name": "Air conditioning",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 109
+          },
+          {
+            "name": "Non-smoking throughout",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 108
+          },
+          {
+            "name": "Mosquito net",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 90
+          },
+          {
+            "name": "Wake-up service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 83
+          },
+          {
+            "name": "Heating",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 80
+          },
+          {
+            "name": "Soundproofing",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 79
+          },
+          {
+            "name": "Car hire",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 75
+          },
+          {
+            "name": "Carpeted",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 70
+          },
+          {
+            "name": "Soundproof rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 64
+          },
+          {
+            "name": "Ironing facilities",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 25
+          },
+          {
+            "name": "Airport shuttle",
+            "additionalInfo": {
+              "requiresAdditionalCharge": true,
+              "isOffSite": false
+            },
+            "id": 17
+          },
+          {
+            "name": "Non-smoking rooms",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 16
+          },
+          {
+            "name": "Iron",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 15
+          },
+          {
+            "name": "Wake up service/Alarm clock",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 13
+          },
+          {
+            "name": "Room service",
+            "additionalInfo": {
+              "requiresAdditionalCharge": false,
+              "isOffSite": false
+            },
+            "id": 5
+          }
+        ]
+      }
+    ],
+    "timeOfScrapeISO": "2026-08-17T13:26:50.692Z"
+  },
+  "_review_summary": {
+    "summary": "",
+    "pros": [
+      {
+        "description": "<b>Location</b>: Short walk to Nizami Street, Fountain Square, and the Old City.",
+        "numberOfMentions": 18,
+        "sentiment": "POSITIVE"
+      },
+      {
+        "description": "<b>Staff</b>: Friendly team provides warm service and helpful local advice.",
+        "numberOfMentions": 11,
+        "sentiment": "POSITIVE"
+      }
+    ],
+    "cons": [
+      {
+        "description": "<b>Room Cleanliness</b>: Generally tidy, though some guests report floor stains, dust, and ants.",
+        "numberOfMentions": 13,
+        "sentiment": "MIXED"
+      },
+      {
+        "description": "<b>Room Soundproofing</b>: Disturbance from street traffic, loud music, and internal ventilation noise.",
+        "numberOfMentions": 4,
+        "sentiment": "NEGATIVE"
+      },
+      {
+        "description": "<b>Breakfast</b>: Varied sweet and savory options, but served in a small, crowded room.",
+        "numberOfMentions": 9,
+        "sentiment": "MIXED"
+      }
+    ],
+    "language": "en",
+    "numReviews": 27
+  }
+}

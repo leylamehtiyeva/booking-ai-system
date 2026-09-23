@@ -1,0 +1,2067 @@
+{
+  "end_to_end_v2": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/nli_end_to_end_verification_v2_report.json",
+      "raw_section_omitted": "subclaims_full",
+      "n_omitted": 40,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "run_metadata": {
+      "model": "GuardrailsAI/finetuned_nli_provenance",
+      "checkpoint_schema": "v2/atomic (Q1/Q2/Q3 quiet, FC1 sentence-split)",
+      "n_subclaims_total": 40,
+      "candidate_counts": {
+        "n_before_cleanup": 200,
+        "n_after_heading_filter": 189,
+        "n_after_dedup": 137,
+        "n_deterministic_decisions": 10,
+        "n_nli_calls": 127,
+        "n_nli_calls_saved_by_heading_filter": 11,
+        "n_nli_calls_saved_by_dedup": 52,
+        "n_nli_calls_saved_by_deterministic_routing": 10,
+        "n_naive_nli_calls_if_uncleaned": 200,
+        "total_nli_calls_saved": 73
+      }
+    },
+    "per_k": {
+      "1": {
+        "metrics": {
+          "n": 40,
+          "tp": 16,
+          "fp": 1,
+          "fn": 0,
+          "tn": 23,
+          "precision_verified_support": 0.9412,
+          "recall_support_coverage": 1.0,
+          "f1": 0.9697,
+          "false_support_rate": 0.0417,
+          "false_negative_rate": 0.0,
+          "accuracy": 0.975
+        },
+        "n_fp": 1,
+        "n_fn": 0
+      },
+      "3": {
+        "metrics": {
+          "n": 40,
+          "tp": 16,
+          "fp": 3,
+          "fn": 0,
+          "tn": 21,
+          "precision_verified_support": 0.8421,
+          "recall_support_coverage": 1.0,
+          "f1": 0.9143,
+          "false_support_rate": 0.125,
+          "false_negative_rate": 0.0,
+          "accuracy": 0.925
+        },
+        "n_fp": 3,
+        "n_fn": 0
+      }
+    },
+    "verification_only_metrics_B": {
+      "1": {
+        "n_supported_with_gold_retrieved": 16,
+        "n_verified_given_retrieval_succeeded": 16,
+        "verification_recall_given_retrieval_success": 1.0,
+        "n_not_supported": 24,
+        "n_false_support_among_not_supported": 1,
+        "false_support_rate": 0.0417
+      },
+      "3": {
+        "n_supported_with_gold_retrieved": 16,
+        "n_verified_given_retrieval_succeeded": 16,
+        "verification_recall_given_retrieval_success": 1.0,
+        "n_not_supported": 24,
+        "n_false_support_among_not_supported": 3,
+        "false_support_rate": 0.125
+      }
+    },
+    "deterministic_routing_tp_contribution": {
+      "1": 5,
+      "3": 9
+    },
+    "false_positives_by_k": {
+      "1": [
+        {
+          "property_slug": "nizami_studio",
+          "constraint_text": "quiet",
+          "subclaim": "Q2",
+          "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+          "retrieval_rank": 1,
+          "evidence_text": "Non-smoking throughout",
+          "embedding_similarity_score": 0.679952,
+          "nli_entailment_probability": 0.544882,
+          "source_type": "facilities",
+          "chunk_id": "16406264::38",
+          "duplicate_chunk_ids": [
+            "16406264::38"
+          ],
+          "verification_method": "nli",
+          "error_type": "NLI_verification_failure"
+        }
+      ],
+      "3": [
+        {
+          "property_slug": "apt_city_center",
+          "constraint_text": "quiet",
+          "subclaim": "Q2",
+          "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+          "retrieval_rank": 3,
+          "evidence_text": "Non-smoking throughout",
+          "embedding_similarity_score": 0.679952,
+          "nli_entailment_probability": 0.544882,
+          "source_type": "facilities",
+          "chunk_id": "12895996::58",
+          "duplicate_chunk_ids": [
+            "12895996::58"
+          ],
+          "verification_method": "nli",
+          "error_type": "NLI_verification_failure"
+        },
+        {
+          "property_slug": "nizami_studio",
+          "constraint_text": "quiet",
+          "subclaim": "Q2",
+          "hypothesis": "The immediate surroundings are explicitly described as quiet.",
+          "retrieval_rank": 1,
+          "evidence_text": "Non-smoking throughout",
+          "embedding_similarity_score": 0.679952,
+          "nli_entailment_probability": 0.544882,
+          "source_type": "facilities",
+          "chunk_id": "16406264::38",
+          "duplicate_chunk_ids": [
+            "16406264::38"
+          ],
+          "verification_method": "nli",
+          "error_type": "NLI_verification_failure"
+        },
+        {
+          "property_slug": "fermaart_hotel",
+          "constraint_text": "good breakfast",
+          "subclaim": "main",
+          "hypothesis": "The breakfast served at this property is good in quality.",
+          "retrieval_rank": 3,
+          "evidence_text": "Continental breakfast included",
+          "embedding_similarity_score": 0.676896,
+          "nli_entailment_probability": 0.429304,
+          "source_type": "room_facilities",
+          "chunk_id": "16084035::180",
+          "duplicate_chunk_ids": [
+            "16084035::180",
+            "16084035::192",
+            "16084035::261"
+          ],
+          "verification_method": "nli",
+          "error_type": "NLI_verification_failure"
+        }
+      ]
+    },
+    "false_negatives_by_k": {
+      "1": [],
+      "3": []
+    },
+    "subclaim_outcomes_by_k": {
+      "1": [
+        {
+          "pair_id": "apt_city_center__quiet",
+          "subclaim": "Q1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__quiet",
+          "subclaim": "Q2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__quiet",
+          "subclaim": "Q3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__quiet",
+          "subclaim": "Q1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__quiet",
+          "subclaim": "Q2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "nizami_studio__quiet",
+          "subclaim": "Q3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__quiet",
+          "subclaim": "Q1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__quiet",
+          "subclaim": "Q2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__quiet",
+          "subclaim": "Q3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__quiet",
+          "subclaim": "Q1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__quiet",
+          "subclaim": "Q2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__quiet",
+          "subclaim": "Q3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "apt_city_center__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        }
+      ],
+      "3": [
+        {
+          "pair_id": "apt_city_center__quiet",
+          "subclaim": "Q1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__quiet",
+          "subclaim": "Q2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "apt_city_center__quiet",
+          "subclaim": "Q3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__quiet",
+          "subclaim": "Q1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__quiet",
+          "subclaim": "Q2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "nizami_studio__quiet",
+          "subclaim": "Q3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__quiet",
+          "subclaim": "Q1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__quiet",
+          "subclaim": "Q2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__quiet",
+          "subclaim": "Q3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__quiet",
+          "subclaim": "Q1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__quiet",
+          "subclaim": "Q2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__quiet",
+          "subclaim": "Q3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "apt_city_center__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "FP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_breakfast",
+          "subclaim": "main",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC2",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__family_friendly",
+          "subclaim": "FC3",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "apt_city_center__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "nizami_studio__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "fermaart_hotel__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW1",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW2a",
+          "gold_status": "SUPPORTED",
+          "predicted_status": "VERIFIED_SUPPORT",
+          "outcome": "TP"
+        },
+        {
+          "pair_id": "modern_apt_nizami__good_for_remote_work",
+          "subclaim": "RW2b",
+          "gold_status": "NOT_SUPPORTED",
+          "predicted_status": "NOT_VERIFIED",
+          "outcome": "TN"
+        }
+      ]
+    },
+    "regression_checks": [
+      {
+        "name": "Non-smoking throughout -> quiet (expect NOT SUPPORT everywhere it appears)",
+        "rule": "not_support_everywhere",
+        "passed": false,
+        "occurrences": [
+          {
+            "pair_id": "apt_city_center__quiet",
+            "subclaim": "Q2",
+            "text": "Non-smoking throughout",
+            "rank": 3,
+            "status": "VERIFIED_SUPPORT",
+            "entailment_prob": 0.544882
+          },
+          {
+            "pair_id": "apt_city_center__quiet",
+            "subclaim": "Q3",
+            "text": "Non-smoking throughout",
+            "rank": 3,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.058264
+          },
+          {
+            "pair_id": "nizami_studio__quiet",
+            "subclaim": "Q2",
+            "text": "Non-smoking throughout",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT",
+            "entailment_prob": 0.544882
+          },
+          {
+            "pair_id": "nizami_studio__quiet",
+            "subclaim": "Q3",
+            "text": "Non-smoking throughout",
+            "rank": 1,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.058264
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q2",
+            "text": "Non-smoking throughout",
+            "rank": 2,
+            "status": "VERIFIED_SUPPORT",
+            "entailment_prob": 0.544882
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q3",
+            "text": "Non-smoking throughout",
+            "rank": 2,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.058264
+          },
+          {
+            "pair_id": "apt_city_center__family_friendly",
+            "subclaim": "FC3",
+            "text": "Non-smoking throughout",
+            "rank": 5,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.029305
+          }
+        ]
+      },
+      {
+        "name": "Continental breakfast included -> good breakfast quality (expect NOT SUPPORT everywhere)",
+        "rule": "not_support_everywhere",
+        "passed": false,
+        "occurrences": [
+          {
+            "pair_id": "fermaart_hotel__good_breakfast",
+            "subclaim": "main",
+            "text": "Continental breakfast included",
+            "rank": 3,
+            "status": "VERIFIED_SUPPORT",
+            "entailment_prob": 0.429304
+          },
+          {
+            "pair_id": "fermaart_hotel__good_breakfast",
+            "subclaim": "main",
+            "text": "Continental breakfast included",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__good_breakfast",
+            "subclaim": "main",
+            "text": "Continental breakfast included",
+            "rank": 5,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          }
+        ]
+      },
+      {
+        "name": "Children and beds -> family layout (expect NOT SUPPORT everywhere - filtered as heading)",
+        "rule": "not_support_everywhere",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "apt_city_center__family_friendly",
+            "subclaim": "FC1",
+            "text": "Children and beds",
+            "rank": 5,
+            "status": "REMOVED_BY_HEADING_FILTER",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "modern_apt_nizami__family_friendly",
+            "subclaim": "FC2",
+            "text": "Children and beds",
+            "rank": 5,
+            "status": "REMOVED_BY_HEADING_FILTER",
+            "entailment_prob": null
+          }
+        ]
+      },
+      {
+        "name": "Soundproofing -> Q1 soundproofing (expect SUPPORT, deterministic or NLI)",
+        "rule": "support_in",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q1",
+            "text": "Soundproofing",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q1",
+            "text": "Soundproofing",
+            "rank": 2,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q1",
+            "text": "Soundproofing",
+            "rank": 3,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q1",
+            "text": "Soundproofing",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q3",
+            "text": "Soundproofing",
+            "rank": 5,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.03264
+          }
+        ]
+      },
+      {
+        "name": "Quiet street view -> Q2 explicitly quiet surroundings (expect SUPPORT)",
+        "rule": "support_in",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q2",
+            "text": "Quiet street view",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT",
+            "entailment_prob": 0.614411
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q3",
+            "text": "Quiet street view",
+            "rank": 1,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.097076
+          },
+          {
+            "pair_id": "modern_apt_nizami__quiet",
+            "subclaim": "Q1",
+            "text": "Quiet street view",
+            "rank": 1,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.152356
+          },
+          {
+            "pair_id": "modern_apt_nizami__quiet",
+            "subclaim": "Q2",
+            "text": "Quiet street view",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT",
+            "entailment_prob": 0.614411
+          },
+          {
+            "pair_id": "modern_apt_nizami__quiet",
+            "subclaim": "Q3",
+            "text": "Quiet street view",
+            "rank": 1,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.097076
+          }
+        ]
+      },
+      {
+        "name": "Children of any age are welcome -> FC1 (expect SUPPORT)",
+        "rule": "support_in",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "apt_city_center__family_friendly",
+            "subclaim": "FC1",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT",
+            "entailment_prob": 0.501563
+          },
+          {
+            "pair_id": "nizami_studio__family_friendly",
+            "subclaim": "FC1",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT",
+            "entailment_prob": 0.501563
+          },
+          {
+            "pair_id": "fermaart_hotel__family_friendly",
+            "subclaim": "FC1",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT",
+            "entailment_prob": 0.501563
+          },
+          {
+            "pair_id": "modern_apt_nizami__family_friendly",
+            "subclaim": "FC1",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT",
+            "entailment_prob": 0.501563
+          },
+          {
+            "pair_id": "apt_city_center__family_friendly",
+            "subclaim": "FC3",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.185703
+          },
+          {
+            "pair_id": "nizami_studio__family_friendly",
+            "subclaim": "FC3",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 3,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.185703
+          },
+          {
+            "pair_id": "modern_apt_nizami__family_friendly",
+            "subclaim": "FC2",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 4,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.092582
+          },
+          {
+            "pair_id": "modern_apt_nizami__family_friendly",
+            "subclaim": "FC3",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.185703
+          }
+        ]
+      },
+      {
+        "name": "Free WiFi -> RW2a (expect deterministic SUPPORT)",
+        "rule": "deterministic_support_in",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "apt_city_center__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 2,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "apt_city_center__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "apt_city_center__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 4,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.16284
+          },
+          {
+            "pair_id": "apt_city_center__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 5,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "nizami_studio__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 2,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "nizami_studio__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "nizami_studio__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.16284
+          },
+          {
+            "pair_id": "nizami_studio__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 2,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 5,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.16284
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 5,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "modern_apt_nizami__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 2,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "modern_apt_nizami__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "NOT_VERIFIED",
+            "entailment_prob": 0.16284
+          }
+        ]
+      },
+      {
+        "name": "Desk -> RW1 (expect deterministic SUPPORT)",
+        "rule": "deterministic_support_in",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 2,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 3,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "modern_apt_nizami__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC",
+            "entailment_prob": null
+          },
+          {
+            "pair_id": "modern_apt_nizami__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 2,
+            "status": "ABSORBED_BY_DEDUP",
+            "entailment_prob": null
+          }
+        ]
+      }
+    ]
+  },
+  "v1_vs_v2_e2e_comparison": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/nli_end_to_end_v1_vs_v2_comparison.json",
+      "raw_section_omitted": null,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "A_retrieval_only": {
+      "v1": {
+        "n_subclaims_total": 32,
+        "n_subclaims_supported": 14,
+        "recall_at_1": {
+          "k": 1,
+          "n_supported": 14,
+          "hits": 13,
+          "recall": 0.9286
+        },
+        "recall_at_3": {
+          "k": 3,
+          "n_supported": 14,
+          "hits": 14,
+          "recall": 1.0
+        }
+      },
+      "v2": {
+        "schema": "v2 (atomic: Q1/Q2/Q3 quiet + FC1 sentence-split)",
+        "n_subclaims_total": 40,
+        "n_subclaims_supported": 16,
+        "recall_at_1": {
+          "k": 1,
+          "n_supported": 16,
+          "hits": 16,
+          "recall": 1.0
+        },
+        "recall_at_3": {
+          "k": 3,
+          "n_supported": 16,
+          "hits": 16,
+          "recall": 1.0
+        }
+      }
+    },
+    "B_verification_given_retrieval_success": {
+      "v1": {
+        "1": {
+          "n_supported_with_gold_retrieved": 13,
+          "n_verified_given_retrieval_succeeded": 11,
+          "verification_recall_given_retrieval_success": 0.8462,
+          "n_not_supported": 18,
+          "n_false_support_among_not_supported": 1,
+          "false_support_rate": 0.0556
+        },
+        "3": {
+          "n_supported_with_gold_retrieved": 14,
+          "n_verified_given_retrieval_succeeded": 12,
+          "verification_recall_given_retrieval_success": 0.8571,
+          "n_not_supported": 18,
+          "n_false_support_among_not_supported": 3,
+          "false_support_rate": 0.1667
+        }
+      },
+      "v2": {
+        "1": {
+          "n_supported_with_gold_retrieved": 16,
+          "n_verified_given_retrieval_succeeded": 16,
+          "verification_recall_given_retrieval_success": 1.0,
+          "n_not_supported": 24,
+          "n_false_support_among_not_supported": 1,
+          "false_support_rate": 0.0417
+        },
+        "3": {
+          "n_supported_with_gold_retrieved": 16,
+          "n_verified_given_retrieval_succeeded": 16,
+          "verification_recall_given_retrieval_success": 1.0,
+          "n_not_supported": 24,
+          "n_false_support_among_not_supported": 3,
+          "false_support_rate": 0.125
+        }
+      }
+    },
+    "C_final_end_to_end": {
+      "v1": {
+        "1": {
+          "n": 32,
+          "tp": 11,
+          "fp": 1,
+          "fn": 3,
+          "tn": 17,
+          "precision_verified_support": 0.9167,
+          "recall_support_coverage": 0.7857,
+          "f1": 0.8462,
+          "false_support_rate": 0.0556,
+          "false_negative_rate": 0.2143,
+          "accuracy": 0.875
+        },
+        "3": {
+          "n": 32,
+          "tp": 12,
+          "fp": 3,
+          "fn": 2,
+          "tn": 15,
+          "precision_verified_support": 0.8,
+          "recall_support_coverage": 0.8571,
+          "f1": 0.8276,
+          "false_support_rate": 0.1667,
+          "false_negative_rate": 0.1429,
+          "accuracy": 0.8438
+        }
+      },
+      "v2": {
+        "1": {
+          "n": 40,
+          "tp": 16,
+          "fp": 1,
+          "fn": 0,
+          "tn": 23,
+          "precision_verified_support": 0.9412,
+          "recall_support_coverage": 1.0,
+          "f1": 0.9697,
+          "false_support_rate": 0.0417,
+          "false_negative_rate": 0.0,
+          "accuracy": 0.975
+        },
+        "3": {
+          "n": 40,
+          "tp": 16,
+          "fp": 3,
+          "fn": 0,
+          "tn": 21,
+          "precision_verified_support": 0.8421,
+          "recall_support_coverage": 1.0,
+          "f1": 0.9143,
+          "false_support_rate": 0.125,
+          "false_negative_rate": 0.0,
+          "accuracy": 0.925
+        }
+      }
+    },
+    "summary_by_k": {
+      "1": {
+        "precision": {
+          "v1": 0.9167,
+          "v2": 0.9412,
+          "delta": 0.0245
+        },
+        "recall": {
+          "v1": 0.7857,
+          "v2": 1.0,
+          "delta": 0.2143
+        },
+        "f1": {
+          "v1": 0.8462,
+          "v2": 0.9697,
+          "delta": 0.1235
+        },
+        "false_support_rate": {
+          "v1": 0.0556,
+          "v2": 0.0417,
+          "delta": -0.0139
+        },
+        "fp_count": {
+          "v1": 1,
+          "v2": 1
+        },
+        "fn_count": {
+          "v1": 3,
+          "v2": 0
+        },
+        "n_subclaims": {
+          "v1": 32,
+          "v2": 40
+        }
+      },
+      "3": {
+        "precision": {
+          "v1": 0.8,
+          "v2": 0.8421,
+          "delta": 0.0421
+        },
+        "recall": {
+          "v1": 0.8571,
+          "v2": 1.0,
+          "delta": 0.1429
+        },
+        "f1": {
+          "v1": 0.8276,
+          "v2": 0.9143,
+          "delta": 0.0867
+        },
+        "false_support_rate": {
+          "v1": 0.1667,
+          "v2": 0.125,
+          "delta": -0.0417
+        },
+        "fp_count": {
+          "v1": 3,
+          "v2": 3
+        },
+        "fn_count": {
+          "v1": 2,
+          "v2": 0
+        },
+        "n_subclaims": {
+          "v1": 32,
+          "v2": 40
+        }
+      }
+    },
+    "error_types_v1_fn_at_k3": {
+      "verification_failure": 2
+    },
+    "error_types_v2_fn_at_k3": {},
+    "error_types_v2_fp_at_k3": {
+      "NLI_verification_failure": 3
+    },
+    "nli_call_counts": {
+      "v1": {
+        "total_nli_calls": 160
+      },
+      "v2": {
+        "n_before_cleanup": 200,
+        "n_after_heading_filter": 189,
+        "n_after_dedup": 137,
+        "n_deterministic_decisions": 10,
+        "n_nli_calls": 127,
+        "n_nli_calls_saved_by_heading_filter": 11,
+        "n_nli_calls_saved_by_dedup": 52,
+        "n_nli_calls_saved_by_deterministic_routing": 10,
+        "n_naive_nli_calls_if_uncleaned": 200,
+        "total_nli_calls_saved": 73
+      }
+    },
+    "regression_checks_v2": [
+      {
+        "name": "Non-smoking throughout -> quiet (expect NOT SUPPORT everywhere it appears)",
+        "passed": false
+      },
+      {
+        "name": "Continental breakfast included -> good breakfast quality (expect NOT SUPPORT everywhere)",
+        "passed": false
+      },
+      {
+        "name": "Children and beds -> family layout (expect NOT SUPPORT everywhere - filtered as heading)",
+        "passed": true
+      },
+      {
+        "name": "Soundproofing -> Q1 soundproofing (expect SUPPORT, deterministic or NLI)",
+        "passed": true
+      },
+      {
+        "name": "Quiet street view -> Q2 explicitly quiet surroundings (expect SUPPORT)",
+        "passed": true
+      },
+      {
+        "name": "Children of any age are welcome -> FC1 (expect SUPPORT)",
+        "passed": true
+      },
+      {
+        "name": "Free WiFi -> RW2a (expect deterministic SUPPORT)",
+        "passed": true
+      },
+      {
+        "name": "Desk -> RW1 (expect deterministic SUPPORT)",
+        "passed": true
+      }
+    ]
+  },
+  "strict_routing": {
+    "_metadata": {
+      "derived_from": "evaluation/outputs/nli_end_to_end_strict_routing_report.json",
+      "raw_section_omitted": "subclaims_full",
+      "n_omitted": 40,
+      "purpose": "Tracked summary of frozen experiment results (raw per-example predictions remain in gitignored evaluation/outputs/)."
+    },
+    "run_metadata": {
+      "model": "GuardrailsAI/finetuned_nli_provenance",
+      "routing_rule": "path == listing.facilities[N].name or rooms[N].facilities[M].name -> deterministic (alias or NOT_VERIFIED, NLI skipped); else -> NLI",
+      "candidates_source": "reused retrieval_candidates_v2.jsonl - no new retrieval",
+      "n_subclaims_total": 40,
+      "candidate_counts": {
+        "n_before_cleanup": 200,
+        "n_after_heading_filter": 189,
+        "n_after_dedup": 137,
+        "n_deterministic_decisions": 62,
+        "n_deterministic_verified_support": 10,
+        "n_deterministic_not_verified_no_nli_call": 52,
+        "n_nli_calls": 75,
+        "n_naive_nli_calls_if_uncleaned": 200,
+        "total_nli_calls_saved": 125
+      }
+    },
+    "per_k": {
+      "1": {
+        "metrics": {
+          "n": 40,
+          "tp": 16,
+          "fp": 0,
+          "fn": 0,
+          "tn": 24,
+          "precision_verified_support": 1.0,
+          "recall_support_coverage": 1.0,
+          "f1": 1.0,
+          "false_support_rate": 0.0,
+          "false_negative_rate": 0.0,
+          "accuracy": 1.0
+        },
+        "n_fp": 0,
+        "n_fn": 0
+      },
+      "3": {
+        "metrics": {
+          "n": 40,
+          "tp": 16,
+          "fp": 1,
+          "fn": 0,
+          "tn": 23,
+          "precision_verified_support": 0.9412,
+          "recall_support_coverage": 1.0,
+          "f1": 0.9697,
+          "false_support_rate": 0.0417,
+          "false_negative_rate": 0.0,
+          "accuracy": 0.975
+        },
+        "n_fp": 1,
+        "n_fn": 0
+      }
+    },
+    "branch_metrics_ABC": {
+      "1": {
+        "A_deterministic_branch": {
+          "n": 16,
+          "tp": 5,
+          "fp": 0,
+          "fn": 0,
+          "tn": 11,
+          "precision_verified_support": 1.0,
+          "recall_support_coverage": 1.0,
+          "f1": 1.0,
+          "false_support_rate": 0.0,
+          "false_negative_rate": 0.0,
+          "accuracy": 1.0
+        },
+        "B_nli_branch": {
+          "n": 20,
+          "tp": 11,
+          "fp": 0,
+          "fn": 0,
+          "tn": 9,
+          "precision_verified_support": 1.0,
+          "recall_support_coverage": 1.0,
+          "f1": 1.0,
+          "false_support_rate": 0.0,
+          "false_negative_rate": 0.0,
+          "accuracy": 1.0
+        },
+        "C_combined": {
+          "n": 40,
+          "tp": 16,
+          "fp": 0,
+          "fn": 0,
+          "tn": 24,
+          "precision_verified_support": 1.0,
+          "recall_support_coverage": 1.0,
+          "f1": 1.0,
+          "false_support_rate": 0.0,
+          "false_negative_rate": 0.0,
+          "accuracy": 1.0
+        }
+      },
+      "3": {
+        "A_deterministic_branch": {
+          "n": 33,
+          "tp": 9,
+          "fp": 0,
+          "fn": 3,
+          "tn": 21,
+          "precision_verified_support": 1.0,
+          "recall_support_coverage": 0.75,
+          "f1": 0.8571,
+          "false_support_rate": 0.0,
+          "false_negative_rate": 0.25,
+          "accuracy": 0.9091
+        },
+        "B_nli_branch": {
+          "n": 33,
+          "tp": 12,
+          "fp": 1,
+          "fn": 1,
+          "tn": 19,
+          "precision_verified_support": 0.9231,
+          "recall_support_coverage": 0.9231,
+          "f1": 0.9231,
+          "false_support_rate": 0.05,
+          "false_negative_rate": 0.0769,
+          "accuracy": 0.9394
+        },
+        "C_combined": {
+          "n": 40,
+          "tp": 16,
+          "fp": 1,
+          "fn": 0,
+          "tn": 23,
+          "precision_verified_support": 0.9412,
+          "recall_support_coverage": 1.0,
+          "f1": 0.9697,
+          "false_support_rate": 0.0417,
+          "false_negative_rate": 0.0,
+          "accuracy": 0.975
+        }
+      }
+    },
+    "false_positives_by_k": {
+      "1": [],
+      "3": [
+        {
+          "property_slug": "fermaart_hotel",
+          "constraint_text": "good breakfast",
+          "subclaim": "main",
+          "hypothesis": "The breakfast served at this property is good in quality.",
+          "retrieval_rank": 3,
+          "evidence_text": "Continental breakfast included",
+          "embedding_similarity_score": 0.676896,
+          "nli_entailment_probability": 0.429304,
+          "source_type": "room_facilities",
+          "chunk_id": "16084035::180",
+          "verification_method": "nli"
+        }
+      ]
+    },
+    "false_negatives_by_k": {
+      "1": [],
+      "3": []
+    },
+    "regression_checks": [
+      {
+        "name": "Non-smoking throughout -> quiet (expect NOT SUPPORT everywhere)",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "apt_city_center__quiet",
+            "subclaim": "Q2",
+            "text": "Non-smoking throughout",
+            "rank": 3,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          },
+          {
+            "pair_id": "apt_city_center__quiet",
+            "subclaim": "Q3",
+            "text": "Non-smoking throughout",
+            "rank": 3,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          },
+          {
+            "pair_id": "nizami_studio__quiet",
+            "subclaim": "Q2",
+            "text": "Non-smoking throughout",
+            "rank": 1,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          },
+          {
+            "pair_id": "nizami_studio__quiet",
+            "subclaim": "Q3",
+            "text": "Non-smoking throughout",
+            "rank": 1,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q2",
+            "text": "Non-smoking throughout",
+            "rank": 2,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q3",
+            "text": "Non-smoking throughout",
+            "rank": 2,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          },
+          {
+            "pair_id": "apt_city_center__family_friendly",
+            "subclaim": "FC3",
+            "text": "Non-smoking throughout",
+            "rank": 5,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          }
+        ]
+      },
+      {
+        "name": "Continental breakfast included -> good breakfast quality (expect NOT SUPPORT everywhere)",
+        "passed": false,
+        "occurrences": [
+          {
+            "pair_id": "fermaart_hotel__good_breakfast",
+            "subclaim": "main",
+            "text": "Continental breakfast included",
+            "rank": 3,
+            "status": "VERIFIED_SUPPORT"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_breakfast",
+            "subclaim": "main",
+            "text": "Continental breakfast included",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_breakfast",
+            "subclaim": "main",
+            "text": "Continental breakfast included",
+            "rank": 5,
+            "status": "ABSORBED_BY_DEDUP"
+          }
+        ]
+      },
+      {
+        "name": "Children and beds -> family layout (expect NOT SUPPORT everywhere)",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "apt_city_center__family_friendly",
+            "subclaim": "FC1",
+            "text": "Children and beds",
+            "rank": 5,
+            "status": "REMOVED_BY_HEADING_FILTER"
+          },
+          {
+            "pair_id": "modern_apt_nizami__family_friendly",
+            "subclaim": "FC2",
+            "text": "Children and beds",
+            "rank": 5,
+            "status": "REMOVED_BY_HEADING_FILTER"
+          }
+        ]
+      },
+      {
+        "name": "Soundproofing -> Q1 (expect SUPPORT)",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q1",
+            "text": "Soundproofing",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC"
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q1",
+            "text": "Soundproofing",
+            "rank": 2,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q1",
+            "text": "Soundproofing",
+            "rank": 3,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q1",
+            "text": "Soundproofing",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q3",
+            "text": "Soundproofing",
+            "rank": 5,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          }
+        ]
+      },
+      {
+        "name": "Quiet street view -> Q2 (expect SUPPORT)",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q2",
+            "text": "Quiet street view",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT"
+          },
+          {
+            "pair_id": "fermaart_hotel__quiet",
+            "subclaim": "Q3",
+            "text": "Quiet street view",
+            "rank": 1,
+            "status": "NOT_VERIFIED"
+          },
+          {
+            "pair_id": "modern_apt_nizami__quiet",
+            "subclaim": "Q1",
+            "text": "Quiet street view",
+            "rank": 1,
+            "status": "NOT_VERIFIED"
+          },
+          {
+            "pair_id": "modern_apt_nizami__quiet",
+            "subclaim": "Q2",
+            "text": "Quiet street view",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT"
+          },
+          {
+            "pair_id": "modern_apt_nizami__quiet",
+            "subclaim": "Q3",
+            "text": "Quiet street view",
+            "rank": 1,
+            "status": "NOT_VERIFIED"
+          }
+        ]
+      },
+      {
+        "name": "Children of any age are welcome -> FC1 (expect SUPPORT)",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "apt_city_center__family_friendly",
+            "subclaim": "FC1",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT"
+          },
+          {
+            "pair_id": "nizami_studio__family_friendly",
+            "subclaim": "FC1",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT"
+          },
+          {
+            "pair_id": "fermaart_hotel__family_friendly",
+            "subclaim": "FC1",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT"
+          },
+          {
+            "pair_id": "modern_apt_nizami__family_friendly",
+            "subclaim": "FC1",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT"
+          },
+          {
+            "pair_id": "apt_city_center__family_friendly",
+            "subclaim": "FC3",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "NOT_VERIFIED"
+          },
+          {
+            "pair_id": "nizami_studio__family_friendly",
+            "subclaim": "FC3",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 3,
+            "status": "NOT_VERIFIED"
+          },
+          {
+            "pair_id": "modern_apt_nizami__family_friendly",
+            "subclaim": "FC2",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 4,
+            "status": "NOT_VERIFIED"
+          },
+          {
+            "pair_id": "modern_apt_nizami__family_friendly",
+            "subclaim": "FC3",
+            "text": "Child policies Children of any age are welcome.",
+            "rank": 1,
+            "status": "NOT_VERIFIED"
+          }
+        ]
+      },
+      {
+        "name": "Free WiFi -> RW2a (expect deterministic SUPPORT)",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "apt_city_center__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 2,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC"
+          },
+          {
+            "pair_id": "apt_city_center__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "apt_city_center__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 4,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          },
+          {
+            "pair_id": "apt_city_center__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 5,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "nizami_studio__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 2,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC"
+          },
+          {
+            "pair_id": "nizami_studio__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "nizami_studio__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          },
+          {
+            "pair_id": "nizami_studio__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 2,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 5,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 5,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "modern_apt_nizami__good_for_remote_work",
+            "subclaim": "RW2a",
+            "text": "Free WiFi",
+            "rank": 2,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC"
+          },
+          {
+            "pair_id": "modern_apt_nizami__good_for_remote_work",
+            "subclaim": "RW2b",
+            "text": "Free WiFi",
+            "rank": 3,
+            "status": "NOT_VERIFIED_DETERMINISTIC_NO_NLI_CALL"
+          }
+        ]
+      },
+      {
+        "name": "Desk -> RW1 (expect deterministic SUPPORT)",
+        "passed": true,
+        "occurrences": [
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 2,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 3,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "fermaart_hotel__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 4,
+            "status": "ABSORBED_BY_DEDUP"
+          },
+          {
+            "pair_id": "modern_apt_nizami__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 1,
+            "status": "VERIFIED_SUPPORT_DETERMINISTIC"
+          },
+          {
+            "pair_id": "modern_apt_nizami__good_for_remote_work",
+            "subclaim": "RW1",
+            "text": "Desk",
+            "rank": 2,
+            "status": "ABSORBED_BY_DEDUP"
+          }
+        ]
+      }
+    ]
+  }
+}
