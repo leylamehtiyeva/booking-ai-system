@@ -52,12 +52,33 @@ def test_routing_failure_keeps_direct_safe_response():
     
     
     
-def test_listing_question_keeps_existing_direct_response():
+def test_listing_question_now_goes_through_typed_response_layer():
     result = {
         "conversation_action": "listing_question",
         "need_clarification": False,
-        "response_type": "listing_question",
-        "answer": "Yes, this property has parking.",
+        "response_type": "listing_query_result",
+        "answer": "I checked the shown listings for that.",
+        "listing_query_result": {
+            "query": {"constraints": []},
+            "matches": [
+                {
+                    "result_id": "H1",
+                    "constraint_results": [
+                        {
+                            "constraint_id": "c1",
+                            "raw_text": "parking",
+                            "field": "parking",
+                            "value": "YES",
+                            "evidence": [],
+                            "reason": "",
+                        }
+                    ],
+                }
+            ],
+            "presentation": [
+                {"result_id": "H1", "position": 1, "title": "Hilton Baku"},
+            ],
+        },
         "state": None,
     }
 
@@ -66,7 +87,24 @@ def test_listing_question_keeps_existing_direct_response():
         result=result,
     )
 
-    assert answer == "Yes, this property has parking."
+    assert answer == "Hilton Baku has parking."
+    assert payload is None
+
+
+def test_routing_unavailable_still_direct_when_action_missing():
+    result = {
+        "need_clarification": False,
+        "response_type": "routing_unavailable",
+        "answer": "I couldn't process that message right now.",
+        "state": None,
+    }
+
+    answer, payload = build_assistant_response(
+        user_message="Make it cheaper",
+        result=result,
+    )
+
+    assert answer == "I couldn't process that message right now."
     assert payload is None
     
     
@@ -216,6 +254,12 @@ def test_process_user_message_passes_previous_history_to_response_input(
         lambda: None,
     )
 
+    monkeypatch.setattr(
+        chat_handler,
+        "get_shown_result_set",
+        lambda: None,
+    )
+
     async def fake_handle_user_message(**kwargs):
         return result
 
@@ -356,6 +400,12 @@ def test_process_user_message_logs_status_and_results_count_for_successful_searc
     monkeypatch.setattr(
         chat_handler,
         "get_search_state",
+        lambda: None,
+    )
+
+    monkeypatch.setattr(
+        chat_handler,
+        "get_shown_result_set",
         lambda: None,
     )
 

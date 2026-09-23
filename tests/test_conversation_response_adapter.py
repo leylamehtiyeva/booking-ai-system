@@ -7,9 +7,12 @@ from app.schemas.conversation_response import (
     ClarificationConversationOutcome,
     ConversationMessage,
     GeneralChatConversationOutcome,
+    InformationalConversationOutcome,
+    ListingQueryConversationOutcome,
     SearchConversationOutcome,
 )
 from app.schemas.conversation_route import ConversationAction
+from app.schemas.match import Ternary
 
 
 def test_builds_general_chat_response_input():
@@ -148,10 +151,10 @@ def test_preserves_recent_conversation_messages():
     assert response_input.recent_messages == recent_messages
     
     
-def test_rejects_result_without_conversation_action():
+def test_missing_conversation_action_still_raises_for_unknown_shapes():
     result = {
         "need_clarification": False,
-        "response_type": "routing_unavailable",
+        "response_type": "some_future_response_type",
         "answer": "Please try again.",
         "state": None,
     }
@@ -164,9 +167,146 @@ def test_rejects_result_without_conversation_action():
             user_message="Make it cheaper",
             result=result,
         )
-        
-        
-def test_listing_question_is_not_supported_yet():
+
+
+def test_routing_unavailable_without_conversation_action_returns_none():
+    result = {
+        "need_clarification": False,
+        "response_type": "routing_unavailable",
+        "answer": "Please try again.",
+        "state": None,
+    }
+
+    response_input = build_conversation_response_input(
+        user_message="Make it cheaper",
+        result=result,
+    )
+
+    assert response_input is None
+
+
+def _constraint_match(result_id: str, value: str, field: str = "parking") -> dict:
+    return {
+        "result_id": result_id,
+        "constraint_results": [
+            {
+                "constraint_id": f"c-{result_id}",
+                "raw_text": "parking",
+                "field": field,
+                "value": value,
+                "evidence": [],
+                "reason": "",
+            }
+        ],
+    }
+
+
+def _presentation(result_id: str, position: int, title: str | None = None) -> dict:
+    return {"result_id": result_id, "position": position, "title": title}
+
+
+def _listing_question_result(*, matches: list[dict], presentation: list[dict]) -> dict:
+    return {
+        "conversation_action": "listing_question",
+        "need_clarification": False,
+        "response_type": "listing_query_result",
+        "answer": "I checked the shown listings for that.",
+        "listing_query_result": {
+            "query": {"constraints": []},
+            "matches": matches,
+            "presentation": presentation,
+        },
+        "state": None,
+    }
+
+
+def test_listing_query_result_builds_listing_query_outcome():
+    result = _listing_question_result(
+        matches=[_constraint_match("H1", "YES")],
+        presentation=[_presentation("H1", 1, "Hilton Baku")],
+    )
+
+    response_input = build_conversation_response_input(
+        user_message="Does it have parking?",
+        result=result,
+    )
+
+    assert isinstance(response_input.outcome, ListingQueryConversationOutcome)
+    assert len(response_input.outcome.items) == 1
+
+    item = response_input.outcome.items[0]
+    assert item.position == 1
+    assert item.title == "Hilton Baku"
+    assert item.match.result_id == "H1"
+    assert item.match.constraint_results[0].value == Ternary.YES
+
+
+def test_listing_query_result_orders_items_by_position():
+    result = _listing_question_result(
+        matches=[
+            _constraint_match("H2", "NO"),
+            _constraint_match("H1", "YES"),
+        ],
+        presentation=[
+            _presentation("H1", 1, "Hotel A"),
+            _presentation("H2", 2, "Hotel B"),
+        ],
+    )
+
+    response_input = build_conversation_response_input(
+        user_message="Which of these have parking?",
+        result=result,
+    )
+
+    assert [item.match.result_id for item in response_input.outcome.items] == ["H1", "H2"]
+
+
+def test_listing_query_result_missing_presentation_fails_loudly():
+    result = _listing_question_result(
+        matches=[_constraint_match("H1", "YES")],
+        presentation=[],
+    )
+
+    with pytest.raises(ValueError, match="Missing presentation metadata"):
+        build_conversation_response_input(
+            user_message="Does it have parking?",
+            result=result,
+        )
+
+
+def test_listing_query_result_duplicate_match_result_id_fails_loudly():
+    result = _listing_question_result(
+        matches=[
+            _constraint_match("H1", "YES"),
+            _constraint_match("H1", "NO"),
+        ],
+        presentation=[_presentation("H1", 1, "Hotel A")],
+    )
+
+    with pytest.raises(ValueError, match="Duplicate ResultQueryMatch"):
+        build_conversation_response_input(
+            user_message="Does it have parking?",
+            result=result,
+        )
+
+
+def test_listing_query_result_duplicate_presentation_entry_fails_loudly():
+    result = _listing_question_result(
+        matches=[_constraint_match("H1", "YES")],
+        presentation=[
+            _presentation("H1", 1, "Hotel A"),
+            _presentation("H1", 1, "Hotel A (dup)"),
+        ],
+    )
+
+    with pytest.raises(ValueError, match="Duplicate presentation entry"):
+        build_conversation_response_input(
+            user_message="Does it have parking?",
+            result=result,
+        )
+
+
+def test_listing_query_unresolved_response_type_still_raises():
     result = {
         "conversation_action": "listing_question",
         "need_clarification": False,
@@ -175,11 +315,44 @@ def test_listing_question_is_not_supported_yet():
         "state": None,
     }
 
-    with pytest.raises(
-        ValueError,
-        match="listing_question is not yet supported",
-    ):
+    with pytest.raises(ValueError, match="Unsupported LISTING_QUESTION response_type"):
         build_conversation_response_input(
             user_message="Does it have parking?",
             result=result,
         )
+
+
+def test_update_no_op_builds_informational_outcome_not_failure():
+    result = {
+        "conversation_action": "update_search",
+        "need_clarification": False,
+        "response_type": "update_no_op",
+        "answer": "Your search hasn't changed, so I didn't run a new search.",
+        "state": None,
+    }
+
+    response_input = build_conversation_response_input(
+        user_message="No changes",
+        result=result,
+    )
+
+    assert isinstance(response_input.outcome, InformationalConversationOutcome)
+    assert response_input.outcome.code == "update_no_op"
+
+
+def test_listing_query_unsupported_builds_informational_outcome():
+    result = {
+        "conversation_action": "listing_question",
+        "need_clarification": False,
+        "response_type": "listing_query_unsupported",
+        "answer": "I can't check that from the information in the shown listings.",
+        "state": None,
+    }
+
+    response_input = build_conversation_response_input(
+        user_message="Is it romantic?",
+        result=result,
+    )
+
+    assert isinstance(response_input.outcome, InformationalConversationOutcome)
+    assert response_input.outcome.code == "listing_query_unsupported"

@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import uuid
+
 from app.config.settings import MAX_ITEMS_HARD_CAP
 
 from app.logic.normalize_search_response import normalize_search_response
 
+from app.logic.result_ids import build_result_id
 from app.logic.result_selection import select_ranked_items
 from app.observability.trace import RequestTrace
 from app.retrieval import Source, get_candidates
@@ -16,6 +19,7 @@ from app.schemas.search_response import (
     NormalizedSearchResponse,
     SearchStatus,
 )
+from app.schemas.shown_result_set import ShownResult, ShownResultSet
 
 from app.logic.listing_evaluation import (
     evaluate_listings,
@@ -30,7 +34,7 @@ async def orchestrate_search_request(
     source: Source = "fixtures",
     fallback_policy: FallbackPolicy | None = None,
     trace: RequestTrace | None = None,
-) -> NormalizedSearchResponse:
+) -> tuple[NormalizedSearchResponse, ShownResultSet]:
     """
     Execute accommodation search for an already validated
     canonical SearchRequest.
@@ -68,6 +72,8 @@ async def orchestrate_search_request(
     if trace is None:
         trace = RequestTrace()
 
+    result_set_id = str(uuid.uuid4())
+
     # Retrieval
     with trace.step(
         "retrieval",
@@ -91,11 +97,17 @@ async def orchestrate_search_request(
     ranked = evaluation.ranked_items
 
     if not ranked:
-        return NormalizedSearchResponse(
-            status=SearchStatus.NO_RESULTS,
-            results=[],
-            debug_notes=(
-                evaluation.debug_notes
+        return (
+            NormalizedSearchResponse(
+                status=SearchStatus.NO_RESULTS,
+                results=[],
+                debug_notes=(
+                    evaluation.debug_notes
+                ),
+            ),
+            ShownResultSet(
+                result_set_id=result_set_id,
+                items=[],
             ),
         )
 
@@ -111,6 +123,20 @@ async def orchestrate_search_request(
             requested_property_types=req.property_types,
         )
 
+    # Snapshot of the listings that will actually be shown, captured here
+    # because normalize_search_response() below does not preserve the full
+    # ListingRaw (facilities/rooms/policies/description) on its output.
+    shown_result_set = ShownResultSet(
+        result_set_id=result_set_id,
+        items=[
+            ShownResult(
+                result_id=build_result_id(item["listing"]),
+                listing=item["listing"],
+            )
+            for item in selected
+        ],
+    )
+
     # Normalize search output
     with trace.step(
         "normalize_response",
@@ -123,4 +149,4 @@ async def orchestrate_search_request(
         dropped_requests=[],
     )
 
-    return normalized
+    return normalized, shown_result_set

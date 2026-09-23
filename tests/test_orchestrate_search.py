@@ -73,7 +73,7 @@ async def test_baku_kitchen_returns_apartment():
         constraints=[kitchen_constraint()],
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=10,
@@ -92,7 +92,7 @@ async def test_tokyo_returns_no_results_on_fixtures():
         check_out=date(2026, 2, 14),
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=10,
@@ -140,7 +140,7 @@ async def test_candidate_pool_size_and_result_limit_have_different_responsibilit
 
     req = make_request()
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=6,
@@ -231,7 +231,7 @@ async def test_numeric_filters_are_applied_in_orchestrator(monkeypatch):
         },
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=10,
@@ -300,7 +300,7 @@ async def test_price_filter_per_night_is_applied(monkeypatch):
         }
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=10,
@@ -349,7 +349,7 @@ async def test_bathroom_filter_is_applied(monkeypatch):
         }
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=10,
@@ -399,7 +399,7 @@ async def test_orchestrator_returns_normalized_response(monkeypatch):
         occupancy_types=[],
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=10,
@@ -492,7 +492,7 @@ async def test_constraint_resolution_results_are_attached(monkeypatch):
         fake_resolve_listing_constraints_with_fallback,
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=5,
@@ -574,7 +574,7 @@ async def test_forbidden_constraint_excludes_violating_listing(monkeypatch):
         ],
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=10,
@@ -606,7 +606,7 @@ async def test_non_smoking_forbidden_constraint_matches_real_router_output():
         ],
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=40,
@@ -629,7 +629,7 @@ async def test_occupancy_filter_is_applied():
         constraints=[kitchen_constraint()],
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=10,
@@ -671,7 +671,7 @@ async def test_unresolved_must_textual_constraint_cannot_disappear_when_fallback
         occupancy_types=[],
     )
 
-    out = await orchestrate_search_request(
+    out, _ = await orchestrate_search_request(
         req,
         source="fixtures",
         candidate_pool_size=10,

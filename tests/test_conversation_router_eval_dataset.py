@@ -73,6 +73,33 @@ def test_build_router_input_with_existing_state():
     assert isinstance(router_input.current_search, SearchRequest)
     assert router_input.latest_result_context == {
         "has_shown_results": True,
+        "shown_results": [],
+    }
+
+
+def test_build_router_input_projects_shown_results_without_listing_raw():
+    case = ConversationRouterEvalCase(
+        id="router-test-3",
+        user_message="Does the second one have parking?",
+        has_current_search=True,
+        has_shown_results=True,
+        expected_action="listing_question",
+        category="listing_question",
+        notes="Test case",
+        shown_results=[
+            {"result_id": "H1", "title": "Hilton Baku"},
+            {"result_id": "H2", "title": "Marriott Baku"},
+        ],
+    )
+
+    router_input = build_router_input(case)
+
+    assert router_input.latest_result_context == {
+        "has_shown_results": True,
+        "shown_results": [
+            {"position": 1, "result_id": "H1", "title": "Hilton Baku"},
+            {"position": 2, "result_id": "H2", "title": "Marriott Baku"},
+        ],
     }
     
     
@@ -81,8 +108,11 @@ import asyncio
 from app.logic.conversation_router import ConversationRoutingError
 from app.observability.trace import LLMCallTrace
 from app.schemas.conversation_route import (
+    ClarificationReason,
     ConversationAction,
     ConversationActionDecision,
+    ConversationDecisionStatus,
+    ResultScope,
 )
 from evaluation.tasks.conversation_router.dataset import (
     ConversationRouterEvalCase,
@@ -129,6 +159,10 @@ def test_run_router_eval_case_success(monkeypatch):
         return ConversationActionDecision(
             action=ConversationAction.UPDATE_SEARCH,
             reason="The user changes the current city.",
+            decision_status=ConversationDecisionStatus.RESOLVED,
+            clarification_reason=ClarificationReason.NONE,
+            result_scope=ResultScope.NOT_APPLICABLE,
+            target_result_id="",
         )
 
     monkeypatch.setattr(

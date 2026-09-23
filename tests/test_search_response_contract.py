@@ -34,7 +34,7 @@ def make_request(
 
 @pytest.mark.asyncio
 async def test_search_orchestrator_returns_typed_response_for_results():
-    response = await orchestrate_search_request(
+    response, _ = await orchestrate_search_request(
         make_request(),
         source="fixtures",
         candidate_pool_size=5,
@@ -54,7 +54,7 @@ async def test_search_orchestrator_returns_typed_response_for_results():
 
 @pytest.mark.asyncio
 async def test_search_orchestrator_returns_typed_response_for_no_results():
-    response = await orchestrate_search_request(
+    response, _ = await orchestrate_search_request(
         make_request(city="NoSuchCity"),
         source="fixtures",
         candidate_pool_size=5,

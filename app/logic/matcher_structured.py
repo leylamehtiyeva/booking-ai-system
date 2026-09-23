@@ -202,35 +202,59 @@ def _match_field_via_rules(listing: ListingRaw, field: Field) -> FieldMatch:
         aliases=rule.aliases,
         preferred_path_prefixes=rule.preferred_path_prefixes,
     )
-    if best_positive is not None:
-        return FieldMatch(
-            value=Ternary.YES,
-            confidence=0.95,
-            evidence=[
-                Evidence(
-                    source=EvidenceSource.STRUCTURED,
-                    path=best_positive.path,
-                    snippet=best_positive.raw_text,
-                )
-            ],
-        )
-
     best_negative = find_best_negative_signal_match(
         signals=signals,
         negative_aliases=rule.negative_aliases,
         preferred_path_prefixes=rule.preferred_path_prefixes,
     )
-    if best_negative is not None:
-        return FieldMatch(
-            value=Ternary.NO,
-            confidence=0.9,
-            evidence=[
-                Evidence(
-                    source=EvidenceSource.STRUCTURED,
-                    path=best_negative.path,
-                    snippet=best_negative.raw_text,
-                )
-            ],
+
+    positive_evidence = (
+        Evidence(
+            source=EvidenceSource.STRUCTURED,
+            path=best_positive.path,
+            snippet=best_positive.raw_text,
         )
+        if best_positive is not None
+        else None
+    )
+    negative_evidence = (
+        Evidence(
+            source=EvidenceSource.STRUCTURED,
+            path=best_negative.path,
+            snippet=best_negative.raw_text,
+        )
+        if best_negative is not None
+        else None
+    )
+
+    if best_positive is not None and best_negative is not None:
+        if best_positive == best_negative:
+            # Same signal matched both alias lists - the negative alias
+            # phrase textually contains/overlaps the positive one (e.g.
+            # "no parking" nested inside "no parking available on site"),
+            # so it is the more specific read of this one piece of
+            # evidence, not a second, independent claim. Resolve to NO.
+            return FieldMatch(
+                value=Ternary.NO,
+                confidence=0.9,
+                evidence=[negative_evidence],
+            )
+
+        # Positive and negative evidence come from two different signals
+        # (e.g. a facility says "Private parking" but the description says
+        # "No parking available on site."). Without semantic understanding
+        # we cannot safely decide which claim is authoritative, so this is
+        # a genuine conflict rather than a single ambiguous sentence.
+        return FieldMatch(
+            value=Ternary.UNCERTAIN,
+            confidence=0.3,
+            evidence=[positive_evidence, negative_evidence],
+        )
+
+    if best_positive is not None:
+        return FieldMatch(value=Ternary.YES, confidence=0.95, evidence=[positive_evidence])
+
+    if best_negative is not None:
+        return FieldMatch(value=Ternary.NO, confidence=0.9, evidence=[negative_evidence])
 
     return FieldMatch(value=Ternary.UNCERTAIN, confidence=0.3, evidence=[])

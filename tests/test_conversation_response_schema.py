@@ -7,10 +7,15 @@ from app.schemas.conversation_response import (
     ConversationOutcome,
     ConversationResponseInput,
     GeneralChatConversationOutcome,
+    InformationalConversationOutcome,
+    ListingQueryConversationOutcome,
+    ListingQueryResponseItem,
     SearchConversationOutcome,
 )
 from app.schemas.conversation_route import ConversationAction
+from app.schemas.match import Ternary
 from app.schemas.query import SearchRequest
+from app.schemas.result_query_match import ConstraintMatchResult, ResultQueryMatch
 from app.schemas.search_response import NormalizedSearchResponse, SearchStatus
 
 
@@ -106,6 +111,67 @@ def test_conversation_outcome_rejects_unknown_kind():
                 "kind": "something_else",
             }
         )
+
+
+def test_listing_query_outcome_carries_result_query_match_unchanged():
+    match = ResultQueryMatch(
+        result_id="H1",
+        constraint_results=[
+            ConstraintMatchResult(
+                constraint_id="c1",
+                raw_text="parking",
+                field="parking",
+                value=Ternary.YES,
+                evidence=[],
+            )
+        ],
+    )
+
+    outcome = ListingQueryConversationOutcome(
+        items=[ListingQueryResponseItem(position=1, title="Hilton Baku", match=match)]
+    )
+
+    assert outcome.kind == "listing_query"
+    assert outcome.items[0].match is match
+
+
+def test_informational_outcome_requires_a_known_code():
+    with pytest.raises(ValidationError):
+        InformationalConversationOutcome(code="not_a_real_code")
+
+    outcome = InformationalConversationOutcome(code="update_no_op")
+    assert outcome.kind == "informational"
+
+
+def test_conversation_outcome_union_round_trips_listing_query_by_discriminator():
+    adapter = TypeAdapter(ConversationOutcome)
+
+    payload = {
+        "kind": "listing_query",
+        "items": [
+            {
+                "position": 1,
+                "title": "Hilton Baku",
+                "match": {
+                    "result_id": "H1",
+                    "constraint_results": [
+                        {
+                            "constraint_id": "c1",
+                            "raw_text": "parking",
+                            "field": "parking",
+                            "value": "YES",
+                            "evidence": [],
+                        }
+                    ],
+                },
+            }
+        ],
+    }
+
+    outcome = adapter.validate_python(payload)
+
+    assert isinstance(outcome, ListingQueryConversationOutcome)
+    assert outcome.items[0].match.result_id == "H1"
 
 
 def test_search_outcome_without_search_response_is_invalid():

@@ -23,6 +23,69 @@ from app.schemas.conversation_response import (
     GeneralChatConversationOutcome,
 )
 from app.schemas.conversation_route import ConversationAction
+from app.schemas.conversation_response import (
+    ConversationFailureOutcome,
+    InformationalConversationOutcome,
+    ListingQueryConversationOutcome,
+    ListingQueryResponseItem,
+)
+from app.schemas.match import Ternary
+from app.schemas.result_query_match import ConstraintMatchResult, ResultQueryMatch
+import pytest
+
+
+def _listing_query_outcome() -> ListingQueryConversationOutcome:
+    return ListingQueryConversationOutcome(
+        items=[
+            ListingQueryResponseItem(
+                position=1,
+                title="Hilton Baku",
+                match=ResultQueryMatch(
+                    result_id="H1",
+                    constraint_results=[
+                        ConstraintMatchResult(
+                            constraint_id="c1",
+                            raw_text="parking",
+                            field="parking",
+                            value=Ternary.YES,
+                            evidence=[],
+                        )
+                    ],
+                ),
+            )
+        ]
+    )
+
+
+@pytest.mark.parametrize(
+    "outcome",
+    [
+        ConversationFailureOutcome(user_safe_message="fixed message"),
+        InformationalConversationOutcome(code="update_no_op"),
+        _listing_query_outcome(),
+    ],
+    ids=["failure", "informational", "listing_query"],
+)
+def test_deterministic_only_outcomes_never_call_the_llm_runner(monkeypatch, outcome):
+    response_input = ConversationResponseInput(
+        user_message="hello",
+        action=ConversationAction.GENERAL_CHAT,
+        outcome=outcome,
+    )
+
+    def fail_if_called(*args, **kwargs):
+        raise AssertionError("the LLM runner must not be built for a deterministic-only outcome")
+
+    monkeypatch.setattr(
+        "app.logic.conversation_response_llm.build_adk_model",
+        fail_if_called,
+    )
+
+    result = asyncio.run(
+        generate_conversation_response_with_llm(response_input)
+    )
+
+    assert result.source == "deterministic"
 
 
 def test_general_chat_llm_payload_contains_only_conversation_context():

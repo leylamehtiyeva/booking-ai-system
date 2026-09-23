@@ -174,8 +174,13 @@ class FakeRunner:
         return _event_stream(
             FakeEvent(
                 text_parts=[
-                    '{"action":"general_chat",',
-                    '"reason":"greeting"}',
+                    '{"action":"general_chat","reason":"greeting",',
+                    (
+                        '"decision_status":"resolved",'
+                        '"clarification_reason":"none",'
+                        '"result_scope":"not_applicable",'
+                        '"target_result_id":""}'
+                    ),
                 ],
                 is_final=True,
             )
@@ -245,7 +250,9 @@ async def test_router_records_successful_llm_call_once(
     assert recorded["success"] is True
     assert recorded["error"] is None
     assert recorded["response_text"] == (
-        '{"action":"general_chat","reason":"greeting"}'
+        '{"action":"general_chat","reason":"greeting",'
+        '"decision_status":"resolved","clarification_reason":"none",'
+        '"result_scope":"not_applicable","target_result_id":""}'
     )
     assert "You are a conversation classifier" in recorded["prompt_text"]
     assert "Latest user message:" in recorded["prompt_text"]
@@ -566,8 +573,13 @@ class RetryThenSuccessRunner:
         return _event_stream(
             FakeEvent(
                 text_parts=[
-                    '{"action":"general_chat",',
-                    '"reason":"greeting"}',
+                    '{"action":"general_chat","reason":"greeting",',
+                    (
+                        '"decision_status":"resolved",'
+                        '"clarification_reason":"none",'
+                        '"result_scope":"not_applicable",'
+                        '"target_result_id":""}'
+                    ),
                 ],
                 is_final=True,
             )
