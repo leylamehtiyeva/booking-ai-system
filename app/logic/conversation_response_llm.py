@@ -178,6 +178,9 @@ def _build_llm_payload(
 
         payload["outcome"] = {
             "kind": "search",
+            "status": answer_payload.get(
+                "search_status"
+            ),
             "results_count": answer_payload.get(
                 "results_count",
                 0,

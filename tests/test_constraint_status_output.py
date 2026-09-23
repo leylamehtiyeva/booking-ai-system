@@ -44,6 +44,7 @@ async def test_orchestrate_search_returns_constraint_statuses(monkeypatch):
                 raw_text="satellite TV",
                 normalized_text="satellite TV",
                 resolver_type="textual",
+                priority="must",
                 decision="UNCERTAIN",
                 resolution_status="uncertain",
                 confidence=0.0,

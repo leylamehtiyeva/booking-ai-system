@@ -3,6 +3,10 @@ from __future__ import annotations
 from typing import Any
 
 from app.schemas.search_response import NormalizedSearchResponse
+from app.schemas.search_response import (
+    NormalizedSearchResponse,
+    SearchStatus,
+)
 
 
 IMPORTANT_FACT_KEYS = {
@@ -199,6 +203,7 @@ def _pick_reason_lines(items: list[dict[str, Any]], limit: int = 4) -> list[str]
 
 def _normalize_answer_constraint_items(
     items: list[dict[str, Any]],
+    facts: dict[str, Any] | None = None,
 ) -> list[dict[str, str]]:
     out: list[dict[str, str]] = []
 
@@ -209,7 +214,21 @@ def _normalize_answer_constraint_items(
 
         cleaned_reason: str
         if name == "property_type":
-            cleaned_reason = "Matches the requested apartment type"
+            actual_property_type = (
+                (facts or {}).get("property_type")
+            )
+
+            if actual_property_type:
+                cleaned_reason = (
+                    "Matches the requested "
+                    f"{actual_property_type} type"
+                )
+            else:
+                cleaned_reason = (
+                    str(reason).strip()
+                    if reason
+                    else label
+                )
         elif name == "occupancy_type":
             cleaned_reason = "Matches the requested occupancy type"
         else:
@@ -230,11 +249,21 @@ def _build_answer_constraint_sections(
     matched_details: list[dict[str, Any]],
     uncertain_details: list[dict[str, Any]],
     failed_details: list[dict[str, Any]],
+    facts: dict[str, Any] | None = None,
 ) -> dict[str, list[dict[str, str]]]:
     return {
-        "confirmed": _normalize_answer_constraint_items(matched_details),
-        "needs_confirmation": _normalize_answer_constraint_items(uncertain_details),
-        "not_satisfied": _normalize_answer_constraint_items(failed_details),
+        "confirmed": _normalize_answer_constraint_items(
+            matched_details,
+            facts,
+        ),
+        "needs_confirmation": _normalize_answer_constraint_items(
+            uncertain_details,
+            facts,
+        ),
+        "not_satisfied": _normalize_answer_constraint_items(
+            failed_details,
+            facts,
+        ),
     }
 
 
@@ -601,16 +630,19 @@ def build_answer_payload(
         else None
     )
 
-    if response.need_clarification:
+    if response.status == SearchStatus.NO_RESULTS:
         return {
-            "need_clarification": True,
-            "questions": list(response.questions or []),
+            "need_clarification": False,
+            "questions": [],
+            "search_status": response.status.value,
             "latest_user_query": latest_user_query,
             "request_summary": request_summary,
             "active_intent": request_summary,
             "results_count": 0,
             "top_results": [],
-            "debug_notes": list(response.debug_notes or []),
+            "debug_notes": list(
+                response.debug_notes or []
+            ),
         }
 
     top_results: list[dict[str, Any]] = []
@@ -645,6 +677,7 @@ def build_answer_payload(
             matched_details=matched_details,
             uncertain_details=uncertain_details,
             failed_details=failed_details,
+            facts=facts_dict,
         )
 
         answer_verdict = _build_result_verdict(
@@ -753,10 +786,12 @@ def build_answer_payload(
     return {
         "need_clarification": False,
         "questions": [],
+        "search_status": response.status.value,
         "latest_user_query": latest_user_query,
         "request_summary": request_summary,
         "active_intent": request_summary,
         "results_count": len(response.results or []),
         "top_results": top_results,
         "debug_notes": list(response.debug_notes or []),
+        
     }

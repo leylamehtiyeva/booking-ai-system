@@ -10,6 +10,69 @@ from app.schemas.search_response import (
     ResultFact,
 )
 
+from app.schemas.search_response import SearchStatus
+
+
+def test_build_answer_payload_uses_actual_property_type_in_explanation():
+    response = NormalizedSearchResponse(
+        status=SearchStatus.RESULTS,
+        request_summary=NormalizedRequestSummary(
+            city="Baku",
+            check_in="2026-08-21",
+            check_out="2026-09-04",
+            constraints=[],
+            property_types=[
+                "apartment",
+                "hotel",
+            ],
+            occupancy_types=[],
+            filters={},
+        ),
+        results=[
+            NormalizedSearchResult(
+                result_id="hotel-1",
+                title="Moxen Luxury Hotel",
+                url="https://example.com/hotel",
+                score=0.0,
+                matched_constraints=[
+                    ConstraintStatus(
+                        name="property_type",
+                        status="matched",
+                        reason="PROPERTY_TYPE: matched hotel",
+                    )
+                ],
+                uncertain_constraints=[],
+                failed_constraints=[],
+                facts=[
+                    ResultFact(
+                        key="property_type",
+                        value="hotel",
+                        source="property_semantics",
+                    )
+                ],
+                why=[
+                    "PROPERTY_TYPE: matched hotel"
+                ],
+            )
+        ],
+        debug_notes=[],
+    )
+
+    payload = build_answer_payload(
+        response,
+        top_k=3,
+    )
+
+    explanation = (
+        payload["top_results"][0]
+        ["answer_explanation"]
+    )
+
+    assert (
+        explanation["confirmed"][0]["reason"]
+        == "Matches the requested hotel type"
+    )
+
 
 def test_build_answer_payload_for_normal_results():
     response = NormalizedSearchResponse(
