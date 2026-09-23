@@ -8,6 +8,68 @@ from app.schemas.listing import ListingRaw
 from app.schemas.match import Ternary
 from app.schemas.property_semantics import OccupancyType, PropertyType
 
+from app.schemas.listing import (
+    Facility,
+    ListingRaw,
+    Room,
+)
+
+def test_detect_occupancy_type_from_canonical_room_facility():
+    listing = ListingRaw(
+        id="occupancy-1",
+        name="Nice stay",
+        rooms=[
+            Room(
+                name="Apartment",
+                facilities=[
+                    Facility(
+                        name="Entire apartment"
+                    )
+                ],
+            )
+        ],
+    )
+
+    detected, evidence = (
+        detect_occupancy_type(listing)
+    )
+
+    assert (
+        detected
+        == OccupancyType.ENTIRE_PLACE
+    )
+
+    assert evidence
+
+    assert (
+        "facilities"
+        in evidence[0].path
+    )
+
+
+def test_detect_property_type_prefers_canonical_field():
+    listing = ListingRaw(
+        id="canonical-1",
+        name="Hotel-looking accommodation",
+        property_type="apartment",
+        rooms=[],
+    )
+
+    detected, evidence = (
+        detect_property_type(listing)
+    )
+
+    assert (
+        detected
+        == PropertyType.APARTMENT
+    )
+
+    assert evidence
+
+    assert (
+        evidence[0].path
+        == "listing.property_type"
+    )
 
 def test_detect_property_type_apartment():
     listing = ListingRaw(

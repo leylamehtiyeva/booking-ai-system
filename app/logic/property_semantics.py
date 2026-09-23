@@ -16,77 +16,237 @@ class SemanticMatchResult:
     why: str
 
 
-def _texts_for_listing(listing: ListingRaw) -> list[tuple[str, str]]:
+def _texts_for_listing(
+    listing: ListingRaw,
+) -> list[tuple[str, str]]:
     out: list[tuple[str, str]] = []
 
-    name = getattr(listing, "name", None)
-    if name:
-        out.append(("listing.name", name))
+    if listing.name:
+        out.append(
+            (
+                "listing.name",
+                listing.name,
+            )
+        )
 
-    description = getattr(listing, "description", None)
-    if description:
-        out.append(("listing.description", description))
+    if listing.description:
+        out.append(
+            (
+                "listing.description",
+                listing.description,
+            )
+        )
 
-    listing_type = getattr(listing, "type", None)
-    if listing_type:
-        out.append(("listing.type", str(listing_type)))
+    if listing.fine_print:
+        out.append(
+            (
+                "listing.fine_print",
+                listing.fine_print,
+            )
+        )
 
-    rooms = getattr(listing, "rooms", []) or []
-    for i, room in enumerate(rooms):
-        room_type = getattr(room, "roomType", None)
-        if room_type:
-            out.append((f"rooms[{i}].roomType", room_type))
+    for i, room in enumerate(
+        listing.rooms or []
+    ):
+        if room.name:
+            out.append(
+                (
+                    f"rooms[{i}].name",
+                    room.name,
+                )
+            )
 
-        facilities = getattr(room, "facilities", []) or []
-        for j, facility in enumerate(facilities):
-            if facility:
-                out.append((f"rooms[{i}].facilities[{j}]", str(facility)))
+        for j, facility in enumerate(
+            room.facilities or []
+        ):
+            if isinstance(facility, str):
+                out.append(
+                    (
+                        (
+                            f"rooms[{i}]"
+                            f".facilities[{j}]"
+                        ),
+                        facility,
+                    )
+                )
+                continue
+
+            if facility.name:
+                out.append(
+                    (
+                        (
+                            f"rooms[{i}]"
+                            f".facilities[{j}].name"
+                        ),
+                        facility.name,
+                    )
+                )
+
+            if facility.overview:
+                out.append(
+                    (
+                        (
+                            f"rooms[{i}]"
+                            f".facilities[{j}]"
+                            ".overview"
+                        ),
+                        facility.overview,
+                    )
+                )
 
     return out
 
+def _property_type_from_canonical_value(
+    value: str | None,
+) -> PropertyType | None:
+    if not value:
+        return None
 
-def detect_property_type(listing: ListingRaw) -> tuple[PropertyType | None, list[Evidence]]:
+    normalized = (
+        value
+        .strip()
+        .lower()
+        .replace("-", "_")
+        .replace(" ", "_")
+    )
+
+    try:
+        return PropertyType(normalized)
+    except ValueError:
+        return None
+
+def detect_property_type(
+    listing: ListingRaw,
+) -> tuple[
+    PropertyType | None,
+    list[Evidence],
+]:
+    canonical = (
+        _property_type_from_canonical_value(
+            listing.property_type
+        )
+    )
+
+    if canonical is not None:
+        return (
+            canonical,
+            [
+                Evidence(
+                    source=(
+                        EvidenceSource.STRUCTURED
+                    ),
+                    path="listing.property_type",
+                    snippet=listing.property_type,
+                )
+            ],
+        )
+
+    # Fallback only when structured
+    # property_type is unavailable.
     texts = _texts_for_listing(listing)
 
     rules = [
-        (PropertyType.CAPSULE_HOTEL, ["capsule hotel", "capsule"]),
-        (PropertyType.BED_AND_BREAKFAST, ["bed and breakfast", "b&b"]),
-        (PropertyType.HOLIDAY_HOME, ["holiday home", "vacation home"]),
-        (PropertyType.COUNTRY_HOUSE, ["country house"]),
-        (PropertyType.LOVE_HOTEL, ["love hotel"]),
-        (PropertyType.GUEST_HOUSE, ["guest house", "guesthouse"]),
-        (PropertyType.APARTHOTEL, ["aparthotel"]),
-        (PropertyType.RYOKAN, ["ryokan", "ryokans", "旅館"]),
-        (PropertyType.HOMESTAY, ["homestay"]),
-        (PropertyType.CAMPSITE, ["campsite", "camping"]),
-        (PropertyType.CHALET, ["chalet"]),
-        (PropertyType.LODGE, ["lodge"]),
-        (PropertyType.RESORT, ["resort"]),
-        (PropertyType.HOSTEL, ["hostel"]),
-        (PropertyType.VILLA, ["villa"]),
-        (PropertyType.HOTEL, ["hotel"]),
-        (PropertyType.APARTMENT, ["apartment", "apartments", "flat", "studio"]),
-        (PropertyType.HOUSE, ["house", "home"]),
+        (
+            PropertyType.CAPSULE_HOTEL,
+            ["capsule hotel", "capsule"],
+        ),
+        (
+            PropertyType.BED_AND_BREAKFAST,
+            ["bed and breakfast", "b&b"],
+        ),
+        (
+            PropertyType.HOLIDAY_HOME,
+            ["holiday home", "vacation home"],
+        ),
+        (
+            PropertyType.COUNTRY_HOUSE,
+            ["country house"],
+        ),
+        (
+            PropertyType.LOVE_HOTEL,
+            ["love hotel"],
+        ),
+        (
+            PropertyType.GUEST_HOUSE,
+            ["guest house", "guesthouse"],
+        ),
+        (
+            PropertyType.APARTHOTEL,
+            ["aparthotel"],
+        ),
+        (
+            PropertyType.RYOKAN,
+            ["ryokan", "ryokans", "旅館"],
+        ),
+        (
+            PropertyType.HOMESTAY,
+            ["homestay"],
+        ),
+        (
+            PropertyType.CAMPSITE,
+            ["campsite", "camping"],
+        ),
+        (
+            PropertyType.CHALET,
+            ["chalet"],
+        ),
+        (
+            PropertyType.LODGE,
+            ["lodge"],
+        ),
+        (
+            PropertyType.RESORT,
+            ["resort"],
+        ),
+        (
+            PropertyType.HOSTEL,
+            ["hostel"],
+        ),
+        (
+            PropertyType.VILLA,
+            ["villa"],
+        ),
+        (
+            PropertyType.HOTEL,
+            ["hotel"],
+        ),
+        (
+            PropertyType.APARTMENT,
+            [
+                "apartment",
+                "apartments",
+                "flat",
+                "studio",
+            ],
+        ),
+        (
+            PropertyType.HOUSE,
+            ["house", "home"],
+        ),
     ]
 
     for path, text in texts:
         low = text.lower()
-        for ptype, patterns in rules:
+
+        for property_type, patterns in rules:
             for pattern in patterns:
-                if pattern in low:
-                    return (
-                        ptype,
-                        [
-                            Evidence(
-                                source=EvidenceSource.STRUCTURED,
-                                path=path,
-                                snippet=pattern,
-                            )
-                        ],
-                    )
+                if pattern not in low:
+                    continue
+
+                return (
+                    property_type,
+                    [
+                        Evidence(
+                            source=(
+                                EvidenceSource.STRUCTURED
+                            ),
+                            path=path,
+                            snippet=pattern,
+                        )
+                    ],
+                )
 
     return None, []
-
 
 def detect_occupancy_type(listing: ListingRaw) -> tuple[OccupancyType | None, list[Evidence]]:
     texts = _texts_for_listing(listing)

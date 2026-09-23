@@ -94,6 +94,8 @@ class ConstraintResolutionResult(BaseModel):
     normalized_text: str
 
     resolver_type: ResolverType
+    priority: str
+    mapped_fields: list[str] = Field(default_factory=list)
     decision: DecisionType
     resolution_status: ResolutionStatus
     confidence: float | None = None
@@ -270,6 +272,8 @@ def _normalize_result(
         raw_text=req.raw_text,
         normalized_text=req.normalized_text,
         resolver_type=req.resolver_type,
+        priority=req.priority,
+        mapped_fields=req.mapped_fields,
         decision=decision,
         resolution_status=_decision_to_status(decision),
         confidence=confidence,
@@ -393,7 +397,13 @@ def is_constraint_fallback_eligible(
     if not policy.enabled:
         return False
 
-    if policy.must_only and constraint.priority != ConstraintPriority.MUST:
+    # must_only gates the *blocking* priorities (must + forbidden), not
+    # literally "must" only — a confirmed forbidden constraint must reject
+    # a listing exactly like a failed must constraint does.
+    if policy.must_only and constraint.priority not in (
+        ConstraintPriority.MUST,
+        ConstraintPriority.FORBIDDEN,
+    ):
         return False
 
     if (

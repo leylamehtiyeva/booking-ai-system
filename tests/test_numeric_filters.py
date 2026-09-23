@@ -8,11 +8,104 @@ from app.logic.numeric_filters import (
     match_bedrooms_filters,
     match_price_filters,
 )
+
+from app.schemas.listing import (
+    BedGroup,
+    Facility,
+    ListingRaw,
+    Room,
+)
 from datetime import date
 from app.schemas.filters import PriceConstraint, SearchFilters
 from app.schemas.listing import ListingRaw, Room
 from app.schemas.match import Ternary
 
+
+def test_extract_area_from_canonical_room_facility():
+    listing = ListingRaw(
+        id="area-room-1",
+        name="Large apartment",
+        rooms=[
+            Room(
+                name="Apartment with Sea View",
+                facilities=[
+                    Facility(
+                        name="2153 feet²"
+                    )
+                ],
+            )
+        ],
+    )
+
+    value, evidence = extract_area_sqm(
+        listing
+    )
+
+    assert value is not None
+
+    assert 199.9 <= value <= 200.1
+
+    assert evidence
+
+    assert (
+        evidence[0].path
+        == "rooms[0].facilities[0].name"
+    )
+    
+    
+def test_extract_bathroom_count_from_canonical_room_facility():
+    listing = ListingRaw(
+        id="bathroom-room-1",
+        rooms=[
+            Room(
+                name="Apartment",
+                facilities=[
+                    Facility(
+                        name="2 bathrooms"
+                    )
+                ],
+            )
+        ],
+    )
+
+    value, evidence = (
+        extract_bathroom_count(listing)
+    )
+
+    assert value == 2.0
+    assert evidence
+
+    assert (
+        evidence[0].path
+        == "rooms[0].facilities[0].name"
+    )
+    
+    
+def test_bed_count_is_not_treated_as_bedroom_count():
+    listing = ListingRaw(
+        id="bedroom-guard-1",
+        name="Apartment",
+        rooms=[
+            Room(
+                name="Apartment",
+                bed_types=[
+                    BedGroup(
+                        room="Bedroom 1",
+                        beds=[
+                            "1 large double bed"
+                        ],
+                    )
+                ],
+            )
+        ],
+    )
+
+    value, evidence = (
+        extract_bedroom_count(listing)
+    )
+
+    assert value is None
+    assert evidence == []
 
 def test_extract_bedroom_count_from_room_name():
     listing = ListingRaw(
