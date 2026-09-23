@@ -8,6 +8,7 @@ from app.config.llm import (
     LlmProvider,
     get_llm_profile,
     GROQ_GPT_OSS_20B_PROFILE_NAME,
+    GEMINI_2_5_FLASH_LITE_PROFILE_NAME,
 )
 from app.llm import model_factory
 from app.llm.model_factory import (
@@ -15,6 +16,17 @@ from app.llm.model_factory import (
     build_adk_model,
 )
 
+
+def test_get_llm_profile_returns_gemini_flash_lite_profile():
+    profile = get_llm_profile(
+        GEMINI_2_5_FLASH_LITE_PROFILE_NAME
+    )
+
+    assert profile.provider == LlmProvider.GOOGLE
+    assert profile.adapter == AdkModelAdapter.GEMINI
+    assert profile.model == "gemini-2.5-flash-lite"
+    assert profile.api_key_env == "GOOGLE_API_KEY"
+    assert profile.api_base is None
 
 def test_get_llm_profile_uses_configured_gemini_model(
     monkeypatch,

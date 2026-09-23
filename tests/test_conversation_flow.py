@@ -189,7 +189,12 @@ async def test_conversation_flow_new_search_rebuilds_state(monkeypatch):
 
     out = await handle_user_message("new", previous_state=previous_state)
 
+
     assert out["state"]["city"] == "Paris"
+    assert (
+        out["conversation_action"]
+        == ConversationAction.START_SEARCH.value
+    )
 
 
 @pytest.mark.asyncio
@@ -215,6 +220,10 @@ async def test_conversation_flow_general_chat_returns_previous_state(monkeypatch
     assert out["state"]["constraints"]
     assert "telemetry" in out
     assert out["telemetry"] is not None
+    assert (
+        out["conversation_action"]
+        == ConversationAction.GENERAL_CHAT.value
+    )
     
     
 from unittest.mock import AsyncMock
@@ -274,6 +283,7 @@ async def test_routing_failure_does_not_change_search_state(
     assert result["search_request"] == expected_state
     assert "telemetry" in result
     assert result["telemetry"] is not None
+    assert "conversation_action" not in result
 
     update_mock.assert_not_awaited()
     search_mock.assert_not_awaited()
@@ -445,4 +455,9 @@ async def test_update_without_existing_state_starts_search(
             "effective_action"
         ]
         == "start_search"
+    )
+    
+    assert (
+        result["conversation_action"]
+        == ConversationAction.START_SEARCH.value
     )

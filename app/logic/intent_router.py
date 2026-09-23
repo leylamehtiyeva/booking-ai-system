@@ -25,11 +25,14 @@ USER_ID = "local-user"
 
 
 def _clean_filters(filters):
-    if not filters:
+    if filters is None:
         return None
 
-    data = filters.model_dump()
-    cleaned = {k: v for k, v in data.items() if v is not None}
+    cleaned = filters.model_dump(
+        mode="json",
+        exclude_none=True,
+    )
+
     return cleaned or None
 
 
