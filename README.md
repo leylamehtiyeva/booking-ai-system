@@ -47,6 +47,16 @@ flowchart TD
     DFR --> RESP
 
     RESP -. next turn .-> U
+
+    classDef state fill:#233042,stroke:#7c93b3,stroke-width:1.5px,color:#eef2f7;
+    classDef llm fill:#33263f,stroke:#a889c9,stroke-width:1.5px,color:#f4eef9;
+    classDef det fill:#1f3327,stroke:#7fae8f,stroke-width:1.5px,color:#eaf5ee;
+    classDef clarify fill:#3d3018,stroke:#c9a35c,stroke-width:1.5px,color:#f9f1e0;
+
+    class R,IP,LLMR llm;
+    class SR,SRS state;
+    class DPA,DFR det;
+    class CLAR clarify;
 ```
 
 Every user message is first classified by a Conversation Router into one of four actions — `START_SEARCH`, `UPDATE_SEARCH`, `LISTING_QUESTION`, `GENERAL_CHAT`. Clarification isn't a fifth action: it's a short-circuit taken whenever the system should abstain rather than guess.
@@ -91,6 +101,14 @@ flowchart TD
     TES --> DV
 
     DV --> DR[Deterministic Factual Rendering]
+
+    classDef state fill:#233042,stroke:#7c93b3,stroke-width:1.5px,color:#eef2f7;
+    classDef llm fill:#33263f,stroke:#a889c9,stroke-width:1.5px,color:#f4eef9;
+    classDef det fill:#1f3327,stroke:#7fae8f,stroke-width:1.5px,color:#eaf5ee;
+
+    class SRS state;
+    class FCE,TES llm;
+    class DV,DR det;
 ```
 
 - Candidates come from `ShownResultSet` — the persisted snapshot of exactly what was shown, never re-derived or re-ranked here.
