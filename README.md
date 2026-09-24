@@ -72,6 +72,31 @@ Every user message is first classified by a Conversation Router into one of four
 - **Structured-first evidence resolution**, with free-text LLM evidence as a narrow fallback
 - **Deterministic factual verdicts and rendering** for listing follow-ups — never LLM-paraphrased
 
+## Example Interaction
+
+*Example based on the repository's fixture data.*
+
+**User**
+
+Looking for an apartment in Baku, April 10–15, with WiFi.
+
+**Assistant**
+
+I found 2 matching options:
+
+1. **Sunny Central Apartment** — WiFi confirmed
+2. **Modern Loft Apartment** — WiFi confirmed
+
+**User**
+
+Is the first one in a quiet location?
+
+**Assistant**
+
+Sunny Central Apartment has a quiet location.
+
+> "Quiet location" has no dedicated structured field, so the system falls back to the listing's free-text description ("Quiet street but still central") for evidence. An LLM interprets that evidence, while the final verdict and factual response remain deterministic.
+
 ## Conversation State
 
 Two separate objects carry state across turns, because they answer different questions.
