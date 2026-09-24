@@ -78,7 +78,7 @@ Every user message is first classified by a Conversation Router into one of four
 
 **👤 User**
 
-Looking for an apartment in Baku, April 10–15, with WiFi.
+I am looking for an apartment in Baku for these dates April 10–15. The apartment have to be with WiFi
 
 **🤖 Assistant**
 
