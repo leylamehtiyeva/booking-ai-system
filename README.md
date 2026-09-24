@@ -76,22 +76,22 @@ Every user message is first classified by a Conversation Router into one of four
 
 *Example based on the repository's fixture data.*
 
-**User**
+**👤 User**
 
 Looking for an apartment in Baku, April 10–15, with WiFi.
 
-**Assistant**
+**🤖 Assistant**
 
 I found 2 matching options:
 
 1. **Sunny Central Apartment** — WiFi confirmed
 2. **Modern Loft Apartment** — WiFi confirmed
 
-**User**
+**👤 User**
 
 Is the first one in a quiet location?
 
-**Assistant**
+**🤖 Assistant**
 
 Sunny Central Apartment has a quiet location.
 
