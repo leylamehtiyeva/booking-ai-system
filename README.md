@@ -13,6 +13,8 @@ flowchart TD
         SRS[("ShownResultSet<br/>what the user was shown")]
     end
 
+    STATE -. context .-> R
+
     subgraph SEARCH["Search / Update"]
         IP["Interpret intent or update patch [LLM]"]
         APPLY["Build / update SearchRequest<br/>deterministic state transition<br/>✎ SearchRequest"]
@@ -29,9 +31,6 @@ flowchart TD
         GC["No domain computation"]
     end
 
-    SR -. context .-> R
-    SRS -. context .-> R
-
     R -- "START / UPDATE" --> IP
     R -- "LISTING_QUESTION" --> VAL
     R -- "GENERAL_CHAT" --> GC
@@ -40,7 +39,7 @@ flowchart TD
     IP --> APPLY --> RUN
     VAL --> FACT --> VERD
 
-    SRS -. candidates .-> VAL
+    STATE -. candidates .-> VAL
 
     VAL -- "invalid reference" --> CLAR
     APPLY -- "missing context" --> CLAR
@@ -58,23 +57,23 @@ flowchart TD
     LLMR --> RESP(["Response to user"])
     DFR --> RESP
 
+    classDef io fill:#1b1f24,stroke:#d0d7de,stroke-width:2.5px,color:#ffffff,font-weight:bold;
     classDef state fill:#233042,stroke:#7c93b3,stroke-width:1.5px,color:#eef2f7;
     classDef llm fill:#33263f,stroke:#a889c9,stroke-width:1.5px,color:#f4eef9;
     classDef det fill:#1f3327,stroke:#7fae8f,stroke-width:1.5px,color:#eaf5ee;
     classDef clarify fill:#3d3018,stroke:#c9a35c,stroke-width:1.5px,color:#f9f1e0;
 
+    class U,RESP io;
     class R,IP,LLMR llm;
     class SR,SRS state;
     class APPLY,VAL,VERD,DFR det;
     class CLAR clarify;
 
-    linkStyle 6,12,13 stroke:#c9a35c,stroke-width:1.5px;
-
-    U ~~~ SR
-    U ~~~ SRS
+    linkStyle 0 stroke-width:2.5px;
+    linkStyle 5,11,12 stroke:#c9a35c,stroke-width:1.5px;
 ```
 
-**Purple** = LLM · **Green** = deterministic guardrail · **Neutral** = application/domain pipeline · **Cylinders** = persistent state · **Amber** = abstention. Solid arrows = control flow, dotted arrows = state reads, ✎ = state write.
+**Dark pills** = turn input / output · **Purple** = LLM · **Green** = deterministic guardrail · **Neutral** = application/domain pipeline · **Cylinders** = persistent state · **Amber** = abstention. Solid arrows = control flow, dotted arrows = state reads, ✎ = state write.
 
 Every user message is first classified by a Conversation Router into one of four actions — `START_SEARCH`, `UPDATE_SEARCH`, `LISTING_QUESTION`, `GENERAL_CHAT`. Clarification isn't a fifth action: it's a shared short-circuit taken whenever the system should abstain rather than guess — an ambiguous turn, a listing reference that fails validation, or a search missing required context.
 
