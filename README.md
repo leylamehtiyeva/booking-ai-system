@@ -6,47 +6,57 @@ A multi-turn conversational system for accommodation search, built around explic
 
 ```mermaid
 flowchart TD
-    U[User message] --> R["Conversation Router [LLM]"]
+    U(["User message"]) --> R["Conversation Router [LLM]<br/>action + reference interpretation"]
 
-    subgraph STATE["Persistent state"]
-        direction TB
-        SR[(SearchRequest)]
-        SRS[(ShownResultSet)]
+    subgraph STATE["Persistent state · survives across turns"]
+        SR[("SearchRequest<br/>what the user wants")]
+        SRS[("ShownResultSet<br/>what the user was shown")]
     end
 
-    SR -. reads for context .-> R
-    SRS -. shown-result context .-> R
+    subgraph SEARCH["Search / Update"]
+        IP["Interpret intent or update patch [LLM]"]
+        APPLY["Build / update SearchRequest<br/>deterministic state transition<br/>✎ SearchRequest"]
+        RUN["Retrieve → Match → Rank<br/>structured-first · textual LLM fallback<br/>✎ ShownResultSet"]
+    end
 
-    R -- "ambiguous action / reference" --> CLAR{{"Clarification — abstain, ask user"}}
-    R -- "START_SEARCH / UPDATE_SEARCH" --> IP["Search Intent / Update Patch [LLM]"]
-    R -- "LISTING_QUESTION" --> LQ["Grounded Listing Follow-up<br/>(structured-first factual resolution)"]
-    R -- "GENERAL_CHAT" --> GC[General Chat]
+    subgraph LISTING["Listing Question"]
+        VAL["Validate reference<br/>against ShownResultSet"]
+        FACT["Grounded factual resolution<br/>structured-first · textual LLM fallback"]
+        VERD["Verdict YES / NO / UNCERTAIN<br/>deterministic"]
+    end
 
-    IP -- "new intent (START_SEARCH)" --> SR
-    IP -- "proposed patch (UPDATE_SEARCH)" --> DPA[Deterministic Patch Application]
-    DPA --> SR
+    subgraph CHAT["General Chat"]
+        GC["No domain computation"]
+    end
 
-    SR -- "missing required context" --> CLAR
-    SR --> RET[Provider Retrieval]
-    RET --> MER["Matching, Evidence & Ranking<br/>(structured first + optional textual fallback [LLM])"]
-    MER --> SRS
+    SR -. context .-> R
+    SRS -. context .-> R
 
-    SRS --> LQ
+    R -- "START / UPDATE" --> IP
+    R -- "LISTING_QUESTION" --> VAL
+    R -- "GENERAL_CHAT" --> GC
+    R -- "ambiguous" --> CLAR{{"Clarification<br/>abstain, ask user"}}
 
-    MER --> OUT[Typed Conversation Outcome]
-    LQ --> OUT
+    IP --> APPLY --> RUN
+    VAL --> FACT --> VERD
+
+    SRS -. candidates .-> VAL
+
+    VAL -- "invalid reference" --> CLAR
+    APPLY -- "missing context" --> CLAR
+
+    RUN --> OUT[["Typed Conversation Outcome"]]
+    VERD --> OUT
     GC --> OUT
     CLAR --> OUT
 
-    OUT --> POL[Response Policy]
+    OUT --> POL{"Response Policy"}
 
-    POL -- "Search / Update /<br/>General Chat / Clarification" --> LLMR["LLM Response Wording<br/>(deterministic fallback)"]
-    POL -- "Listing Question" --> DFR["Deterministic Factual Rendering<br/>(no response LLM)"]
+    POL -- "search · chat · clarification" --> LLMR["Response wording [LLM]<br/>deterministic fallback"]
+    POL -- "listing facts · notices" --> DFR["Deterministic rendering<br/>no response LLM"]
 
-    LLMR --> RESP[Response to user]
+    LLMR --> RESP(["Response to user"])
     DFR --> RESP
-
-    RESP -. next turn .-> U
 
     classDef state fill:#233042,stroke:#7c93b3,stroke-width:1.5px,color:#eef2f7;
     classDef llm fill:#33263f,stroke:#a889c9,stroke-width:1.5px,color:#f4eef9;
@@ -55,13 +65,20 @@ flowchart TD
 
     class R,IP,LLMR llm;
     class SR,SRS state;
-    class DPA,DFR det;
+    class APPLY,VAL,VERD,DFR det;
     class CLAR clarify;
+
+    linkStyle 6,12,13 stroke:#c9a35c,stroke-width:1.5px;
+
+    U ~~~ SR
+    U ~~~ SRS
 ```
 
-Every user message is first classified by a Conversation Router into one of four actions — `START_SEARCH`, `UPDATE_SEARCH`, `LISTING_QUESTION`, `GENERAL_CHAT`. Clarification isn't a fifth action: it's a short-circuit taken whenever the system should abstain rather than guess.
+**Purple** = LLM · **Green** = deterministic guardrail · **Neutral** = application/domain pipeline · **Cylinders** = persistent state · **Amber** = abstention. Solid arrows = control flow, dotted arrows = state reads, ✎ = state write.
 
-`START_SEARCH` builds a new persistent search state; `UPDATE_SEARCH` has the LLM propose a patch that deterministic code merges into it. A ready state runs through retrieval, matching, and ranking, while `LISTING_QUESTION` answers against the snapshot of what was just shown, not the chat transcript. Resolved domain flows converge into typed outcomes before rendering, with response policy depending on the outcome type.
+Every user message is first classified by a Conversation Router into one of four actions — `START_SEARCH`, `UPDATE_SEARCH`, `LISTING_QUESTION`, `GENERAL_CHAT`. Clarification isn't a fifth action: it's a shared short-circuit taken whenever the system should abstain rather than guess — an ambiguous turn, a listing reference that fails validation, or a search missing required context.
+
+`START_SEARCH` builds a new persistent search state; `UPDATE_SEARCH` has the LLM propose a patch that deterministic code applies to it. A ready state runs through retrieval, matching, and ranking, while `LISTING_QUESTION` answers against the snapshot of what was just shown (`ShownResultSet`), not the chat transcript. Resolved domain flows converge into typed outcomes before rendering, with response policy depending on the outcome type.
 
 ### Key engineering decisions
 
