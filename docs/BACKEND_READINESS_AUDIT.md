@@ -16,6 +16,8 @@
 | P0-4 Application service | ✅ Done | `3f87a4b` | `process_turn(session, message) -> TurnResult`; Streamlit — тонкий adapter; публичный JSON без server state и debug |
 | P0-6 Multi-turn integration tests | ✅ Done | см. `git log` | 7 hermetic сценариев через `process_turn`; mutation check: 7 из 7 дефектов пойманы |
 | P0-7 E2E evaluation contract & baseline | ✅ Baseline recorded (до targeted fixes) | `4dcec9d`, `5d1fd0d`, `26439e5`, `68107f8`, `961cef8` | Baseline 2026-10-15 на `961cef8`: decision 28/49 = 0.571, critical false YES 6/25, false NO 5/24, top-1 19/24; router переведён на Gemini |
+| Targeted fix: dates (0028, 0032) | ✅ Done | `b8150f9`, `0ed9a73` | Без даты выезда — уточняющий вопрос вместо молчаливой 1 ночи; 90-ночная защита только при переносе года; UPDATE-ответ с одной датой выезда → `set_check_out` |
+| Targeted fixes: 0041, 0049, budget scope, 0002, labels 0037/0028 | ⏳ Todo | — | 0041 — исследование и план |
 
 Offline suite после P0-8: **799 passed, 2 skipped (live)**.
 
@@ -377,6 +379,13 @@ async def process_turn(session: ConversationSession, user_message: str,
 >   - уточнение scope бюджета;
 >   - 1 retry для `invalid_response` (0002);
 >   - версионированное исправление labels 0037 и 0028.
+> - **Date fixes выполнены** (`b8150f9`, `0ed9a73`):
+>   - 0028: без даты выезда и числа ночей система спрашивает дату выезда, остальной запрос сохраняется;
+>   - 0032: «until the end of the year» больше не считается перевёрнутым диапазоном;
+>   - UPDATE-ответ «Until April 20th» обновляет только выезд.
+>
+>   Эффект виден в flow-тестах; replay не показывает его, потому что берёт уже нормализованные даты из сохранённых predictions.
+> - **Known limitation (на будущий review):** UPDATE, в котором указана только новая дата заезда («move check-in to April 12»), сбрасывает выезд на следующий день — правило промпта UPDATE `set_nights = 1` плюс `apply_intent_patch`. Не менялось как несвязанная логика.
 > - **Router на Groq снят:** лимит 8K tokens/minute сорвал первый baseline (46/50 кейсов — 429) и ограничил бы demo ~2 сообщениями в минуту.
 >
 > Подробно: `evaluation/tasks/end_to_end/README.md`.
