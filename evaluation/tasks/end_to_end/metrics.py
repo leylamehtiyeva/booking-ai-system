@@ -6,6 +6,8 @@ from collections import Counter
 from statistics import mean
 from typing import Any
 
+from evaluation.tasks.end_to_end.contract import CONTRACT_VERSION, LEGACY_CONTRACT_VERSION
+
 
 def _safe_rate(numerator: int, denominator: int) -> float:
     return numerator / denominator if denominator else 0.0
@@ -55,141 +57,102 @@ def _extract_llm_calls(row: dict[str, Any]) -> int:
     return int(scenario.get("llm_calls_count") or 0)
 
 
+def _confusion(rows: list[dict[str, Any]], predicted_key: str) -> dict[str, int]:
+    counts = Counter((row["expected_decision"], row[predicted_key]) for row in rows)
+    return {f"{expected}->{predicted}": n for (expected, predicted), n in sorted(counts.items())}
+
+
 def compute_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """
+    decision (current contract):
+    - accuracy: strict three-way match with the golden label;
+    - critical_false_yes: golden NO/UNCERTAIN, system claimed YES - the
+      primary safety metric (rate over NO+UNCERTAIN cases);
+    - false_no: golden YES, system showed nothing (rate over YES cases);
+    - conservative: system answered UNCERTAIN where the golden label is YES
+      or NO - wrong, but it did not claim anything false.
+    legacy: the pre-v2 "any result = YES" contract, for comparison only.
+    """
     total = len(rows)
+    ok_rows = [row for row in rows if row["status"] == "ok"]
+    error_rows = [row for row in rows if row["status"] == "error"]
 
-    ok_rows = [
-        row for row in rows
-        if row["status"] == "ok"
-    ]
+    yes_rows = [row for row in ok_rows if row["expected_decision"] == "YES"]
+    rejection_rows = [row for row in ok_rows if row["expected_decision"] in ("NO", "UNCERTAIN")]
 
-    error_rows = [
-        row for row in rows
-        if row["status"] == "error"
-    ]
-
-    decision_correct_count = sum(
-        row["decision_correct"]
+    decision_correct = sum(row["decision_correct"] for row in ok_rows)
+    critical_false_yes = sum(row["critical_false_yes"] for row in ok_rows)
+    false_no = sum(row["predicted_decision"] == "NO" for row in yes_rows)
+    yes_to_uncertain = sum(row["predicted_decision"] == "UNCERTAIN" for row in yes_rows)
+    no_to_uncertain = sum(
+        row["expected_decision"] == "NO" and row["predicted_decision"] == "UNCERTAIN"
         for row in ok_rows
     )
 
-    yes_rows = [
-        row for row in ok_rows
-        if row["expected_decision"] == "YES"
-    ]
+    legacy_correct = sum(row["legacy_decision_correct"] for row in ok_rows)
+    legacy_critical_false_yes = sum(row["legacy_critical_false_yes"] for row in ok_rows)
 
-    top1_selection_correct_count = sum(
-        row["selection_correct"] is True
-        for row in yes_rows
-    )
+    top1 = sum(row["selection_correct"] is True for row in yes_rows)
+    topk = sum(_top_k_contains_acceptable(row) for row in yes_rows)
+    mrr_sum = sum(_reciprocal_rank(row) for row in yes_rows)
 
-    topk_contains_acceptable_count = sum(
-        _top_k_contains_acceptable(row)
-        for row in yes_rows
-    )
-
-    mrr_sum = sum(
-        _reciprocal_rank(row)
-        for row in yes_rows
-    )
-
-    rejection_rows = [
-        row for row in ok_rows
-        if row["expected_decision"] in ("NO", "UNCERTAIN")
-    ]
-
-    critical_false_yes_count = sum(
-        row["critical_false_yes"]
-        for row in ok_rows
-    )
-
-    confusion_matrix = Counter(
-        (
-            row["expected_decision"],
-            row["predicted_decision"],
-        )
-        for row in ok_rows
-    )
-
-    error_types = Counter(
-        row["error"]["type"]
-        for row in error_rows
-        if row.get("error")
-    )
-
-    runtimes = [
-        row["runtime_ms"]
-        for row in ok_rows
-        if row.get("runtime_ms") is not None
-    ]
-
-    costs = [
-        _extract_cost(row)
-        for row in ok_rows
-    ]
-
-    llm_calls = [
-        _extract_llm_calls(row)
-        for row in ok_rows
-    ]
+    runtimes = [row["runtime_ms"] for row in ok_rows if row.get("runtime_ms") is not None]
+    costs = [_extract_cost(row) for row in ok_rows]
+    llm_calls = [_extract_llm_calls(row) for row in ok_rows]
 
     return {
         "total": total,
-
         "ok_total": len(ok_rows),
         "error_total": len(error_rows),
         "error_rate": _safe_rate(len(error_rows), total),
-        "error_types": dict(error_types),
+        "error_types": dict(Counter(row["error"]["type"] for row in error_rows if row.get("error"))),
 
-        "decision_correct_count": decision_correct_count,
-        "decision_accuracy": _safe_rate(
-            decision_correct_count,
-            len(ok_rows),
-        ),
+        "decision": {
+            "contract_version": CONTRACT_VERSION,
+            "accuracy": _safe_rate(decision_correct, len(ok_rows)),
+            "correct_count": decision_correct,
+            "yes_total": len(yes_rows),
+            "rejection_total": len(rejection_rows),
+            "critical_false_yes_count": critical_false_yes,
+            "critical_false_yes_rate": _safe_rate(critical_false_yes, len(rejection_rows)),
+            "false_no_count": false_no,
+            "false_no_rate": _safe_rate(false_no, len(yes_rows)),
+            "conservative": {
+                "yes_to_uncertain": yes_to_uncertain,
+                "no_to_uncertain": no_to_uncertain,
+            },
+            "basis_counts": dict(Counter(row["decision_basis"] for row in ok_rows)),
+            "confusion_matrix": _confusion(ok_rows, "predicted_decision"),
+        },
 
-        "yes_total": len(yes_rows),
+        "selection": {
+            "yes_total": len(yes_rows),
+            "top1_correct_count": top1,
+            "top1_accuracy": _safe_rate(top1, len(yes_rows)),
+            "topk_contains_acceptable_count": topk,
+            "topk_contains_acceptable_rate": _safe_rate(topk, len(yes_rows)),
+            "mrr": _safe_rate(mrr_sum, len(yes_rows)),
+        },
 
-        "top1_selection_correct_count": top1_selection_correct_count,
-        "top1_selection_accuracy": _safe_rate(
-            top1_selection_correct_count,
-            len(yes_rows),
-        ),
-
-        "topk_contains_acceptable_count": topk_contains_acceptable_count,
-        "topk_contains_acceptable_rate": _safe_rate(
-            topk_contains_acceptable_count,
-            len(yes_rows),
-        ),
-
-        "mrr": _safe_rate(
-            mrr_sum,
-            len(yes_rows),
-        ),
-
-        "rejection_total": len(rejection_rows),
-        "critical_false_yes_count": critical_false_yes_count,
-        "critical_false_yes_rate": _safe_rate(
-            critical_false_yes_count,
-            len(rejection_rows),
-        ),
+        "legacy": {
+            "contract_version": LEGACY_CONTRACT_VERSION,
+            "note": "Any non-empty result counted as YES. For comparison with pre-v2 reports only.",
+            "decision_accuracy": _safe_rate(legacy_correct, len(ok_rows)),
+            "critical_false_yes_count": legacy_critical_false_yes,
+            "critical_false_yes_rate": _safe_rate(legacy_critical_false_yes, len(rejection_rows)),
+            "confusion_matrix": _confusion(ok_rows, "legacy_predicted_decision"),
+        },
 
         "runtime_ms": {
             "mean": mean(runtimes) if runtimes else 0.0,
             "max": max(runtimes) if runtimes else 0,
         },
-
         "cost": {
             "total_estimated_usd": sum(costs),
             "mean_estimated_usd": mean(costs) if costs else 0.0,
         },
-
         "llm_calls": {
             "total": sum(llm_calls),
             "mean": mean(llm_calls) if llm_calls else 0.0,
-        },
-
-        "confusion_matrix": {
-            f"{expected}->{predicted}": count
-            for (expected, predicted), count in confusion_matrix.items()
         },
     }

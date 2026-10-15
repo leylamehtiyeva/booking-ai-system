@@ -4,113 +4,79 @@ from __future__ import annotations
 
 from typing import Any
 
-from google.api_core.exceptions import ServerError, ServiceUnavailable, TooManyRequests
 from pydantic import BaseModel, Field
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from app.config.clock import use_reference_date
 from app.logic.conversation_flow import handle_user_message
-from app.schemas.fallback_policy import FallbackPolicy
 from evaluation.core.reference_date import EVAL_REFERENCE_DATE
+from evaluation.tasks.end_to_end.contract import (
+    CONTRACT_VERSION,
+    infer_decision,
+    infer_legacy_decision,
+    selected_listing_ids,
+)
 from evaluation.tasks.end_to_end.dataset import Decision, EndToEndEvalCase
+from evaluation.tasks.end_to_end.run_config import EvalRunConfig
+
+
+class EvalTurnFailure(RuntimeError):
+    """The turn ended in a typed failure outcome - scored as an error, not a decision."""
+
+    def __init__(self, failure: dict[str, Any] | None, *, llm_calls: int = 0) -> None:
+        failure = failure or {}
+        super().__init__(f"{failure.get('stage', 'unknown')}:{failure.get('code', 'unknown')}")
+        self.failure = failure
+        self.llm_calls = llm_calls
 
 
 class EndToEndPrediction(BaseModel):
+    contract_version: str = CONTRACT_VERSION
     decision: Decision
+    decision_basis: str
+    legacy_decision: Decision
     selected_listing_id: str | None = None
     selected_listing_ids: list[str] = Field(default_factory=list)
     raw_response: dict[str, Any]
 
 
-def _extract_selected_listing_ids(response: dict[str, Any]) -> list[str]:
-    results = response.get("results") or []
-
-    ids: list[str] = []
-
-    for item in results:
-        listing_id = (
-            item.get("result_id")
-            or item.get("id")
-            or item.get("listing_id")
-        )
-
-        if listing_id:
-            ids.append(str(listing_id))
-
-    return ids
+def _failure_of(response: dict[str, Any]) -> dict[str, Any]:
+    if response.get("response_type") == "routing_unavailable":
+        router = (response.get("parsed_intent") or {}).get("router") or {}
+        return {"stage": "conversation_routing", "code": router.get("error_code")}
+    return response.get("failure") or {}
 
 
-def _infer_decision(response: dict[str, Any]) -> Decision:
-    results = response.get("results") or []
-
-    if results:
-        return "YES"
-
-    if response.get("need_clarification") is True:
-        questions = response.get("questions") or []
-        debug_notes = response.get("debug_notes") or []
-
-        text = " ".join(questions + debug_notes).lower()
-
-        no_result_markers = [
-            "ничего не найдено",
-            "no listings remained",
-            "no results",
-            "nothing found",
-            "no suitable listings",
-        ]
-
-        if any(marker in text for marker in no_result_markers):
-            return "NO"
-
-        return "UNCERTAIN"
-
-    return "NO"
-
-
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=1, max=8),
-    retry=retry_if_exception_type(
-        (
-            ServerError,
-            ServiceUnavailable,
-            TooManyRequests,
-            TimeoutError,
-        )
-    ),
-    reraise=True,
-)
 async def run_case(
     case: EndToEndEvalCase,
     *,
-    source: str = "fixtures",
-    top_n: int = 5,
-    max_items: int = 40,
-    fallback_policy: FallbackPolicy | None = None,
+    config: EvalRunConfig | None = None,
 ) -> EndToEndPrediction:
-    if fallback_policy is None:
-        fallback_policy = FallbackPolicy(
-            enabled=True,
-            top_k=5,
-            must_only=True,
-        )
+    config = config or EvalRunConfig()
 
     with use_reference_date(EVAL_REFERENCE_DATE):
         response = await handle_user_message(
             user_message=case.user_query,
             previous_state=None,
-            source=source,
-            top_n=top_n,
-            max_items=max_items,
-            fallback_policy=fallback_policy,
+            source=config.source,
+            top_n=config.top_n,
+            max_items=config.max_items,
+            fallback_policy=config.fallback_policy(),
         )
 
-    selected_ids = _extract_selected_listing_ids(response)
-    decision = _infer_decision(response)
+    decision, basis = infer_decision(response)
+    if decision is None:
+        telemetry = response.get("telemetry") or {}
+        raise EvalTurnFailure(
+            _failure_of(response),
+            llm_calls=int((telemetry.get("llm") or {}).get("calls_count") or 0),
+        )
+
+    selected_ids = selected_listing_ids(response)
 
     return EndToEndPrediction(
         decision=decision,
+        decision_basis=basis,
+        legacy_decision=infer_legacy_decision(response),
         selected_listing_id=selected_ids[0] if selected_ids else None,
         selected_listing_ids=selected_ids,
         raw_response=response,

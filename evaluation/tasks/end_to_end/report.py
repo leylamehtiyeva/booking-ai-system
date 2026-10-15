@@ -58,6 +58,8 @@ def save_evaluation_report(
     evaluation_result: dict[str, Any],
     report_path: str | Path,
     failures_path: str | Path,
+    run_metadata: dict[str, Any] | None = None,
+    evaluation_metadata: dict[str, Any] | None = None,
 ) -> None:
     metrics = evaluation_result["metrics"]
     rows = evaluation_result["rows"]
@@ -65,6 +67,8 @@ def save_evaluation_report(
     failures = build_failures(rows)
 
     report = {
+        "run_metadata": run_metadata,
+        "evaluation_metadata": evaluation_metadata,
         "metrics": metrics,
         "failure_count": len(failures),
         "failures_path": str(failures_path),

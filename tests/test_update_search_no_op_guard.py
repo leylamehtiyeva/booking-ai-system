@@ -379,13 +379,16 @@ def test_deterministic_response_returns_no_op_answer_verbatim():
 
 def test_e2e_infer_decision_no_longer_reports_uncertain_for_no_op():
     """
-    The end-to-end eval harness's _infer_decision used to treat any
+    The end-to-end eval harness's decision rule used to treat any
     need_clarification=True response as UNCERTAIN. With need_clarification
     now False for a no-op update, it must not be scored as UNCERTAIN.
     Only checks the existing pure function - does not touch or extend the
     e2e harness itself.
     """
-    from evaluation.tasks.end_to_end.adapter import _infer_decision
+    from evaluation.tasks.end_to_end.contract import (
+        infer_decision,
+        infer_legacy_decision,
+    )
 
     no_op_response = {
         "need_clarification": False,
@@ -394,4 +397,5 @@ def test_e2e_infer_decision_no_longer_reports_uncertain_for_no_op():
         "results": [],
     }
 
-    assert _infer_decision(no_op_response) != "UNCERTAIN"
+    assert infer_legacy_decision(no_op_response) != "UNCERTAIN"
+    assert infer_decision(no_op_response)[0] != "UNCERTAIN"
