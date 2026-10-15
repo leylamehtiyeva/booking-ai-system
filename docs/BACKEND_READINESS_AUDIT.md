@@ -11,13 +11,13 @@
 | P0-5 Hermetic test suite | ✅ Done | `2077102`, `baef520` | `uv run pytest` без сети и ключей; live — только `BOOKING_AI_LIVE_TESTS=1 uv run pytest -m live` |
 | P0-2 Date normalization | ✅ Done | `a2c41f5`, `74b786e` | Reference clock, интерпретация дат как пары, clarification вместо crash; денежные суммы («$2000») не считаются годом |
 | P0-3 Fixtures time bomb | ✅ Done | `a2c41f5` | Recurring yearly availability в fixture retriever; данные fixtures не менялись |
-| **P0-8 Fixture price = total за окно, а не за проживание** | 🆕 Найдено при ревью P0-3 | — | Старый баг, не исправлен; см. P0-8 |
+| P0-8 Fixture price semantics | ✅ Done | см. `git log` | Fixture retriever пересчитывает цену на запрошенное проживание; данные fixtures не менялись |
 | P0-1 Graceful failure handling | ✅ Done | `fba5e0a` | Fatal stage → typed `processing_unavailable`; textual fallback → UNCERTAIN; программные ошибки не скрываются |
 | P0-4 Application service | ✅ Done | `3f87a4b` | `process_turn(session, message) -> TurnResult`; Streamlit — тонкий adapter; публичный JSON без server state и debug |
 | P0-6 Multi-turn integration tests | ✅ Done | см. `git log` | 7 hermetic сценариев через `process_turn`; mutation check: 7 из 7 дефектов пойманы |
-| P0-7, P0-8 | ⏳ Todo | — | — |
+| P0-7 E2E evaluation contract & baseline | ⏳ In progress | — | — |
 
-Offline suite после P0-6: **787 passed, 2 skipped (live)**.
+Offline suite после P0-8: **799 passed, 2 skipped (live)**.
 
 ---
 
@@ -373,6 +373,16 @@ async def process_turn(session: ConversationSession, user_message: str,
 - **Сложность.** S (код) + M (triage, ограничить 1 днём).
 
 #### P0-8. Fixture `price` — total за всё окно доступности, а не за запрошенное проживание
+> **✅ Done.**
+> - **Формула.** `FixturesRetriever` отдаёт копии с ценой `window_total × requested_nights / window_nights`. Используется длина исходного окна, поэтому ставка за ночь сохраняется в другом году, через Новый год и при сужении окна из-за 29 февраля.
+> - **Нет данных — нет цены.** Без известной длины окна или проживания — `price=None`, т.е. UNCERTAIN downstream, а не выдуманная цена.
+> - **Проверено.** `apt-large-good`, 5 ночей: $350, `$100/night` → matched, «70 per night», listing card «350.0 USD total for 5 night(s)». Тесты: `tests/retrieval/test_fixture_stay_price.py`.
+> - **Влияние на e2e** (offline, сохранённые intents, fallback выключен) — меняется 9 кейсов:
+>   - 0010 исправлен (было NO, стало правильное YES);
+>   - 0026, 0028, 0032 (label NO) теперь показывают listing с неподтверждённым must-have — баг цены маскировал известное ограничение «отсутствие данных ≠ отказ»;
+>   - 0006: top-1 зависит от textual fallback (breakfast).
+>
+>   Labels не менялись; разбор переносится в P0-7.
 - **Проблема.** В `fixtures/listings_sample.json` `price` = ставка × ночи **всего окна** `available_dates` (пересчёт 2026-08-27, см. `evaluation/tasks/end_to_end/README.md`). Но `match_price_filters` сравнивает его с бюджетом за **запрошенные** ночи.
 - **Путь цены.** `FixturesRetriever.get_candidates` (`ListingRaw.price` без изменений) → `listing_evaluation._rank_structured` → `evaluate_numeric_filters` → `match_price_filters(total_price=listing.price, check_in/check_out запроса)`. Бюджет `per_night` × ночи запроса сравнивается с total окна. Display: `normalize_search_response` выводит «per night» как `price / ночи запроса`.
 - **Evidence** (offline). `apt-large-good` ($3150 за окно в 45 ночей, $70/ночь), запрос на 5 ночей:
@@ -427,7 +437,7 @@ async def process_turn(session: ConversationSession, user_message: str,
 - [x] У каждого LLM-вызова есть timeout; retry только на retryable-ошибки. *(P0-1)*
 - [x] Невалидные/кросс-годовые/прошедшие даты дают корректную дату или clarification, а не crash и не тихий поиск в прошлом. *(P0-2)*
 - [x] Demo-сценарий из README работает при любом `APP_REFERENCE_DATE` в 2026–2028. *(P0-3, `test_readme_demo_search_is_stable_regardless_of_today`)*
-- [ ] Цена в fixtures соответствует запрошенному проживанию. *(P0-8)*
+- [x] Цена в fixtures соответствует запрошенному проживанию. *(P0-8)*
 
 **Architecture / API readiness**
 - [x] `app/services/conversation_service.py::process_turn(session, message) -> TurnResult` — единственная точка входа на один turn. *(P0-4)*
