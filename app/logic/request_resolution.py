@@ -54,7 +54,10 @@ def resolve_required_search_context(intent) -> ResolvedSearchContext:
             check_out = check_in + timedelta(days=nights)
 
     elif check_in and not check_out:
-        check_out = check_in + timedelta(days=1)
+        # Never assume a one-night stay ("long stay starting April 1st").
+        questions.append(
+            "What is your check-out date? You can also tell me how many nights you'll stay."
+        )
 
     elif check_out and not check_in:
         questions.append("Please specify the check-in date.")

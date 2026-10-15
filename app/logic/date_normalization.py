@@ -11,9 +11,10 @@ from app.config import clock
 ISO_DATE_PATTERN = re.compile(r"^\s*(\d{4})-(\d{2})-(\d{2})\s*$")
 
 # When the user gives no year, check-out is placed on the first matching
-# day after check-in. A result longer than this means the user's check-out
-# was actually before check-in ("April 15 to April 10"), not a stay that
-# spans a year - booking platforms cap stays well below this anyway.
+# day after check-in. If that rolled check-out into the next year AND made
+# the stay longer than this, the user's check-out was actually before
+# check-in ("April 15 to April 10"). Without a rollover a long stay is just
+# long ("April 2 until the end of the year").
 MAX_INFERRED_STAY_NIGHTS = 90
 
 _LEAP_YEAR = 2000
@@ -138,7 +139,6 @@ def resolve_stay_dates(
     user_text: str,
     today: date | None = None,
     anchor_check_in: date | None = None,
-    default_one_night: bool = False,
 ) -> StayDates:
     """
     Turn LLM-extracted dates into a valid future stay, or raise
@@ -195,14 +195,17 @@ def resolve_stay_dates(
             resolved_check_out = _next_occurrence(
                 check_out_parts[1], check_out_parts[2], on_or_after=stay_start
             )
-            if (resolved_check_out - stay_start).days > MAX_INFERRED_STAY_NIGHTS:
+            rolled_into_next_year = resolved_check_out.year > stay_start.year
+            if (
+                rolled_into_next_year
+                and (resolved_check_out - stay_start).days > MAX_INFERRED_STAY_NIGHTS
+            ):
                 raise InvalidStayDatesError(StayDatesIssue.CHECK_OUT_NOT_AFTER_CHECK_IN)
 
-    if resolved_check_in is not None and resolved_check_out is None:
-        if nights is not None:
-            resolved_check_out = resolved_check_in + timedelta(days=nights)
-        elif default_one_night:
-            resolved_check_out = resolved_check_in + timedelta(days=1)
+    # No check-out and no nights: left open - the caller asks for it
+    # rather than assuming a one-night stay.
+    if resolved_check_in is not None and resolved_check_out is None and nights is not None:
+        resolved_check_out = resolved_check_in + timedelta(days=nights)
 
     stay_start = resolved_check_in or anchor_check_in
     if (
@@ -223,8 +226,9 @@ def resolve_stay_dates(
 
 def normalize_intent_dates(intent, user_text: str, *, today: date | None = None):
     """
-    START_SEARCH: normalize the first-turn intent's dates (a single date
-    defaults to one night). Raises InvalidStayDatesError.
+    START_SEARCH: normalize the first-turn intent's dates. A check-in without
+    check-out or nights stays open (asked for by required-context
+    resolution). Raises InvalidStayDatesError.
     """
     stay = resolve_stay_dates(
         check_in=getattr(intent, "check_in", None),
@@ -232,7 +236,6 @@ def normalize_intent_dates(intent, user_text: str, *, today: date | None = None)
         nights=getattr(intent, "nights", None),
         user_text=user_text,
         today=today,
-        default_one_night=True,
     )
 
     data = intent.model_dump()

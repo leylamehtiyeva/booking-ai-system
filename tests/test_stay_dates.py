@@ -172,10 +172,10 @@ def test_check_in_with_nights_computes_check_out():
     assert (stay.check_in, stay.check_out) == (date(2027, 4, 20), date(2027, 4, 26))
 
 
-def test_single_date_defaults_to_one_night_when_requested():
-    stay = _resolve("2026-11-03", None, text="Nov 3", default_one_night=True)
+def test_single_date_leaves_check_out_open():
+    stay = _resolve("2026-11-03", None, text="Nov 3")
 
-    assert stay.check_out == date(2026, 11, 4)
+    assert (stay.check_in, stay.check_out) == (date(2026, 11, 3), None)
 
 
 def test_partial_update_check_out_is_anchored_to_existing_check_in():
