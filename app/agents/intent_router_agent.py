@@ -251,6 +251,26 @@ Softness indicators:
 - ideally located
 - preferably quiet
 
+A direct request is NOT softness, even when phrased as a question or
+a wish. These are priority="must":
+- "We're looking for something with a really nice atmosphere"
+  -> nice atmosphere -> must
+- "Do you have anything with a really nice atmosphere?"
+  -> nice atmosphere -> must
+- "Could you find something that looks really trustworthy?"
+  -> trustworthy -> must
+- "I really want a sea view" -> sea view -> must
+
+These ARE softness - priority="nice":
+- "A balcony would be great" -> balcony -> nice
+- "It would be great if smoking was allowed" -> smoking allowed -> nice
+- "I'd prefer somewhere quiet" -> quiet -> nice
+
+Facts about the traveller are not listing requirements - do not turn
+them into constraints:
+- "I won't be bringing any pets" -> no constraint
+- "I'm travelling for work" -> no constraint
+
 CATEGORY:
 Use:
 - amenity
