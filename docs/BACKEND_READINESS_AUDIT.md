@@ -15,7 +15,7 @@
 | P0-1 Graceful failure handling | ✅ Done | `fba5e0a` | Fatal stage → typed `processing_unavailable`; textual fallback → UNCERTAIN; программные ошибки не скрываются |
 | P0-4 Application service | ✅ Done | `3f87a4b` | `process_turn(session, message) -> TurnResult`; Streamlit — тонкий adapter; публичный JSON без server state и debug |
 | P0-6 Multi-turn integration tests | ✅ Done | см. `git log` | 7 hermetic сценариев через `process_turn`; mutation check: 7 из 7 дефектов пойманы |
-| P0-7 E2E evaluation contract & baseline | 🟡 Contract done, baseline pending | `4dcec9d`, `5d1fd0d`, `26439e5` | Контракт v2, metadata, replay, spend guard; D1/D2 open-world, D3 + breakfast исправлены; платный baseline — после smoke и отдельного решения |
+| P0-7 E2E evaluation contract & baseline | ✅ Baseline recorded (до targeted fixes) | `4dcec9d`, `5d1fd0d`, `26439e5`, `68107f8`, `961cef8` | Baseline 2026-10-15 на `961cef8`: decision 28/49 = 0.571, critical false YES 6/25, false NO 5/24, top-1 19/24; router переведён на Gemini |
 
 Offline suite после P0-8: **799 passed, 2 skipped (live)**.
 
@@ -366,7 +366,20 @@ async def process_turn(session: ConversationSession, user_message: str,
 - **Сложность.** M (1.5 дня).
 
 #### P0-7. Зафиксировать e2e decision contract и пересчитать baseline
-> **🟡 Контракт и инструменты готовы, платный baseline ещё не запускался.** Подробно: `evaluation/tasks/end_to_end/README.md`.
+> **✅ Baseline зафиксирован (до targeted fixes)** — `evaluation/outputs/end_to_end/baseline_gemini_router_2026-10-15/`.
+> - **Конфигурация:** commit `961cef8`; Gemini 2.5 Flash-Lite на всех стадиях; `top_n=2`; reference date 2026-03-01.
+> - **Метрики:** decision accuracy 28/49 = 0.571; critical false YES 6/25; false NO 5/24; conservative YES→UNCERTAIN 6, NO→UNCERTAIN 3; top-1 acceptable 19/24.
+> - **Выполнение:** 1 `invalid_response`, 0 provider failures.
+> - **Запланированные targeted fixes:**
+>   - даты (0032, 0028);
+>   - строгая проверка evidence для субъективного MUST (0041);
+>   - показ неподтверждённых nice-to-have (0049);
+>   - уточнение scope бюджета;
+>   - 1 retry для `invalid_response` (0002);
+>   - версионированное исправление labels 0037 и 0028.
+> - **Router на Groq снят:** лимит 8K tokens/minute сорвал первый baseline (46/50 кейсов — 429) и ограничил бы demo ~2 сообщениями в минуту.
+>
+> Подробно: `evaluation/tasks/end_to_end/README.md`.
 > - **Контракт v2.** YES = top-1 `strong`; partial/weak/clarification → UNCERTAIN; ничего не показано → NO; typed failure → ошибка. Legacy-метрики сохранены отдельным блоком.
 > - **Обвязка прогона:** run metadata (SHA, модели, `top_n`, reference date), `--max-llm-calls`, `--output-dir`, бесплатный `replay`.
 > - **Продуктовые решения:**

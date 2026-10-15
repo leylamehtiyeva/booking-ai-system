@@ -244,3 +244,45 @@ Predictions пишутся построчно с flush, `run_metadata.json` — 
 не теряет уже обработанные кейсы. Лимит LLM-вызовов считает все попытки, которые делает наш код
 (router, intent, update, factual, textual fallback, включая повторы); внутренние HTTP-повторы SDK, если они
 есть, в telemetry не видны.
+
+
+## Baseline 2026-10-15 — до targeted fixes
+
+Артефакты: `evaluation/outputs/end_to_end/baseline_gemini_router_2026-10-15/` (`predictions.jsonl`,
+`run_metadata.json`, `report.json`, `failures.jsonl`; не изменялись после прогона, секретов не содержат).
+
+- **Конфигурация:** commit `961cef8` (`dirty=false`); все стадии — `gemini-2.5-flash-lite`
+  (`ROUTER_LLM_PROFILE=gemini_default`); `top_n=2`, `max_items=40`, fallback `top_k=5`; reference date `2026-03-01`.
+- **Выполнение:** 50/50 кейсов, `valid_as_baseline=true`, 0 provider failures, 1 `invalid_response`
+  (0002, intent extraction), 289 LLM-вызовов (router 50, intent 50, textual fallback 189), latency на кейс
+  mean 8.3 s / p90 14.9 s / max 17.1 s, оценка стоимости по telemetry $0.053 (занижена, P1-5).
+
+| Метрика (контракт v2, исходные labels) | Значение |
+|---|---|
+| Decision accuracy | 28/49 = 0.571 |
+| Critical false YES | 6/25 |
+| False NO | 5/24 |
+| Conservative | YES→UNCERTAIN 6, NO→UNCERTAIN 3 |
+| Top-1 acceptable | 19/24 (каждый промах — кейс без результатов) |
+| Legacy-контракт | accuracy 0.592, critical false YES 13 |
+
+Предыдущий baseline на Groq-router (`baseline_2026-10-15`, не сохранён в Git) невалиден: 46/50 кейсов
+упали на лимите Groq 8K tokens/minute.
+
+### Разбор ошибок (22 кейса)
+
+| Категория | Кейсы |
+|---|---|
+| Scope бюджета: «$200 max» на месяц → `total_stay`, gold — per night | 0005, 0011, 0012, 0025 (false NO), 0045 |
+| Даты: «in April 2026» → выезд 1 мая; только дата заезда → 1 ночь; 90-ночная защита без переноса года | 0010, 0028, 0032 |
+| Open-world, отрицательные требования (D2) | 0004, 0014, 0018 |
+| Open-world, неподтверждённый must (D1) | 0026, 0038 |
+| Субъективный must не подтверждён (D3; нестабильно между прогонами) | 0001, 0003, 0023 |
+| Label расходится с D3 (явное nice-to-have) | 0029, 0043, 0049 |
+| Ошибка golden label (`pets_allowed:false` из «I won't be bringing pets») | 0037 |
+| Textual fallback подтвердил субъективное требование косвенной ассоциацией («quiet» → «nice atmosphere») | 0041 |
+| Невалидный JSON от intent extraction | 0002 |
+
+Critical false YES: 0028, 0029, 0037, 0041, 0043, 0049. Из них ошибки системы — 0041 (evidence) и 0028
+(молчаливая 1 ночь; кроме того, gold придумал дату выезда); 0049 — пробел UX: неподтверждённое
+nice-to-have не показывается пользователю.

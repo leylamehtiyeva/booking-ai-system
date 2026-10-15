@@ -172,8 +172,11 @@ Three core components are evaluated separately against hand-labeled golden sets;
 | [Constraint extraction](evaluation/outputs/constraint_extraction_report.json) | Natural-language request → structured search constraints | F1 ≈ 0.79, exact-set match ≈ 0.80 | n = 166 |
 | [Constraint resolution](evaluation/outputs/constraint_resolution_eval_report_new_ver3.json) | Listing evidence → `YES` / `NO` / `UNCERTAIN` decision | ≈ 0.86 accuracy on 114 valid cases; 0 observed critical YES↔NO flips | n = 120 attempted, 114 valid |
 | [Ranking & selection](evaluation/outputs/ranking_selection_eval_report.json) | Which eligible listings are surfaced, and in what order | top-1 ≈ 0.98; 0/103 cases contained an ineligible-listing leak | n = 103 |
+| [End-to-end search decision](evaluation/outputs/end_to_end/baseline_gemini_router_2026-10-15/report.json) | User request → YES / NO / UNCERTAIN claim and top result, full pipeline ([contract v2](evaluation/tasks/end_to_end/README.md)) | decision accuracy 28/49 = 0.571; critical false YES 6/25; false NO 5/24; top-1 acceptable 19/24 | n = 50 (49 scored, 1 invalid model response) |
 
-`LISTING_QUESTION` factual resolution is covered by unit and smoke tests but does not yet have a dedicated scored evaluation. A router benchmark predates the latest routing-boundary changes, a reference-resolution dataset has no saved scored report, and the end-to-end benchmark's ground truth is under revision, so their numbers are not shown here.
+The end-to-end row is the 2026-10-15 baseline **before targeted fixes** (commit `961cef8`, Gemini 2.5 Flash-Lite for every stage, `top_n=2`, reference date 2026-03-01, 0 provider failures). Golden labels are closed-world while the system is deliberately open-world (an unconfirmed requirement is "not confirmed", never "absent"), so part of the gap is conservative UNCERTAIN answers rather than wrong claims; the failure triage is in [`evaluation/tasks/end_to_end/README.md`](evaluation/tasks/end_to_end/README.md).
+
+`LISTING_QUESTION` factual resolution is covered by unit and smoke tests but does not yet have a dedicated scored evaluation. A router benchmark predates the latest routing-boundary changes and a reference-resolution dataset has no saved scored report, so their numbers are not shown here.
 
 ## Observability
 

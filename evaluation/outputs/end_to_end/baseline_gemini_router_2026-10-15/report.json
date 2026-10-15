@@ -1,0 +1,158 @@
+{
+  "run_metadata": {
+    "contract_version": "e2e-decision-v2",
+    "created_at": "2026-10-15T17:53:41.378408+00:00",
+    "git": {
+      "commit": "961cef820c99ea5b5a6de252f85ad33080b904ab",
+      "dirty": false
+    },
+    "dataset": {
+      "path": "evaluation/datasets/end_to_end/end2end_golden_set.jsonl",
+      "sha256": "10682c9567ee757e8dc63a3c4f437fff250875643feb033576f8084d9af5f5c0",
+      "case_limit": null
+    },
+    "reference_date": "2026-03-01",
+    "run_config": {
+      "source": "fixtures",
+      "top_n": 2,
+      "max_items": 40,
+      "fallback_top_k": 5,
+      "fallback_policy": {
+        "enabled": true,
+        "top_k": 5,
+        "must_only": true,
+        "run_for_unresolved": true,
+        "run_for_structured_uncertain": true,
+        "max_constraints_per_listing": 3,
+        "model": "gemini-2.5-flash-lite"
+      }
+    },
+    "models": {
+      "conversation_router_profile": "gemini_default",
+      "conversation_router": "gemini-2.5-flash-lite",
+      "intent_extraction": "gemini-2.5-flash-lite",
+      "intent_update": "gemini-2.5-flash-lite",
+      "textual_fallback": "gemini-2.5-flash-lite"
+    },
+    "execution": {
+      "max_llm_calls": 600,
+      "max_consecutive_failures": 3,
+      "status": "completed",
+      "stopped_reason": null,
+      "valid_as_baseline": true,
+      "cases_completed": 50,
+      "cases_planned": 50,
+      "wall_clock_seconds": 413.9,
+      "cases_ok": 49,
+      "cases_error": 1,
+      "provider_failure_cases": {},
+      "llm_calls_used": 289,
+      "llm_calls_by_step": {
+        "conversation_routing": 50,
+        "search_intent_extraction": 50,
+        "constraint_textual_fallback": 189
+      },
+      "failed_llm_attempts": {
+        "search_intent_extraction:invalid_response": 1
+      },
+      "tokens": {
+        "prompt": 317152,
+        "completion": 54441,
+        "note": "From turn telemetry; several stages estimate tokens from text and omit the system instruction, so prompt tokens are undercounted."
+      },
+      "estimated_cost_usd": 0.053491,
+      "case_latency_ms": {
+        "mean": 8274,
+        "p50": 7317,
+        "p90": 14949,
+        "max": 17137
+      }
+    }
+  },
+  "evaluation_metadata": {
+    "contract_version": "e2e-decision-v2",
+    "evaluated_at": "2026-10-15T18:01:12.514131+00:00",
+    "evaluator_git_commit": "961cef820c99ea5b5a6de252f85ad33080b904ab",
+    "case_limit": null
+  },
+  "metrics": {
+    "total": 50,
+    "ok_total": 49,
+    "error_total": 1,
+    "error_rate": 0.02,
+    "error_types": {
+      "TurnFailure": 1
+    },
+    "decision": {
+      "contract_version": "e2e-decision-v2",
+      "accuracy": 0.5714285714285714,
+      "correct_count": 28,
+      "yes_total": 24,
+      "rejection_total": 25,
+      "critical_false_yes_count": 6,
+      "critical_false_yes_rate": 0.24,
+      "false_no_count": 5,
+      "false_no_rate": 0.20833333333333334,
+      "conservative": {
+        "yes_to_uncertain": 6,
+        "no_to_uncertain": 3
+      },
+      "basis_counts": {
+        "partial_match": 13,
+        "no_results": 15,
+        "strong_match": 19,
+        "clarification": 2
+      },
+      "confusion_matrix": {
+        "NO->NO": 9,
+        "NO->UNCERTAIN": 3,
+        "NO->YES": 3,
+        "UNCERTAIN->NO": 1,
+        "UNCERTAIN->UNCERTAIN": 6,
+        "UNCERTAIN->YES": 3,
+        "YES->NO": 5,
+        "YES->UNCERTAIN": 6,
+        "YES->YES": 13
+      }
+    },
+    "selection": {
+      "yes_total": 24,
+      "top1_correct_count": 19,
+      "top1_accuracy": 0.7916666666666666,
+      "topk_contains_acceptable_count": 19,
+      "topk_contains_acceptable_rate": 0.7916666666666666,
+      "mrr": 0.7916666666666666
+    },
+    "legacy": {
+      "contract_version": "e2e-decision-v1-any-result",
+      "note": "Any non-empty result counted as YES. For comparison with pre-v2 reports only.",
+      "decision_accuracy": 0.5918367346938775,
+      "critical_false_yes_count": 13,
+      "critical_false_yes_rate": 0.52,
+      "confusion_matrix": {
+        "NO->NO": 9,
+        "NO->UNCERTAIN": 1,
+        "NO->YES": 5,
+        "UNCERTAIN->NO": 1,
+        "UNCERTAIN->UNCERTAIN": 1,
+        "UNCERTAIN->YES": 8,
+        "YES->NO": 5,
+        "YES->YES": 19
+      }
+    },
+    "runtime_ms": {
+      "mean": 8376.122448979591,
+      "max": 17137
+    },
+    "cost": {
+      "total_estimated_usd": 0.05317900000000002,
+      "mean_estimated_usd": 0.0010852857142857142
+    },
+    "llm_calls": {
+      "total": 287,
+      "mean": 5.857142857142857
+    }
+  },
+  "failure_count": 22,
+  "failures_path": "evaluation/outputs/end_to_end/baseline_gemini_router_2026-10-15/failures.jsonl"
+}

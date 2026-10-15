@@ -1,0 +1,70 @@
+{
+  "contract_version": "e2e-decision-v2",
+  "created_at": "2026-10-15T17:53:41.378408+00:00",
+  "git": {
+    "commit": "961cef820c99ea5b5a6de252f85ad33080b904ab",
+    "dirty": false
+  },
+  "dataset": {
+    "path": "evaluation/datasets/end_to_end/end2end_golden_set.jsonl",
+    "sha256": "10682c9567ee757e8dc63a3c4f437fff250875643feb033576f8084d9af5f5c0",
+    "case_limit": null
+  },
+  "reference_date": "2026-03-01",
+  "run_config": {
+    "source": "fixtures",
+    "top_n": 2,
+    "max_items": 40,
+    "fallback_top_k": 5,
+    "fallback_policy": {
+      "enabled": true,
+      "top_k": 5,
+      "must_only": true,
+      "run_for_unresolved": true,
+      "run_for_structured_uncertain": true,
+      "max_constraints_per_listing": 3,
+      "model": "gemini-2.5-flash-lite"
+    }
+  },
+  "models": {
+    "conversation_router_profile": "gemini_default",
+    "conversation_router": "gemini-2.5-flash-lite",
+    "intent_extraction": "gemini-2.5-flash-lite",
+    "intent_update": "gemini-2.5-flash-lite",
+    "textual_fallback": "gemini-2.5-flash-lite"
+  },
+  "execution": {
+    "max_llm_calls": 600,
+    "max_consecutive_failures": 3,
+    "status": "completed",
+    "stopped_reason": null,
+    "valid_as_baseline": true,
+    "cases_completed": 50,
+    "cases_planned": 50,
+    "wall_clock_seconds": 413.9,
+    "cases_ok": 49,
+    "cases_error": 1,
+    "provider_failure_cases": {},
+    "llm_calls_used": 289,
+    "llm_calls_by_step": {
+      "conversation_routing": 50,
+      "search_intent_extraction": 50,
+      "constraint_textual_fallback": 189
+    },
+    "failed_llm_attempts": {
+      "search_intent_extraction:invalid_response": 1
+    },
+    "tokens": {
+      "prompt": 317152,
+      "completion": 54441,
+      "note": "From turn telemetry; several stages estimate tokens from text and omit the system instruction, so prompt tokens are undercounted."
+    },
+    "estimated_cost_usd": 0.053491,
+    "case_latency_ms": {
+      "mean": 8274,
+      "p50": 7317,
+      "p90": 14949,
+      "max": 17137
+    }
+  }
+}
