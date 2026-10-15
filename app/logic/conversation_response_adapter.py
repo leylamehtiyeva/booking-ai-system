@@ -58,7 +58,14 @@ def build_conversation_response_input(
 
     response_type = result.get("response_type")
 
-    if result.get("need_clarification"):
+    if response_type == "processing_unavailable":
+        # A stage failed after routing succeeded: the answer is already a
+        # fixed user-safe text and must reach the user verbatim.
+        outcome = ConversationFailureOutcome(
+            user_safe_message=result["answer"]
+        )
+
+    elif result.get("need_clarification"):
         outcome = ClarificationConversationOutcome(
             questions=result.get("questions", [])
         )

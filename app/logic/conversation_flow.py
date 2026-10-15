@@ -5,6 +5,8 @@ from app.observability.trace import RequestTrace
 from app.logic.intent_router import build_search_request_adk_async
 from app.logic.intent_update import update_search_state_async
 from app.logic.date_normalization import InvalidStayDatesError
+from app.llm.call_policy import LlmCallError
+from app.retrieval.errors import RetrievalError
 from app.logic.request_resolution import resolve_required_search_context
 from app.logic.listing_signals import collect_listing_signals
 from app.schemas.query import SearchRequest
@@ -184,6 +186,57 @@ def _build_clarification_response(
             "user_message": user_message,
             "previous_state": previous_state_json,
             "clarification_reason": reason.value,
+        },
+        "search_request": previous_state_json,
+    }
+
+
+_PROCESSING_UNAVAILABLE_MESSAGE = (
+    "I couldn't process that message right now. "
+    "Your current search has not been changed. "
+    "Please try again."
+)
+
+_RETRIEVAL_UNAVAILABLE_MESSAGE = (
+    "I couldn't search for listings right now. "
+    "Your current search has not been changed. "
+    "Please try again."
+)
+
+
+def _build_stage_failure_response(
+    *,
+    stage: str,
+    code: str,
+    previous_state_json: dict[str, Any] | None,
+    route_debug: dict[str, Any] | None,
+    user_message: str,
+) -> Dict[str, Any]:
+    """
+    A fatal stage failure (LLM provider or retrieval) - the turn did not
+    complete. Mirrors routing_unavailable: the previous SearchRequest is
+    returned unchanged and "shown_result_set" is left out, so neither the
+    persisted search nor the stored snapshot is replaced. The answer is a
+    fixed user-safe text; stage/code are for telemetry and the UI's debug
+    view, never provider messages.
+    """
+    failure = {"stage": stage, "code": code}
+
+    return {
+        "need_clarification": False,
+        "response_type": "processing_unavailable",
+        "answer": (
+            _RETRIEVAL_UNAVAILABLE_MESSAGE
+            if stage == "retrieval"
+            else _PROCESSING_UNAVAILABLE_MESSAGE
+        ),
+        "failure": failure,
+        "state": previous_state_json,
+        "parsed_intent": {
+            "router": route_debug,
+            "user_message": user_message,
+            "previous_state": previous_state_json,
+            "failure": failure,
         },
         "search_request": previous_state_json,
     }
@@ -434,10 +487,19 @@ async def _answer_listing_query(
             user_message=user_message,
         )
 
-    with trace.step("listing_question_factual_extraction"):
-        result_query = await extract_factual_constraints_async(
-            user_message,
-            trace=trace,
+    try:
+        with trace.step("listing_question_factual_extraction"):
+            result_query = await extract_factual_constraints_async(
+                user_message,
+                trace=trace,
+            )
+    except LlmCallError as exc:
+        return _build_stage_failure_response(
+            stage="listing_question_factual_extraction",
+            code=exc.code,
+            previous_state_json=previous_state_json,
+            route_debug=route_debug,
+            user_message=user_message,
         )
 
     if not result_query.constraints:
@@ -745,6 +807,18 @@ async def handle_user_message(
                     trace=trace,
                     step="search_intent_extraction",
                 )
+        except LlmCallError as exc:
+            return _finalize_response(
+                _build_stage_failure_response(
+                    stage="search_intent_extraction",
+                    code=exc.code,
+                    previous_state_json=previous_state_json,
+                    route_debug=route_debug,
+                    user_message=user_message,
+                ),
+                trace=trace,
+                action=effective_action,
+            )
         except InvalidStayDatesError as exc:
             # A new search replaces the old one, so the partial request
             # (everything except the dates) becomes the state to complete.
@@ -777,6 +851,18 @@ async def handle_user_message(
                     user_message,
                     trace=trace,
                 )
+        except LlmCallError as exc:
+            return _finalize_response(
+                _build_stage_failure_response(
+                    stage="search_state_update",
+                    code=exc.code,
+                    previous_state_json=previous_state_json,
+                    route_debug=route_debug,
+                    user_message=user_message,
+                ),
+                trace=trace,
+                action=effective_action,
+            )
         except InvalidStayDatesError as exc:
             # The update is rejected as a whole - the previous, valid
             # search stays in place until the user confirms the dates.
@@ -858,14 +944,29 @@ async def handle_user_message(
             action=effective_action,
         )
 
-    search_response, shown_result_set = await orchestrate_search_request(
-        state,
-        result_limit=top_n,
-        candidate_pool_size=max_items,
-        fallback_policy=fallback_policy,
-        source=source,
-        trace=trace,
-    )
+    try:
+        search_response, shown_result_set = await orchestrate_search_request(
+            state,
+            result_limit=top_n,
+            candidate_pool_size=max_items,
+            fallback_policy=fallback_policy,
+            source=source,
+            trace=trace,
+        )
+    except RetrievalError as exc:
+        # The new SearchRequest was never searched - keep the previous one,
+        # so the persisted search always matches the shown results.
+        return _finalize_response(
+            _build_stage_failure_response(
+                stage="retrieval",
+                code=exc.code,
+                previous_state_json=previous_state_json,
+                route_debug=route_debug,
+                user_message=user_message,
+            ),
+            trace=trace,
+            action=effective_action,
+        )
 
     result = search_response.model_dump(
         mode="json",

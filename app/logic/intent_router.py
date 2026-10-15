@@ -14,6 +14,7 @@ from google.adk.sessions import InMemorySessionService
 from google.genai.types import Content, Part
 
 from app.agents.intent_router_agent import IntentRoute, build_intent_router_agent
+from app.llm.call_policy import LlmCallError, call_llm_stage
 from app.logic.date_normalization import InvalidStayDatesError, normalize_intent_dates
 from app.logic.request_resolution import resolve_required_search_context
 from app.schemas.query import SearchRequest
@@ -58,54 +59,46 @@ async def _route_intent_via_adk(
     step: str = "initial_intent_extraction",
 ) -> IntentRoute:
     _ensure_gemini_key()
+    model_name = get_gemini_model()
 
-    max_retries = 3
-    delay_seconds = 1.0
+    async def attempt() -> IntentRoute:
+        agent = build_intent_router_agent()
+        session_service = InMemorySessionService()
+        runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
 
-    for attempt in range(max_retries):
+        session_id = f"intent-{uuid.uuid4().hex[:8]}"
+        await session_service.create_session(
+            app_name=APP_NAME,
+            user_id=USER_ID,
+            session_id=session_id,
+        )
+
+        msg = Content(role="user", parts=[Part.from_text(text=user_text)])
+        cfg = RunConfig(response_modalities=["TEXT"])
+
+        final_text: Optional[str] = None
+        async for ev in runner.run_async(
+            user_id=USER_ID,
+            session_id=session_id,
+            new_message=msg,
+            run_config=cfg,
+        ):
+            content = getattr(ev, "content", None)
+            if content and getattr(content, "parts", None):
+                for p in content.parts:
+                    t = getattr(p, "text", None)
+                    if t:
+                        final_text = (final_text or "") + t
+
+        if not final_text:
+            raise LlmCallError("empty_response", stage=step)
+
+        clean = _strip_json_fence(final_text)
+
         try:
-            agent = build_intent_router_agent()
-            session_service = InMemorySessionService()
-            runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
-
-            session_id = f"intent-{uuid.uuid4().hex[:8]}"
-            await session_service.create_session(
-                app_name=APP_NAME,
-                user_id=USER_ID,
-                session_id=session_id,
-            )
-
-            msg = Content(role="user", parts=[Part.from_text(text=user_text)])
-            cfg = RunConfig(response_modalities=["TEXT"])
-
-            final_text: Optional[str] = None
-            async for ev in runner.run_async(
-                user_id=USER_ID,
-                session_id=session_id,
-                new_message=msg,
-                run_config=cfg,
-            ):
-                content = getattr(ev, "content", None)
-                if content and getattr(content, "parts", None):
-                    for p in content.parts:
-                        t = getattr(p, "text", None)
-                        if t:
-                            final_text = (final_text or "") + t
-
-            if not final_text:
-                raise ValueError("ADK returned empty response text")
-
-            clean = _strip_json_fence(final_text)
-            
-            record_llm_call_estimated(
-                trace=trace,
-                step=step,
-                model=get_gemini_model(),
-                prompt_text=user_text,
-                response_text=final_text,
-                success=True,
-            )
             payload = json.loads(clean)
+            if not isinstance(payload, dict):
+                raise ValueError("intent payload is not a JSON object")
 
             if payload.get("filters") is None:
                 payload["filters"] = {}
@@ -119,22 +112,23 @@ async def _route_intent_via_adk(
             if payload.get("occupancy_types") is None:
                 payload["occupancy_types"] = []
 
-            return IntentRoute.model_validate(payload)
+            intent = IntentRoute.model_validate(payload)
+        except ValueError as exc:  # JSONDecodeError and ValidationError
+            raise LlmCallError(
+                "invalid_response", stage=step, parse_failure=True
+            ) from exc
 
-        except Exception as e:
-            error_text = str(e)
-            is_resource_exhausted = (
-                "RESOURCE_EXHAUSTED" in error_text
-                or "429" in error_text
-                or "_ResourceExhaustedError" in e.__class__.__name__
-            )
+        record_llm_call_estimated(
+            trace=trace,
+            step=step,
+            model=model_name,
+            prompt_text=user_text,
+            response_text=final_text,
+            success=True,
+        )
+        return intent
 
-            if is_resource_exhausted and attempt < max_retries - 1:
-                await asyncio.sleep(delay_seconds)
-                delay_seconds *= 2
-                continue
-
-            raise
+    return await call_llm_stage(attempt, stage=step, model=model_name, trace=trace)
 
 
 async def route_intent_adk_async(

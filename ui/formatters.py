@@ -35,6 +35,7 @@ _DIRECT_RESPONSE_TYPES = {
     "other",
     "listing_question",
     "routing_unavailable",
+    "processing_unavailable",
     "listing_query_result",
     "listing_query_unsupported",
 }

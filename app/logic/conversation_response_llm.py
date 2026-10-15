@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import uuid
 from collections.abc import AsyncIterator
 from typing import Any
@@ -41,6 +42,9 @@ from app.observability.llm_usage import (
     record_llm_call_from_response,
 )
 from app.observability.trace import RequestTrace
+from app.llm.call_policy import classify_provider_exception
+
+logger = logging.getLogger(__name__)
 
 
 APP_NAME = "booking-ai-agent"
@@ -393,6 +397,16 @@ async def generate_conversation_response_with_llm(
             )
 
         except Exception as exc:
+            # Recoverable: the deterministic text is always a correct
+            # answer, so even an unexpected error falls back instead of
+            # failing the turn - but it is logged with its traceback and
+            # recorded as "unexpected_error", never as a provider failure.
+            # Telemetry carries the error code only, not str(exc).
+            error_code = classify_provider_exception(exc)
+            if error_code is None:
+                error_code = "unexpected_error"
+                logger.exception("Conversation response generation failed")
+
             record_llm_call_estimated(
                 trace=trace,
                 step="conversation_response_generation",
@@ -400,7 +414,7 @@ async def generate_conversation_response_with_llm(
                 prompt_text=prompt,
                 response_text=response_text,
                 success=False,
-                error=str(exc),
+                error=error_code,
             )
 
             return ConversationResponseGenerationResult(

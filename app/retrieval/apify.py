@@ -16,6 +16,7 @@ from app.schemas.query import SearchRequest
 import time
 from app.observability.trace import RequestTrace, ExternalCallTrace
 from app.observability.pricing import estimate_apify_cost_usd
+from app.retrieval.errors import RetrievalError
 logger = logging.getLogger(__name__)
 from app.schemas.listing import (
     BedGroup,
@@ -713,6 +714,34 @@ def _post_json_sync(url: str, payload: Dict[str, Any], timeout: int = 180) -> An
         return json.loads(body)
 
 
+def _classify_apify_http_status(status: int) -> str:
+    if status == 429:
+        return "rate_limited"
+    if status in {401, 403}:
+        return "authentication_error"
+    if 500 <= status < 600:
+        return "provider_unavailable"
+    return "provider_error"
+
+
+def _record_apify_failure(
+    trace: RequestTrace | None,
+    started: float,
+    code: str,
+) -> None:
+    if trace is None:
+        return
+    trace.add_external_call(
+        ExternalCallTrace(
+            step="apify_booking_search",
+            provider="apify",
+            latency_ms=round((time.perf_counter() - started) * 1000, 2),
+            success=False,
+            error=code,
+        )
+    )
+
+
 class ApifyRetriever:
     async def _get_candidates_for_property_type(
         self,
@@ -724,9 +753,7 @@ class ApifyRetriever:
 
         token = os.getenv("APIFY_TOKEN")
         if not token:
-            raise ValueError(
-                "Missing APIFY_TOKEN in environment"
-            )
+            raise RetrievalError("configuration_error")
 
         actor = os.getenv(
             "APIFY_BOOKING_ACTOR",
@@ -851,24 +878,27 @@ class ApifyRetriever:
                 )
 
         except HTTPError as e:
-            body = ""
+            # The request URL carries the API token and the body may echo
+            # the actor input - neither goes into the error or telemetry.
+            code = _classify_apify_http_status(e.code)
+            logger.warning("Apify request failed: HTTP %s (%s)", e.code, code)
+            _record_apify_failure(trace, started, code)
+            raise RetrievalError(code) from e
 
-            try:
-                body = e.read().decode(
-                    "utf-8"
-                )
-            except Exception:
-                pass
+        except (URLError, TimeoutError) as e:
+            code = (
+                "timeout"
+                if isinstance(e, TimeoutError)
+                or isinstance(getattr(e, "reason", None), TimeoutError)
+                else "provider_unavailable"
+            )
+            logger.warning("Apify request failed: %s", code)
+            _record_apify_failure(trace, started, code)
+            raise RetrievalError(code) from e
 
-            raise RuntimeError(
-                f"Apify HTTPError "
-                f"{e.code}: {body}"
-            ) from e
-
-        except URLError as e:
-            raise RuntimeError(
-                f"Apify URLError: {e}"
-            ) from e
+        except json.JSONDecodeError as e:
+            _record_apify_failure(trace, started, "invalid_response")
+            raise RetrievalError("invalid_response") from e
 
         _save_apify_debug_payload(
             actor_input,
@@ -876,10 +906,11 @@ class ApifyRetriever:
         )
 
         if not isinstance(items, list):
-            raise RuntimeError(
-                "Unexpected Apify response type: "
-                f"{type(items)}"
+            logger.warning(
+                "Unexpected Apify response type: %s",
+                type(items).__name__,
             )
+            raise RetrievalError("invalid_response")
 
         out: List[ListingRaw] = []
 

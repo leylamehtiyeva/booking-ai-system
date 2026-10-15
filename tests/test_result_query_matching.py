@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from app.llm.call_policy import LlmCallError
 from app.logic import constraint_evidence_resolution
 from app.logic.result_candidate_selection import CandidateSelectionResult
 from app.logic.result_query_matching import match_result_query_against_candidates
@@ -399,7 +400,7 @@ async def test_multiple_constraints_independent_fallback_resolution(monkeypatch)
 
 async def test_fallback_technical_failure_keeps_structured_uncertain(monkeypatch):
     async def _raise(req, *, model=None, trace=None):
-        raise RuntimeError("Gemini API unavailable")
+        raise LlmCallError("provider_unavailable", stage="constraint_textual_fallback")
 
     monkeypatch.setattr(constraint_evidence_resolution, "resolve_constraint_via_textual_evidence", _raise)
 

@@ -209,7 +209,8 @@ def test_conversation_response_llm_failure_uses_deterministic_fallback(
         == "conversation_response_generation"
     )
     assert llm_call["success"] is False
-    assert (
-        "simulated responder failure"
-        in llm_call["error"]
-    )
+    # Telemetry carries an error code, never the exception message; an
+    # unclassified exception is reported as unexpected_error, not as a
+    # provider failure.
+    assert llm_call["error"] == "unexpected_error"
+    assert "simulated responder failure" not in str(telemetry)

@@ -16,6 +16,7 @@ from google.adk.sessions import InMemorySessionService
 from google.genai.types import Content, Part
 
 from app.agents.intent_update_agent import build_intent_update_agent
+from app.llm.call_policy import LlmCallError, call_llm_stage
 from app.logic.apply_intent_patch import apply_intent_patch
 from app.config import clock
 from app.logic.date_normalization import (
@@ -114,52 +115,67 @@ async def route_intent_update_patch_async(
     trace: RequestTrace | None = None,
 ) -> SearchIntentPatch:
     _ensure_gemini_key()
-    
-
-    agent = build_intent_update_agent()
-    session_service = InMemorySessionService()
-    runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
-
-    session_id = f"intent-update-{uuid.uuid4().hex[:8]}"
-    await session_service.create_session(
-        app_name=APP_NAME,
-        user_id=USER_ID,
-        session_id=session_id,
-    )
-
+    model_name = get_gemini_model()
     prompt = _build_update_prompt(previous_state, user_message)
-    msg = Content(role="user", parts=[Part.from_text(text=prompt)])
-    cfg = RunConfig(response_modalities=["TEXT"])
 
-    final_text: Optional[str] = None
-    record_llm_call_estimated(
+    async def attempt() -> SearchIntentPatch:
+        agent = build_intent_update_agent()
+        session_service = InMemorySessionService()
+        runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
+
+        session_id = f"intent-update-{uuid.uuid4().hex[:8]}"
+        await session_service.create_session(
+            app_name=APP_NAME,
+            user_id=USER_ID,
+            session_id=session_id,
+        )
+
+        msg = Content(role="user", parts=[Part.from_text(text=prompt)])
+        cfg = RunConfig(response_modalities=["TEXT"])
+
+        final_text: Optional[str] = None
+        async for ev in runner.run_async(
+            user_id=USER_ID,
+            session_id=session_id,
+            new_message=msg,
+            run_config=cfg,
+        ):
+            content = getattr(ev, "content", None)
+            if content and getattr(content, "parts", None):
+                for p in content.parts:
+                    t = getattr(p, "text", None)
+                    if t:
+                        final_text = (final_text or "") + t
+
+        if not final_text:
+            raise LlmCallError("empty_response", stage="intent_update")
+
+        clean = _strip_json_fence(final_text)
+        try:
+            patch = SearchIntentPatch.model_validate_json(clean)
+        except ValueError as exc:  # ValidationError, incl. malformed JSON
+            raise LlmCallError(
+                "invalid_response", stage="intent_update", parse_failure=True
+            ) from exc
+
+        # Recorded after the call with the real response - previously this
+        # was logged before the call, always as success with no response.
+        record_llm_call_estimated(
+            trace=trace,
+            step="intent_update",
+            model=model_name,
+            prompt_text=prompt,
+            response_text=final_text,
+            success=True,
+        )
+        return patch
+
+    return await call_llm_stage(
+        attempt,
+        stage="intent_update",
+        model=model_name,
         trace=trace,
-        step="intent_update",
-        model=get_gemini_model(),
-        prompt_text=prompt,
-        response_text=final_text,
-        success=True,
     )
-    
-    async for ev in runner.run_async(
-        user_id=USER_ID,
-        session_id=session_id,
-        new_message=msg,
-        run_config=cfg,
-    ):
-        content = getattr(ev, "content", None)
-        if content and getattr(content, "parts", None):
-            for p in content.parts:
-                t = getattr(p, "text", None)
-                if t:
-                    final_text = (final_text or "") + t
-
-    if not final_text:
-        raise ValueError("Intent update agent returned empty response")
-
-    clean = _strip_json_fence(final_text)
-    patch = SearchIntentPatch.model_validate_json(clean)
-    return patch
 
 
 def _inherit_month_from_previous_state(

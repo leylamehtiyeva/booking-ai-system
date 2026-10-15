@@ -32,6 +32,11 @@ from app.agents.conversation_router_agent import (
     build_conversation_router_agent,
 )
 from app.config.llm import get_llm_profile
+from app.llm.call_policy import (
+    classify_api_error,
+    classify_litellm_error,
+    classify_provider_exception,
+)
 from app.llm.model_factory import build_adk_model
 
 
@@ -65,30 +70,6 @@ class ConversationRoutingError(RuntimeError):
         super().__init__(f"Conversation routing failed: {code}")
         self.code = code
         self.internal_detail = internal_detail
-
-
-def _classify_litellm_error(exc: Exception) -> str:
-    if isinstance(exc, litellm.RateLimitError):
-        return "rate_limited"
-
-    if isinstance(exc, litellm.AuthenticationError):
-        return "authentication_error"
-
-    return "provider_error"
-
-def _classify_api_error(exc: APIError) -> str:
-    code = getattr(exc, "code", None)
-
-    if code == 429:
-        return "rate_limited"
-
-    if code in {401, 403}:
-        return "authentication_error"
-
-    if isinstance(code, int) and 500 <= code < 600:
-        return "provider_unavailable"
-
-    return "provider_error"
 
 
 def _extract_event_text(event: Any) -> str | None:
@@ -284,14 +265,14 @@ async def _run_router_attempt(
         litellm.AuthenticationError,
         litellm.APIError,
     ) as exc:
-        routing_error_code = _classify_litellm_error(exc)
+        routing_error_code = classify_litellm_error(exc)
 
         raise ConversationRoutingError(
             code=routing_error_code,
         ) from exc
 
     except APIError as exc:
-        routing_error_code = _classify_api_error(exc)
+        routing_error_code = classify_api_error(exc)
 
         raise ConversationRoutingError(
             code=routing_error_code,
@@ -303,9 +284,18 @@ async def _run_router_attempt(
 
         raise
 
-    except Exception:
-        routing_error_code = "unexpected_error"
-        raise
+    except Exception as exc:
+        # Provider/network errors outside the explicitly handled types
+        # above (e.g. litellm.ServiceUnavailableError, litellm.Timeout,
+        # httpx transport errors) are routing failures too. Anything
+        # unrecognised is a programming error and propagates unchanged.
+        classified_code = classify_provider_exception(exc)
+        if classified_code is None:
+            routing_error_code = "unexpected_error"
+            raise
+
+        routing_error_code = classified_code
+        raise ConversationRoutingError(code=routing_error_code) from exc
 
     finally:
         _record_router_llm_call(

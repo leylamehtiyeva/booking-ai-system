@@ -56,3 +56,22 @@ CONVERSATION_ROUTER_RETRY_DELAY_SECONDS = max(
         )
     ),
 )
+
+
+# Failure policy for the non-router LLM stages (intent extraction, intent
+# update, factual extraction, textual evidence fallback) - see
+# app/llm/call_policy.py. Only rate limits / provider unavailability are
+# retried, with exponential backoff from the base delay.
+LLM_STAGE_TIMEOUT_SECONDS = float(
+    os.getenv("LLM_STAGE_TIMEOUT_SECONDS", "20")
+)
+
+LLM_STAGE_MAX_ATTEMPTS = max(
+    1,
+    int(os.getenv("LLM_STAGE_MAX_ATTEMPTS", "3")),
+)
+
+LLM_STAGE_RETRY_BASE_DELAY_SECONDS = max(
+    0.0,
+    float(os.getenv("LLM_STAGE_RETRY_BASE_DELAY_SECONDS", "1.0")),
+)

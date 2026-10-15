@@ -10,7 +10,6 @@ from app.logic.constraint_evidence_resolution import (
 from app.logic.field_rules import FIELD_RULES
 from app.logic.matcher_structured import _match_field_via_rules
 from app.logic.result_candidate_selection import CandidateSelectionResult
-from app.observability.llm_usage import record_llm_call_failed
 from app.observability.trace import RequestTrace
 from app.schemas.constraints import ConstraintMappingStatus, UserConstraint
 from app.schemas.fallback_policy import FallbackPolicy
@@ -179,35 +178,17 @@ async def _match_candidate_constraints(
                 listing, matched_field
             )
 
-    try:
-        fallback_results = await resolve_listing_constraints_with_fallback(
-            listing=listing,
-            constraints=constraints,
-            structured_matches_by_field=structured_matches_by_field,
-            policy=policy,
-            trace=trace,
-        )
-    except Exception as exc:
-        # A genuine API/network/timeout failure (not the JSON-decode case,
-        # which resolve_constraint_via_textual_evidence already turns into
-        # a safe UNCERTAIN result) must not crash the whole LISTING_QUESTION
-        # turn. Record it into the same telemetry stream real fallback
-        # calls use (step="constraint_textual_fallback") so it stays
-        # visible, then fall through to the structured verdict for every
-        # constraint that would have gone through fallback - which is
-        # UNCERTAIN/unresolved by construction, since only those are ever
-        # eligible in the first place.
-        logger.exception(
-            "Listing-question textual fallback failed",
-            extra={"step": "constraint_textual_fallback"},
-        )
-        record_llm_call_failed(
-            trace=trace,
-            step="constraint_textual_fallback",
-            model=policy.model,
-            error=str(exc),
-        )
-        fallback_results = []
+    # Provider failures of the textual fallback are already turned into
+    # UNCERTAIN per constraint inside resolve_listing_constraints_with_fallback
+    # (see app.llm.call_policy); anything else raised here is a programming
+    # error and must not be hidden behind the structured verdict.
+    fallback_results = await resolve_listing_constraints_with_fallback(
+        listing=listing,
+        constraints=constraints,
+        structured_matches_by_field=structured_matches_by_field,
+        policy=policy,
+        trace=trace,
+    )
 
     fallback_by_constraint_id = {
         result.constraint_id: result

@@ -11,12 +11,14 @@ from google.genai.types import Content, Part
 
 from app.agents.factual_question_agent import build_factual_question_agent
 from app.config.llm import get_gemini_model
+from app.llm.call_policy import LlmCallError, call_llm_stage
 from app.observability.llm_usage import record_llm_call_estimated
 from app.observability.trace import RequestTrace
 from app.schemas.result_query import ResultQuery
 
 APP_NAME = "booking-ai-agent"
 USER_ID = "local-user"
+FACTUAL_EXTRACTION_STEP = "factual_question_extraction"
 
 
 def _ensure_gemini_key() -> None:
@@ -45,65 +47,66 @@ async def extract_factual_constraints_async(
     result must never reach apply_intent_patch/set_search_state - see
     ResultQuery's own docstring.
 
-    One deliberate deviation from intent_update.py's telemetry placement:
-    that file calls record_llm_call_estimated() BEFORE the response loop
-    runs (response_text is always None, success is always True at that
-    point regardless of outcome). That looks like a pre-existing
-    telemetry bug there, not a pattern worth propagating - here the call
-    is made after the response is collected, with the real text and a
-    real success/failure outcome.
+    Runs under the shared LLM stage failure policy (app.llm.call_policy):
+    raises LlmCallError for provider failures and unusable responses.
     """
     _ensure_gemini_key()
+    model_name = get_gemini_model()
 
-    agent = build_factual_question_agent()
-    session_service = InMemorySessionService()
-    runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
+    async def attempt() -> ResultQuery:
+        agent = build_factual_question_agent()
+        session_service = InMemorySessionService()
+        runner = Runner(agent=agent, app_name=APP_NAME, session_service=session_service)
 
-    session_id = f"factual-question-{uuid.uuid4().hex[:8]}"
-    await session_service.create_session(
-        app_name=APP_NAME,
-        user_id=USER_ID,
-        session_id=session_id,
-    )
+        session_id = f"factual-question-{uuid.uuid4().hex[:8]}"
+        await session_service.create_session(
+            app_name=APP_NAME,
+            user_id=USER_ID,
+            session_id=session_id,
+        )
 
-    msg = Content(role="user", parts=[Part.from_text(text=user_message)])
-    cfg = RunConfig(response_modalities=["TEXT"])
+        msg = Content(role="user", parts=[Part.from_text(text=user_message)])
+        cfg = RunConfig(response_modalities=["TEXT"])
 
-    final_text: Optional[str] = None
+        final_text: Optional[str] = None
 
-    async for ev in runner.run_async(
-        user_id=USER_ID,
-        session_id=session_id,
-        new_message=msg,
-        run_config=cfg,
-    ):
-        content = getattr(ev, "content", None)
-        if content and getattr(content, "parts", None):
-            for p in content.parts:
-                t = getattr(p, "text", None)
-                if t:
-                    final_text = (final_text or "") + t
+        async for ev in runner.run_async(
+            user_id=USER_ID,
+            session_id=session_id,
+            new_message=msg,
+            run_config=cfg,
+        ):
+            content = getattr(ev, "content", None)
+            if content and getattr(content, "parts", None):
+                for p in content.parts:
+                    t = getattr(p, "text", None)
+                    if t:
+                        final_text = (final_text or "") + t
 
-    if not final_text:
+        if not final_text:
+            raise LlmCallError("empty_response", stage=FACTUAL_EXTRACTION_STEP)
+
+        clean = _strip_json_fence(final_text)
+        try:
+            result_query = ResultQuery.model_validate_json(clean)
+        except ValueError as exc:  # ValidationError, incl. malformed JSON
+            raise LlmCallError(
+                "invalid_response", stage=FACTUAL_EXTRACTION_STEP, parse_failure=True
+            ) from exc
+
         record_llm_call_estimated(
             trace=trace,
-            step="factual_question_extraction",
-            model=get_gemini_model(),
+            step=FACTUAL_EXTRACTION_STEP,
+            model=model_name,
             prompt_text=user_message,
-            response_text=None,
-            success=False,
-            error="empty_response",
+            response_text=final_text,
+            success=True,
         )
-        raise ValueError("Factual question agent returned empty response")
+        return result_query
 
-    record_llm_call_estimated(
+    return await call_llm_stage(
+        attempt,
+        stage=FACTUAL_EXTRACTION_STEP,
+        model=model_name,
         trace=trace,
-        step="factual_question_extraction",
-        model=get_gemini_model(),
-        prompt_text=user_message,
-        response_text=final_text,
-        success=True,
     )
-
-    clean = _strip_json_fence(final_text)
-    return ResultQuery.model_validate_json(clean)

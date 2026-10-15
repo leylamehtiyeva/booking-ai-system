@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 from typing import Any, Literal
 from app.observability.trace import RequestTrace
@@ -18,6 +19,12 @@ from app.schemas.fields import Field as CanonicalField
 from app.schemas.listing import ListingRaw
 from app.schemas.match import Ternary
 from app.config.llm import get_gemini_model
+from app.llm.call_policy import LlmCallError, call_llm_stage
+from app.llm.model_factory import LlmModelConfigurationError
+
+logger = logging.getLogger(__name__)
+
+TEXTUAL_FALLBACK_STEP = "constraint_textual_fallback"
 
 
 
@@ -117,7 +124,9 @@ def _gemini_client():
 
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
-        raise ValueError("Missing GOOGLE_API_KEY")
+        # Subclass of ValueError, so existing callers are unaffected;
+        # call_llm_stage classifies it as configuration_error.
+        raise LlmModelConfigurationError("Missing GOOGLE_API_KEY")
     return Client(api_key=api_key)
 
 
@@ -522,7 +531,35 @@ async def resolve_constraint_via_textual_evidence(
 
         return _normalize_result(data, req)
 
-    return await asyncio.to_thread(_call_sync)
+    # The worker thread cannot be cancelled on timeout; the call is
+    # abandoned (its result discarded) rather than awaited further.
+    return await call_llm_stage(
+        lambda: asyncio.to_thread(_call_sync),
+        stage=TEXTUAL_FALLBACK_STEP,
+        model=model,
+        trace=trace,
+    )
+
+
+def _unavailable_result(
+    req: ConstraintResolutionRequest,
+    error: LlmCallError,
+) -> ConstraintResolutionResult:
+    """
+    Recoverable failure: the evidence check could not run, so nothing is
+    known - the same "no evidence" shape the invalid-JSON branch above
+    already produces, which the deterministic decision reduces to
+    UNCERTAIN.
+    """
+    return _normalize_result(
+        {
+            "signals": [],
+            "evidence_missing": True,
+            "confidence": 0.0,
+            "reason": f"Textual evidence check unavailable ({error.code}).",
+        },
+        req,
+    )
 
 
 async def resolve_listing_constraints_with_fallback(
@@ -562,11 +599,19 @@ async def resolve_listing_constraints_with_fallback(
             constraint=constraint,
             structured_value=structured_value,
         )
-        result = await resolve_constraint_via_textual_evidence(
-            req,
-            model=policy.model,
-            trace=trace,
-        )
+        try:
+            result = await resolve_constraint_via_textual_evidence(
+                req,
+                model=policy.model,
+                trace=trace,
+            )
+        except LlmCallError as exc:
+            logger.warning(
+                "Textual evidence fallback unavailable for listing %s: %s",
+                req.listing_id,
+                exc.code,
+            )
+            result = _unavailable_result(req, exc)
         results.append(result)
 
     return results

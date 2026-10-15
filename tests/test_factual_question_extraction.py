@@ -6,6 +6,7 @@ from types import SimpleNamespace
 import pytest
 
 from app.agents.factual_question_agent import build_factual_question_agent
+from app.llm.call_policy import LlmCallError
 from app.logic import factual_question_extraction
 from app.schemas.constraints import (
     ConstraintCategory,
@@ -186,7 +187,9 @@ async def test_extract_factual_constraints_raises_on_empty_response(
         _make_fake_runner([]),
     )
 
-    with pytest.raises(ValueError):
+    with pytest.raises(LlmCallError) as exc_info:
         await factual_question_extraction.extract_factual_constraints_async(
             "Which of these have parking?"
         )
+
+    assert exc_info.value.code == "empty_response"
