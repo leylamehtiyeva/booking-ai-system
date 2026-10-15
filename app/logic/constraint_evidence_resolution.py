@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
 import os
 from typing import Any, Literal
 from app.observability.trace import RequestTrace
@@ -41,6 +42,12 @@ SignalRelation = Literal[
 ]
 
 SignalStrength = Literal["strong", "medium", "weak"]
+EvidenceType = Literal["direct_statement", "measurement", "associated_feature"]
+
+# Evidence that can confirm a requirement. An associated feature (a quiet
+# street for "nice atmosphere", WiFi for "workspace") never can, however
+# strongly the model rated it.
+_CONFIRMING_EVIDENCE_TYPES = frozenset({"direct_statement", "measurement"})
 
 
 class EvidenceSignal(BaseModel):
@@ -50,6 +57,13 @@ class EvidenceSignal(BaseModel):
     source: str = "other"
     path: str | None = None
     explanation: str = ""
+    # What the snippet is evidence OF (model-reported): the requested
+    # property itself, a measurement of it, or a different property that
+    # is merely associated with it. None = not stated / not recognised.
+    evidence_type: EvidenceType | None = None
+    # Whether the snippet was found in the listing evidence sent to the
+    # model (set by _normalize_result; None = not checked).
+    snippet_verified: bool | None = None
 
 
 class ConstraintEvidenceAnalysis(BaseModel):
@@ -178,30 +192,62 @@ def _source_from_path(path: str) -> str:
     return "other"
 
 
+def _usable(signal: EvidenceSignal) -> bool:
+    """A signal whose quote could not be found in the listing is ignored."""
+    return signal.snippet_verified is not False
+
+
+def _confirming_signals(analysis: ConstraintEvidenceAnalysis) -> list[EvidenceSignal]:
+    return [
+        signal
+        for signal in analysis.signals
+        if _usable(signal)
+        and signal.relation == "supports"
+        and signal.strength == "strong"
+        and signal.evidence_type in _CONFIRMING_EVIDENCE_TYPES
+    ]
+
+
+def _contradicting_signals(analysis: ConstraintEvidenceAnalysis) -> list[EvidenceSignal]:
+    # A missing evidence_type does not block a contradiction (open-world
+    # keeps the listing as UNCERTAIN only when nothing contradicts it), but
+    # an associated feature or an unverifiable quote cannot reject it.
+    return [
+        signal
+        for signal in analysis.signals
+        if _usable(signal)
+        and signal.relation in {"contradicts", "weakly_contradicts"}
+        and signal.evidence_type != "associated_feature"
+    ]
+
+
 def _has_explicit_negative(analysis: ConstraintEvidenceAnalysis) -> bool:
+    contradicting = _contradicting_signals(analysis)
     return any(
         signal.relation == "contradicts" and signal.strength == "strong"
-        for signal in analysis.signals
-    ) or analysis.has_direct_contradiction
+        for signal in contradicting
+    ) or (analysis.has_direct_contradiction and bool(contradicting))
     
     
     
 def _decide_from_analysis(analysis: ConstraintEvidenceAnalysis) -> DecisionType:
-    strong_support = any(
-        signal.relation == "supports" and signal.strength == "strong"
-        for signal in analysis.signals
-    )
+    """
+    Deterministic reduction of the model's evidence signals. The model's
+    own flags are necessary but not sufficient:
 
-    strong_contradiction = any(
-        signal.relation == "contradicts" and signal.strength == "strong"
-        for signal in analysis.signals
-    )
+    - NO needs a contradiction backed by a verified quote that is not just
+      an associated feature;
+    - YES needs a strong supporting signal whose verified quote is a direct
+      statement or a measurement of the requested property, plus the
+      model's own direct-support flag, and no conflict or condition.
 
-    if strong_contradiction or analysis.has_direct_contradiction:
+    Anything else is UNCERTAIN (open-world: not confirmed, never "no").
+    """
+    if _has_explicit_negative(analysis):
         return "NO"
 
     if (
-        strong_support
+        _confirming_signals(analysis)
         and analysis.has_direct_support
         and not analysis.has_conflicting_evidence
         and not analysis.condition_or_extra_requirement_present
@@ -209,6 +255,35 @@ def _decide_from_analysis(analysis: ConstraintEvidenceAnalysis) -> DecisionType:
         return "YES"
 
     return "UNCERTAIN"
+
+
+def _normalize_snippet(text: str) -> str:
+    return " ".join(re.sub(r"[^0-9a-z]+", " ", (text or "").casefold()).split())
+
+
+def _snippet_found(snippet: str, listing_evidence: list[dict[str, str]]) -> bool:
+    """
+    The quote must come from the listing evidence sent to the model: exact
+    match after case/punctuation/whitespace normalisation, within one
+    evidence item or across adjacent ones. No fuzzy matching.
+    """
+    quote = _normalize_snippet(snippet)
+    if not quote:
+        return False
+    texts = [_normalize_snippet(item.get("text", "")) for item in listing_evidence]
+    return any(quote in text for text in texts) or quote in " ".join(texts)
+
+
+def _downgrade_reason(analysis: ConstraintEvidenceAnalysis) -> str | None:
+    """Why a support the model claimed did not confirm the requirement."""
+    claimed = [s for s in analysis.signals if s.relation == "supports" and s.strength == "strong"]
+    if not claimed or _confirming_signals(analysis):
+        return None
+    if any(s.snippet_verified is False for s in claimed):
+        return "Not confirmed: the quoted supporting evidence was not found in the listing data."
+    if all(s.evidence_type == "associated_feature" for s in claimed):
+        return "Not confirmed: the listing only mentions related features, not the requested property itself."
+    return "Not confirmed: the evidence analysis did not state its basis (direct statement or measurement)."
 
 
 def _normalize_result(
@@ -223,6 +298,12 @@ def _normalize_result(
             source=str(signal.get("source", "other")).strip() or "other",
             path=signal.get("path"),
             explanation=str(signal.get("explanation", "")).strip(),
+            evidence_type=(
+                signal.get("evidence_type")
+                if signal.get("evidence_type") in _CONFIRMING_EVIDENCE_TYPES | {"associated_feature"}
+                else None
+            ),
+            snippet_verified=_snippet_found(str(signal.get("snippet", "")), req.listing_evidence),
         )
         for signal in raw.get("signals", [])
         if isinstance(signal, dict)
@@ -254,11 +335,14 @@ def _normalize_result(
         for signal in analysis.signals
         if signal.relation in {"supports", "contradicts", "weakly_supports", "weakly_contradicts"}
         and signal.snippet
+        and signal.snippet_verified is not False
     ]
 
     explicit_negative = _has_explicit_negative(analysis)
 
-    reason = analysis.reason
+    # A claimed support that did not count is explained deterministically,
+    # instead of keeping the model's (contradicting) reasoning.
+    reason = (_downgrade_reason(analysis) if decision == "UNCERTAIN" else None) or analysis.reason
     if not reason:
         if decision == "YES":
             reason = f"{req.normalized_text} is explicitly supported by listing text."
@@ -355,6 +439,7 @@ Return only valid JSON:
       "snippet": "exact evidence text",
       "source": "facilities|room_facilities|policies|highlights|description|title|property_type|other",
       "path": "string|null",
+      "evidence_type": "direct_statement | measurement | associated_feature",
       "explanation": "why this evidence has this relation to the constraint"
     }
   ],
@@ -375,6 +460,18 @@ Signal meanings:
 - weakly_contradicts: evidence may conflict with the constraint, but is indirect, vague, partial, or not fully reliable.
 - irrelevant: evidence is unrelated to the constraint.
 
+Evidence type - what the snippet is evidence OF (always set it):
+- direct_statement: the snippet states the requested property itself
+  (e.g. "Guests praise the warm, romantic atmosphere" for "nice atmosphere";
+  "Free WiFi" for "wifi"; "Breakfast included" for "breakfast").
+- measurement: the snippet measures the requested property
+  (e.g. "about 85 square meters" for "spacious"; "5 minutes walk to the beach" for "near the beach").
+- associated_feature: the snippet describes a DIFFERENT property that is
+  often associated with the requested one, but does not state it
+  (e.g. "quiet residential area" for "nice atmosphere"; "Quiet Stay Hotel" for
+  "nice atmosphere"; "Free WiFi" for "workspace"; "city center" for "romantic").
+  An associated feature is at most weakly_supports, never supports.
+
 Strength meanings:
 - strong: direct and explicit evidence.
 - medium: reasonably relevant but not fully explicit.
@@ -384,6 +481,7 @@ General rules:
 - Use only the provided listing evidence.
 - Do not invent facts.
 - Do not infer from common sense if the listing does not say it.
+- Copy each snippet exactly from the listing evidence.
 - Missing evidence is not contradiction.
 - Weak evidence is not direct support.
 - Conditional evidence should be marked with condition_or_extra_requirement_present=true.

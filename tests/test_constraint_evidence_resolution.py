@@ -190,8 +190,8 @@ def test_decide_from_analysis_returns_no_for_strong_contradiction():
     assert cer._decide_from_analysis(analysis) == "NO"
 
 
-def test_decide_from_analysis_returns_yes_for_strong_support():
-    analysis = cer.ConstraintEvidenceAnalysis(
+def _strong_support_analysis(**signal_extra) -> "cer.ConstraintEvidenceAnalysis":
+    return cer.ConstraintEvidenceAnalysis(
         signals=[
             cer.EvidenceSignal(
                 relation="supports",
@@ -199,13 +199,22 @@ def test_decide_from_analysis_returns_yes_for_strong_support():
                 snippet="Free WiFi is available in all rooms.",
                 source="facilities",
                 path="listing.facilities[0]",
+                **signal_extra,
             )
         ],
         has_direct_support=True,
         evidence_missing=False,
     )
 
-    assert cer._decide_from_analysis(analysis) == "YES"
+
+def test_decide_from_analysis_returns_yes_for_strong_support():
+    assert cer._decide_from_analysis(_strong_support_analysis(evidence_type="direct_statement")) == "YES"
+
+
+def test_decide_from_analysis_needs_a_stated_evidence_basis_for_yes():
+    """Since M1 (case 0041): strong support without evidence_type is not enough."""
+    assert cer._decide_from_analysis(_strong_support_analysis()) == "UNCERTAIN"
+    assert cer._decide_from_analysis(_strong_support_analysis(evidence_type="associated_feature")) == "UNCERTAIN"
 
 
 def test_decide_from_analysis_returns_uncertain_for_missing_evidence():
