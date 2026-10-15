@@ -1,255 +1,68 @@
+"""
+Streamlit adapter over the application service: read the session from
+st.session_state, run one turn through process_turn, store the updated
+session, and append what to display. No domain or response-generation
+policy lives here.
+"""
+
 from __future__ import annotations
-from app.config.settings import MAX_ITEMS_HARD_CAP, TOP_N_DEFAULT, FALLBACK_TOP_K_DEFAULT, SOURCE_NAME 
+
 import asyncio
-import sys
-from pathlib import Path
+import logging
 from typing import Any
-from app.schemas.fallback_policy import FallbackPolicy
+
 import streamlit as st
-from app.observability.telemetry_logger import save_telemetry_record
-from app.logic.conversation_flow import handle_user_message
-from app.schemas.conversation_response import ConversationMessage
-from app.logic.conversation_response_adapter import (
-    build_conversation_response_input,
-)
-from app.logic.conversation_response_generator import (
-    generate_deterministic_conversation_response,
-)
-from app.logic.conversation_response_llm import (
-    generate_conversation_response_with_llm,
-)
-from app.schemas.query import SearchRequest
-from app.observability.trace import RequestTrace
-from ui.formatters import build_display_answer
-from app.schemas.shown_result_set import ShownResultSet
+
+from app.schemas.turn import TurnConfig, TurnResult
+from app.services.conversation_service import process_turn
 from ui.state import (
     append_message,
-    get_search_state,
-    get_shown_result_set,
-    set_search_state,
-    set_shown_result_set,
-    get_messages,
+    get_conversation_session,
+    set_conversation_session,
 )
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
+logger = logging.getLogger(__name__)
 
-from app.logic.conversation_flow import handle_user_message
-from app.schemas.query import SearchRequest
+STREAMLIT_TURN_CONFIG = TurnConfig(include_debug=True)
 
-from ui.formatters import build_display_answer
-from ui.state import append_message, get_search_state, set_search_state
-from ui.formatters import build_result_links
+UNEXPECTED_ERROR_MESSAGE = (
+    "Something went wrong while processing your message. "
+    "Your current search has not been changed. Please try again."
+)
 
 
-def run_async(coro: Any) -> Any:
-    return asyncio.run(coro)
-
-def build_recent_conversation_messages(
-    messages: list[dict[str, Any]],
-    *,
-    limit: int = 8,
-) -> list[ConversationMessage]:
-    """
-    Convert Streamlit UI messages into the small conversation-history
-    contract used by the response layer.
-
-    Debug data and other UI-specific fields are intentionally excluded.
-    """
-    if limit <= 0:
-        return []
-
-    visible_messages: list[ConversationMessage] = []
-
-    for message in messages:
-        role = message.get("role")
-        content = message.get("content")
-
-        if role not in {"user", "assistant"}:
-            continue
-
-        if not isinstance(content, str) or not content.strip():
-            continue
-
-        visible_messages.append(
-            ConversationMessage(
-                role=role,
-                content=content,
-            )
-        )
-
-    return visible_messages[-limit:]
-
-def build_assistant_response(
-    *,
-    user_message: str,
-    result: dict[str, Any],
-    recent_messages: list[ConversationMessage] | None = None,
-) -> tuple[str, dict[str, Any] | None]:
-    """
-    Deterministic-only counterpart of process_user_message's response
-    generation (no LLM) - used by tests that want to assert the
-    deterministic renderer's exact text. Routing strategy mirrors
-    production: build_conversation_response_input decides, by outcome
-    type, whether a typed response exists at all - this function does
-    not re-derive that from ConversationAction.
-    """
-    response_input = build_conversation_response_input(
-        user_message=user_message,
-        result=result,
-        recent_messages=recent_messages,
-    )
-
-    if response_input is None:
-        return build_display_answer(result)
-
-    assistant_answer = generate_deterministic_conversation_response(
-        response_input
-    )
-
-    # Preserve the existing answer payload for debug/observability.
-    _, answer_payload = build_display_answer(result)
-
-    return assistant_answer, answer_payload
 def process_user_message(user_message: str) -> None:
-    # 1. Capture conversation history BEFORE adding the current user message.
-    recent_messages = build_recent_conversation_messages(
-        get_messages()
-    )
-
     append_message("user", user_message)
 
-    # One trace represents the whole user turn:
-    # router -> domain processing -> conversation response.
-    trace = RequestTrace()
+    session = get_conversation_session()
 
-    previous_state = None
-    current_state = get_search_state()
-
-    if current_state is not None:
-        previous_state = SearchRequest.model_validate(
-            current_state
-        )
-
-    shown_result_set = None
-    current_shown_results = get_shown_result_set()
-
-    if current_shown_results is not None:
-        shown_result_set = ShownResultSet.model_validate(
-            current_shown_results
-        )
-
-    # 2. Run router + domain processing.
-    with st.spinner("Thinking..."):
-        result = run_async(
-            handle_user_message(
-                user_message=user_message,
-                previous_state=previous_state,
-                source=SOURCE_NAME,
-                top_n=TOP_N_DEFAULT,
-                fallback_policy=FallbackPolicy(
-                    enabled=True,
-                    top_k=FALLBACK_TOP_K_DEFAULT,
-                ),
-                max_items=MAX_ITEMS_HARD_CAP,
-                shown_result_set=shown_result_set,
-                trace=trace,
+    try:
+        with st.spinner("Thinking..."):
+            turn = asyncio.run(
+                process_turn(session, user_message, config=STREAMLIT_TURN_CONFIG)
             )
-        )
+    except Exception:
+        # UI boundary for unexpected (programming) errors: expected
+        # provider/retrieval failures already come back as typed turns.
+        # Nothing was committed - the stored session stays as it was.
+        logger.exception("Unexpected error while processing a chat turn")
+        append_message("assistant", UNEXPECTED_ERROR_MESSAGE)
+        return
 
-    # 3. Generate the final user-facing response.
-    #
-    # Routing strategy (typed response layer vs. direct passthrough) is
-    # decided entirely by build_conversation_response_input, based on the
-    # application result's shape - the UI does not decide this from
-    # ConversationAction. The one narrow exception is the known
-    # routing_unavailable technical-failure shape, which has no
-    # ConversationAction at all (see build_conversation_response_input's
-    # own docstring) and returns None for that reason alone.
-    response_input = build_conversation_response_input(
-        user_message=user_message,
-        result=result,
-        recent_messages=recent_messages,
-    )
+    set_conversation_session(turn.session)
+    append_message("assistant", turn.assistant_message, debug_data=_debug_data(turn))
 
-    response_source = "direct"
 
-    if response_input is None:
-        assistant_answer, answer_payload = build_display_answer(result)
+def _debug_data(turn: TurnResult) -> dict[str, Any] | None:
+    if turn.debug is None:
+        return None
 
-    else:
-        generation_result = run_async(
-            generate_conversation_response_with_llm(
-                response_input,
-                trace=trace,
-            )
-        )
-
-        assistant_answer = generation_result.text
-        response_source = generation_result.source
-
-        _, answer_payload = build_display_answer(result)
-
-        result_links = build_result_links(
-            answer_payload
-        )
-
-        if result_links:
-            assistant_answer = (
-                f"{assistant_answer}\n\n{result_links}"
-            )
-
-    # 4. IMPORTANT:
-    # Rebuild telemetry only AFTER conversation response generation.
-    # The result already contains an earlier snapshot produced by
-    # handle_user_message(), which does not include the responder call.
-    result["telemetry"] = trace.summary()
-
-    # 5. Save the FINAL telemetry for the whole user turn.
-    telemetry_log_info = None
-
-    if result.get("telemetry"):
-        telemetry_log_info = save_telemetry_record(
-            telemetry=result["telemetry"],
-            user_message=user_message,
-            source=SOURCE_NAME,
-            top_n=TOP_N_DEFAULT,
-            max_items=MAX_ITEMS_HARD_CAP,
-            result_summary={
-                "status": result.get("status"),
-                "need_clarification": result.get(
-                    "need_clarification"
-                ),
-                "results_count": len(
-                    result.get("results") or []
-                ),
-                "questions": result.get("questions"),
-            },
-        )
-
-    # 6. Store debug information shown in Streamlit.
-    debug_data = {
-        "parsed_intent": result.get("parsed_intent"),
-        "search_request": result.get("search_request"),
-        "state_after": result.get("state"),
-        "answer_payload": answer_payload,
-        "conversation_response_source": response_source,
-        "telemetry": result.get("telemetry"),
-        "telemetry_log_info": telemetry_log_info,
+    return {
+        "parsed_intent": turn.debug.parsed_intent,
+        "search_request": turn.debug.search_request,
+        "state_after": turn.debug.state_after,
+        "answer_payload": turn.debug.answer_payload,
+        "conversation_response_source": turn.inspector.response_source,
+        "telemetry": turn.debug.telemetry,
+        "telemetry_log_info": turn.debug.telemetry_log_info,
     }
-
-    append_message(
-        "assistant",
-        assistant_answer,
-        debug_data=debug_data,
-    )
-
-    set_search_state(result.get("state"))
-
-    # Only present when orchestrate_search_request actually ran this turn
-    # (START_SEARCH/UPDATE_SEARCH that executed) - absent for GENERAL_CHAT,
-    # LISTING_QUESTION, and update_search blocked by need_clarification, so
-    # the previous snapshot is left untouched in those cases by construction.
-    if "shown_result_set" in result:
-        set_shown_result_set(result["shown_result_set"])

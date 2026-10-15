@@ -1,3 +1,11 @@
+"""
+Deterministic, UI-independent presentation of a handle_user_message()
+result: the plain-text answer for outcomes that bypass the response LLM,
+the compact answer payload behind search results, and the result links
+appended to a generated search answer. Moved unchanged from ui/formatters.py
+so the application service owns it.
+"""
+
 from __future__ import annotations
 
 from typing import Any
@@ -5,7 +13,6 @@ from typing import Any
 from app.logic.answer_generation import build_user_answer
 from app.logic.build_answer_payload import build_answer_payload
 from app.schemas.search_response import NormalizedSearchResponse
-from typing import Any
 
 
 def build_result_links(
@@ -38,6 +45,9 @@ _DIRECT_RESPONSE_TYPES = {
     "processing_unavailable",
     "listing_query_result",
     "listing_query_unsupported",
+    # Was missing: every UPDATE_SEARCH no-op turn fell through to
+    # NormalizedSearchResponse.model_validate and crashed the Streamlit turn.
+    "update_no_op",
 }
 
 

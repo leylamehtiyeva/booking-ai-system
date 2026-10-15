@@ -1,35 +1,28 @@
 import streamlit as st
 
+from app.schemas.session import ConversationSession
+
 
 def init_session_state() -> None:
+    # Display transcript (UI-only: carries debug data for the expander).
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    if "search_state" not in st.session_state:
-        st.session_state.search_state = None
-
-    if "shown_results" not in st.session_state:
-        st.session_state.shown_results = None
+    # Domain state for process_turn - SearchRequest, ShownResultSet, history.
+    if "conversation_session" not in st.session_state:
+        st.session_state.conversation_session = ConversationSession()
 
 
 def get_messages():
     return st.session_state.messages
 
 
-def get_search_state():
-    return st.session_state.search_state
+def get_conversation_session() -> ConversationSession:
+    return st.session_state.conversation_session
 
 
-def set_search_state(state) -> None:
-    st.session_state.search_state = state
-
-
-def get_shown_result_set():
-    return st.session_state.shown_results
-
-
-def set_shown_result_set(shown_result_set) -> None:
-    st.session_state.shown_results = shown_result_set
+def set_conversation_session(session: ConversationSession) -> None:
+    st.session_state.conversation_session = session
 
 
 def append_message(role: str, content: str, debug_data=None) -> None:

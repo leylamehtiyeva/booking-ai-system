@@ -511,6 +511,14 @@ async def resolve_constraint_via_textual_evidence(
         try:
             data = json.loads(raw_json)
         except json.JSONDecodeError:
+            # The reason travels into user-facing/API payloads (Decision
+            # Inspector), so it must not carry raw model output - that
+            # only goes to the debug log.
+            logger.debug(
+                "Textual fallback returned invalid JSON for listing %s: %.300s",
+                req.listing_id,
+                raw_text,
+            )
             return _normalize_result(
                 {
                     "signals": [],
@@ -521,10 +529,7 @@ async def resolve_constraint_via_textual_evidence(
                     "evidence_missing": True,
                     "condition_or_extra_requirement_present": False,
                     "confidence": 0.0,
-                    "reason": (
-                        "LLM fallback returned invalid JSON. "
-                        f"Raw response: {raw_text[:300]}"
-                    ),
+                    "reason": "LLM fallback returned invalid JSON.",
                 },
                 req,
             )
