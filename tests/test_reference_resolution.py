@@ -29,6 +29,7 @@ from app.schemas.conversation_route import (
 )
 from app.schemas.listing import ListingRaw
 from app.schemas.query import SearchRequest
+from app.schemas.result_query import ResultQuery
 from app.schemas.shown_result_set import ShownResult, ShownResultSet
 
 
@@ -44,6 +45,23 @@ def make_shown_result_set(*listings: tuple[str, str]) -> ShownResultSet:
             for result_id, title in listings
         ],
     )
+
+
+def mock_factual_extraction(monkeypatch) -> AsyncMock:
+    """
+    LISTING_QUESTION turns that pass reference validation continue into
+    factual extraction (a real LLM call). These tests only cover the
+    reference-validation layer, so extraction returns an empty ResultQuery
+    (-> listing_query_unsupported, matcher never runs). Returning the mock
+    lets a test assert that validation actually let the turn through.
+    """
+    extraction_mock = AsyncMock(return_value=ResultQuery())
+    monkeypatch.setattr(
+        conversation_flow,
+        "extract_factual_constraints_async",
+        extraction_mock,
+    )
+    return extraction_mock
 
 
 def fake_route(decision: ConversationActionDecision):
@@ -158,6 +176,8 @@ async def test_listing_question_current_results_has_no_target(monkeypatch):
         ),
     )
 
+    extraction_mock = mock_factual_extraction(monkeypatch)
+
     result = await conversation_flow.handle_user_message(
         "Which of these have parking?",
         shown_result_set=make_shown_result_set(
@@ -165,6 +185,8 @@ async def test_listing_question_current_results_has_no_target(monkeypatch):
         ),
     )
 
+    extraction_mock.assert_awaited_once()
+    assert extraction_mock.await_args.args[0] == "Which of these have parking?"
     assert result["result_scope"] == "current_results"
     assert result["target_result_id"] is None
     assert result["reference_resolution_status"] == "not_applicable"
@@ -193,6 +215,8 @@ async def test_listing_question_specific_result_resolves_valid_id(
         ),
     )
 
+    extraction_mock = mock_factual_extraction(monkeypatch)
+
     result = await conversation_flow.handle_user_message(
         "Does the second one have parking?",
         shown_result_set=make_shown_result_set(
@@ -200,6 +224,8 @@ async def test_listing_question_specific_result_resolves_valid_id(
         ),
     )
 
+    extraction_mock.assert_awaited_once()
+    assert extraction_mock.await_args.args[0] == "Does the second one have parking?"
     assert result["result_scope"] == "specific_result"
     assert result["target_result_id"] == "H2"
     assert result["reference_resolution_status"] == "resolved"
@@ -368,11 +394,15 @@ async def test_listing_question_specific_result_single_shown_result(
         ),
     )
 
+    extraction_mock = mock_factual_extraction(monkeypatch)
+
     result = await conversation_flow.handle_user_message(
         "Does it have parking?",
         shown_result_set=make_shown_result_set(("H1", "Hilton Baku")),
     )
 
+    extraction_mock.assert_awaited_once()
+    assert extraction_mock.await_args.args[0] == "Does it have parking?"
     assert result["target_result_id"] == "H1"
     assert result["reference_resolution_status"] == "resolved"
 

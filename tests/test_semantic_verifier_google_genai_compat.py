@@ -36,6 +36,7 @@ def test_generate_content_config_supports_structured_output_fields():
         )
 
 
+@pytest.mark.live
 @pytest.mark.skipif(
     not os.getenv("GOOGLE_API_KEY"),
     reason="GOOGLE_API_KEY not set - live google-genai compatibility check skipped",

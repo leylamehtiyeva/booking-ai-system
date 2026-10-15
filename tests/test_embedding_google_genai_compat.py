@@ -39,6 +39,7 @@ def test_embed_content_response_types_still_expose_expected_fields():
     assert "token_count" in types.ContentEmbeddingStatistics.model_fields
 
 
+@pytest.mark.live
 @pytest.mark.skipif(
     not os.getenv("GOOGLE_API_KEY"),
     reason="GOOGLE_API_KEY not set - live embedding compatibility check skipped",
