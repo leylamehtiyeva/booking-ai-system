@@ -14,9 +14,10 @@
 | **P0-8 Fixture price = total за окно, а не за проживание** | 🆕 Найдено при ревью P0-3 | — | Старый баг, не исправлен; см. P0-8 |
 | P0-1 Graceful failure handling | ✅ Done | `fba5e0a` | Fatal stage → typed `processing_unavailable`; textual fallback → UNCERTAIN; программные ошибки не скрываются |
 | P0-4 Application service | ✅ Done | `3f87a4b` | `process_turn(session, message) -> TurnResult`; Streamlit — тонкий adapter; публичный JSON без server state и debug |
-| P0-6, P0-7, P0-8 | ⏳ Todo | — | — |
+| P0-6 Multi-turn integration tests | ✅ Done | см. `git log` | 7 hermetic сценариев через `process_turn`; mutation check: 7 из 7 дефектов пойманы |
+| P0-7, P0-8 | ⏳ Todo | — | — |
 
-Offline suite на `3f87a4b`: **780 passed, 2 skipped (live)**.
+Offline suite после P0-6: **787 passed, 2 skipped (live)**.
 
 ---
 
@@ -338,6 +339,19 @@ async def process_turn(session: ConversationSession, user_message: str,
 - **Сложность.** S.
 
 #### P0-6. Multi-turn integration tests (hermetic)
+> **✅ Done.** `tests/integration/test_multi_turn_scenarios.py` — 7 сценариев из списка ниже через `process_turn`.
+> - **Настоящие:** flow, state transitions, fixture retrieval, matching, ranking, reference validation, deterministic verdicts и rendering.
+> - **Scripted — только LLM-границы.** Router разрешает «first/second» по полученному context. Очереди фейков обязаны быть израсходованы ровно, т.е. лишний LLM-вызов роняет тест.
+> - **Mutation check.** Все 7 намеренных дефектов пойманы:
+>   - snapshot не заменяется;
+>   - доверие выдуманному id;
+>   - нет no-op guard;
+>   - пропуск истории;
+>   - устаревший router context;
+>   - потеря constraints при update;
+>   - сброс state при failure.
+> - Багов не найдено.
+> - **Не покрыто:** pronoun follow-ups (P1-1), бюджет/цены (P0-8), живой router (P1-3), LLM-формулировка ответа в цепочке.
 - **Проблема.** См. 4.3. Нет ни одного теста цепочки turns через сохраняемый state.
 - **Зависит от.** P0-4 (тесты пишутся против `process_turn`), P0-5.
 - **Минимальный fix.** `tests/integration/test_multi_turn_scenarios.py`: scripted fake LLM layer (очередь заранее заданных `ConversationActionDecision`/`IntentRoute`/`SearchIntentPatch`/`ResultQuery`), реальные fixtures, реальный matcher/ranking. Сценарии:
@@ -423,7 +437,7 @@ async def process_turn(session: ConversationSession, user_message: str,
 
 **Testing**
 - [x] `uv run pytest` зелёный без сети и без API-ключей; live-тесты только через `-m live`. *(P0-5)*
-- [ ] 7 hermetic multi-turn сценариев (P0-6) зелёные.
+- [x] 7 hermetic multi-turn сценариев (P0-6) зелёные. *(P0-6)*
 - [x] Unit-тесты на даты с инжектированным `today`. *(P0-2)*
 
 **Evaluation**
