@@ -9,6 +9,7 @@ from app.schemas.constraints import UserConstraint
 from app.schemas.fields import Field
 from app.schemas.filters import SearchFilters
 from app.schemas.property_semantics import OccupancyType, PropertyType
+from app.config import clock
 from app.config.llm import get_gemini_model
 
 class IntentRoute(BaseModel):
@@ -46,6 +47,7 @@ class IntentRoute(BaseModel):
 
 def build_intent_router_agent() -> Agent:
     allowed_fields = [f.value for f in Field]
+    today = clock.today().isoformat()
     schema = IntentRoute.model_json_schema()
 
     instruction = f"""
@@ -92,9 +94,12 @@ CITY:
   - Tiflis -> Tbilisi
 
 DATES:
+- Today's date is {today}.
 - If the user provides both check-in and check-out, fill both.
 - If the user says "from X for N nights", set check_in and nights.
 - If the user provides only one date, set check_in only.
+- Resolve relative dates ("tomorrow", "next weekend") against today's date.
+- If the user gives no year, use the next upcoming occurrence on or after today.
 - Do not invent dates.
 
 GUESTS AND ROOMS:

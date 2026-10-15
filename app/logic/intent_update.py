@@ -17,7 +17,12 @@ from google.genai.types import Content, Part
 
 from app.agents.intent_update_agent import build_intent_update_agent
 from app.logic.apply_intent_patch import apply_intent_patch
-from app.logic.date_normalization import normalize_patch_dates
+from app.config import clock
+from app.logic.date_normalization import (
+    InvalidStayDatesError,
+    StayDatesIssue,
+    normalize_patch_dates,
+)
 from app.schemas.intent_patch import SearchIntentPatch
 from app.schemas.query import SearchRequest
 
@@ -49,6 +54,8 @@ def _build_update_prompt(previous_state: SearchRequest, user_message: str) -> st
         indent=2,
     )
     return f"""
+Today's date: {clock.today().isoformat()}
+
 Current structured search state (source of truth):
 {state_json}
 
@@ -82,6 +89,8 @@ DATES:
 - If user gives one date only, set_check_in to that date and set_nights = 1
 - If user says "from X for N nights", set_check_in = X and set_nights = N
 - If user gives both dates, set_check_in and set_check_out
+- Resolve relative dates ("tomorrow", "next weekend") against today's date
+- If the user gives no year, use the next upcoming occurrence on or after today
 - Do not invent dates
 
 FILTERS:
@@ -191,6 +200,7 @@ async def update_search_state_async(
         set_check_out=patch.set_check_out,
         set_nights=patch.set_nights,
         user_text=user_message,
+        current_check_in=previous_state.check_in,
     )
 
     if (
@@ -211,4 +221,16 @@ async def update_search_state_async(
         }
     )
     
-    return apply_intent_patch(previous_state, patch)
+    updated_state = apply_intent_patch(previous_state, patch)
+
+    # apply_intent_patch assigns fields without re-validation, so a patch
+    # that only moves one side of the range (e.g. check-out before the
+    # existing check-in) would otherwise yield an invalid SearchRequest.
+    if (
+        updated_state.check_in is not None
+        and updated_state.check_out is not None
+        and updated_state.check_out <= updated_state.check_in
+    ):
+        raise InvalidStayDatesError(StayDatesIssue.CHECK_OUT_NOT_AFTER_CHECK_IN)
+
+    return updated_state

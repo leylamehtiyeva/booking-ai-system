@@ -8,8 +8,10 @@ from google.api_core.exceptions import ServerError, ServiceUnavailable, TooManyR
 from pydantic import BaseModel, Field
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
+from app.config.clock import use_reference_date
 from app.logic.conversation_flow import handle_user_message
 from app.schemas.fallback_policy import FallbackPolicy
+from evaluation.core.reference_date import EVAL_REFERENCE_DATE
 from evaluation.tasks.end_to_end.dataset import Decision, EndToEndEvalCase
 
 
@@ -94,14 +96,15 @@ async def run_case(
             must_only=True,
         )
 
-    response = await handle_user_message(
-        user_message=case.user_query,
-        previous_state=None,
-        source=source,
-        top_n=top_n,
-        max_items=max_items,
-        fallback_policy=fallback_policy,
-    )
+    with use_reference_date(EVAL_REFERENCE_DATE):
+        response = await handle_user_message(
+            user_message=case.user_query,
+            previous_state=None,
+            source=source,
+            top_n=top_n,
+            max_items=max_items,
+            fallback_policy=fallback_policy,
+        )
 
     selected_ids = _extract_selected_listing_ids(response)
     decision = _infer_decision(response)

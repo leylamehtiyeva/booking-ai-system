@@ -32,6 +32,12 @@ def test_dotenv_loading_is_disabled(tmp_path):
     assert "BOOKING_AI_DOTENV_PROBE" not in os.environ
 
 
+def test_reference_date_is_pinned():
+    from app.config import clock
+
+    assert clock.today().isoformat() == conftest.OFFLINE_REFERENCE_DATE
+
+
 def test_local_llm_config_is_not_inherited():
     for name in conftest.LOCAL_CONFIG_ENV_VARS:
         assert name not in os.environ

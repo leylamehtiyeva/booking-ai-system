@@ -45,6 +45,11 @@ LIVE_MODE = os.getenv(LIVE_TESTS_ENV_VAR) == "1"
 
 OFFLINE_CREDENTIAL_PLACEHOLDER = "offline-test-placeholder"
 
+# Fixed "today" for the offline suite (see app/config/clock.py), so tests
+# with dated fixtures/requests do not start failing as the calendar moves.
+# Tests that need another day use clock.use_reference_date(...).
+OFFLINE_REFERENCE_DATE = "2026-03-01"
+
 CREDENTIAL_ENV_VARS = (
     "GOOGLE_API_KEY",
     "GEMINI_API_KEY",
@@ -88,6 +93,8 @@ def _apply_offline_environment() -> None:
 
     for name in LOCAL_CONFIG_ENV_VARS:
         os.environ.pop(name, None)
+
+    os.environ["APP_REFERENCE_DATE"] = OFFLINE_REFERENCE_DATE
 
 
 def _is_loopback_host(host: object) -> bool:

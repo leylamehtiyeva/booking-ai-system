@@ -14,7 +14,7 @@ from google.adk.sessions import InMemorySessionService
 from google.genai.types import Content, Part
 
 from app.agents.intent_router_agent import IntentRoute, build_intent_router_agent
-from app.logic.date_normalization import normalize_intent_dates
+from app.logic.date_normalization import InvalidStayDatesError, normalize_intent_dates
 from app.logic.request_resolution import resolve_required_search_context
 from app.schemas.query import SearchRequest
 
@@ -157,8 +157,17 @@ async def build_search_request_adk_async(
     step: str = "initial_intent_extraction",
 ) -> SearchRequest:
     intent = await route_intent_adk_async(user_text, trace=trace, step=step)
-    intent = normalize_intent_dates(intent, user_text)
 
+    date_error: InvalidStayDatesError | None = None
+    try:
+        intent = normalize_intent_dates(intent, user_text)
+    except InvalidStayDatesError as exc:
+        # Keep the rest of the request (city, constraints, ...) so the
+        # clarification turn only has to collect valid dates.
+        date_error = exc
+        intent = intent.model_copy(
+            update={"check_in": None, "check_out": None, "nights": None}
+        )
 
     resolved = resolve_required_search_context(intent)
     clean_filters = _clean_filters(intent.filters)
@@ -175,6 +184,10 @@ async def build_search_request_adk_async(
     occupancy_types=intent.occupancy_types or None,
     constraints=intent.constraints,
 )
+
+    if date_error is not None:
+        date_error.partial_state = req
+        raise date_error
 
     return req
 

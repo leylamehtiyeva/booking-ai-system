@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 from app.observability.trace import RequestTrace
 from app.logic.intent_router import build_search_request_adk_async
 from app.logic.intent_update import update_search_state_async
+from app.logic.date_normalization import InvalidStayDatesError
 from app.logic.request_resolution import resolve_required_search_context
 from app.logic.listing_signals import collect_listing_signals
 from app.schemas.query import SearchRequest
@@ -185,6 +186,34 @@ def _build_clarification_response(
             "clarification_reason": reason.value,
         },
         "search_request": previous_state_json,
+    }
+
+
+def _build_invalid_dates_response(
+    exc: InvalidStayDatesError,
+    *,
+    state_json: dict[str, Any] | None,
+    route_debug: dict[str, Any] | None,
+    user_message: str,
+    previous_state_json: dict[str, Any] | None,
+) -> Dict[str, Any]:
+    """
+    The user's dates cannot form a valid future stay (past, reversed,
+    impossible). Same need_clarification shape as the missing-context
+    branch of handle_user_message - no search runs and, by leaving out
+    "shown_result_set", the stored snapshot is untouched.
+    """
+    return {
+        "need_clarification": True,
+        "questions": [exc.question],
+        "state": state_json,
+        "parsed_intent": {
+            "router": route_debug,
+            "user_message": user_message,
+            "previous_state": previous_state_json,
+            "date_issue": exc.issue.value,
+        },
+        "search_request": state_json,
     }
 
 
@@ -709,11 +738,26 @@ async def handle_user_message(
         effective_action
         == ConversationAction.START_SEARCH
     ):
-        with trace.step("search_intent_extraction"):
-            state = await build_search_request_adk_async(
-                user_message,
+        try:
+            with trace.step("search_intent_extraction"):
+                state = await build_search_request_adk_async(
+                    user_message,
+                    trace=trace,
+                    step="search_intent_extraction",
+                )
+        except InvalidStayDatesError as exc:
+            # A new search replaces the old one, so the partial request
+            # (everything except the dates) becomes the state to complete.
+            return _finalize_response(
+                _build_invalid_dates_response(
+                    exc,
+                    state_json=_build_state_payload(exc.partial_state),
+                    route_debug=route_debug,
+                    user_message=user_message,
+                    previous_state_json=previous_state_json,
+                ),
                 trace=trace,
-                step="search_intent_extraction",
+                action=effective_action,
             )
 
     elif (
@@ -726,11 +770,26 @@ async def handle_user_message(
                 "SearchRequest"
             )
 
-        with trace.step("search_state_update"):
-            state = await update_search_state_async(
-                previous_state,
-                user_message,
+        try:
+            with trace.step("search_state_update"):
+                state = await update_search_state_async(
+                    previous_state,
+                    user_message,
+                    trace=trace,
+                )
+        except InvalidStayDatesError as exc:
+            # The update is rejected as a whole - the previous, valid
+            # search stays in place until the user confirms the dates.
+            return _finalize_response(
+                _build_invalid_dates_response(
+                    exc,
+                    state_json=previous_state_json,
+                    route_debug=route_debug,
+                    user_message=user_message,
+                    previous_state_json=previous_state_json,
+                ),
                 trace=trace,
+                action=effective_action,
             )
 
         if state == previous_state:

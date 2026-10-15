@@ -107,10 +107,38 @@ def _covers_dates(
     ):
         return True
 
-    return (
-        listing_check_in <= check_in
-        and check_out <= listing_check_out
-    )
+    # Fixture availability is a recurring yearly calendar: the window is
+    # matched by month/day in the requested year (or the year before, for
+    # windows spanning New Year), so the offline demo does not expire.
+    # Shifting by whole years keeps the window length - and therefore the
+    # fixture `price`, which is the total for the whole window - unchanged.
+    year_shift = check_in.year - listing_check_in.year
+
+    for shift in (year_shift, year_shift - 1):
+        window_start = _shift_years(listing_check_in, shift, is_window_end=False)
+        window_end = _shift_years(listing_check_out, shift, is_window_end=True)
+
+        if window_start <= check_in and check_out <= window_end:
+            return True
+
+    return False
+
+
+def _shift_years(
+    value: date,
+    years: int,
+    *,
+    is_window_end: bool,
+) -> date:
+    try:
+        return value.replace(year=value.year + years)
+    except ValueError:
+        # A Feb 29 edge in a non-leap target year: narrow the window to the
+        # nearest real day (start -> Mar 1, end -> Feb 28), never widen it.
+        target_year = value.year + years
+        if is_window_end:
+            return date(target_year, 2, 28)
+        return date(target_year, 3, 1)
 
 
 class FixturesRetriever:
