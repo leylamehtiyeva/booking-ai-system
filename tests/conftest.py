@@ -96,6 +96,11 @@ def _apply_offline_environment() -> None:
 
     os.environ["APP_REFERENCE_DATE"] = OFFLINE_REFERENCE_DATE
 
+    # litellm downloads its model cost map from GitHub at import time; the
+    # guard would block it anyway, this just uses the bundled copy directly
+    # (the app's own pricing lives in app/observability/pricing.py).
+    os.environ["LITELLM_LOCAL_MODEL_COST_MAP"] = "True"
+
 
 def _is_loopback_host(host: object) -> bool:
     if host is None:
