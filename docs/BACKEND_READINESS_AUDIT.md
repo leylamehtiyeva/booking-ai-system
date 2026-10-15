@@ -13,9 +13,10 @@
 | P0-3 Fixtures time bomb | ✅ Done | `a2c41f5` | Recurring yearly availability в fixture retriever; данные fixtures не менялись |
 | **P0-8 Fixture price = total за окно, а не за проживание** | 🆕 Найдено при ревью P0-3 | — | Старый баг, не исправлен; см. P0-8 |
 | P0-1 Graceful failure handling | ✅ Done | `fba5e0a` | Fatal stage → typed `processing_unavailable`; textual fallback → UNCERTAIN; программные ошибки не скрываются |
-| P0-4, P0-6, P0-7, P0-8 | ⏳ Todo | — | — |
+| P0-4 Application service | ✅ Done | `3f87a4b` | `process_turn(session, message) -> TurnResult`; Streamlit — тонкий adapter; публичный JSON без server state и debug |
+| P0-6, P0-7, P0-8 | ⏳ Todo | — | — |
 
-Offline suite на `fba5e0a`: **761 passed, 2 skipped (live)**.
+Offline suite на `3f87a4b`: **780 passed, 2 skipped (live)**.
 
 ---
 
@@ -297,6 +298,25 @@ async def process_turn(session: ConversationSession, user_message: str,
 - **Сложность.** S.
 
 #### P0-4. Вынести turn orchestration из Streamlit: `process_turn` + typed contracts
+> **✅ Done (`3f87a4b`).**
+> - **Service:** `app/services/conversation_service.py::process_turn(session, message, config=TurnConfig()) -> TurnResult`.
+> - **Contracts:** `app/schemas/session.py::ConversationSession` (session_id, SearchRequest, ShownResultSet, история ≤ 20) и `app/schemas/turn.py`:
+>   - `TurnResult` — assistant_message, outcome_kind, conversation_action (`None` при routing failure), listing_cards, `DecisionInspector`, failure `{stage, code}`, telemetry summary;
+>   - `session` и `debug` — `exclude=True`, т.е. доступны только in-process и в публичный JSON не попадают.
+> - `ui/formatters.py` перенесён в `app/logic/display_answer.py`.
+> - Streamlit — тонкий adapter: unexpected error логируется на UI boundary и показывается безопасным сообщением; session не коммитится. Следующий turn использует последнюю валидную session (проверено тестом).
+> - **Проверки:**
+>   - старый handler и `process_turn` дают идентичные ответы, `SearchRequest` и `ShownResultSet` в 7 сценариях;
+>   - публичный `model_dump(mode="json")` проверен рекурсивно по ключам: нет `ListingRaw`, server session, debug records, provider payload;
+>   - `streamlit.testing.AppTest` прогоняет полный пользовательский turn с mocks.
+> - **Исправлено попутно:**
+>   - UPDATE_SEARCH no-op ронял Streamlit (`update_no_op` не было в direct response types);
+>   - при невалидном JSON textual fallback писал сырой ответ модели в `reason`, который виден в Decision Inspector.
+> - **Ограничения / для API-слоя:**
+>   - нужен `SessionStore` с lock на `session_id`: два одновременных turn'а по одной сессии — побеждает последняя запись;
+>   - `listing_cards` возвращаются только в turn'ах с поиском;
+>   - telemetry пишется в файл синхронно;
+>   - `routing_unavailable` типизирован в service; adapter по-прежнему возвращает для него `None`.
 - **Проблема.** См. 3a. Без этого FastAPI придётся дублировать `chat_handler.py`, а backend нельзя тестировать без UI.
 - **Файлы.** `ui/services/chat_handler.py::process_user_message`, `build_assistant_response`, `build_recent_conversation_messages`; `ui/formatters.py`; `ui/state.py`. Новые: `app/services/conversation_service.py`, `app/schemas/session.py`, `app/schemas/turn.py`.
 - **Минимальный fix.** Перенести логику **без изменения поведения**: `process_turn(session, message) -> TurnResult`. `ui/formatters.py` → `app/logic/display_answer.py` (в `ui/` оставить re-export или обновить импорты). `chat_handler.process_user_message` превращается в ~20 строк: session из `st.session_state` → `asyncio.run(process_turn)` → session обратно. `TurnResult` содержит `listing_cards` и `inspector`, собранные из уже существующих данных (`answer_payload.top_results`, `parsed_intent.router`, `constraint_resolution_results`, `listing_query_result`). Telemetry сохраняется внутри сервиса.
@@ -389,16 +409,16 @@ async def process_turn(session: ConversationSession, user_message: str,
 **Booking AI Backend v1.0 is complete and ready for API integration**, когда выполнены все пункты:
 
 **Reliability**
-- [ ] Ни одна ошибка или timeout LLM/retrieval не выходит из `process_turn` как exception: только typed `failure` outcome, и state с snapshot не изменены (fault-injection test по всем стадиям). *(на уровне `handle_user_message` сделано в P0-1; остаётся перенести гарантию в `process_turn`, P0-4)*
+- [x] Ни одна ошибка или timeout LLM/retrieval не выходит из `process_turn` как exception: только typed `failure` outcome, и state с snapshot не изменены (fault-injection test по всем стадиям). *(P0-1 + P0-4: `TurnResult.failure`, тесты provider/routing failure через `process_turn`)*
 - [x] У каждого LLM-вызова есть timeout; retry только на retryable-ошибки. *(P0-1)*
 - [x] Невалидные/кросс-годовые/прошедшие даты дают корректную дату или clarification, а не crash и не тихий поиск в прошлом. *(P0-2)*
 - [x] Demo-сценарий из README работает при любом `APP_REFERENCE_DATE` в 2026–2028. *(P0-3, `test_readme_demo_search_is_stable_regardless_of_today`)*
 - [ ] Цена в fixtures соответствует запрошенному проживанию. *(P0-8)*
 
 **Architecture / API readiness**
-- [ ] `app/services/conversation_service.py::process_turn(session, message) -> TurnResult` — единственная точка входа на один turn.
-- [ ] В `app/` нет импортов `streamlit`; Streamlit — тонкий adapter над `process_turn`.
-- [ ] `ConversationSession` и `TurnResult` — Pydantic-модели с JSON schema; `TurnResult` содержит `assistant_message`, `listing_cards`, `inspector`, `telemetry`.
+- [x] `app/services/conversation_service.py::process_turn(session, message) -> TurnResult` — единственная точка входа на один turn. *(P0-4)*
+- [x] В `app/` нет импортов `streamlit`; Streamlit — тонкий adapter над `process_turn`. *(P0-4, проверяется тестом)*
+- [x] `ConversationSession` и `TurnResult` — Pydantic-модели с JSON schema; `TurnResult` содержит `assistant_message`, `listing_cards`, `inspector`, `telemetry`. *(P0-4)*
 - [ ] Dead/legacy code из P1-7 удалён.
 
 **Testing**
