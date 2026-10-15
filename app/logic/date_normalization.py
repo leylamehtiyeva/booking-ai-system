@@ -8,8 +8,6 @@ from enum import Enum
 from app.config import clock
 
 
-YEAR_PATTERN = re.compile(r"\b(19|20)\d{2}\b")
-CHINESE_YEAR_PATTERN = re.compile(r"(19|20)\d{2}\s*年")
 ISO_DATE_PATTERN = re.compile(r"^\s*(\d{4})-(\d{2})-(\d{2})\s*$")
 
 # When the user gives no year, check-out is placed on the first matching
@@ -22,10 +20,23 @@ _LEAP_YEAR = 2000
 _MAX_YEAR_LOOKAHEAD = 8
 
 
-def user_explicitly_mentioned_year(user_text: str) -> bool:
-    return bool(
-        YEAR_PATTERN.search(user_text) or CHINESE_YEAR_PATTERN.search(user_text)
+_CURRENCY_SYMBOLS = "$€£¥₽₼₺₾"
+_CURRENCY_WORDS = (
+    "usd|eur|gbp|azn|rub|try|gel|aed|jpy|thb|"
+    "dollars?|euros?|manats?|rubles?|lari|lira"
+)
+
+
+def count_stated_year(year: int, user_text: str) -> int:
+    """
+    How many times the user wrote this exact year - money amounts like
+    "$2000" / "2000 USD" and longer numbers do not count.
+    """
+    pattern = (
+        rf"(?<![\d{_CURRENCY_SYMBOLS}]){year}(?!\d)"
+        rf"(?!\s*(?:[{_CURRENCY_SYMBOLS}]|(?:{_CURRENCY_WORDS})\b))"
     )
+    return len(re.findall(pattern, user_text, flags=re.IGNORECASE))
 
 
 class StayDatesIssue(str, Enum):
@@ -133,13 +144,15 @@ def resolve_stay_dates(
     Turn LLM-extracted dates into a valid future stay, or raise
     InvalidStayDatesError - never returns check_out <= check_in.
 
-    - No year in the user's text: the LLM's year is ignored; check-in is
-      the next occurrence on/after today, and check-out the next
-      occurrence on/after check-in (or anchor_check_in, the existing
-      check-in for a partial UPDATE_SEARCH) - which is what handles
-      cross-year ranges like "Dec 28 - Jan 3".
-    - Year in the user's text: the dates are taken as given, and a stay
-      in the past is rejected rather than silently moved to the future.
+    Decided per date, by whether the user actually wrote that date's year
+    (see count_stated_year - "$2000" is not a year):
+    - Year not stated: the LLM's year is ignored; check-in is the next
+      occurrence on/after today, and check-out the next occurrence
+      on/after check-in (or anchor_check_in, the existing check-in for a
+      partial UPDATE_SEARCH) - which is what handles cross-year ranges
+      like "Dec 28 - Jan 3".
+    - Year stated: the date is taken as given, and a stay in the past is
+      rejected rather than silently moved to the future.
     """
     today = today or clock.today()
 
@@ -149,17 +162,35 @@ def resolve_stay_dates(
     if nights is not None and nights <= 0:
         raise InvalidStayDatesError(StayDatesIssue.NON_POSITIVE_NIGHTS)
 
-    if user_explicitly_mentioned_year(user_text):
-        resolved_check_in = _exact_date(check_in_parts) if check_in_parts else None
-        resolved_check_out = _exact_date(check_out_parts) if check_out_parts else None
-    else:
-        resolved_check_in = (
-            _next_occurrence(check_in_parts[1], check_in_parts[2], on_or_after=today)
-            if check_in_parts
-            else None
+    resolved_check_in = None
+    if check_in_parts:
+        if count_stated_year(check_in_parts[0], user_text) > 0:
+            resolved_check_in = _exact_date(check_in_parts)
+        else:
+            resolved_check_in = _next_occurrence(
+                check_in_parts[1], check_in_parts[2], on_or_after=today
+            )
+
+    # "from Dec 28 2026 to Jan 3": the LLM tends to copy the one stated year
+    # onto check-out. A year written once and shared by both dates belongs
+    # to check-in; check-out is then inferred from it.
+    check_out_year_stated = False
+    if check_out_parts:
+        check_out_year_count = count_stated_year(check_out_parts[0], user_text)
+        shares_single_year_with_check_in = (
+            check_in_parts is not None
+            and check_in_parts[0] == check_out_parts[0]
+            and check_out_year_count < 2
         )
-        resolved_check_out = None
-        if check_out_parts:
+        check_out_year_stated = (
+            check_out_year_count > 0 and not shares_single_year_with_check_in
+        )
+
+    resolved_check_out = None
+    if check_out_parts:
+        if check_out_year_stated:
+            resolved_check_out = _exact_date(check_out_parts)
+        else:
             stay_start = resolved_check_in or anchor_check_in or today
             resolved_check_out = _next_occurrence(
                 check_out_parts[1], check_out_parts[2], on_or_after=stay_start

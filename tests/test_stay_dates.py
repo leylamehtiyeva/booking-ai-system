@@ -465,3 +465,49 @@ EXPECTED_DEMO_RESULT_IDS = [
     "baku-apt-2",
     "baku-apt-3",
 ]
+
+
+# --- explicit-year detection --------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Find an apartment in Baku under $2000 for April 10-15",
+        "Find an apartment in Baku under 2000 USD for April 10-15",
+        "apartment in Baku for April 10-15, budget 2000 manat",
+        "apartment in Baku for April 10-15 under 2000€",
+    ],
+)
+def test_money_amount_is_not_an_explicit_year(text):
+    stay = _resolve("2026-04-10", "2026-04-15", text=text)
+
+    assert (stay.check_in, stay.check_out) == (date(2027, 4, 10), date(2027, 4, 15))
+
+
+def test_explicit_year_applies_only_to_the_date_that_carries_it():
+    """Year given for check-in only; the LLM's check-out year is not trusted."""
+    stay = _resolve("2026-12-28", "2026-01-03", text="from Dec 28 2026 to Jan 3")
+
+    assert (stay.check_in, stay.check_out) == (date(2026, 12, 28), date(2027, 1, 3))
+
+
+def test_explicit_past_year_next_to_a_budget_is_still_rejected():
+    with pytest.raises(InvalidStayDatesError) as exc_info:
+        _resolve("2025-04-10", "2025-04-15", text="under $2000, April 10-15 2025")
+
+    assert exc_info.value.issue == StayDatesIssue.IN_THE_PAST
+
+
+def test_year_written_for_both_dates_keeps_a_reversed_range_reversed():
+    with pytest.raises(InvalidStayDatesError) as exc_info:
+        _resolve("2026-12-28", "2026-01-03", text="from Dec 28 2026 to Jan 3 2026")
+
+    assert exc_info.value.issue == StayDatesIssue.CHECK_OUT_NOT_AFTER_CHECK_IN
+
+
+def test_chinese_year_marker_counts_as_stated_year():
+    with pytest.raises(InvalidStayDatesError) as exc_info:
+        _resolve("2025-04-10", "2025-04-15", text="2025年4月10日到15日 巴库")
+
+    assert exc_info.value.issue == StayDatesIssue.IN_THE_PAST
