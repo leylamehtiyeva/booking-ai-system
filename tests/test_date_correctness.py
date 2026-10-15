@@ -220,3 +220,15 @@ async def test_explicit_long_stay_until_end_of_year_is_not_rejected(scripted):
     assert turn.outcome_kind == "search"
     state = turn.session.search_request
     assert (state.check_in, state.check_out) == (date(2026, 4, 2), date(2026, 12, 31))
+
+
+def test_update_prompt_handles_a_check_out_only_answer():
+    """Reply to the check-out question must update check-out, not become a new check-in."""
+    from app.agents.intent_update_agent import build_intent_update_agent
+    from app.logic.intent_update import _build_update_prompt
+
+    rule = 'set_check_out only - keep the existing check-in'
+    prompt = _build_update_prompt(SearchRequest(city="Baku", check_in=date(2026, 4, 1)), "Until April 20th")
+
+    assert rule in prompt
+    assert rule in build_intent_update_agent().instruction

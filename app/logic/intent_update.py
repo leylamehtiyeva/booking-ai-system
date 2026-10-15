@@ -87,6 +87,7 @@ PATCH FORMAT:
 - Do not use any legacy field-centric patch format
 
 DATES:
+- If the user gives only a check-out date ("until April 20", "leaving on the 20th", "check out on X"), set_check_out only - keep the existing check-in
 - If user gives one date only, set_check_in to that date and set_nights = 1
 - If user says "from X for N nights", set_check_in = X and set_nights = N
 - If user gives both dates, set_check_in and set_check_out
