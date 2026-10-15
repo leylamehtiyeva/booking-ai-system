@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, List
 from app.schemas.search_response import SearchStatus
 from app.logic.result_ids import build_result_id
+from app.schemas.constraints import ConstraintPriority
 from app.schemas.match import Ternary
 from app.schemas.query import SearchRequest
 from app.schemas.search_response import (
@@ -487,6 +488,58 @@ def _collect_facts(item: dict[str, Any], req: SearchRequest) -> list[ResultFact]
     return facts
 
 
+OPTIONAL_NOT_CHECKED_REASON = "Not confirmed (optional)"
+
+
+def _with_unchecked_optional_requirements(
+    req: SearchRequest,
+    matched: list[ConstraintStatus],
+    uncertain: list[ConstraintStatus],
+    failed: list[ConstraintStatus],
+) -> list[ConstraintStatus]:
+    """
+    A NICE requirement that nothing checked (no canonical field, and the
+    textual fallback runs only for must/forbidden) had no status at all and
+    disappeared from the result. It is listed as not confirmed instead.
+
+    Runs on already selected results, so tier, ranking and eligibility are
+    untouched; a requirement that already has any status keeps it.
+    """
+    existing = [*matched, *uncertain, *failed]
+    covered_ids = {
+        status.constraint.get("id")
+        for status in existing
+        if status.constraint and status.constraint.get("id")
+    }
+    covered_keys = {_normalize_constraint_key(status.name) for status in existing}
+    lookup = _build_constraint_lookup(req)
+
+    additions: list[ConstraintStatus] = []
+    for constraint in req.constraints or []:
+        if constraint.priority != ConstraintPriority.NICE or constraint.id in covered_ids:
+            continue
+
+        keys = {
+            _normalize_constraint_key(constraint.normalized_text),
+            _normalize_constraint_key(constraint.raw_text),
+            *(_normalize_constraint_key(field.value) for field in constraint.mapped_fields or []),
+        }
+        if keys & covered_keys:
+            continue
+
+        additions.append(
+            _status_bucket(
+                constraint.normalized_text,
+                "uncertain",
+                OPTIONAL_NOT_CHECKED_REASON,
+                constraint_meta=lookup.get(_normalize_constraint_key(constraint.normalized_text)),
+            )
+        )
+        covered_keys |= keys
+
+    return [*uncertain, *additions]
+
+
 def normalize_search_response(
     req: SearchRequest,
     ranked: list[dict[str, Any]],
@@ -501,6 +554,7 @@ def normalize_search_response(
     for item in ranked[: max(0, top_n)]:
         listing = item.get("listing")
         matched, uncertain, failed = _collect_constraint_statuses(item, req)
+        uncertain = _with_unchecked_optional_requirements(req, matched, uncertain, failed)
         facts = _collect_facts(item, req)
 
         matched_requested_constraints, matched_derived_matches = _split_requested_vs_derived(matched)
