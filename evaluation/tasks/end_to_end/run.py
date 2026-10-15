@@ -76,15 +76,13 @@ def _print_summary(title: str, metrics: dict[str, Any]) -> None:
     )
 
 
-async def predict_command(
-    paths: OutputPaths, limit: int | None, config: EvalRunConfig, max_llm_calls: int | None
-) -> None:
+async def predict_command(paths: OutputPaths, limit: int | None, config: EvalRunConfig, guards: dict) -> None:
     await run_predictions(
         dataset_path=DATASET_PATH,
         output_path=paths.predictions,
         limit=limit,
         config=config,
-        max_llm_calls=max_llm_calls,
+        **guards,
     )
 
 
@@ -135,10 +133,8 @@ async def replay_command(paths: OutputPaths, config: EvalRunConfig) -> None:
     print(f"Replay saved to: {paths.replay_dir}")
 
 
-async def all_command(
-    paths: OutputPaths, limit: int | None, config: EvalRunConfig, max_llm_calls: int | None
-) -> None:
-    await predict_command(paths, limit=limit, config=config, max_llm_calls=max_llm_calls)
+async def all_command(paths: OutputPaths, limit: int | None, config: EvalRunConfig, guards: dict) -> None:
+    await predict_command(paths, limit=limit, config=config, guards=guards)
     evaluate_command(paths, limit=limit)
 
 
@@ -171,6 +167,13 @@ def build_parser() -> argparse.ArgumentParser:
             default=None,
             help="Spend guard: stop starting new cases once this many LLM calls were made.",
         )
+        sub.add_argument(
+            "--max-consecutive-failures",
+            type=int,
+            default=None,
+            help="Outage guard: stop after this many consecutive provider failures "
+            "(rate limit, timeout, provider unavailable).",
+        )
 
     predict_parser = subparsers.add_parser(
         "predict",
@@ -200,6 +203,13 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _guards_from(args: argparse.Namespace) -> dict:
+    return {
+        "max_llm_calls": args.max_llm_calls,
+        "max_consecutive_failures": args.max_consecutive_failures,
+    }
+
+
 def _config_from(args: argparse.Namespace) -> EvalRunConfig:
     config = EvalRunConfig()
     if getattr(args, "top_n", None) is not None:
@@ -213,7 +223,7 @@ async def main() -> None:
     paths = OutputPaths(args.output_dir)
 
     if args.command == "predict":
-        await predict_command(paths, limit=args.limit, config=_config_from(args), max_llm_calls=args.max_llm_calls)
+        await predict_command(paths, limit=args.limit, config=_config_from(args), guards=_guards_from(args))
 
     elif args.command == "evaluate":
         evaluate_command(paths, limit=args.limit)
@@ -222,7 +232,7 @@ async def main() -> None:
         await replay_command(paths, _config_from(args))
 
     elif args.command == "all":
-        await all_command(paths, limit=args.limit, config=_config_from(args), max_llm_calls=args.max_llm_calls)
+        await all_command(paths, limit=args.limit, config=_config_from(args), guards=_guards_from(args))
 
     else:
         raise ValueError(f"Unknown command: {args.command}")

@@ -22,11 +22,11 @@ from evaluation.tasks.end_to_end.run_config import EvalRunConfig
 class EvalTurnFailure(RuntimeError):
     """The turn ended in a typed failure outcome - scored as an error, not a decision."""
 
-    def __init__(self, failure: dict[str, Any] | None, *, llm_calls: int = 0) -> None:
+    def __init__(self, failure: dict[str, Any] | None, *, telemetry: dict[str, Any] | None = None) -> None:
         failure = failure or {}
         super().__init__(f"{failure.get('stage', 'unknown')}:{failure.get('code', 'unknown')}")
         self.failure = failure
-        self.llm_calls = llm_calls
+        self.telemetry = telemetry or {}
 
 
 class EndToEndPrediction(BaseModel):
@@ -65,11 +65,7 @@ async def run_case(
 
     decision, basis = infer_decision(response)
     if decision is None:
-        telemetry = response.get("telemetry") or {}
-        raise EvalTurnFailure(
-            _failure_of(response),
-            llm_calls=int((telemetry.get("llm") or {}).get("calls_count") or 0),
-        )
+        raise EvalTurnFailure(_failure_of(response), telemetry=response.get("telemetry"))
 
     selected_ids = selected_listing_ids(response)
 

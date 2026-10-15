@@ -312,12 +312,10 @@ async def test_replay_runs_saved_intents_through_the_current_backend_without_llm
     assert result["replay"]["textual_fallback"] == "disabled"
 
 
-# --- spend guard ----------------------------------------------------------------------
+# --- runner guards and execution summary ------------------------------------------------
 
 
-async def test_runner_stops_starting_cases_once_the_llm_call_budget_is_reached(tmp_path, monkeypatch):
-    from evaluation.tasks.end_to_end import runner
-
+def _dataset(tmp_path, n: int):
     dataset = tmp_path / "dataset.jsonl"
     dataset.write_text(
         "\n".join(
@@ -331,27 +329,119 @@ async def test_runner_stops_starting_cases_once_the_llm_call_budget_is_reached(t
                     "hard_constraints": "{}",
                 }
             )
-            for i in range(5)
+            for i in range(n)
         )
     )
+    return dataset
+
+
+def _telemetry(calls: int = 3, *, failed_step: str | None = None) -> dict:
+    llm_calls = [
+        {"step": "conversation_routing", "success": True, "prompt_tokens": 100, "completion_tokens": 10}
+        for _ in range(calls)
+    ]
+    if failed_step:
+        llm_calls.append({"step": failed_step, "success": False, "error": "rate_limited"})
+    return {"llm": {"calls_count": len(llm_calls), "calls": llm_calls}, "cost": {"estimated_total_usd": 0.001}}
+
+
+def _ok_prediction(calls: int = 3):
+    return adapter.EndToEndPrediction(
+        decision="NO",
+        decision_basis="no_results",
+        legacy_decision="NO",
+        raw_response={"results": [], "telemetry": _telemetry(calls)},
+    )
+
+
+def _provider_failure(code: str = "rate_limited", stage: str = "conversation_routing"):
+    return adapter.EvalTurnFailure(
+        {"stage": stage, "code": code},
+        telemetry=_telemetry(0, failed_step=stage),
+    )
+
+
+async def _run(tmp_path, monkeypatch, outcomes: list, **guards):
+    from evaluation.tasks.end_to_end import runner
+
     calls_made = []
 
     async def fake_run_case(case, *, config):
+        outcome = outcomes[len(calls_made)]
         calls_made.append(case.case_id)
-        return adapter.EndToEndPrediction(
-            decision="NO",
-            decision_basis="no_results",
-            legacy_decision="NO",
-            raw_response={"results": [], "telemetry": {"llm": {"calls_count": 3}}},
-        )
+        if isinstance(outcome, BaseException):
+            raise outcome
+        return outcome
 
     monkeypatch.setattr(runner, "run_case", fake_run_case)
     output = tmp_path / "out" / "predictions.jsonl"
+    await runner.run_predictions(dataset_path=_dataset(tmp_path, len(outcomes)), output_path=output, **guards)
+    execution = json.loads((output.parent / runner.RUN_METADATA_FILENAME).read_text())["execution"]
+    return calls_made, output.read_text().splitlines(), execution
 
-    await runner.run_predictions(dataset_path=dataset, output_path=output, max_llm_calls=7)
+
+async def test_runner_stops_starting_cases_once_the_llm_call_budget_is_reached(tmp_path, monkeypatch):
+    calls_made, lines, execution = await _run(
+        tmp_path, monkeypatch, [_ok_prediction(3) for _ in range(5)], max_llm_calls=7
+    )
 
     assert calls_made == ["c0", "c1", "c2"]  # 3 + 3 < 7, then 9 >= 7 stops
-    assert len(output.read_text().splitlines()) == 3
-    execution = json.loads((output.parent / runner.RUN_METADATA_FILENAME).read_text())["execution"]
+    assert len(lines) == 3
     assert execution["status"] == "stopped"
+    assert execution["valid_as_baseline"] is False
     assert (execution["cases_completed"], execution["llm_calls_used"]) == (3, 9)
+
+
+async def test_runner_stops_after_consecutive_provider_failures(tmp_path, monkeypatch):
+    outcomes = [_ok_prediction(), *[_provider_failure() for _ in range(5)]]
+
+    calls_made, lines, execution = await _run(tmp_path, monkeypatch, outcomes, max_consecutive_failures=3)
+
+    assert calls_made == ["c0", "c1", "c2", "c3"]
+    assert len(lines) == 4  # partial results kept
+    assert execution["status"] == "stopped"
+    assert "3 consecutive provider failures" in execution["stopped_reason"]
+    assert execution["valid_as_baseline"] is False
+    assert execution["provider_failure_cases"] == {"conversation_routing:rate_limited": 3}
+    assert execution["failed_llm_attempts"] == {"conversation_routing:rate_limited": 3}
+
+
+async def test_quality_failures_never_trigger_the_outage_guard(tmp_path, monkeypatch):
+    outcomes = [
+        _provider_failure(),
+        _provider_failure(),
+        _provider_failure(code="invalid_response", stage="search_intent_extraction"),
+        RuntimeError("unexpected backend error"),
+        _provider_failure(),
+        _provider_failure(),
+    ]
+
+    calls_made, _, execution = await _run(tmp_path, monkeypatch, outcomes, max_consecutive_failures=3)
+
+    assert len(calls_made) == 6
+    assert execution["status"] == "completed"
+    assert execution["provider_failure_cases"] == {"conversation_routing:rate_limited": 4}
+    assert execution["valid_as_baseline"] is False  # completed, but with provider failures
+
+
+async def test_success_resets_the_consecutive_failure_count(tmp_path, monkeypatch):
+    outcomes = [_provider_failure(), _provider_failure(), _ok_prediction(), _provider_failure(), _provider_failure(), _ok_prediction()]
+
+    calls_made, _, execution = await _run(tmp_path, monkeypatch, outcomes, max_consecutive_failures=3)
+
+    assert len(calls_made) == 6
+    assert execution["status"] == "completed"
+
+
+async def test_clean_run_is_a_valid_baseline_with_execution_summary(tmp_path, monkeypatch):
+    _, _, execution = await _run(tmp_path, monkeypatch, [_ok_prediction(2), _ok_prediction(4)], max_consecutive_failures=3)
+
+    assert execution["status"] == "completed"
+    assert execution["valid_as_baseline"] is True
+    assert (execution["cases_ok"], execution["cases_error"]) == (2, 0)
+    assert execution["llm_calls_used"] == 6
+    assert execution["llm_calls_by_step"] == {"conversation_routing": 6}
+    assert (execution["tokens"]["prompt"], execution["tokens"]["completion"]) == (600, 60)
+    assert execution["estimated_cost_usd"] == pytest.approx(0.002)
+    assert set(execution["case_latency_ms"]) == {"mean", "p50", "p90", "max"}
+    assert execution["wall_clock_seconds"] >= 0
