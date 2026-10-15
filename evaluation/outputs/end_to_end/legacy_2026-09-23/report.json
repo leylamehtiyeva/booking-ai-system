@@ -1,0 +1,90 @@
+{
+  "run_metadata": {
+    "status": "unavailable",
+    "note": "Predictions were produced before run metadata existed (backend commit, models and top_n unknown; the adapter of that time used top_n=5). Re-scoring them with the current contract does not measure the current backend."
+  },
+  "evaluation_metadata": {
+    "contract_version": "e2e-decision-v2",
+    "evaluated_at": "2026-10-15T16:06:10.823778+00:00",
+    "evaluator_git_commit": "26439e59924c5a23d7635a1714dba2dad65b1948",
+    "case_limit": null
+  },
+  "metrics": {
+    "total": 50,
+    "ok_total": 50,
+    "error_total": 0,
+    "error_rate": 0.0,
+    "error_types": {},
+    "decision": {
+      "contract_version": "e2e-decision-v2",
+      "accuracy": 0.62,
+      "correct_count": 31,
+      "yes_total": 25,
+      "rejection_total": 25,
+      "critical_false_yes_count": 6,
+      "critical_false_yes_rate": 0.24,
+      "false_no_count": 4,
+      "false_no_rate": 0.16,
+      "conservative": {
+        "yes_to_uncertain": 6,
+        "no_to_uncertain": 2
+      },
+      "basis_counts": {
+        "strong_match": 21,
+        "weak_match": 2,
+        "partial_match": 10,
+        "no_results": 16,
+        "clarification": 1
+      },
+      "confusion_matrix": {
+        "NO->NO": 11,
+        "NO->UNCERTAIN": 2,
+        "NO->YES": 2,
+        "UNCERTAIN->NO": 1,
+        "UNCERTAIN->UNCERTAIN": 5,
+        "UNCERTAIN->YES": 4,
+        "YES->NO": 4,
+        "YES->UNCERTAIN": 6,
+        "YES->YES": 15
+      }
+    },
+    "selection": {
+      "yes_total": 25,
+      "top1_correct_count": 21,
+      "top1_accuracy": 0.84,
+      "topk_contains_acceptable_count": 21,
+      "topk_contains_acceptable_rate": 0.84,
+      "mrr": 0.84
+    },
+    "legacy": {
+      "contract_version": "e2e-decision-v1-any-result",
+      "note": "Any non-empty result counted as YES. For comparison with pre-v2 reports only.",
+      "decision_accuracy": 0.66,
+      "critical_false_yes_count": 12,
+      "critical_false_yes_rate": 0.48,
+      "confusion_matrix": {
+        "NO->NO": 11,
+        "NO->YES": 4,
+        "UNCERTAIN->NO": 1,
+        "UNCERTAIN->UNCERTAIN": 1,
+        "UNCERTAIN->YES": 8,
+        "YES->NO": 4,
+        "YES->YES": 21
+      }
+    },
+    "runtime_ms": {
+      "mean": 8621.32,
+      "max": 35841
+    },
+    "cost": {
+      "total_estimated_usd": 0.044056,
+      "mean_estimated_usd": 0.00088112
+    },
+    "llm_calls": {
+      "total": 290,
+      "mean": 5.8
+    }
+  },
+  "failure_count": 19,
+  "failures_path": "evaluation/outputs/end_to_end/legacy_2026-09-23/failures.jsonl"
+}

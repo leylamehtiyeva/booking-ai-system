@@ -1,0 +1,96 @@
+{
+  "intents_run_metadata": {
+    "status": "unavailable",
+    "note": "Predictions were produced before run metadata existed (backend commit, models and top_n unknown; the adapter of that time used top_n=5). Re-scoring them with the current contract does not measure the current backend."
+  },
+  "evaluation_metadata": {
+    "contract_version": "e2e-decision-v2",
+    "evaluated_at": "2026-10-15T16:06:13.456517+00:00",
+    "evaluator_git_commit": "26439e59924c5a23d7635a1714dba2dad65b1948"
+  },
+  "replay": {
+    "textual_fallback": "disabled",
+    "intents_from": "evaluation/outputs/end_to_end/legacy_2026-09-23/predictions.jsonl",
+    "run_config": {
+      "source": "fixtures",
+      "top_n": 2,
+      "max_items": 40,
+      "fallback_top_k": 5
+    }
+  },
+  "skipped_case_ids": [],
+  "metrics": {
+    "total": 50,
+    "ok_total": 50,
+    "error_total": 0,
+    "error_rate": 0.0,
+    "error_types": {},
+    "decision": {
+      "contract_version": "e2e-decision-v2",
+      "accuracy": 0.36,
+      "correct_count": 18,
+      "yes_total": 25,
+      "rejection_total": 25,
+      "critical_false_yes_count": 4,
+      "critical_false_yes_rate": 0.16,
+      "false_no_count": 3,
+      "false_no_rate": 0.12,
+      "conservative": {
+        "yes_to_uncertain": 17,
+        "no_to_uncertain": 7
+      },
+      "basis_counts": {
+        "partial_match": 28,
+        "strong_match": 9,
+        "no_results": 12,
+        "clarification": 1
+      },
+      "confusion_matrix": {
+        "NO->NO": 8,
+        "NO->UNCERTAIN": 7,
+        "UNCERTAIN->NO": 1,
+        "UNCERTAIN->UNCERTAIN": 5,
+        "UNCERTAIN->YES": 4,
+        "YES->NO": 3,
+        "YES->UNCERTAIN": 17,
+        "YES->YES": 5
+      }
+    },
+    "selection": {
+      "yes_total": 25,
+      "top1_correct_count": 19,
+      "top1_accuracy": 0.76,
+      "topk_contains_acceptable_count": 22,
+      "topk_contains_acceptable_rate": 0.88,
+      "mrr": 0.82
+    },
+    "legacy": {
+      "contract_version": "e2e-decision-v1-any-result",
+      "note": "Any non-empty result counted as YES. For comparison with pre-v2 reports only.",
+      "decision_accuracy": 0.62,
+      "critical_false_yes_count": 15,
+      "critical_false_yes_rate": 0.6,
+      "confusion_matrix": {
+        "NO->NO": 8,
+        "NO->YES": 7,
+        "UNCERTAIN->NO": 1,
+        "UNCERTAIN->UNCERTAIN": 1,
+        "UNCERTAIN->YES": 8,
+        "YES->NO": 3,
+        "YES->YES": 22
+      }
+    },
+    "runtime_ms": {
+      "mean": 0.0,
+      "max": 0
+    },
+    "cost": {
+      "total_estimated_usd": 0.0,
+      "mean_estimated_usd": 0.0
+    },
+    "llm_calls": {
+      "total": 0,
+      "mean": 0
+    }
+  }
+}

@@ -6,10 +6,63 @@
 
 Запуск:
 ```
-python -m evaluation.tasks.end_to_end.run predict   # прогоняет pipeline, пишет predictions.jsonl (стоит денег/времени — LLM-вызовы)
-python -m evaluation.tasks.end_to_end.run evaluate   # только сравнение predictions.jsonl с датасетом, без API-вызовов
-python -m evaluation.tasks.end_to_end.run all
+python -m evaluation.tasks.end_to_end.run predict [--limit N] [--top-n N] [--max-llm-calls N]  # ПЛАТНО; пишет predictions.jsonl + run_metadata.json
+python -m evaluation.tasks.end_to_end.run evaluate                        # бесплатно: пересчёт сохранённых predictions по текущему контракту
+python -m evaluation.tasks.end_to_end.run replay [--top-n N]              # бесплатно: сохранённые intents через текущий backend, без LLM
+python -m evaluation.tasks.end_to_end.run all [--limit N] [--top-n N] [--max-llm-calls N]      # ПЛАТНО: predict + evaluate
 ```
+
+`--max-llm-calls` — ограничитель расходов: перед каждым кейсом сравнивается число LLM-вызовов из
+telemetry (включая неудачные попытки), и прогон останавливается при достижении лимита (последний кейс
+может превысить его на свои вызовы). Итог пишется в `run_metadata.json` → `execution`.
+
+Настройки прогона по умолчанию совпадают с production turn (`TurnConfig`): `top_n=2`,
+`max_items=40`, textual fallback `top_k=5`, `source=fixtures`, reference date `2026-03-01`.
+`--output-dir` (глобальный флаг, до команды) задаёт папку прогона; по умолчанию `evaluation/outputs/end_to_end`.
+
+CLI загружает `.env` до импорта `app` (`env.py`), как `ui/streamlit_app.py`. Раньше `.env` подхватывался
+позже, и часть настроек «замерзала» на значениях по умолчанию: router шёл через `gemini_default` вместо
+production `groq_gpt_oss_20b`, а textual fallback — через `gemini-2.5-flash` вместо `GEMINI_MODEL`.
+Прогон 2026-09-23 почти наверняка выполнен на такой смеси моделей.
+
+**Архив прогона 2026-09-23:** `evaluation/outputs/end_to_end/legacy_2026-09-23/` — исходные
+`predictions.jsonl`, оригинальные v1-отчёты (`*_v1_original.*`), пересчёт по v2 (`report.json`) и replay.
+
+## Decision contract v2 (`contract.py`, P0-7)
+
+Три уровня, которые раньше смешивались:
+
+1. **Eligibility** — показывать ли вариант. Listing скрывается только при *подтверждённом* нарушении
+   (structured NO, явное отрицательное evidence, NO от fallback, несовпадение property type, цена NO).
+   Система работает в **open-world**: если удобства нет в данных, оно «не подтверждено», а не «отсутствует».
+2. **Constraint satisfaction** — по каждому требованию: matched / uncertain / failed.
+3. **Overall decision** — что система вправе утверждать пользователю (по top-1 показанному результату;
+   `strong` всегда ранжируется первым):
+
+| Ответ системы | Решение | basis |
+|---|---|---|
+| top-1 `match_tier == strong` (все must, property type и числовые фильтры подтверждены) | YES | `strong_match` |
+| top-1 `partial` / `weak` | UNCERTAIN | `partial_match` / `weak_match` |
+| уточняющий вопрос | UNCERTAIN | `clarification` |
+| ничего не показано | NO | `no_results` |
+| typed failure (provider / retrieval) | ошибка, не решение | `turn_failure` |
+
+Решения пересчитываются из сохранённого `raw_response`, поэтому любой старый прогон можно бесплатно
+переоценить. Старый контракт («любой результат = YES») оставлен в отчёте как блок `legacy`.
+
+**Метрики:** `decision.accuracy` (строгое совпадение), `critical_false_yes` (gold NO/UNCERTAIN → YES —
+главная метрика безопасности), `false_no` (gold YES → ничего не показано), `conservative`
+(UNCERTAIN вместо YES/NO — ошибка, но без ложного утверждения), top-1 / top-k / MRR, `legacy.*`.
+Каждый отчёт содержит `run_metadata` (git SHA + dirty, модели по стадиям, `top_n`, fallback policy,
+sha256 датасета, reference date) и `evaluation_metadata`.
+
+**Чего контракт не утверждает:** `strong` покрывает только *извлечённые* требования. Требование,
+пропущенное intent extraction или сохранённое как nice-to-have (например, субъективное), не мешает
+`strong` — такие случаи видны как critical false YES и разбираются ниже, а не маскируются контрактом.
+
+**Семантика golden labels:** NO / YES в датасете размечены в **closed-world** — удобство, которого нет в
+`facilities` listing'а, считается отсутствующим. Это расходится с open-world поведением системы и
+объясняет большую часть `conservative` ошибок (см. triage). Labels не менялись.
 
 ## Эксперимент 2026-08-27: аудит датасета и фикстур
 
@@ -123,3 +176,71 @@ night", или "in April 2026" без точных дат). Первая поп�
   `comparator.py`/`metrics.py`. Стоит либо начать использовать как sanity-check (например,
   `assert target_listing_id in acceptable_ids` при загрузке датасета — фикс кейса 0001 показал,
   что расхождение между этими двумя полями как раз и было багом), либо убрать как мёртвое поле.
+
+
+## P0-7: triage ошибок (2026-10-15)
+
+Источник: бесплатный re-score сохранённых predictions (`legacy_2026-09-23/`, backend до P0-1…P0-8,
+`top_n=5`) по контракту v2 и replay сохранённых intents через текущий backend (без LLM, textual fallback
+выключен; после исправлений D3/breakfast: critical false YES 4/25, единственное изменение — 0037).
+Re-score: decision accuracy **0.62**, critical false YES **6/25**, false NO **4/25**,
+conservative YES→UNCERTAIN 6, NO→UNCERTAIN 2; legacy-блок воспроизводит прежние 0.66 / 12.
+
+| Кейс | Gold → система | Причина | Категория | Текущий backend |
+|---|---|---|---|---|
+| 0029 | NO → **YES** | «it would be great if smoking was allowed» — явное nice-to-have, извлечено верно; по D3 оно не блокирует YES. Gold считает smoking hard | label расходится с продуктовой политикой (D3) | остаётся — ожидаемо |
+| 0037 | NO → **YES** | «I really want a sea view» извлечено как nice (должно быть must); «I won't be bringing any pets» превращено в must «no pets» (это не требование к жилью), которое к тому же игнорировалось (known без mapped_fields) | intent extraction (priority, лишний constraint) + runtime-баг unmapped must | replay → UNCERTAIN (из-за «no pets»); исправление priority — промпт, проверка в платном прогоне |
+| 0041, 0047, 0050 | UNCERTAIN → **YES** | прямая просьба («looking for … nice atmosphere», «Do you have anything with…», «Could you find … trustworthy») извлечена как nice вопреки правилу промпта | intent extraction (priority) | промпт уточнён примерами; проверка в платном прогоне |
+| 0049 | UNCERTAIN → **YES** | «I'd really prefer … local» — мягкая формулировка → nice; по D3 не блокирует YES | label расходится с политикой D3 (пограничный) | остаётся — ожидаемо |
+| 0002, 0004, 0012, 0014, 0018, 0025 | YES → UNCERTAIN | отрицательное требование («no gym / breakfast / pool / conference room») нельзя подтвердить в open-world; gold — closed-world. В 0002 также «breakfast» → `coffee_machine`, «balcony» как nice | расхождение open/closed-world (+ intent mapping в 0002) | без изменений |
+| 0031, 0038 | NO → UNCERTAIN | must-have не подтверждён — показан как partial/weak | расхождение open/closed-world | 0031 → NO (safety net по property type) |
+| 0026, 0028, 0032, 0034 | NO → UNCERTAIN (после P0-8) | исправленная цена больше не отсеивает listing с неподтверждённым must-have; в 0034 также «breakfast» → `coffee_machine` | расхождение open/closed-world, ранее скрытое багом цены | новое поведение |
+| 0005, 0011 | YES → NO | «under $480», «$400 maximum» за месяц → `total_stay`; gold считает per-night | неоднозначный запрос (scope бюджета) | без изменений |
+| 0045 | UNCERTAIN → NO | то же (Dubai, $400 → total) | неоднозначный запрос | без изменений |
+| 0008 | YES → NO | город извлечён как «Batum» | intent extraction (нормализация города) | без изменений |
+| 0010 | YES → NO | цена за окно (P0-8) + «April 2026» → 1 ночь | backend-баг | исправлено (replay: YES) |
+| 0006 | YES → YES | после P0-8 top-1 зависит от textual fallback (breakfast) | ranking + fallback | проверить в платном прогоне |
+| 0023 | YES → YES | в gold `property_type=apartment`, в запросе его нет | label с допущением (на top-1 не влияет) | — |
+
+Систематические проблемы intent extraction: «breakfast» маппится на `coffee_machine` (нет canonical
+поля — LLM выбирает ближайшее); жёсткие требования понижаются до nice-to-have.
+
+### Продуктовые решения (приняты 2026-10-15)
+
+- **D1 — open-world для must-have.** Неподтверждённый must-have → listing можно показать как partial, решение
+  UNCERTAIN; отсутствие информации не трактуется как NO.
+- **D2 — open-world для запретов.** Отсутствие информации о запрещённом свойстве не доказывает, что запрет
+  соблюдён → UNCERTAIN. Closed-world ради метрик не вводится.
+- **D3 — нет безоговорочного YES при неподтверждённом обязательном требовании.** Неподтверждённый MUST
+  (в т. ч. субъективный) не даёт `strong`; явное nice-to-have не блокирует YES, если все hard-требования
+  подтверждены. Ключевое vs необязательное определяется priority из intent extraction («must» для прямой
+  просьбы, «nice» только при явном смягчении).
+
+Как это реализовано (classifier tiers не менялись — их семантика уже соответствовала D1–D3, что
+подтверждено `tests/test_requirement_semantics.py`):
+
+- `UserConstraint` (`app/schemas/constraints.py`) — инварианты маппинга при создании/загрузке constraint:
+  - meal plan («breakfast», «half board», «all inclusive»…) никогда не маппится на amenity-поле —
+    раньше «breakfast» → `coffee_machine`, и listing с кофемашиной «подтверждал» завтрак; теперь проверка
+    идёт по тексту listing'а;
+  - `known` без единого mapped field (кроме категорий со своим слотом: property type, occupancy, numeric)
+    → unresolved/textual; раньше такой MUST/FORBIDDEN молча игнорировался.
+- Промпт intent extraction дополнен примерами: прямые субъективные просьбы → must, явное смягчение → nice,
+  факты о путешественнике («I won't be bringing any pets») — не constraint.
+
+
+## Процедура платного прогона
+
+1. Чистое дерево (`run_metadata.git.dirty == false`).
+2. Smoke в отдельную папку, без полного прогона:
+   ```
+   uv run python -m evaluation.tasks.end_to_end.run --output-dir evaluation/outputs/end_to_end/smoke_<date> predict --limit 3 --max-llm-calls 40
+   uv run python -m evaluation.tasks.end_to_end.run --output-dir evaluation/outputs/end_to_end/smoke_<date> evaluate --limit 3
+   ```
+3. Проверить `run_metadata.json` (SHA, модели, `top_n`, reference date, `execution`) и ошибки.
+4. Полный прогон — только после отдельного решения: `--output-dir evaluation/outputs/end_to_end/baseline_<date> all --max-llm-calls 600`.
+
+Predictions пишутся построчно с flush, `run_metadata.json` — до первого кейса, поэтому прерванный прогон
+не теряет уже обработанные кейсы. Лимит LLM-вызовов считает все попытки, которые делает наш код
+(router, intent, update, factual, textual fallback, включая повторы); внутренние HTTP-повторы SDK, если они
+есть, в telemetry не видны.

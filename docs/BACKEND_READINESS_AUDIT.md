@@ -15,7 +15,7 @@
 | P0-1 Graceful failure handling | ✅ Done | `fba5e0a` | Fatal stage → typed `processing_unavailable`; textual fallback → UNCERTAIN; программные ошибки не скрываются |
 | P0-4 Application service | ✅ Done | `3f87a4b` | `process_turn(session, message) -> TurnResult`; Streamlit — тонкий adapter; публичный JSON без server state и debug |
 | P0-6 Multi-turn integration tests | ✅ Done | см. `git log` | 7 hermetic сценариев через `process_turn`; mutation check: 7 из 7 дефектов пойманы |
-| P0-7 E2E evaluation contract & baseline | ⏳ In progress | — | — |
+| P0-7 E2E evaluation contract & baseline | 🟡 Contract done, baseline pending | `4dcec9d`, `5d1fd0d`, `26439e5` | Контракт v2, metadata, replay, spend guard; D1/D2 open-world, D3 + breakfast исправлены; платный baseline — после smoke и отдельного решения |
 
 Offline suite после P0-8: **799 passed, 2 skipped (live)**.
 
@@ -366,6 +366,21 @@ async def process_turn(session: ConversationSession, user_message: str,
 - **Сложность.** M (1.5 дня).
 
 #### P0-7. Зафиксировать e2e decision contract и пересчитать baseline
+> **🟡 Контракт и инструменты готовы, платный baseline ещё не запускался.** Подробно: `evaluation/tasks/end_to_end/README.md`.
+> - **Контракт v2.** YES = top-1 `strong`; partial/weak/clarification → UNCERTAIN; ничего не показано → NO; typed failure → ошибка. Legacy-метрики сохранены отдельным блоком.
+> - **Обвязка прогона:** run metadata (SHA, модели, `top_n`, reference date), `--max-llm-calls`, `--output-dir`, бесплатный `replay`.
+> - **Продуктовые решения:**
+>   - D1/D2 — open-world: неподтверждённый must-have или запрет → UNCERTAIN;
+>   - D3 — неподтверждённый MUST не даёт `strong`, явное nice-to-have не блокирует.
+>
+>   Tier-семантика уже соответствовала решениям.
+> - **Исправлено в runtime:**
+>   - meal plan больше не маппится на amenity («breakfast» → `coffee_machine` подтверждал завтрак кофемашиной);
+>   - MUST/FORBIDDEN `known` без mapped field больше не игнорируется;
+>   - промпт intent extraction разделяет прямые просьбы (must) и явное смягчение (nice).
+> - **Найдено в eval CLI:** `.env` загружался после импорта `app`, поэтому router и fallback шли на других моделях, чем production. Исправлено в `env.py`.
+> - **Offline** (legacy predictions, контракт v2): decision accuracy 0.62, critical false YES 6/25, false NO 4/25; legacy 0.66 / 12 воспроизведены.
+> - **Остаточные расхождения open/closed-world с golden labels** — ожидаемые, labels не менялись.
 - **Проблема.** См. 4.2.
 - **Файлы.** `evaluation/tasks/end_to_end/adapter.py::_infer_decision`, `run.py`, `metrics.py`; `evaluation/tasks/end_to_end/README.md`.
 - **Минимальный fix.** Документировать и реализовать контракт: нет результатов → NO; top-1 `strong` → YES; только `partial`/`weak` → UNCERTAIN; clarification → UNCERTAIN. Сохранить старую метрику как `decision_any_result` для сравнения. `top_n` брать из `app.config.settings`. Записывать в report модель/профиль и git SHA. Сначала **бесплатно** пересчитать сохранённые predictions; после P0-1…P0-3 — **один** платный `predict` (только с разрешения).
