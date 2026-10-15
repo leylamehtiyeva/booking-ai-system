@@ -9,12 +9,13 @@
 | Задача | Статус | Commit | Итог |
 |---|---|---|---|
 | P0-5 Hermetic test suite | ✅ Done | `2077102`, `baef520` | `uv run pytest` без сети и ключей; live — только `BOOKING_AI_LIVE_TESTS=1 uv run pytest -m live` |
-| P0-2 Date normalization | ✅ Done | `a2c41f5` | Reference clock, интерпретация дат как пары, clarification вместо crash |
+| P0-2 Date normalization | ✅ Done | `a2c41f5`, `74b786e` | Reference clock, интерпретация дат как пары, clarification вместо crash; денежные суммы («$2000») не считаются годом |
 | P0-3 Fixtures time bomb | ✅ Done | `a2c41f5` | Recurring yearly availability в fixture retriever; данные fixtures не менялись |
 | **P0-8 Fixture price = total за окно, а не за проживание** | 🆕 Найдено при ревью P0-3 | — | Старый баг, не исправлен; см. P0-8 |
-| P0-1, P0-4, P0-6, P0-7 | ⏳ Todo | — | — |
+| P0-1 Graceful failure handling | ✅ Done | `fba5e0a` | Fatal stage → typed `processing_unavailable`; textual fallback → UNCERTAIN; программные ошибки не скрываются |
+| P0-4, P0-6, P0-7, P0-8 | ⏳ Todo | — | — |
 
-Offline suite на `baef520`: **687 passed, 2 skipped (live)**.
+Offline suite на `fba5e0a`: **761 passed, 2 skipped (live)**.
 
 ---
 
@@ -224,6 +225,31 @@ async def process_turn(session: ConversationSession, user_message: str,
 ### P0 — Must fix
 
 #### P0-1. Unhandled failures роняют turn — typed failure outcome для всех стадий
+> **✅ Done (`fba5e0a`).** Реализован не через `StageFailure`, а через существующие механизмы плюс `app/llm/call_policy.py`.
+>
+> | Стадия | Класс | Timeout / retry | Поведение при сбое |
+> |---|---|---|---|
+> | Conversation router | fatal | 15 s, 2 попытки (без изменений) | `routing_unavailable` (как раньше); теперь также классифицирует `litellm.ServiceUnavailableError` / `Timeout` и httpx transport errors |
+> | Intent extraction (START) | fatal | `LLM_STAGE_*`: 20 s, 3 попытки, backoff 1→2 s | `processing_unavailable`, `stage=search_intent_extraction`, прежний state |
+> | Intent update (UPDATE) | fatal | то же | `processing_unavailable`, `stage=search_state_update`, прежний state |
+> | Factual extraction (LISTING_QUESTION) | fatal | то же | `processing_unavailable`, `stage=listing_question_factual_extraction` |
+> | Textual evidence fallback | recoverable | то же | Провал по отдельному constraint → UNCERTAIN (`reason: Textual evidence check unavailable (<code>)`), turn завершается |
+> | Retrieval (Apify) | fatal | без retry (платный вызов), 180 s urlopen | `RetrievalError(code)` → `processing_unavailable`, `stage=retrieval`, прежний state (новый SearchRequest не сохраняется) |
+> | Response generation | recoverable | 10 s (без изменений) | Deterministic fallback; ошибка в telemetry — только код |
+>
+> - Retry только для `rate_limited` / `provider_unavailable` (тот же набор, что был у router).
+> - Не ретраятся: `timeout`, `authentication_error`, `provider_error`, `configuration_error`, `empty_response`, `invalid_response`.
+> - Нераспознанные exceptions пробрасываются как есть. Catch-all в LISTING_QUESTION matching убран.
+> - `processing_unavailable` превращается в `ConversationFailureOutcome` и рендерится без response LLM.
+> - Telemetry: каждая неудачная попытка записывается только с кодом ошибки. `intent_update` больше не пишет «успешный» вызов до самого вызова.
+> - Тесты: `tests/test_failure_handling.py` (66 fault-injection тестов).
+>
+> **Известные ограничения:**
+> - Thread с вызовом textual fallback (sync google-genai client) при timeout не отменяется, а отбрасывается.
+> - Если fallback-провайдер «висит», сбои по constraints копятся последовательно: до `top_k × 3 constraints × timeout`. Circuit breaker на запрос не делался; это связано с P1-6.
+> - При parse failure токены не учитываются: записывается только failed call.
+> - Ошибки конфигурации ADK-агентов без ключа (`Gemini` строится напрямую, не через `model_factory`) не классифицируются как `configuration_error` (P1-8).
+> - Программная ошибка всё ещё роняет turn. Последний рубеж (лог + generic ответ) — задача service layer (P0-4).
 - **Проблема.** Любая ошибка или timeout вне router'а пробрасывается из `handle_user_message`. В Streamlit пользователь видит traceback и не получает ответа ассистента.
 - **Файлы.** `app/logic/conversation_flow.py` (`handle_user_message`, `_answer_listing_query`); `app/logic/intent_router.py::_route_intent_via_adk`; `app/logic/intent_update.py::route_intent_update_patch_async`; `app/logic/factual_question_extraction.py::extract_factual_constraints_async`; `app/logic/constraint_evidence_resolution.py::resolve_listing_constraints_with_fallback`; `app/logic/conversation_router.py:307`; `app/logic/conversation_response_adapter.py`.
 - **Evidence.** (a) `pytest tests/test_reference_resolution.py` с невалидным ключом → `google.genai.errors.ClientError` выходит из `handle_user_message`. (b) Mocked START_SEARCH с датами 2026-12-28 → 2027-01-03 → uncaught `ValidationError`. (c) В коде нет `try` вокруг `:409`, `:713`, `:730`, `:802`.
@@ -363,8 +389,8 @@ async def process_turn(session: ConversationSession, user_message: str,
 **Booking AI Backend v1.0 is complete and ready for API integration**, когда выполнены все пункты:
 
 **Reliability**
-- [ ] Ни одна ошибка или timeout LLM/retrieval не выходит из `process_turn` как exception: только typed `failure` outcome, и state с snapshot не изменены (fault-injection test по всем стадиям).
-- [ ] У каждого LLM-вызова есть timeout; retry только на retryable-ошибки.
+- [ ] Ни одна ошибка или timeout LLM/retrieval не выходит из `process_turn` как exception: только typed `failure` outcome, и state с snapshot не изменены (fault-injection test по всем стадиям). *(на уровне `handle_user_message` сделано в P0-1; остаётся перенести гарантию в `process_turn`, P0-4)*
+- [x] У каждого LLM-вызова есть timeout; retry только на retryable-ошибки. *(P0-1)*
 - [x] Невалидные/кросс-годовые/прошедшие даты дают корректную дату или clarification, а не crash и не тихий поиск в прошлом. *(P0-2)*
 - [x] Demo-сценарий из README работает при любом `APP_REFERENCE_DATE` в 2026–2028. *(P0-3, `test_readme_demo_search_is_stable_regardless_of_today`)*
 - [ ] Цена в fixtures соответствует запрошенному проживанию. *(P0-8)*
