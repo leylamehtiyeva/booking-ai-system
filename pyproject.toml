@@ -13,6 +13,8 @@ dependencies = [
     "streamlit>=1.44.0",
     "tqdm",
     "litellm==1.95.0",
+    "fastapi>=0.123.10",
+    "uvicorn>=0.40.0",
 ]
 
 [dependency-groups]

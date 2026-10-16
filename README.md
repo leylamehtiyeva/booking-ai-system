@@ -215,9 +215,19 @@ cp .env.example .env                                       # configure provider 
 uv run streamlit run ui/streamlit_app.py                   # run the app (uses local fixture listings by default)
 uv run pytest                                               # optional: run tests
 uv run streamlit run dashboards/telemetry_dashboard.py      # optional: telemetry dashboard
+uv run uvicorn app.api.main:app --port 8000                 # optional: HTTP API (single worker)
 ```
 
-Python, Pydantic, Streamlit, Gemini/Groq, Apify, pytest.
+### HTTP API (MVP)
+
+A thin FastAPI adapter over `process_turn` (`app/api/main.py`):
+
+- `GET /api/health` → `{"status": "ok"}`
+- `POST /api/chat` with `{"message": "...", "session_id": "..."}` → the public `TurnResult` (assistant message, listing cards, Decision Inspector, telemetry). Omit `session_id` to start a conversation and send back the returned one to continue it. An unknown or expired id gives `404 session_not_found`.
+
+Sessions are kept in memory: a restart loses them and they are not shared between workers, so run one worker. Allowed browser origins are set with `BOOKING_API_CORS_ORIGINS` (default: the Astro dev server on port 4321). Interactive docs: `/docs`.
+
+Python, Pydantic, FastAPI, Streamlit, Gemini/Groq, Apify, pytest.
 
 ## Status / Limitations
 
