@@ -4,7 +4,7 @@
 
 ## Статус выполнения
 
-Ветка `backend-v1-hardening`. Обновлено 2026-10-15.
+Ветка `backend-v1-hardening`. Обновлено 2026-10-16.
 
 | Задача | Статус | Commit | Итог |
 |---|---|---|---|
@@ -17,9 +17,24 @@
 | P0-6 Multi-turn integration tests | ✅ Done | см. `git log` | 7 hermetic сценариев через `process_turn`; mutation check: 7 из 7 дефектов пойманы |
 | P0-7 E2E evaluation contract & baseline | ✅ Baseline recorded (до targeted fixes) | `4dcec9d`, `5d1fd0d`, `26439e5`, `68107f8`, `961cef8` | Baseline 2026-10-15 на `961cef8`: decision 28/49 = 0.571, critical false YES 6/25, false NO 5/24, top-1 19/24; router переведён на Gemini |
 | Targeted fix: dates (0028, 0032) | ✅ Done | `b8150f9`, `0ed9a73` | Без даты выезда — уточняющий вопрос вместо молчаливой 1 ночи; 90-ночная защита только при переносе года; UPDATE-ответ с одной датой выезда → `set_check_out` |
-| Targeted fixes: 0041, 0049, budget scope, 0002, labels 0037/0028 | ⏳ Todo | — | 0041 — исследование и план |
+| Targeted fix: evidence confirmation (0041, M1) | ✅ Done | `368aae3` | YES из textual fallback только по проверенной цитате с direct statement или measurement |
+| Targeted fix: optional requirements (0049, M2) | ✅ Done | `52fc035` | Непроверенный NICE показывается как «Not confirmed (optional)» |
+| Targeted fix: budget scope | ✅ Done | `2243cf2`, `5518ff6` | Бюджет без per night / whole stay → один вопрос; ставка per week / per month никогда не становится price filter |
+| Targeted fix: area measurement scope | ✅ Done | `a712b3a` | Площадь здания, участка или террасы не считается площадью номера; разные размеры номеров не сводятся к максимуму; неясный scope → UNCERTAIN |
+| Остаток: 0002, labels 0037/0028 | ⏸ Отложено | — | Не блокирует интеграцию с UI |
 
-Offline suite после P0-8: **799 passed, 2 skipped (live)**.
+Offline suite после targeted fixes: **1006 passed, 2 skipped (live)**.
+
+### Решение 2026-10-16: Backend v1.0 — demo-ready foundation
+
+Backend hardening на этом этапе завершён: backend достаточно стабилен для интеграции с API и UI. **Это не заявление о production readiness.** Дальше в backend — только bug fixes, нужные FastAPI / frontend. Свежий e2e run на финальном коде не делался, метрики baseline (`961cef8`) этот код не описывают.
+
+Известные ограничения:
+- **Площадь отдельной комнаты внутри квартиры** («bedroom 15 sqm») относится к главному объекту листинга и может быть принята за площадь всей квартиры. Распознавание scope площади — только на английском; иначе UNCERTAIN.
+- **Бюджетные единицы поддержаны не полностью:** фильтр — только per night или за всё проживание. Ставки per week / per month распознаются по английским формулировкам и ведут к уточняющему вопросу; per day, per person и другие формулировки отдельно не обрабатываются.
+- **LLM нестабилен на пограничных формулировках** (scope бюджета, scope площади, open-world requirements): детерминированные guards закрывают явные случаи, остальное зависит от модели и проверено только offline со scripted ответами.
+- Частые уточнения бюджета (≈22 из 50 e2e-запросов без scope) сделают часть e2e YES-кейсов UNCERTAIN до ответа пользователя.
+- Session state хранится вызывающей стороной; общего хранилища сессий в backend нет.
 
 ---
 
