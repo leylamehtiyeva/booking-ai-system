@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, timedelta
 
+from app.logic.budget_period import period_budget_text
 
 
 @dataclass
@@ -92,7 +93,7 @@ def _ambiguous_budget_question(intent, check_in: date | None, check_out: date | 
     price = getattr(filters, "price", None) if filters is not None else None
     has_amount = price is not None and (price.max_amount is not None or price.min_amount is not None)
 
-    period_budget = _period_budget_text(intent)
+    period_budget = period_budget_text(intent)
     if period_budget and not has_amount:
         return (
             f"You mentioned {period_budget}. I can filter by a nightly or total-stay budget. "
@@ -110,18 +111,6 @@ def _ambiguous_budget_question(intent, check_in: date | None, check_out: date | 
 
     budget = _format_amount(amount, price.currency)
     return f"Do you mean {budget} per night or {budget} for the whole stay?"
-
-
-# Extraction keeps a weekly or monthly rate as a requirement with this
-# normalized_text instead of a price filter (the filter has no such unit).
-PERIOD_BUDGET_TEXTS = frozenset({"budget per month", "budget per week"})
-
-
-def _period_budget_text(intent) -> str | None:
-    for constraint in getattr(intent, "constraints", None) or []:
-        if (constraint.normalized_text or "").strip().lower() in PERIOD_BUDGET_TEXTS:
-            return constraint.raw_text
-    return None
 
 
 def _format_amount(amount: float, currency: str | None) -> str:

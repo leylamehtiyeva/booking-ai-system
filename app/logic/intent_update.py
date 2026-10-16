@@ -18,6 +18,7 @@ from google.genai.types import Content, Part
 from app.agents.intent_update_agent import build_intent_update_agent
 from app.llm.call_policy import LlmCallError, call_llm_stage
 from app.logic.apply_intent_patch import apply_intent_patch
+from app.logic.budget_period import guard_period_budget
 from app.config import clock
 from app.logic.date_normalization import (
     InvalidStayDatesError,
@@ -248,6 +249,11 @@ async def update_search_state_async(
     )
     
     updated_state = apply_intent_patch(previous_state, patch)
+    updated_state = guard_period_budget(
+        updated_state,
+        user_message,
+        previous_price=previous_state.filters.price if previous_state.filters else None,
+    )
 
     # apply_intent_patch assigns fields without re-validation, so a patch
     # that only moves one side of the range (e.g. check-out before the

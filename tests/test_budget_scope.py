@@ -480,3 +480,110 @@ async def test_no_scope_warning_reaches_the_user_after_a_correct_update(scripted
     public = search.model_dump_json()
     assert "scope (per night or whole stay) not specified" not in public
     assert "per night or $200 for the whole stay" not in search.assistant_message
+
+
+# --- monthly budget: extraction mistakes are caught from the user's own words ----------------
+# Adversarial: the model ignores the rule and returns the monthly amount as a price filter.
+
+
+def _misread_monthly(amount: float = 900, scope=None, constraints=None) -> IntentRoute:
+    return IntentRoute(
+        city="Baku",
+        check_in="2026-04-01",
+        check_out="2026-04-30",
+        constraints=constraints or [],
+        filters=_budget(amount, scope, currency="$"),
+    )
+
+
+async def test_misread_monthly_budget_then_per_night_never_becomes_900_a_night(scripted):
+    queues, searches = scripted
+    queues["route"] += [ConversationAction.START_SEARCH, ConversationAction.UPDATE_SEARCH]
+    queues["intent"].append(_misread_monthly())
+    queues["patch"].append(SearchIntentPatch(set_filters=SearchFilters(price=PriceConstraint(scope="per_night"))))
+
+    first = await _turn(ConversationSession(), "Baku for April. My budget is $900 per month.")
+
+    assert first.assistant_message.startswith("You mentioned $900 per month.")
+    assert "$900 per night" not in first.assistant_message
+    assert first.session.search_request.filters is None or first.session.search_request.filters.price is None
+
+    second = await _turn(first.session, "per night")
+
+    assert second.outcome_kind == "clarification"
+    assert searches == []
+    price = second.session.search_request.filters.price
+    assert price.max_amount is None  # $900 was never confirmed as a nightly amount
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "My budget is $900 per month.",
+        "I can pay 900 USD a month",
+        "budget: $900/month",
+        "around $900 monthly",
+        "My monthly budget is $900",
+        "I spend €250 per week on rent",
+    ],
+)
+async def test_period_wording_is_detected_without_relying_on_the_model_marker(scripted, message):
+    queues, searches = scripted
+    queues["route"].append(ConversationAction.START_SEARCH)
+    amount = 250 if "250" in message else 900
+    queues["intent"].append(_misread_monthly(amount))
+
+    turn = await _turn(ConversationSession(), message)
+
+    assert turn.outcome_kind == "clarification"
+    assert turn.assistant_message.startswith("You mentioned")
+    assert searches == []
+
+
+async def test_a_silently_converted_monthly_amount_is_also_dropped(scripted):
+    """$900/month -> $30/night is an interpretation the user never stated."""
+    queues, searches = scripted
+    queues["route"].append(ConversationAction.START_SEARCH)
+    queues["intent"].append(_misread_monthly(30, scope="per_night"))
+
+    turn = await _turn(ConversationSession(), "Baku for April, $900 per month")
+
+    assert turn.assistant_message.startswith("You mentioned $900 per month.")
+    assert searches == []
+
+
+async def test_a_separately_stated_nightly_budget_is_kept(scripted):
+    queues, searches = scripted
+    queues["route"].append(ConversationAction.START_SEARCH)
+    queues["intent"].append(_misread_monthly(40, scope="per_night"))
+
+    turn = await _turn(ConversationSession(), "I usually pay $900 per month at home, here $40 per night max")
+
+    assert turn.outcome_kind == "search"
+    assert turn.session.search_request.filters.price.max_amount == 40
+
+
+async def test_a_stay_length_is_not_a_monthly_rate(scripted):
+    queues, searches = scripted
+    queues["route"].append(ConversationAction.START_SEARCH)
+    queues["intent"].append(_misread_monthly(900, scope="total_stay"))
+
+    turn = await _turn(ConversationSession(), "Baku for a month, $900 in total for the whole month")
+
+    assert turn.outcome_kind == "search"
+    assert turn.session.search_request.filters.price.scope == "total_stay"
+
+
+async def test_monthly_budget_given_in_an_update_is_guarded_too(scripted):
+    queues, searches = scripted
+    _start(queues, scope="per_night")
+    queues["route"].append(ConversationAction.UPDATE_SEARCH)
+    queues["patch"].append(SearchIntentPatch(set_filters=_budget(900, currency="$")))
+
+    first = await _turn(ConversationSession(), "Apartment in Baku for April with WiFi, $200 per night")
+    second = await _turn(first.session, "actually make it $900 per month")
+
+    assert second.outcome_kind == "clarification"
+    assert second.assistant_message.startswith("You mentioned $900 per month.")
+    assert len(searches) == 1
+    assert second.session.search_request.filters is None or second.session.search_request.filters.price is None

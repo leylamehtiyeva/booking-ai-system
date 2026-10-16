@@ -15,6 +15,7 @@ from google.genai.types import Content, Part
 
 from app.agents.intent_router_agent import IntentRoute, build_intent_router_agent
 from app.llm.call_policy import LlmCallError, call_llm_stage
+from app.logic.budget_period import guard_period_budget
 from app.logic.date_normalization import InvalidStayDatesError, normalize_intent_dates
 from app.logic.request_resolution import resolve_required_search_context
 from app.schemas.query import SearchRequest
@@ -162,6 +163,8 @@ async def build_search_request_adk_async(
         intent = intent.model_copy(
             update={"check_in": None, "check_out": None, "nights": None}
         )
+
+    intent = guard_period_budget(intent, user_text)
 
     resolved = resolve_required_search_context(intent)
     clean_filters = _clean_filters(intent.filters)
