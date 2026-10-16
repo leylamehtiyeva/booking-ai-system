@@ -686,6 +686,20 @@ def match_price_filters(
             ),
         )
 
+    if price_filter.scope is None:
+        nights = _night_count(check_in, check_out)
+        if nights is not None and nights > 1:
+            # Per night or for the whole stay? The two readings differ by a
+            # factor of the stay length, so neither may reject a listing.
+            # Required-context resolution asks the user before searching.
+            return NumericMatchResult(
+                attribute="price_total",
+                value=Ternary.UNCERTAIN,
+                actual_value=total_price,
+                evidence=evidence,
+                why="PRICE: budget scope (per night or whole stay) not specified",
+            )
+
     if price_filter.scope == "per_night":
         nights = _night_count(check_in, check_out)
         if nights is None:

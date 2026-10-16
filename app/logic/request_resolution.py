@@ -67,9 +67,65 @@ def resolve_required_search_context(intent) -> ResolvedSearchContext:
             "Please specify the travel dates. Example: 2026-04-20 for 6 nights."
         )
 
+    # One question at a time: the budget is only asked about once city and
+    # dates are settled, because the stay length decides whether it matters.
+    if not questions:
+        budget_question = _ambiguous_budget_question(intent, check_in, check_out)
+        if budget_question:
+            questions.append(budget_question)
+
     return ResolvedSearchContext(
         city=city,
         check_in=check_in,
         check_out=check_out,
         questions=questions,
     )
+
+
+def _ambiguous_budget_question(intent, check_in: date | None, check_out: date | None) -> str | None:
+    """
+    A budget without a stated scope is ambiguous for a multi-night stay
+    ($200 a night and $200 in total select very different listings). For a
+    single night both readings are the same, so nothing is asked.
+    """
+    filters = getattr(intent, "filters", None)
+    price = getattr(filters, "price", None) if filters is not None else None
+    has_amount = price is not None and (price.max_amount is not None or price.min_amount is not None)
+
+    period_budget = _period_budget_text(intent)
+    if period_budget and not has_amount:
+        return (
+            f"You mentioned {period_budget}. I can filter by a nightly or total-stay budget. "
+            "What budget would you like me to use for your dates?"
+        )
+
+    if price is None or price.scope is not None:
+        return None
+
+    amount = price.max_amount if price.max_amount is not None else price.min_amount
+    if amount is None or check_in is None or check_out is None:
+        return None
+    if (check_out - check_in).days <= 1:
+        return None
+
+    budget = _format_amount(amount, price.currency)
+    return f"Do you mean {budget} per night or {budget} for the whole stay?"
+
+
+# Extraction keeps a weekly or monthly rate as a requirement with this
+# normalized_text instead of a price filter (the filter has no such unit).
+PERIOD_BUDGET_TEXTS = frozenset({"budget per month", "budget per week"})
+
+
+def _period_budget_text(intent) -> str | None:
+    for constraint in getattr(intent, "constraints", None) or []:
+        if (constraint.normalized_text or "").strip().lower() in PERIOD_BUDGET_TEXTS:
+            return constraint.raw_text
+    return None
+
+
+def _format_amount(amount: float, currency: str | None) -> str:
+    value = f"{amount:g}"
+    if currency in {"$", "USD", "usd"}:
+        return f"${value}"
+    return f"{value} {currency}" if currency else value

@@ -117,8 +117,17 @@ Examples:
 - price
 
 Price rules:
-- per night / nightly -> filters.price.scope = "per_night"
-- total / overall / whole stay -> filters.price.scope = "total_stay"
+- per night / nightly / a night -> filters.price.scope = "per_night"
+- total / overall / whole stay / for the trip -> filters.price.scope = "total_stay"
+- If the user does not say whether the budget is per night or for the whole
+  stay, leave filters.price.scope null - never guess it. The application asks.
+  "$200 max", "up to $140", "my budget is 60 USD", "can't spend more than 400 USD"
+  -> scope null.
+- A rate per week or per month ("$900 per month") is neither. Never put it in filters.price.
+  Keep it as one constraint so the application can ask for a supported budget:
+  raw_text = the user's words ("$900 per month"), normalized_text = "budget per month"
+  (or "budget per week"), priority="must", category="numeric", mapping_status="known",
+  mapped_fields=[], evidence_strategy="none".
 - Use max_amount unless the user clearly asks for a minimum.
 - Include currency when mentioned.
 

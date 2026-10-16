@@ -97,6 +97,15 @@ DATES:
 
 FILTERS:
 - Use set_filters only for structured numeric changes like bedrooms, bathrooms, area, price
+- If the user answers whether the budget is per night or for the whole stay, set only the scope:
+  "per night" -> {{"set_filters":{{"price":{{"scope":"per_night"}}}}}}
+  "for the whole stay" / "in total" -> {{"set_filters":{{"price":{{"scope":"total_stay"}}}}}}
+- If a new budget does not say per night or for the whole stay, leave its scope null
+- A budget per week or per month cannot be filtered. Never put it in filters.price;
+  add it as a constraint with normalized_text "budget per month" (or "budget per week").
+- If the state has a "budget per month" or "budget per week" constraint and the user gives
+  a nightly or total budget, set max_amount AND scope, and remove the old constraint:
+  "$40 per night" -> {{"set_filters":{{"price":{{"max_amount":40,"currency":"$","scope":"per_night"}}}},"remove_constraint_texts":["$900 per month"]}}
 - Do NOT rebuild the whole filters object if only one field changes
 
 PROPERTY / OCCUPANCY:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, model_validator
 
 class PriceConstraint(BaseModel):
     """
@@ -36,10 +36,16 @@ class SearchFilters(BaseModel):
     
     @model_validator(mode="after")
     def normalize_empty_price(self):
+        # Drop only a price that carries nothing. A scope- or currency-only
+        # price is a patch ("per night" answering the budget question) that
+        # apply_intent_patch merges into the existing amount; without an
+        # amount it never filters anything on its own.
         if (
             self.price is not None
             and self.price.min_amount is None
             and self.price.max_amount is None
+            and self.price.currency is None
+            and self.price.scope is None
         ):
             self.price = None
 
