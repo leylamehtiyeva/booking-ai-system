@@ -10,6 +10,7 @@ from app.observability.trace import RequestTrace
 from pydantic import BaseModel, Field
 from app.schemas.fallback_policy import FallbackPolicy
 from app.observability.llm_usage import record_llm_call_from_response
+from app.logic.area_scope import area_mentions, mentions_other_part
 from app.logic.listing_signals import collect_listing_signals
 from app.schemas.constraints import (
     ConstraintMappingStatus,
@@ -64,6 +65,9 @@ class EvidenceSignal(BaseModel):
     # Whether the snippet was found in the listing evidence sent to the
     # model (set by _normalize_result; None = not checked).
     snippet_verified: bool | None = None
+    # A measurement of another part of the property (building, terrace,
+    # plot) than the one the requirement is about (set by _normalize_result).
+    measures_other_part: bool = False
 
 
 class ConstraintEvidenceAnalysis(BaseModel):
@@ -205,6 +209,7 @@ def _confirming_signals(analysis: ConstraintEvidenceAnalysis) -> list[EvidenceSi
         and signal.relation == "supports"
         and signal.strength == "strong"
         and signal.evidence_type in _CONFIRMING_EVIDENCE_TYPES
+        and not signal.measures_other_part
     ]
 
 
@@ -218,6 +223,7 @@ def _contradicting_signals(analysis: ConstraintEvidenceAnalysis) -> list[Evidenc
         if _usable(signal)
         and signal.relation in {"contradicts", "weakly_contradicts"}
         and signal.evidence_type != "associated_feature"
+        and not signal.measures_other_part
     ]
 
 
@@ -274,6 +280,16 @@ def _snippet_found(snippet: str, listing_evidence: list[dict[str, str]]) -> bool
     return any(quote in text for text in texts) or quote in " ".join(texts)
 
 
+def _measures_other_part(snippet: str, constraint_text: str) -> bool:
+    """
+    The quoted areas all belong to another part of the property (building,
+    terrace, plot) while the requirement is not about that part. An area
+    whose scope is unclear is left to the model (see the prompt rule).
+    """
+    scopes = {scope for _, scope in area_mentions(snippet)}
+    return scopes == {"other"} and not mentions_other_part(constraint_text)
+
+
 def _downgrade_reason(analysis: ConstraintEvidenceAnalysis) -> str | None:
     """Why a support the model claimed did not confirm the requirement."""
     claimed = [s for s in analysis.signals if s.relation == "supports" and s.strength == "strong"]
@@ -281,6 +297,8 @@ def _downgrade_reason(analysis: ConstraintEvidenceAnalysis) -> str | None:
         return None
     if any(s.snippet_verified is False for s in claimed):
         return "Not confirmed: the quoted supporting evidence was not found in the listing data."
+    if any(s.measures_other_part for s in claimed):
+        return "Not confirmed: the measurement refers to another part of the property, not the room or unit you would book."
     if all(s.evidence_type == "associated_feature" for s in claimed):
         return "Not confirmed: the listing only mentions related features, not the requested property itself."
     return "Not confirmed: the evidence analysis did not state its basis (direct statement or measurement)."
@@ -304,6 +322,10 @@ def _normalize_result(
                 else None
             ),
             snippet_verified=_snippet_found(str(signal.get("snippet", "")), req.listing_evidence),
+            measures_other_part=(
+                signal.get("evidence_type") == "measurement"
+                and _measures_other_part(str(signal.get("snippet", "")), req.normalized_text)
+            ),
         )
         for signal in raw.get("signals", [])
         if isinstance(signal, dict)
@@ -466,6 +488,10 @@ Evidence type - what the snippet is evidence OF (always set it):
   "Free WiFi" for "wifi"; "Breakfast included" for "breakfast").
 - measurement: the snippet measures the requested property
   (e.g. "about 85 square meters" for "spacious"; "5 minutes walk to the beach" for "near the beach").
+  A measurement counts only if it is of the bookable unit (the room or apartment) or the
+  part the constraint names. The size of a building, plot or shared terrace is not the size
+  of a room ("hotel with 120 square meters" does not support "spacious room"). If it is
+  unclear what was measured, the signal is at most weakly_supports.
 - associated_feature: the snippet describes a DIFFERENT property that is
   often associated with the requested one, but does not state it
   (e.g. "quiet residential area" for "nice atmosphere"; "Quiet Stay Hotel" for

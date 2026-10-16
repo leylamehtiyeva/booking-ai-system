@@ -1,8 +1,9 @@
 from __future__ import annotations
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 from typing import Any, List, Optional, Tuple
+from app.logic.area_scope import area_mentions
 from app.schemas.filters import SearchFilters
 from app.schemas.listing import ListingRaw
 from app.schemas.match import Evidence, EvidenceSource, Ternary
@@ -301,70 +302,74 @@ def extract_bathroom_count(
 
     return best_count, [best_evidence]
 
-_AREA_PATTERNS = [
-    (
-        re.compile(
-            r"\b(\d+(?:[\.,]\d+)?)\s*(?:sqm|sq\.?\s*m|m²|m2|square meters?|square metres?)\b"
-        ),
-        1.0,
-    ),
-    (
-        re.compile(
-            r"\b(\d+(?:[\.,]\d+)?)\s*(?:sq\.?\s*ft|ft²|ft2|square feet|feet²)\b"
-        ),
-        0.092903,
-    ),
-]
+def extract_area_candidates(listing: ListingRaw) -> tuple[list[float], List[Evidence], str | None]:
+    """
+    Distinct areas of the bookable unit, their evidence, and - when none is
+    found - why: no area at all (None), or areas whose scope is another part
+    of the property or unclear.
 
+    An area in a room entry or the listing name describes the unit unless it
+    is attached to another part ("Private terrace 20 m²"); in the description
+    it must be attached to the unit (see app.logic.area_scope).
+    """
+    unit: dict[float, Evidence] = {}
+    scopes: set[str] = set()
 
-def _parse_area_mentions(text: str) -> List[float]:
-    out: List[float] = []
+    for text, path in _collect_text_candidates(listing):
+        for value, scope in area_mentions(text):
+            if scope == "unknown" and (path.startswith("rooms[") or path == "listing.name"):
+                scope = "unit"
+            scopes.add(scope)
+            if scope == "unit":
+                unit.setdefault(value, Evidence(source=EvidenceSource.STRUCTURED, path=path, snippet=text))
 
-    for pattern, multiplier in _AREA_PATTERNS:
-        for m in pattern.finditer(text):
-            raw = m.group(1).replace(",", ".")
-            try:
-                area = round(float(raw) * multiplier, 2)
-                out.append(area)
-            except ValueError:
-                continue
-
-    return out
+    if unit:
+        values = sorted(unit)
+        return values, [unit[v] for v in values], None
+    if not scopes:
+        return [], [], None
+    if scopes == {"other"}:
+        return [], [], "AREA: the listing gives an area only for another part of the property, not the unit"
+    return [], [], "AREA: the listing gives an area, but not clearly for the unit you would book"
 
 
 def extract_area_sqm(listing: ListingRaw) -> tuple[float | None, List[Evidence]]:
     """
-    Пытаемся извлечь площадь в sqm.
-
-    Поддерживаем:
-    - 80 sqm
-    - 80 m² / m2
-    - 2196 sq ft / feet²  -> конвертируем в sqm
+    Area of the bookable unit in sqm (80 sqm, 80 m², 2196 sq ft -> sqm), or
+    None when there is none or the unit sizes differ (no size is picked for
+    the user).
     """
-    candidates: List[tuple[float, Evidence, int]] = []
+    values, evidence, _ = extract_area_candidates(listing)
+    if len(values) != 1:
+        return None, evidence if values else []
+    return values[0], evidence
 
-    for text, path in _collect_text_candidates(listing):
-        values = _parse_area_mentions(text)
-        for val in values:
-            priority = 1 if path.startswith("rooms[") or path == "listing.name" else 0
-            candidates.append(
-                (
-                    val,
-                    Evidence(
-                        source=EvidenceSource.STRUCTURED,
-                        path=path,
-                        snippet=text,
-                    ),
-                    priority,
-                )
-            )
 
-    if not candidates:
-        return None, []
+def match_area_candidates(
+    values: list[float],
+    filters: SearchFilters | None,
+    evidence: List[Evidence] | None = None,
+    missing_reason: str | None = None,
+) -> Optional[NumericMatchResult]:
+    """Several unit sizes (different room types) count only if they all agree."""
+    if len(values) == 1:
+        return match_area_filters(values[0], filters, evidence)
 
-    candidates.sort(key=lambda x: (x[2], x[0]), reverse=True)
-    best_value, best_evidence, _ = candidates[0]
-    return best_value, [best_evidence]
+    result = match_area_filters(None, filters, evidence)
+    if result is None or not values:
+        if result is not None and missing_reason:
+            result = replace(result, why=missing_reason)
+        return result
+
+    outcomes = {match_area_filters(v, filters).value for v in values}
+    sizes = ", ".join(f"{v:g}" for v in values)
+    if outcomes == {Ternary.YES}:
+        return NumericMatchResult(attribute="area_sqm", value=Ternary.YES, actual_value=min(values),
+                                  evidence=evidence or [], why=f"AREA: every unit size ({sizes} sqm) fits")
+    if outcomes == {Ternary.NO}:
+        return NumericMatchResult(attribute="area_sqm", value=Ternary.NO, actual_value=max(values),
+                                  evidence=evidence or [], why=f"AREA: no unit size ({sizes} sqm) fits")
+    return replace(result, why=f"AREA: unit sizes differ ({sizes} sqm); it depends on which one is booked")
 
 
 def match_bedrooms_filters(
@@ -778,7 +783,7 @@ def evaluate_numeric_filters(
     Единая точка входа для numeric extraction + matching.
     """
     bedroom_count, bedroom_evidence = extract_bedroom_count(listing)
-    area_sqm, area_evidence = extract_area_sqm(listing)
+    area_values, area_evidence, area_missing_reason = extract_area_candidates(listing)
     bathroom_count, bathroom_evidence = extract_bathroom_count(listing)
     total_price, listing_currency, price_evidence = extract_total_price(listing)
 
@@ -792,10 +797,11 @@ def evaluate_numeric_filters(
     if br is not None:
         results.append(br)
 
-    ar = match_area_filters(
-        area_sqm=area_sqm,
-        filters=filters,
-        evidence=area_evidence,
+    ar = match_area_candidates(
+        area_values,
+        filters,
+        area_evidence,
+        area_missing_reason,
     )
     if ar is not None:
         results.append(ar)
