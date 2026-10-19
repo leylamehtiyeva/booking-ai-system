@@ -98,6 +98,22 @@ describe("DemoApp", () => {
     expect(calls[2]).toEqual({ message: REFINE.request, sessionId: SEARCH.response.session_id });
   });
 
+  it("shows a daily limit without offering to resend", async () => {
+    const limit = new ApiError("rate_limited", "You have reached the demo's message limit for today.", false);
+    const { transport, calls } = scripted(SEARCH.response, limit);
+    render(<DemoApp transport={transport} />);
+
+    await sendText(SEARCH.request);
+    await screen.findAllByRole("article");
+    await sendText(REFINE.request);
+
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toContain("message limit for today");
+    expect(within(alert).queryByRole("button")).toBeNull();
+    expect(screen.getAllByRole("article")).toHaveLength(SEARCH.response.listing_cards.length); // results kept
+    expect(calls).toHaveLength(2);
+  });
+
   it("puts the selected result's decision in the inspector", async () => {
     const { transport } = scripted(SEARCH.response);
     render(<DemoApp transport={transport} />);

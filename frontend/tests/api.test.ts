@@ -35,6 +35,17 @@ describe("httpTransport", () => {
     await expect(transport.send("x", "abc")).rejects.toMatchObject({ kind });
   });
 
+  it.each([
+    ["visitor", false],
+    ["global", false],
+    ["busy", true],
+  ])("maps HTTP 429 (%s) to a rate limit with the server's message", async (scope, retryable) => {
+    const body = { detail: { code: "rate_limited", scope, message: `limit: ${scope}` } };
+    const error = await httpTransport("", vi.fn(async () => json(429, body))).send("x", "abc").catch((e: unknown) => e);
+
+    expect(error).toMatchObject({ kind: "rate_limited", message: `limit: ${scope}`, retryable });
+  });
+
   it("reports an unreachable backend", async () => {
     const transport = httpTransport("", vi.fn(async () => Promise.reject(new TypeError("fetch failed"))));
     const error = await transport.send("x", null).catch((e: unknown) => e);

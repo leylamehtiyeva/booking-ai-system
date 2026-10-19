@@ -100,7 +100,8 @@ export default function DemoApp({ transport, mock = false }: Props) {
         add({ kind: "notice", text: error.message, retry: { text, fresh: true } });
       } else {
         const message = error instanceof ApiError ? error.message : "Something unexpected happened. Please try again.";
-        add({ kind: "notice", text: message, retry: { text, fresh: false } });
+        const retryable = !(error instanceof ApiError) || error.retryable;
+        add({ kind: "notice", text: message, retry: retryable ? { text, fresh: false } : undefined });
       }
     } finally {
       setPending(false);

@@ -227,6 +227,8 @@ A thin FastAPI adapter over `process_turn` (`app/api/main.py`):
 
 Sessions are kept in memory: a restart loses them and they are not shared between workers, so run one worker. Allowed browser origins are set with `BOOKING_API_CORS_ORIGINS` (default: the Astro dev server on port 4321). Interactive docs: `/docs`.
 
+The API always searches the bundled sample listings (`source="fixtures"`); no visitor message ever starts an Apify run. Usage limits are checked before any LLM call — by default 8 turns per visitor (client IP) per 24 hours, 30 turns per UTC day in total and 2 turns in flight — and a rejected request gets `429 rate_limited` without changing the conversation. Counts are kept in SQLite (`BOOKING_API_USAGE_DB`, default `var/usage.sqlite3`), so they survive a restart when that file is on persistent storage. All settings are listed in `.env.example`. The limits count turns, not money: keep a spend cap on the Gemini project too.
+
 Python, Pydantic, FastAPI, Streamlit, Gemini/Groq, Apify, pytest.
 
 ## Status / Limitations

@@ -5,6 +5,7 @@ export const MAX_MESSAGE_LENGTH = 2000; // app/api/main.py
 export type ApiErrorKind =
   | "session_expired" // 404 session_not_found: server restarted or session idle too long
   | "invalid_message" // 422
+  | "rate_limited" // 429: usage limit reached or the demo is busy
   | "server_error" // 500 and other non-2xx
   | "network"; // backend unreachable
 
@@ -12,6 +13,8 @@ export class ApiError extends Error {
   constructor(
     readonly kind: ApiErrorKind,
     message: string,
+    /** False when sending the same message again cannot help (e.g. a daily limit). */
+    readonly retryable = true,
   ) {
     super(message);
     this.name = "ApiError";
@@ -52,6 +55,14 @@ export function httpTransport(baseUrl = "", fetchImpl: typeof fetch = fetch): Ch
         throw new ApiError(
           "session_expired",
           "This conversation has expired - the demo server keeps conversations in memory only. Your message was not sent.",
+        );
+      }
+      if (response.status === 429) {
+        const scope = (body as { detail?: { scope?: string } } | null)?.detail?.scope;
+        throw new ApiError(
+          "rate_limited",
+          detailMessage(body) ?? "The demo is busy right now. Please try again in a few seconds.",
+          scope === "busy",
         );
       }
       if (response.status === 422) {

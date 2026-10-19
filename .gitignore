@@ -42,3 +42,6 @@ evaluation/outputs/*.jsonl
 logs/*
 !logs/.gitkeep
 !logs/README.md
+
+# Usage-limit database of the API (app/api/usage_limits.py)
+var/

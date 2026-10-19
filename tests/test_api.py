@@ -18,6 +18,7 @@ from app.agents.intent_router_agent import IntentRoute
 from app.api import main as api_main
 from app.api.main import create_app
 from app.api.session_store import InMemorySessionStore, SessionNotFoundError
+from app.api.usage_limits import UsageLimitConfig
 from app.config import clock
 from app.llm.call_policy import LlmCallError
 from app.logic import conversation_flow, intent_router, intent_update
@@ -67,9 +68,13 @@ def scripted(monkeypatch):
     assert all(not queue for queue in queues.values()), queues
 
 
+def _limits(tmp_path) -> UsageLimitConfig:
+    return UsageLimitConfig(db_path=str(tmp_path / "usage.sqlite3"))
+
+
 @pytest.fixture
-def client():
-    app = create_app(turn_config=TurnConfig(persist_telemetry=False))
+def client(tmp_path):
+    app = create_app(turn_config=TurnConfig(persist_telemetry=False), usage_config=_limits(tmp_path))
     with clock.use_reference_date(TODAY), TestClient(app) as test_client:
         yield test_client
 
@@ -177,7 +182,7 @@ def test_unexpected_error_is_500_and_keeps_the_stored_session(client, scripted, 
     assert sessions._entries[first["session_id"]].session.model_dump() == before
 
 
-async def test_concurrent_messages_in_one_session_do_not_lose_updates(monkeypatch):
+async def test_concurrent_messages_in_one_session_do_not_lose_updates(monkeypatch, tmp_path):
     """Two requests in the same session run in order; the second sees the first."""
     from app.services import conversation_service
 
@@ -193,7 +198,7 @@ async def test_concurrent_messages_in_one_session_do_not_lose_updates(monkeypatc
     monkeypatch.setattr(conversation_flow, "route_conversation_async", lambda **kw: _general_chat())
     monkeypatch.setattr("app.logic.conversation_response_llm.build_adk_model", _no_response_model)
 
-    app = create_app(turn_config=TurnConfig(persist_telemetry=False))
+    app = create_app(turn_config=TurnConfig(persist_telemetry=False), usage_config=_limits(tmp_path))
     session_id = app.state.sessions.create()
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as http:
