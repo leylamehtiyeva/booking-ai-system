@@ -38,8 +38,12 @@ evaluation/outputs/*.jsonl
 
 
 
-# Runtime logs / telemetry
+# Runtime logs / telemetry (local only: raw provider responses and per-turn
+# telemetry can hold message text and third-party contact details)
 logs/*
+logs/telemetry/
+logs/apify_raw/
+logs/brightdata_raw/
 !logs/.gitkeep
 !logs/README.md
 
