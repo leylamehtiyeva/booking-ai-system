@@ -1,0 +1,1033 @@
+{
+  "search_refine_ask": [
+    {
+      "request": "Apartment in Baku from April 10 to 15 with WiFi and a kitchen, up to $150 per night. A quiet street would be nice.",
+      "response": {
+        "session_id": "3a99e041fdca45c0971b031b48dc8ee3",
+        "assistant_message": "I found 2 option(s) that match your requirements in Baku for 2026-04-10 to 2026-04-15.\n\n1. Modern Loft Apartment\nStrong match\nPrice: 750.0 USD total for 5 night(s)\nMatches:\n- Kitchen\n- Wifi — WiFi\nNeeds confirmation:\n- Quiet street — Not confirmed (optional)\nLink: https://example.com/baku-apt-3\n\n2. City Center Compact Loft\nStrong match\nPrice: 350.0 USD total for 5 night(s)\nMatches:\n- Kitchen — Kitchenette\n- Wifi — WiFi\nNeeds confirmation:\n- Quiet street — Not confirmed (optional)\nLink: https://example.com/baku-apt-6\n\nI can also refine this further — for example, I can focus on listings with more fully confirmed requested constraints, tighten or relax the budget, narrow by location.\n\n1. [Modern Loft Apartment](https://example.com/baku-apt-3)\n2. [City Center Compact Loft](https://example.com/baku-apt-6)",
+        "outcome_kind": "search",
+        "conversation_action": "start_search",
+        "listing_cards": [
+          {
+            "result_id": "baku-apt-3",
+            "position": 1,
+            "title": "Modern Loft Apartment",
+            "url": "https://example.com/baku-apt-3",
+            "price_summary": "750.0 USD total for 5 night(s)",
+            "budget_summary": "Within your budget of 750.0 USD",
+            "match_tier": "strong",
+            "status_label": "strong_match_with_caveats",
+            "confirmed": [
+              {
+                "name": "kitchen",
+                "label": "Kitchen",
+                "reason": "Kitchen"
+              },
+              {
+                "name": "wifi",
+                "label": "Wifi",
+                "reason": "WiFi"
+              },
+              {
+                "name": "price_total",
+                "label": "Budget",
+                "reason": "PRICE: 750.0 <= allowed total 750.0"
+              }
+            ],
+            "needs_confirmation": [
+              {
+                "name": "quiet street",
+                "label": "Quiet street",
+                "reason": "Not confirmed (optional)"
+              }
+            ],
+            "not_satisfied": []
+          },
+          {
+            "result_id": "baku-apt-6",
+            "position": 2,
+            "title": "City Center Compact Loft",
+            "url": "https://example.com/baku-apt-6",
+            "price_summary": "350.0 USD total for 5 night(s)",
+            "budget_summary": "Within your budget of 750.0 USD",
+            "match_tier": "strong",
+            "status_label": "strong_match_with_caveats",
+            "confirmed": [
+              {
+                "name": "kitchen",
+                "label": "Kitchen",
+                "reason": "Kitchenette"
+              },
+              {
+                "name": "wifi",
+                "label": "Wifi",
+                "reason": "WiFi"
+              },
+              {
+                "name": "price_total",
+                "label": "Budget",
+                "reason": "PRICE: 350.0 <= allowed total 750.0"
+              }
+            ],
+            "needs_confirmation": [
+              {
+                "name": "quiet street",
+                "label": "Quiet street",
+                "reason": "Not confirmed (optional)"
+              }
+            ],
+            "not_satisfied": []
+          }
+        ],
+        "inspector": {
+          "routing": {
+            "action": "start_search",
+            "reason": "scripted for the frontend mock",
+            "decision_status": "resolved",
+            "clarification_reason": "none",
+            "result_scope": "not_applicable",
+            "target_result_id": ""
+          },
+          "effective_action": "start_search",
+          "response_source": "deterministic_fallback",
+          "current_search": {
+            "city": "Baku",
+            "check_in": "2026-04-10",
+            "check_out": "2026-04-15",
+            "adults": 2,
+            "children": 0,
+            "rooms": 1,
+            "currency": "USD",
+            "budget_max": null,
+            "min_guest_rating": null,
+            "filters": {
+              "bedrooms_min": null,
+              "bedrooms_max": null,
+              "area_sqm_min": null,
+              "area_sqm_max": null,
+              "bathrooms_min": null,
+              "bathrooms_max": null,
+              "price": {
+                "min_amount": null,
+                "max_amount": 150.0,
+                "currency": "USD",
+                "scope": "per_night"
+              }
+            },
+            "property_types": [
+              "apartment"
+            ],
+            "occupancy_types": null,
+            "constraints": [
+              {
+                "id": "bb5367ab-c76a-4010-9fe4-d70eca537a4c",
+                "raw_text": "wifi",
+                "normalized_text": "wifi",
+                "priority": "must",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": [
+                  "wifi"
+                ],
+                "evidence_strategy": "structured"
+              },
+              {
+                "id": "095d09bd-a3b7-4104-bc3f-d1732b996eb3",
+                "raw_text": "kitchen",
+                "normalized_text": "kitchen",
+                "priority": "must",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": [
+                  "kitchen"
+                ],
+                "evidence_strategy": "structured"
+              },
+              {
+                "id": "7440000f-8cde-4ef6-a5a9-763ca758f1b2",
+                "raw_text": "quiet street",
+                "normalized_text": "quiet street",
+                "priority": "nice",
+                "category": "other",
+                "mapping_status": "unresolved",
+                "mapped_fields": [],
+                "evidence_strategy": "textual"
+              }
+            ]
+          },
+          "search_status": "results",
+          "results": [
+            {
+              "result_id": "baku-apt-3",
+              "title": "Modern Loft Apartment",
+              "score": 30.0,
+              "eligibility_status": "eligible",
+              "match_tier": "strong",
+              "selection_reasons": [
+                "all required constraints are confirmed"
+              ],
+              "blocking_reasons": [],
+              "matched_constraints": [
+                {
+                  "name": "kitchen",
+                  "status": "matched",
+                  "reason": "Kitchen",
+                  "constraint": {
+                    "id": "095d09bd-a3b7-4104-bc3f-d1732b996eb3",
+                    "raw_text": "kitchen",
+                    "normalized_text": "kitchen",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": [
+                      "kitchen"
+                    ],
+                    "evidence_strategy": "structured"
+                  }
+                },
+                {
+                  "name": "wifi",
+                  "status": "matched",
+                  "reason": "WiFi",
+                  "constraint": {
+                    "id": "bb5367ab-c76a-4010-9fe4-d70eca537a4c",
+                    "raw_text": "wifi",
+                    "normalized_text": "wifi",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": [
+                      "wifi"
+                    ],
+                    "evidence_strategy": "structured"
+                  }
+                },
+                {
+                  "name": "price_total",
+                  "status": "matched",
+                  "reason": "PRICE: 750.0 <= allowed total 750.0",
+                  "constraint": null
+                }
+              ],
+              "uncertain_constraints": [
+                {
+                  "name": "quiet street",
+                  "status": "uncertain",
+                  "reason": "Not confirmed (optional)",
+                  "constraint": {
+                    "id": "7440000f-8cde-4ef6-a5a9-763ca758f1b2",
+                    "raw_text": "quiet street",
+                    "normalized_text": "quiet street",
+                    "priority": "nice",
+                    "category": "other",
+                    "mapping_status": "unresolved",
+                    "mapped_fields": [],
+                    "evidence_strategy": "textual"
+                  }
+                }
+              ],
+              "failed_constraints": [],
+              "constraint_resolution_results": []
+            },
+            {
+              "result_id": "baku-apt-6",
+              "title": "City Center Compact Loft",
+              "score": 30.0,
+              "eligibility_status": "eligible",
+              "match_tier": "strong",
+              "selection_reasons": [
+                "all required constraints are confirmed"
+              ],
+              "blocking_reasons": [],
+              "matched_constraints": [
+                {
+                  "name": "kitchen",
+                  "status": "matched",
+                  "reason": "Kitchenette",
+                  "constraint": {
+                    "id": "095d09bd-a3b7-4104-bc3f-d1732b996eb3",
+                    "raw_text": "kitchen",
+                    "normalized_text": "kitchen",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": [
+                      "kitchen"
+                    ],
+                    "evidence_strategy": "structured"
+                  }
+                },
+                {
+                  "name": "wifi",
+                  "status": "matched",
+                  "reason": "WiFi",
+                  "constraint": {
+                    "id": "bb5367ab-c76a-4010-9fe4-d70eca537a4c",
+                    "raw_text": "wifi",
+                    "normalized_text": "wifi",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": [
+                      "wifi"
+                    ],
+                    "evidence_strategy": "structured"
+                  }
+                },
+                {
+                  "name": "price_total",
+                  "status": "matched",
+                  "reason": "PRICE: 350.0 <= allowed total 750.0",
+                  "constraint": null
+                }
+              ],
+              "uncertain_constraints": [
+                {
+                  "name": "quiet street",
+                  "status": "uncertain",
+                  "reason": "Not confirmed (optional)",
+                  "constraint": {
+                    "id": "7440000f-8cde-4ef6-a5a9-763ca758f1b2",
+                    "raw_text": "quiet street",
+                    "normalized_text": "quiet street",
+                    "priority": "nice",
+                    "category": "other",
+                    "mapping_status": "unresolved",
+                    "mapped_fields": [],
+                    "evidence_strategy": "textual"
+                  }
+                }
+              ],
+              "failed_constraints": [],
+              "constraint_resolution_results": []
+            }
+          ],
+          "listing_query": [],
+          "notes": []
+        },
+        "failure": null,
+        "telemetry": {
+          "trace_id": "e1d525b5-86bf-4e4a-bfd9-3d9821282eb1",
+          "latency_ms": 6.34,
+          "estimated_cost_usd": 0.000137,
+          "llm_calls": 1,
+          "failed_llm_calls": 1
+        }
+      }
+    },
+    {
+      "request": "Only show places with a balcony.",
+      "response": {
+        "session_id": "3a99e041fdca45c0971b031b48dc8ee3",
+        "assistant_message": "I found 2 option(s) that match your requirements in Baku for 2026-04-10 to 2026-04-15.\n\n1. Smokers Loft Baku\nStrong match\nPrice: 275.0 USD total for 5 night(s)\nMatches:\n- Balcony — Apartment in Baku with kitchen and balcony.\n- Kitchen\n- Wifi — Free WiFi\nNeeds confirmation:\n- Quiet street — Not confirmed (optional)\nLink: https://example.com/baku-apt-smoking\n\n2. Non-smoking Apartment Baku\nStrong match\nPrice: 275.0 USD total for 5 night(s)\nMatches:\n- Balcony — Apartment in Baku with kitchen and balcony.\n- Kitchen\n- Wifi — Free WiFi\nNeeds confirmation:\n- Quiet street — Not confirmed (optional)\nLink: https://example.com/baku-apt-nonsmoking\n\nI can also refine this further — for example, I can focus on listings with more fully confirmed requested constraints, tighten or relax the budget, narrow by location.\n\n1. [Smokers Loft Baku](https://example.com/baku-apt-smoking)\n2. [Non-smoking Apartment Baku](https://example.com/baku-apt-nonsmoking)",
+        "outcome_kind": "search",
+        "conversation_action": "update_search",
+        "listing_cards": [
+          {
+            "result_id": "baku-apt-smoking",
+            "position": 1,
+            "title": "Smokers Loft Baku",
+            "url": "https://example.com/baku-apt-smoking",
+            "price_summary": "275.0 USD total for 5 night(s)",
+            "budget_summary": "Within your budget of 750.0 USD",
+            "match_tier": "strong",
+            "status_label": "strong_match_with_caveats",
+            "confirmed": [
+              {
+                "name": "balcony",
+                "label": "Balcony",
+                "reason": "Apartment in Baku with kitchen and balcony."
+              },
+              {
+                "name": "kitchen",
+                "label": "Kitchen",
+                "reason": "Kitchen"
+              },
+              {
+                "name": "wifi",
+                "label": "Wifi",
+                "reason": "Free WiFi"
+              },
+              {
+                "name": "price_total",
+                "label": "Budget",
+                "reason": "PRICE: 275.0 <= allowed total 750.0"
+              }
+            ],
+            "needs_confirmation": [
+              {
+                "name": "quiet street",
+                "label": "Quiet street",
+                "reason": "Not confirmed (optional)"
+              }
+            ],
+            "not_satisfied": []
+          },
+          {
+            "result_id": "baku-apt-nonsmoking",
+            "position": 2,
+            "title": "Non-smoking Apartment Baku",
+            "url": "https://example.com/baku-apt-nonsmoking",
+            "price_summary": "275.0 USD total for 5 night(s)",
+            "budget_summary": "Within your budget of 750.0 USD",
+            "match_tier": "strong",
+            "status_label": "strong_match_with_caveats",
+            "confirmed": [
+              {
+                "name": "balcony",
+                "label": "Balcony",
+                "reason": "Apartment in Baku with kitchen and balcony."
+              },
+              {
+                "name": "kitchen",
+                "label": "Kitchen",
+                "reason": "Kitchen"
+              },
+              {
+                "name": "wifi",
+                "label": "Wifi",
+                "reason": "Free WiFi"
+              },
+              {
+                "name": "price_total",
+                "label": "Budget",
+                "reason": "PRICE: 275.0 <= allowed total 750.0"
+              }
+            ],
+            "needs_confirmation": [
+              {
+                "name": "quiet street",
+                "label": "Quiet street",
+                "reason": "Not confirmed (optional)"
+              }
+            ],
+            "not_satisfied": []
+          }
+        ],
+        "inspector": {
+          "routing": {
+            "action": "update_search",
+            "reason": "scripted for the frontend mock",
+            "decision_status": "resolved",
+            "clarification_reason": "none",
+            "result_scope": "not_applicable",
+            "target_result_id": ""
+          },
+          "effective_action": "update_search",
+          "response_source": "deterministic_fallback",
+          "current_search": {
+            "city": "Baku",
+            "check_in": "2026-04-10",
+            "check_out": "2026-04-15",
+            "adults": 2,
+            "children": 0,
+            "rooms": 1,
+            "currency": "USD",
+            "budget_max": null,
+            "min_guest_rating": null,
+            "filters": {
+              "bedrooms_min": null,
+              "bedrooms_max": null,
+              "area_sqm_min": null,
+              "area_sqm_max": null,
+              "bathrooms_min": null,
+              "bathrooms_max": null,
+              "price": {
+                "min_amount": null,
+                "max_amount": 150.0,
+                "currency": "USD",
+                "scope": "per_night"
+              }
+            },
+            "property_types": [
+              "apartment"
+            ],
+            "occupancy_types": null,
+            "constraints": [
+              {
+                "id": "bb5367ab-c76a-4010-9fe4-d70eca537a4c",
+                "raw_text": "wifi",
+                "normalized_text": "wifi",
+                "priority": "must",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": [
+                  "wifi"
+                ],
+                "evidence_strategy": "structured"
+              },
+              {
+                "id": "095d09bd-a3b7-4104-bc3f-d1732b996eb3",
+                "raw_text": "kitchen",
+                "normalized_text": "kitchen",
+                "priority": "must",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": [
+                  "kitchen"
+                ],
+                "evidence_strategy": "structured"
+              },
+              {
+                "id": "7440000f-8cde-4ef6-a5a9-763ca758f1b2",
+                "raw_text": "quiet street",
+                "normalized_text": "quiet street",
+                "priority": "nice",
+                "category": "other",
+                "mapping_status": "unresolved",
+                "mapped_fields": [],
+                "evidence_strategy": "textual"
+              },
+              {
+                "id": "66e4466e-ba62-43d8-b60a-20cee5e177cc",
+                "raw_text": "balcony",
+                "normalized_text": "balcony",
+                "priority": "must",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": [
+                  "balcony"
+                ],
+                "evidence_strategy": "structured"
+              }
+            ]
+          },
+          "search_status": "results",
+          "results": [
+            {
+              "result_id": "baku-apt-smoking",
+              "title": "Smokers Loft Baku",
+              "score": 40.0,
+              "eligibility_status": "eligible",
+              "match_tier": "strong",
+              "selection_reasons": [
+                "all required constraints are confirmed"
+              ],
+              "blocking_reasons": [],
+              "matched_constraints": [
+                {
+                  "name": "balcony",
+                  "status": "matched",
+                  "reason": "Apartment in Baku with kitchen and balcony.",
+                  "constraint": {
+                    "id": "66e4466e-ba62-43d8-b60a-20cee5e177cc",
+                    "raw_text": "balcony",
+                    "normalized_text": "balcony",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": [
+                      "balcony"
+                    ],
+                    "evidence_strategy": "structured"
+                  }
+                },
+                {
+                  "name": "kitchen",
+                  "status": "matched",
+                  "reason": "Kitchen",
+                  "constraint": {
+                    "id": "095d09bd-a3b7-4104-bc3f-d1732b996eb3",
+                    "raw_text": "kitchen",
+                    "normalized_text": "kitchen",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": [
+                      "kitchen"
+                    ],
+                    "evidence_strategy": "structured"
+                  }
+                },
+                {
+                  "name": "wifi",
+                  "status": "matched",
+                  "reason": "Free WiFi",
+                  "constraint": {
+                    "id": "bb5367ab-c76a-4010-9fe4-d70eca537a4c",
+                    "raw_text": "wifi",
+                    "normalized_text": "wifi",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": [
+                      "wifi"
+                    ],
+                    "evidence_strategy": "structured"
+                  }
+                },
+                {
+                  "name": "price_total",
+                  "status": "matched",
+                  "reason": "PRICE: 275.0 <= allowed total 750.0",
+                  "constraint": null
+                }
+              ],
+              "uncertain_constraints": [
+                {
+                  "name": "quiet street",
+                  "status": "uncertain",
+                  "reason": "Not confirmed (optional)",
+                  "constraint": {
+                    "id": "7440000f-8cde-4ef6-a5a9-763ca758f1b2",
+                    "raw_text": "quiet street",
+                    "normalized_text": "quiet street",
+                    "priority": "nice",
+                    "category": "other",
+                    "mapping_status": "unresolved",
+                    "mapped_fields": [],
+                    "evidence_strategy": "textual"
+                  }
+                }
+              ],
+              "failed_constraints": [],
+              "constraint_resolution_results": []
+            },
+            {
+              "result_id": "baku-apt-nonsmoking",
+              "title": "Non-smoking Apartment Baku",
+              "score": 40.0,
+              "eligibility_status": "eligible",
+              "match_tier": "strong",
+              "selection_reasons": [
+                "all required constraints are confirmed"
+              ],
+              "blocking_reasons": [],
+              "matched_constraints": [
+                {
+                  "name": "balcony",
+                  "status": "matched",
+                  "reason": "Apartment in Baku with kitchen and balcony.",
+                  "constraint": {
+                    "id": "66e4466e-ba62-43d8-b60a-20cee5e177cc",
+                    "raw_text": "balcony",
+                    "normalized_text": "balcony",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": [
+                      "balcony"
+                    ],
+                    "evidence_strategy": "structured"
+                  }
+                },
+                {
+                  "name": "kitchen",
+                  "status": "matched",
+                  "reason": "Kitchen",
+                  "constraint": {
+                    "id": "095d09bd-a3b7-4104-bc3f-d1732b996eb3",
+                    "raw_text": "kitchen",
+                    "normalized_text": "kitchen",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": [
+                      "kitchen"
+                    ],
+                    "evidence_strategy": "structured"
+                  }
+                },
+                {
+                  "name": "wifi",
+                  "status": "matched",
+                  "reason": "Free WiFi",
+                  "constraint": {
+                    "id": "bb5367ab-c76a-4010-9fe4-d70eca537a4c",
+                    "raw_text": "wifi",
+                    "normalized_text": "wifi",
+                    "priority": "must",
+                    "category": "amenity",
+                    "mapping_status": "known",
+                    "mapped_fields": [
+                      "wifi"
+                    ],
+                    "evidence_strategy": "structured"
+                  }
+                },
+                {
+                  "name": "price_total",
+                  "status": "matched",
+                  "reason": "PRICE: 275.0 <= allowed total 750.0",
+                  "constraint": null
+                }
+              ],
+              "uncertain_constraints": [
+                {
+                  "name": "quiet street",
+                  "status": "uncertain",
+                  "reason": "Not confirmed (optional)",
+                  "constraint": {
+                    "id": "7440000f-8cde-4ef6-a5a9-763ca758f1b2",
+                    "raw_text": "quiet street",
+                    "normalized_text": "quiet street",
+                    "priority": "nice",
+                    "category": "other",
+                    "mapping_status": "unresolved",
+                    "mapped_fields": [],
+                    "evidence_strategy": "textual"
+                  }
+                }
+              ],
+              "failed_constraints": [],
+              "constraint_resolution_results": []
+            }
+          ],
+          "listing_query": [],
+          "notes": []
+        },
+        "failure": null,
+        "telemetry": {
+          "trace_id": "b2138ac2-826b-493a-9797-51d11c2c8889",
+          "latency_ms": 5.58,
+          "estimated_cost_usd": 0.00018,
+          "llm_calls": 4,
+          "failed_llm_calls": 1
+        }
+      }
+    },
+    {
+      "request": "Does the first one have parking?",
+      "response": {
+        "session_id": "3a99e041fdca45c0971b031b48dc8ee3",
+        "assistant_message": "I couldn't verify parking for Smokers Loft Baku from the listing information.",
+        "outcome_kind": "listing_query",
+        "conversation_action": "listing_question",
+        "listing_cards": [],
+        "inspector": {
+          "routing": {
+            "action": "listing_question",
+            "reason": "scripted for the frontend mock",
+            "decision_status": "resolved",
+            "clarification_reason": "none",
+            "result_scope": "specific_result",
+            "target_result_id": "baku-apt-smoking"
+          },
+          "effective_action": "listing_question",
+          "response_source": "deterministic",
+          "current_search": {
+            "city": "Baku",
+            "check_in": "2026-04-10",
+            "check_out": "2026-04-15",
+            "adults": 2,
+            "children": 0,
+            "rooms": 1,
+            "currency": "USD",
+            "budget_max": null,
+            "min_guest_rating": null,
+            "filters": {
+              "bedrooms_min": null,
+              "bedrooms_max": null,
+              "area_sqm_min": null,
+              "area_sqm_max": null,
+              "bathrooms_min": null,
+              "bathrooms_max": null,
+              "price": {
+                "min_amount": null,
+                "max_amount": 150.0,
+                "currency": "USD",
+                "scope": "per_night"
+              }
+            },
+            "property_types": [
+              "apartment"
+            ],
+            "occupancy_types": null,
+            "constraints": [
+              {
+                "id": "bb5367ab-c76a-4010-9fe4-d70eca537a4c",
+                "raw_text": "wifi",
+                "normalized_text": "wifi",
+                "priority": "must",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": [
+                  "wifi"
+                ],
+                "evidence_strategy": "structured"
+              },
+              {
+                "id": "095d09bd-a3b7-4104-bc3f-d1732b996eb3",
+                "raw_text": "kitchen",
+                "normalized_text": "kitchen",
+                "priority": "must",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": [
+                  "kitchen"
+                ],
+                "evidence_strategy": "structured"
+              },
+              {
+                "id": "7440000f-8cde-4ef6-a5a9-763ca758f1b2",
+                "raw_text": "quiet street",
+                "normalized_text": "quiet street",
+                "priority": "nice",
+                "category": "other",
+                "mapping_status": "unresolved",
+                "mapped_fields": [],
+                "evidence_strategy": "textual"
+              },
+              {
+                "id": "66e4466e-ba62-43d8-b60a-20cee5e177cc",
+                "raw_text": "balcony",
+                "normalized_text": "balcony",
+                "priority": "must",
+                "category": "amenity",
+                "mapping_status": "known",
+                "mapped_fields": [
+                  "balcony"
+                ],
+                "evidence_strategy": "structured"
+              }
+            ]
+          },
+          "search_status": null,
+          "results": [],
+          "listing_query": [
+            {
+              "position": 1,
+              "title": "Smokers Loft Baku",
+              "match": {
+                "result_id": "baku-apt-smoking",
+                "constraint_results": [
+                  {
+                    "constraint_id": "e7d9bf0a-8328-48a7-9796-9e9f2c7f2f2f",
+                    "raw_text": "parking",
+                    "field": "parking",
+                    "value": "UNCERTAIN",
+                    "evidence": [],
+                    "reason": "fallback_resolved"
+                  }
+                ]
+              }
+            }
+          ],
+          "notes": []
+        },
+        "failure": null,
+        "telemetry": {
+          "trace_id": "408aa26b-2c1c-4ff9-a678-e19cc006f899",
+          "latency_ms": 0.0,
+          "estimated_cost_usd": 0.0,
+          "llm_calls": 1,
+          "failed_llm_calls": 0
+        }
+      }
+    }
+  ],
+  "budget_clarification": [
+    {
+      "request": "A hotel in Baku from April 10 to 13, $200 max",
+      "response": {
+        "session_id": "76c91873ce2b42d7ae9d0d38a6f3fb15",
+        "assistant_message": "Do you mean $200 per night or $200 for the whole stay?",
+        "outcome_kind": "clarification",
+        "conversation_action": "start_search",
+        "listing_cards": [],
+        "inspector": {
+          "routing": {
+            "action": "start_search",
+            "reason": "scripted for the frontend mock",
+            "decision_status": "resolved",
+            "clarification_reason": "none",
+            "result_scope": "not_applicable",
+            "target_result_id": ""
+          },
+          "effective_action": "start_search",
+          "response_source": "deterministic_fallback",
+          "current_search": {
+            "city": "Baku",
+            "check_in": "2026-04-10",
+            "check_out": "2026-04-13",
+            "adults": 2,
+            "children": 0,
+            "rooms": 1,
+            "currency": "USD",
+            "budget_max": null,
+            "min_guest_rating": null,
+            "filters": {
+              "bedrooms_min": null,
+              "bedrooms_max": null,
+              "area_sqm_min": null,
+              "area_sqm_max": null,
+              "bathrooms_min": null,
+              "bathrooms_max": null,
+              "price": {
+                "min_amount": null,
+                "max_amount": 200.0,
+                "currency": "$",
+                "scope": null
+              }
+            },
+            "property_types": [
+              "hotel"
+            ],
+            "occupancy_types": null,
+            "constraints": []
+          },
+          "search_status": null,
+          "results": [],
+          "listing_query": [],
+          "notes": []
+        },
+        "failure": null,
+        "telemetry": {
+          "trace_id": "02da774e-5417-4a25-a5c6-d3f7165516dc",
+          "latency_ms": 0.09,
+          "estimated_cost_usd": 1.7e-05,
+          "llm_calls": 1,
+          "failed_llm_calls": 1
+        }
+      }
+    },
+    {
+      "request": "Per night",
+      "response": {
+        "session_id": "76c91873ce2b42d7ae9d0d38a6f3fb15",
+        "assistant_message": "I found 2 option(s) that match your requirements in Baku for 2026-04-10 to 2026-04-13.\n\n1. Large Hotel Room\n✅ Fully confirmed match\nPrice: 210.0 USD total for 3 night(s)\nLink: https://example.com/hotel-large\n\n2. Budget Hotel Room\n✅ Fully confirmed match\nPrice: 120.0 USD total for 3 night(s)\nLink: https://example.com/baku-hotel-1\n\nI can also refine this further — for example, I can tighten or relax the budget, narrow by location, change bedroom / bathroom / area requirements.\n\n1. [Large Hotel Room](https://example.com/hotel-large)\n2. [Budget Hotel Room](https://example.com/baku-hotel-1)",
+        "outcome_kind": "search",
+        "conversation_action": "update_search",
+        "listing_cards": [
+          {
+            "result_id": "hotel-large",
+            "position": 1,
+            "title": "Large Hotel Room",
+            "url": "https://example.com/hotel-large",
+            "price_summary": "210.0 USD total for 3 night(s)",
+            "budget_summary": "Within your budget of 600.0 $",
+            "match_tier": "strong",
+            "status_label": "fully_confirmed_match",
+            "confirmed": [
+              {
+                "name": "price_total",
+                "label": "Budget",
+                "reason": "PRICE: 210.0 <= allowed total 600.0"
+              }
+            ],
+            "needs_confirmation": [],
+            "not_satisfied": []
+          },
+          {
+            "result_id": "baku-hotel-1",
+            "position": 2,
+            "title": "Budget Hotel Room",
+            "url": "https://example.com/baku-hotel-1",
+            "price_summary": "120.0 USD total for 3 night(s)",
+            "budget_summary": "Within your budget of 600.0 $",
+            "match_tier": "strong",
+            "status_label": "fully_confirmed_match",
+            "confirmed": [
+              {
+                "name": "price_total",
+                "label": "Budget",
+                "reason": "PRICE: 120.0 <= allowed total 600.0"
+              }
+            ],
+            "needs_confirmation": [],
+            "not_satisfied": []
+          }
+        ],
+        "inspector": {
+          "routing": {
+            "action": "update_search",
+            "reason": "scripted for the frontend mock",
+            "decision_status": "resolved",
+            "clarification_reason": "none",
+            "result_scope": "not_applicable",
+            "target_result_id": ""
+          },
+          "effective_action": "update_search",
+          "response_source": "deterministic_fallback",
+          "current_search": {
+            "city": "Baku",
+            "check_in": "2026-04-10",
+            "check_out": "2026-04-13",
+            "adults": 2,
+            "children": 0,
+            "rooms": 1,
+            "currency": "USD",
+            "budget_max": null,
+            "min_guest_rating": null,
+            "filters": {
+              "bedrooms_min": null,
+              "bedrooms_max": null,
+              "area_sqm_min": null,
+              "area_sqm_max": null,
+              "bathrooms_min": null,
+              "bathrooms_max": null,
+              "price": {
+                "min_amount": null,
+                "max_amount": 200.0,
+                "currency": "$",
+                "scope": "per_night"
+              }
+            },
+            "property_types": [
+              "hotel"
+            ],
+            "occupancy_types": null,
+            "constraints": []
+          },
+          "search_status": "results",
+          "results": [
+            {
+              "result_id": "hotel-large",
+              "title": "Large Hotel Room",
+              "score": 10.0,
+              "eligibility_status": "eligible",
+              "match_tier": "strong",
+              "selection_reasons": [
+                "all required constraints are confirmed"
+              ],
+              "blocking_reasons": [],
+              "matched_constraints": [
+                {
+                  "name": "price_total",
+                  "status": "matched",
+                  "reason": "PRICE: 210.0 <= allowed total 600.0",
+                  "constraint": null
+                }
+              ],
+              "uncertain_constraints": [],
+              "failed_constraints": [],
+              "constraint_resolution_results": []
+            },
+            {
+              "result_id": "baku-hotel-1",
+              "title": "Budget Hotel Room",
+              "score": 10.0,
+              "eligibility_status": "eligible",
+              "match_tier": "strong",
+              "selection_reasons": [
+                "all required constraints are confirmed"
+              ],
+              "blocking_reasons": [],
+              "matched_constraints": [
+                {
+                  "name": "price_total",
+                  "status": "matched",
+                  "reason": "PRICE: 120.0 <= allowed total 600.0",
+                  "constraint": null
+                }
+              ],
+              "uncertain_constraints": [],
+              "failed_constraints": [],
+              "constraint_resolution_results": []
+            }
+          ],
+          "listing_query": [],
+          "notes": []
+        },
+        "failure": null,
+        "telemetry": {
+          "trace_id": "eaa4ae3b-c295-48a4-9900-c9f125fae91a",
+          "latency_ms": 2.82,
+          "estimated_cost_usd": 8.8e-05,
+          "llm_calls": 1,
+          "failed_llm_calls": 1
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+---
+import { CircleHelp, ListChecks, MessageSquareText, Scale, ShieldQuestion, SlidersHorizontal } from "lucide-react";
+import SectionHeader from "./SectionHeader.astro";
+
+const capabilities = [
+  {
+    icon: MessageSquareText,
+    tile: "tile-blue",
+    title: "Natural-language search",
+    body: "City, dates, guests, budget and what matters to you, written as one plain-English message.",
+    example: "Apartment in Baku, April 10–15, WiFi and a kitchen",
+  },
+  {
+    icon: ListChecks,
+    tile: "tile-indigo",
+    title: "Constraint extraction",
+    body: "Every wish becomes an explicit requirement, marked as required, nice to have or excluded.",
+    example: "kitchen · required   quiet street · optional",
+  },
+  {
+    icon: Scale,
+    tile: "tile-emerald",
+    title: "Transparent matching",
+    body: "Each listing shows which requirements are confirmed, not confirmed or not satisfied, with the reason.",
+    example: "✓ WiFi   ✓ Kitchen   ? Quiet street",
+  },
+  {
+    icon: SlidersHorizontal,
+    tile: "tile-amber",
+    title: "Conversational refinement",
+    body: "Change one thing in your own words. City, dates and the other requirements stay as they were.",
+    example: "Only show places with a balcony.",
+  },
+  {
+    icon: CircleHelp,
+    tile: "tile-blue",
+    title: "Listing questions",
+    body: "Ask about a listing you were shown. The answer is checked against that listing’s own data.",
+    example: "Does the first one have parking?",
+  },
+  {
+    icon: ShieldQuestion,
+    tile: "tile-indigo",
+    title: "Explicit uncertainty",
+    body: "When the data does not say, the answer is “not confirmed”. Unclear requests get one short question.",
+    example: "Do you mean $200 per night or for the whole stay?",
+  },
+];
+---
+
+<section id="capabilities" class="section section-alt">
+  <div class="container-page">
+    <SectionHeader title="What Booking AI can do" subtitle="Six things the live demo does today, each one visible in the Decision Inspector." />
+    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {capabilities.map((item) => (
+        <article class="card card-hover flex flex-col p-6">
+          <div class:list={["icon-tile mb-4", item.tile]}>
+            <item.icon size={20} strokeWidth={1.5} aria-hidden="true" />
+          </div>
+          <h3 class="text-base font-semibold text-ink">{item.title}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
+          <p class="mt-auto pt-4">
+            <span class="block rounded-lg border border-line bg-paper-sunk px-3 py-2 font-mono text-xs leading-relaxed text-ink-soft">{item.example}</span>
+          </p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

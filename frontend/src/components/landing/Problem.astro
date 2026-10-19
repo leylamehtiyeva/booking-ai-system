@@ -1,0 +1,48 @@
+---
+import { Check, X } from "lucide-react";
+import SectionHeader from "./SectionHeader.astro";
+
+const filters = [
+  "Translate “quiet, with a proper kitchen” into checkboxes that may not exist",
+  "Re-enter dates, budget and amenities every time one thing changes",
+  "Open listing after listing to see whether a filter really applied",
+];
+const conversation = [
+  "Say what you need in your own words, required and nice-to-have alike",
+  "Refine with one sentence; the rest of the search stays as it was",
+  "See per listing what is confirmed, not confirmed or not satisfied, and why",
+];
+---
+
+<section id="problem" class="section section-alt">
+  <div class="container-page">
+    <SectionHeader
+      title="Why conversational search"
+      subtitle="A stay is a set of requirements, some strict and some flexible. Filters flatten them into fields, and the real answer often sits in the listing text."
+    />
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="card p-6">
+        <h3 class="text-base font-semibold text-ink">With filters and pages</h3>
+        <ul class="mt-4 space-y-3">
+          {filters.map((item) => (
+            <li class="flex gap-2.5 text-sm leading-relaxed text-muted">
+              <X size={16} strokeWidth={1.75} class="mt-0.5 shrink-0 text-subtle" aria-hidden="true" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="card p-6">
+        <h3 class="text-base font-semibold text-ink">With Booking AI</h3>
+        <ul class="mt-4 space-y-3">
+          {conversation.map((item) => (
+            <li class="flex gap-2.5 text-sm leading-relaxed text-ink-soft">
+              <Check size={16} strokeWidth={1.75} class="mt-0.5 shrink-0 text-ok" aria-hidden="true" />
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

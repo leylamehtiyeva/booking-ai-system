@@ -1,0 +1,13 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  level?: "section" | "major";
+}
+const { title, subtitle, level = "section" } = Astro.props;
+---
+
+<div class="mb-12 text-center">
+  <h2 class:list={["font-bold tracking-tight text-ink", level === "major" ? "text-[1.75rem] md:text-3xl" : "text-2xl"]}>{title}</h2>
+  {subtitle && <p class="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-muted">{subtitle}</p>}
+</div>

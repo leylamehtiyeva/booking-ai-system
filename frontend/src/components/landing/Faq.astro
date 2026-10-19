@@ -1,0 +1,64 @@
+---
+import { REPO_URL } from "../../lib/site";
+import { ChevronDown } from "lucide-react";
+
+const faqs = [
+  {
+    q: "How does Booking AI understand my preferences?",
+    a: "A language model turns your message into a structured search: city, dates, guests, budget and a list of requirements, each marked as required, nice to have or excluded. Code then validates it — for example, it asks whether a budget is per night or for the whole stay instead of assuming.",
+  },
+  {
+    q: "What happens if listing information is incomplete?",
+    a: "Requirements are checked against structured listing fields first. If a field does not answer it, a model reads the listing text and has to quote it; the quote is verified against the listing. Anything still unproven is shown as “not confirmed” — it is never counted as a yes, and a required item that is not confirmed keeps a listing from being a strong match.",
+  },
+  {
+    q: "Can I refine my search?",
+    a: "Yes. Say what to change — “only places with a balcony”, “make it a hotel instead” — and the existing search is updated while everything else is kept. You can also ask about a listing you were shown, such as “Does the first one have parking?”.",
+  },
+  {
+    q: "Does Booking AI use real accommodation data?",
+    a: "The public demo runs on a bundled sample dataset, so listings, prices and links are illustrative and say nothing about real availability. The backend also has an optional Apify-based retriever for live listing data, which is not enabled in the demo.",
+  },
+  {
+    q: "Can I book accommodation through the assistant?",
+    a: "No. Booking AI is a search and decision assistant. It does not take bookings or payments and does not guarantee availability or prices.",
+  },
+  {
+    q: "Which languages does it support?",
+    a: "English. Requests in other languages are not supported yet.",
+  },
+  {
+    q: "Can I inspect the source code?",
+    a: "Yes. The whole project, including the backend, its tests and the evaluation harness, is on GitHub.",
+    link: true,
+  },
+];
+---
+
+<section id="faq" class="section section-alt">
+  <div class="mx-auto max-w-3xl px-6">
+    <h2 class="mb-8 text-center text-2xl font-bold tracking-tight text-ink">FAQ</h2>
+    <div class="border-b border-line">
+      {faqs.map((item) => (
+        <details class="group border-t border-line">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[0.9375rem] font-medium leading-snug text-ink [&::-webkit-details-marker]:hidden">
+            {item.q}
+            <ChevronDown size={16} strokeWidth={1.5} class="shrink-0 text-subtle transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <p class="pb-5 text-sm leading-relaxed text-muted">
+            {item.a}
+            {item.link && (
+              <>
+                {" "}
+                <a href={REPO_URL} class="text-ink underline underline-offset-2 hover:text-ink-soft" rel="noopener">
+                  View source code
+                </a>
+                .
+              </>
+            )}
+          </p>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>

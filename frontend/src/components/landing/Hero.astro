@@ -1,0 +1,84 @@
+---
+import { ArrowRight, FlaskConical, MessagesSquare, Workflow } from "lucide-react";
+import { ListingCard } from "../demo/ListingCard";
+import recorded from "../../mocks/turns.json";
+import type { TurnResult } from "../../lib/types";
+import { REPO_URL } from "../../lib/site";
+
+// A real backend response, recorded offline on the sample listings.
+const step = (recorded as unknown as Record<string, { request: string; response: TurnResult }[]>).search_refine_ask[0];
+const card = step.response.listing_cards[0];
+const decision = step.response.inspector.results[0];
+
+const highlights = [
+  { icon: MessagesSquare, title: "Multi-turn conversation", desc: "New search, refinement, listing questions and general chat, with explicit state between turns." },
+  { icon: Workflow, title: "Seven-stage pipeline", desc: "LLMs interpret language; deterministic code matches, verifies evidence and ranks." },
+  { icon: FlaskConical, title: "1,000+ offline tests", desc: "Hermetic test suite plus golden-set and end-to-end evaluation." },
+];
+---
+
+<section class="px-6 pb-16 pt-16 md:pt-20">
+  <div class="mx-auto max-w-2xl text-center">
+    <p class="mb-5 inline-flex items-center gap-2 rounded-full border border-line bg-paper-sunk px-3 py-1 text-xs font-medium text-muted">
+      <span class="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden="true"></span>
+      Conversational accommodation search
+    </p>
+    <h1 class="text-4xl font-extrabold leading-[1.15] tracking-tight text-ink sm:text-5xl">
+      Describe your stay.<br />Get answers you can check.
+    </h1>
+    <p class="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-muted">
+      Booking AI turns a plain-English request into explicit requirements, checks every listing against them, and shows what is confirmed,
+      what is not, and why.
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="/demo" class="btn btn-primary">
+        Try live demo
+        <ArrowRight size={16} strokeWidth={1.75} aria-hidden="true" />
+      </a>
+      <a href={REPO_URL} class="btn btn-ghost" rel="noopener">View source code</a>
+    </div>
+  </div>
+
+  <!-- Product preview: recorded backend output on the sample dataset. -->
+  <div class="mx-auto mt-14 max-w-3xl overflow-hidden rounded-xl border border-line bg-white shadow-sm">
+    <div class="flex items-center justify-between gap-3 border-b border-line bg-paper-sunk px-4 py-2.5">
+      <div class="flex items-center gap-1.5" aria-hidden="true">
+        <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
+        <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
+      </div>
+      <span class="text-xs text-subtle">Recorded backend output · sample data</span>
+    </div>
+    <div class="grid gap-5 p-5 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] md:p-6">
+      <div class="flex flex-col gap-3">
+        <p class="self-end rounded-xl rounded-br-sm bg-ink px-4 py-2.5 text-sm leading-relaxed text-white">{step.request}</p>
+        <div class="rounded-lg border border-line bg-paper-sunk p-4 text-left">
+          <p class="flex items-center gap-2 text-xs font-medium text-ink">
+            <span class="tag tag-ui">Inspector</span>
+            Why this result
+          </p>
+          <p class="mt-2 text-sm leading-relaxed text-muted">
+            Selected because {decision.selection_reasons.join("; ")}. {decision.matched_constraints.length} requirements confirmed, {decision.uncertain_constraints.length} optional detail not confirmed.
+          </p>
+        </div>
+      </div>
+      <div class="text-left">
+        <ListingCard card={card} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="border-t border-line py-14">
+  <div class="container-page grid gap-10 text-center sm:grid-cols-3">
+    {highlights.map((item) => (
+      <div>
+        <div class="icon-tile tile-gray mx-auto mb-3">
+          <item.icon size={20} strokeWidth={1.5} aria-hidden="true" />
+        </div>
+        <h3 class="text-sm font-semibold text-ink">{item.title}</h3>
+        <p class="mx-auto mt-1.5 max-w-xs text-sm leading-relaxed text-muted">{item.desc}</p>
+      </div>
+    ))}
+  </div>
+</section>

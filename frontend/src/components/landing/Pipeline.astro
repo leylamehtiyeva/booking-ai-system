@@ -1,0 +1,113 @@
+---
+import recorded from "../../mocks/turns.json";
+import type { TurnResult } from "../../lib/types";
+import { budgetText, PRIORITY_TEXT, stayText } from "../../lib/present";
+import SectionHeader from "./SectionHeader.astro";
+
+// One recorded turn on the sample listings illustrates every step.
+const step = (recorded as unknown as Record<string, { request: string; response: TurnResult }[]>).search_refine_ask[0];
+const search = step.response.inspector.current_search!;
+const results = step.response.inspector.results;
+const card = step.response.listing_cards[0];
+
+type Kind = "Input" | "LLM" | "LLM + Deterministic" | "Deterministic";
+const TAG: Record<Kind, string> = { Input: "", LLM: "tag-llm", "LLM + Deterministic": "tag-llm", Deterministic: "tag-det" };
+
+const steps: { title: string; kind: Kind; body: string }[] = [
+  { title: "User message", kind: "Input", body: "The message arrives with the conversation state: the current search and the listings already shown." },
+  {
+    title: "Intent understanding",
+    kind: "LLM + Deterministic",
+    body: "A router decides what the message is, and an LLM extracts the search. Code validates dates and asks when the budget scope is unclear.",
+  },
+  {
+    title: "Candidate retrieval",
+    kind: "Deterministic",
+    body: "Listings for the city and dates come from the listing source, in the demo a bundled sample dataset. No embeddings are used.",
+  },
+  { title: "Matching", kind: "Deterministic", body: "Requirements are checked against structured listing fields. Price, bedrooms and area are compared as numbers." },
+  {
+    title: "Evidence verification",
+    kind: "LLM + Deterministic",
+    body: "Requirements no field answers go to an LLM, which must quote the listing. The quote is checked against the listing text before it counts.",
+  },
+  { title: "Ranking", kind: "Deterministic", body: "Eligible listings are tiered and ordered by what is confirmed. An unconfirmed required item is never a strong match." },
+  {
+    title: "Response generation",
+    kind: "LLM",
+    body: "An LLM words the already-decided outcome, with a deterministic fallback. Facts about a listing are rendered straight from the verdict.",
+  },
+];
+
+const requirements = search.constraints.map((c) => `${c.normalized_text} · ${PRIORITY_TEXT[c.priority] ?? c.priority}`);
+---
+
+<section id="how-it-works" class="section section-alt">
+  <div class="mx-auto max-w-4xl px-6">
+    <SectionHeader
+      level="major"
+      title="How it works"
+      subtitle="Seven stages run on every search turn. Under each step, one real request shows what that stage produces."
+    />
+
+    <ol class="relative space-y-8 before:absolute before:bottom-4 before:left-[1.125rem] before:top-4 before:w-px before:bg-line">
+      {steps.map((item, index) => (
+        <li class="relative flex gap-5">
+          <span class="relative z-10 mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-sm font-bold text-white">{index + 1}</span>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2">
+              <h3 class="text-base font-semibold text-ink">{item.title}</h3>
+              <span class:list={["tag", TAG[item.kind]]}>{item.kind}</span>
+            </div>
+            <p class="mt-1.5 text-sm leading-relaxed text-muted">{item.body}</p>
+
+            <div class="mt-3 rounded-lg border border-line bg-white px-4 py-3 text-[0.82rem] leading-relaxed text-ink-soft">
+              {index === 0 && <p class="font-mono text-xs">“{step.request}”</p>}
+              {index === 1 && (
+                <div class="space-y-2">
+                  <p class="font-mono text-xs text-muted">
+                    action: new search · city: {search.city} · stay: {stayText(search)} · budget: {budgetText(search)}
+                  </p>
+                  <ul class="flex flex-wrap gap-1.5">
+                    {requirements.map((r) => <li class="rounded-md border border-line bg-paper-sunk px-2 py-0.5 text-xs">{r}</li>)}
+                  </ul>
+                </div>
+              )}
+              {index === 2 && <p>Apartments in {search.city} available {stayText(search)} from the sample dataset, priced for the requested nights.</p>}
+              {index === 3 && (
+                <ul class="grid gap-1 sm:grid-cols-2">
+                  {card.confirmed.map((p) => (
+                    <li class="flex gap-2"><span class="text-ok">✓</span><span><span class="font-medium text-ink">{p.label}</span> <span class="text-muted">· {p.reason}</span></span></li>
+                  ))}
+                  {card.needs_confirmation.map((p) => (
+                    <li class="flex gap-2"><span class="text-warn">?</span><span><span class="font-medium text-ink">{p.label}</span> <span class="text-muted">· no structured field</span></span></li>
+                  ))}
+                </ul>
+              )}
+              {index === 4 && (
+                <div class="space-y-1.5">
+                  <p class="text-muted">Another sample listing, Sunny Central Apartment, asked about a “quiet location”:</p>
+                  <p class="border-l-2 border-line-strong pl-3 italic text-ink">“Quiet street but still central.”</p>
+                  <p class="font-mono text-xs text-muted">quote found in listing text → confirmed</p>
+                </div>
+              )}
+              {index === 5 && (
+                <ol class="space-y-1">
+                  {results.map((r, i) => (
+                    <li class="flex justify-between gap-3"><span class="font-medium text-ink">{i + 1}. {r.title}</span><span class="font-mono text-xs text-muted">{r.match_tier} · score {r.score}</span></li>
+                  ))}
+                </ol>
+              )}
+              {index === 6 && (
+                <p>
+                  The reply is worded from the decided outcome: {results.length} strong matches in {search.city}. Listing cards and the Decision
+                  Inspector come straight from the same data.
+                </p>
+              )}
+            </div>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
