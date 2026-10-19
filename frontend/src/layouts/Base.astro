@@ -1,6 +1,6 @@
 ---
 import "../styles/global.css";
-import { REPO_URL } from "../lib/site";
+import { LIVE_DEMO, REPO_URL } from "../lib/site";
 
 interface Props {
   title: string;
@@ -56,9 +56,13 @@ const nav = [
             </svg>
             Source
           </a>
-          <a href="/demo" class:list={["btn !px-3.5 !py-1.5", active === "demo" ? "btn-ghost" : "btn-primary"]} aria-current={active === "demo" ? "page" : undefined}>
-            {active === "demo" ? "Live demo" : "Try live demo"}
-          </a>
+          {LIVE_DEMO ? (
+            <a href="/demo" class:list={["btn !px-3.5 !py-1.5", active === "demo" ? "btn-ghost" : "btn-primary"]} aria-current={active === "demo" ? "page" : undefined}>
+              {active === "demo" ? "Live demo" : "Try live demo"}
+            </a>
+          ) : (
+            <a href="/#walkthrough" class="btn btn-primary !px-3.5 !py-1.5">See it in action</a>
+          )}
         </nav>
       </div>
     </header>
@@ -75,7 +79,7 @@ const nav = [
           An AI engineering project by Leyla Mehtiyeva
         </p>
         <div class="flex gap-5">
-          <a href="/demo" class="hover:text-ink">Live demo</a>
+          {LIVE_DEMO ? <a href="/demo" class="hover:text-ink">Live demo</a> : <a href="/#walkthrough" class="hover:text-ink">Walkthrough</a>}
           <a href={REPO_URL} class="hover:text-ink" rel="noopener">View source code</a>
         </div>
       </div>

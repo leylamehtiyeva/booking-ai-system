@@ -1,0 +1,80 @@
+---
+import { ArrowUpRight } from "lucide-react";
+import SectionHeader from "./SectionHeader.astro";
+
+// Screenshots of the local demo UI replaying responses the real backend
+// produced offline on the sample listings (frontend/scripts/generate_mocks.py).
+// The site header and the replay's own telemetry are left out of the frames.
+const main = {
+  src: "/walkthrough/01-search.jpg",
+  title: "1 · Search with several requirements",
+  caption:
+    "WiFi and a kitchen are required, a quiet street is optional, the budget is per night. Each card shows what is confirmed; the Decision Inspector shows why the first result was selected.",
+  alt: "Booking AI demo: two apartment cards in Baku with confirmed and not confirmed requirements, and the Decision Inspector for the first result",
+};
+const steps = [
+  {
+    src: "/walkthrough/02-refine.jpg",
+    title: "2 · Refine the search",
+    caption: "“Only show places with a balcony.” The balcony is added; city, dates, budget and the other requirements stay.",
+    alt: "Refined results: two listings with the balcony confirmed",
+  },
+  {
+    src: "/walkthrough/03-question.jpg",
+    title: "3 · Ask about a listing",
+    caption: "“Does the first one have parking?” The listing data does not say, so the answer is “couldn’t verify”, not “no”.",
+    alt: "Answer to a parking question: could not verify, verdict UNCERTAIN",
+  },
+  {
+    src: "/walkthrough/04-clarify.jpg",
+    title: "4 · Ask before guessing",
+    caption: "“$200 max” for a three-night stay is ambiguous, so the assistant asks one question before searching.",
+    alt: "Clarifying question: per night or for the whole stay",
+  },
+];
+---
+
+<section id="walkthrough" class="section">
+  <div class="container-page">
+    <SectionHeader
+      title="See it in action"
+      subtitle="Screenshots of the demo replaying responses the real backend produced on the sample dataset. Recorded, not a live AI session."
+    />
+
+    <figure class="overflow-hidden rounded-xl border border-line bg-white shadow-sm">
+      <div class="flex items-center justify-between gap-3 border-b border-line bg-paper-sunk px-4 py-2.5">
+        <div class="flex items-center gap-1.5" aria-hidden="true">
+          <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
+          <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
+          <span class="h-2.5 w-2.5 rounded-full bg-line-strong"></span>
+        </div>
+        <span class="text-xs text-subtle">Recorded walkthrough · sample data</span>
+      </div>
+      <a href={main.src} target="_blank" rel="noopener" class="block">
+        <img src={main.src} alt={main.alt} width="1920" height="1200" loading="lazy" decoding="async" class="block h-auto w-full" />
+      </a>
+      <figcaption class="border-t border-line px-5 py-4">
+        <p class="text-sm font-semibold text-ink">{main.title}</p>
+        <p class="mt-1 text-sm leading-relaxed text-muted">{main.caption}</p>
+      </figcaption>
+    </figure>
+
+    <div class="mt-5 grid gap-5 md:grid-cols-3">
+      {steps.map((step) => (
+        <figure class="card card-hover flex flex-col overflow-hidden">
+          <a href={step.src} target="_blank" rel="noopener" class="block border-b border-line bg-paper-sunk">
+            <img src={step.src} alt={step.alt} width="1920" height="1200" loading="lazy" decoding="async" class="block aspect-[16/10] h-auto w-full object-cover object-top" />
+          </a>
+          <figcaption class="flex flex-1 flex-col p-5">
+            <p class="text-sm font-semibold text-ink">{step.title}</p>
+            <p class="mt-1.5 text-sm leading-relaxed text-muted">{step.caption}</p>
+            <a href={step.src} target="_blank" rel="noopener" class="mt-auto inline-flex items-center gap-1 pt-3 text-xs font-medium text-muted hover:text-ink">
+              Open full size
+              <ArrowUpRight size={12} strokeWidth={1.75} aria-hidden="true" />
+            </a>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>

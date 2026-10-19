@@ -1,6 +1,7 @@
 ---
 import { REPO_URL } from "../../lib/site";
 import { ChevronDown } from "lucide-react";
+import { LIVE_DEMO } from "../../lib/site";
 
 const faqs = [
   {
@@ -17,12 +18,22 @@ const faqs = [
   },
   {
     q: "Does Booking AI use real accommodation data?",
-    a: "The public demo runs on a bundled sample dataset, so listings, prices and links are illustrative and say nothing about real availability. The backend also has an optional Apify-based retriever for live listing data, which is not enabled in the demo.",
+    a: LIVE_DEMO
+      ? "The demo runs on a bundled sample dataset, so listings, prices and links are illustrative and say nothing about real availability. The backend also has an optional Apify-based retriever for live listing data, which is not enabled in the demo."
+      : "The examples on this site were recorded on a bundled sample dataset, so listings, prices and links are illustrative and say nothing about real availability. The backend also has an optional Apify-based retriever for live listing data, which is not enabled in the demo.",
   },
   {
     q: "Can I book accommodation through the assistant?",
     a: "No. Booking AI is a search and decision assistant. It does not take bookings or payments and does not guarantee availability or prices.",
   },
+  ...(LIVE_DEMO
+    ? []
+    : [
+        {
+          q: "Can I try it myself?",
+          a: "Not online yet. The interactive demo is not public for now; it runs against the same backend when the project is run locally. The walkthrough and use cases on this page show recorded output from that backend.",
+        },
+      ]),
   {
     q: "Which languages does it support?",
     a: "English. Requests in other languages are not supported yet.",
@@ -43,7 +54,7 @@ const faqs = [
         <details class="group border-t border-line">
           <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[0.9375rem] font-medium leading-snug text-ink [&::-webkit-details-marker]:hidden">
             {item.q}
-            <ChevronDown size={16} strokeWidth={1.5} class="shrink-0 text-subtle transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
+            <ChevronDown size={16} strokeWidth={1.5} className="shrink-0 text-subtle transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
           </summary>
           <p class="pb-5 text-sm leading-relaxed text-muted">
             {item.a}

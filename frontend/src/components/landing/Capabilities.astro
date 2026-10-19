@@ -1,6 +1,7 @@
 ---
 import { CircleHelp, ListChecks, MessageSquareText, Scale, ShieldQuestion, SlidersHorizontal } from "lucide-react";
 import SectionHeader from "./SectionHeader.astro";
+import { LIVE_DEMO } from "../../lib/site";
 
 const capabilities = [
   {
@@ -50,7 +51,7 @@ const capabilities = [
 
 <section id="capabilities" class="section section-alt">
   <div class="container-page">
-    <SectionHeader title="What Booking AI can do" subtitle="Six things the live demo does today, each one visible in the Decision Inspector." />
+    <SectionHeader title="What Booking AI can do" subtitle={`Six things ${LIVE_DEMO ? "the live demo" : "the system"} does today, each one visible in the Decision Inspector.`} />
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {capabilities.map((item) => (
         <article class="card card-hover flex flex-col p-6">

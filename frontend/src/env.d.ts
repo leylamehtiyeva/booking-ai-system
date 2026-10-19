@@ -3,4 +3,5 @@
 interface ImportMetaEnv {
   readonly PUBLIC_API_BASE_URL?: string;
   readonly PUBLIC_DEMO_MOCK?: string;
+  readonly PUBLIC_LIVE_DEMO?: string;
 }
