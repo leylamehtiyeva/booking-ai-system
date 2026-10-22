@@ -11,7 +11,7 @@ const API_TARGET = process.env.BOOKING_API_PROXY_TARGET ?? "http://127.0.0.1:800
 /**
  * Live demo switch - the same rule as LIVE_DEMO in src/lib/site.ts: on in
  * `astro dev`, off in builds unless PUBLIC_LIVE_DEMO=1. When off, /demo is a
- * redirect to the recorded walkthrough and the chat client is not built.
+ * redirect to the home page and the chat client is not built.
  * @returns {import("astro").AstroIntegration}
  */
 function liveDemoRoute() {
@@ -25,7 +25,7 @@ function liveDemoRoute() {
         if (live) {
           injectRoute({ pattern: "/demo", entrypoint: "./src/routes/demo.astro" });
         } else {
-          updateConfig({ redirects: { "/demo": "/#walkthrough" } });
+          updateConfig({ redirects: { "/demo": "/" } });
         }
       },
     },

@@ -1,0 +1,134 @@
+---
+import { FlaskConical, GitCompareArrows, ListChecks, Quote, ShieldCheck, Trophy } from "lucide-react";
+import SectionHeader from "./SectionHeader.astro";
+import { REPO_URL } from "../../lib/site";
+
+// Every number below comes from a report in evaluation/outputs/ or from a
+// re-run of a deterministic evaluation; see the provenance line on each card.
+const blob = (path: string) => `${REPO_URL}/blob/main/${path}`;
+
+const components = [
+  {
+    icon: Trophy,
+    tile: "tile-emerald",
+    title: "Ranking & selection",
+    what: "Given listings with known verdicts, are the right ones surfaced, in the right order?",
+    metrics: [
+      { value: "101 / 103", label: "top-1 correct" },
+      { value: "0 / 103", label: "ineligible listings shown" },
+    ],
+    provenance: "Deterministic · re-run on the current code · 103 hand-labelled cases",
+    current: true,
+    report: "evaluation/outputs/ranking_selection_eval_report.json",
+  },
+  {
+    icon: ListChecks,
+    tile: "tile-indigo",
+    title: "Constraint extraction",
+    what: "Does a plain-English request become the right set of requirements?",
+    metrics: [
+      { value: "0.79", label: "F1 over 202 requirements" },
+      { value: "132 / 166", label: "requests with the exact set" },
+    ],
+    provenance: "LLM · saved run, April 2026 · measured before later prompt changes",
+    current: false,
+    report: "evaluation/outputs/constraint_extraction_report.json",
+  },
+  {
+    icon: Quote,
+    tile: "tile-amber",
+    title: "Evidence resolution",
+    what: "Given a requirement and a listing’s text, is the verdict YES, NO or UNCERTAIN?",
+    metrics: [
+      { value: "98 / 114", label: "correct verdicts (114 of 120 cases scored)" },
+      { value: "0", label: "critical YES ↔ NO flips" },
+    ],
+    provenance: "LLM · saved run, April 2026 · measured before quote verification was added",
+    current: false,
+    report: "evaluation/outputs/constraint_resolution_eval_report_new_ver3.json",
+  },
+];
+---
+
+<section id="evaluation" class="section">
+  <div class="container-page">
+    <SectionHeader
+      level="major"
+      title="Evaluation & Reliability"
+      subtitle="Each component is scored on its own hand-labelled golden set, whole conversations are scored end to end, and every change runs against an offline regression suite."
+    />
+
+    <div class="grid gap-5 lg:grid-cols-3">
+      {components.map((c) => (
+        <article class="card flex flex-col p-6">
+          <div class="flex items-center gap-3">
+            <div class:list={["icon-tile", c.tile]}>
+              <c.icon size={20} strokeWidth={1.5} aria-hidden="true" />
+            </div>
+            <div>
+              <h3 class="text-base font-semibold text-ink">{c.title}</h3>
+              <p class="text-xs text-subtle">Component-level</p>
+            </div>
+          </div>
+          <p class="mt-3 text-sm leading-relaxed text-muted">{c.what}</p>
+          <dl class="mt-5 grid grid-cols-2 gap-3">
+            {c.metrics.map((m) => (
+              <div class="rounded-lg border border-line bg-paper-sunk px-3 py-2.5">
+                <dt class="sr-only">{m.label}</dt>
+                <dd>
+                  <span class="block text-xl font-bold tracking-tight text-ink [font-variant-numeric:tabular-nums]">{m.value}</span>
+                  <span class="mt-0.5 block text-xs leading-snug text-muted">{m.label}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
+          <p class="mt-auto pt-5 text-xs leading-relaxed text-muted">
+            <span class:list={["mr-1.5 inline-block h-1.5 w-1.5 rounded-full align-middle", c.current ? "bg-ok" : "bg-subtle"]} aria-hidden="true"></span>
+            {c.provenance} ·{" "}
+            <a href={blob(c.report)} class="text-ink-soft underline underline-offset-2 hover:text-ink" rel="noopener">report</a>
+          </p>
+        </article>
+      ))}
+    </div>
+
+    <div class="mt-5 grid gap-5 md:grid-cols-2">
+      <article class="card flex gap-4 p-6">
+        <div class="icon-tile tile-blue">
+          <GitCompareArrows size={20} strokeWidth={1.5} aria-hidden="true" />
+        </div>
+        <div class="min-w-0">
+          <h3 class="text-base font-semibold text-ink">End-to-end evaluation</h3>
+          <p class="mt-2 text-sm leading-relaxed text-muted">
+            50 hand-labelled requests run through the whole pipeline and are scored on the decision the answer implies — yes, no or uncertain —
+            and on the top result. Each critical false “yes” was traced to a cause; the fixes that followed include quote verification, visible
+            optional preferences, budget-scope questions and area attribution.
+          </p>
+          <p class="mt-3 text-xs leading-relaxed text-muted">
+            The last full run predates those fixes, so no end-to-end score is shown for the current system ·{" "}
+            <a href={blob("evaluation/tasks/end_to_end/README.md")} class="text-ink-soft underline underline-offset-2 hover:text-ink" rel="noopener">method</a>
+          </p>
+        </div>
+      </article>
+
+      <article class="card flex gap-4 p-6">
+        <div class="icon-tile tile-emerald">
+          <ShieldCheck size={20} strokeWidth={1.5} aria-hidden="true" />
+        </div>
+        <div class="min-w-0">
+          <h3 class="text-base font-semibold text-ink">Regression & reliability</h3>
+          <ul class="mt-2 space-y-1.5 text-sm leading-relaxed text-muted">
+            <li><span class="font-medium text-ink">1,000+ offline tests</span> run without network access or API keys.</li>
+            <li><span class="font-medium text-ink">7 multi-turn scenarios</span> cover search, refinement, follow-ups and clarification.</li>
+            <li><span class="font-medium text-ink">29 failure-handling tests</span>: a provider or retrieval error ends the turn with a typed failure and leaves the conversation unchanged.</li>
+          </ul>
+          <p class="mt-3 text-xs leading-relaxed text-muted">Tests guard behaviour and contracts; they are not a measure of model accuracy.</p>
+        </div>
+      </article>
+    </div>
+
+    <p class="mt-6 flex items-center justify-center gap-2 text-center text-xs text-muted">
+      <FlaskConical size={14} strokeWidth={1.5} aria-hidden="true" />
+      <span><span class="inline-block h-1.5 w-1.5 rounded-full bg-ok align-middle"></span> measured on the current code · <span class="inline-block h-1.5 w-1.5 rounded-full bg-subtle align-middle"></span> saved run of an earlier version</span>
+    </p>
+  </div>
+</section>

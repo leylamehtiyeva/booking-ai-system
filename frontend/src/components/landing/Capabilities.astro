@@ -1,57 +1,64 @@
 ---
-import { CircleHelp, ListChecks, MessageSquareText, Scale, ShieldQuestion, SlidersHorizontal } from "lucide-react";
+import { CircleHelp, Feather, MessageSquareText, MessagesSquare, ShieldQuestion, SlidersHorizontal } from "lucide-react";
 import SectionHeader from "./SectionHeader.astro";
-import { LIVE_DEMO } from "../../lib/site";
 
+// What a user can do in a conversation. Every card is backed by the current
+// backend and demo; examples are phrased the way a user would type them.
 const capabilities = [
   {
     icon: MessageSquareText,
     tile: "tile-blue",
-    title: "Natural-language search",
-    body: "City, dates, guests, budget and what matters to you, written as one plain-English message.",
-    example: "Apartment in Baku, April 10–15, WiFi and a kitchen",
-  },
-  {
-    icon: ListChecks,
-    tile: "tile-indigo",
-    title: "Constraint extraction",
-    body: "Every wish becomes an explicit requirement, marked as required, nice to have or excluded.",
-    example: "kitchen · required   quiet street · optional",
-  },
-  {
-    icon: Scale,
-    tile: "tile-emerald",
-    title: "Transparent matching",
-    body: "Each listing shows which requirements are confirmed, not confirmed or not satisfied, with the reason.",
-    example: "✓ WiFi   ✓ Kitchen   ? Quiet street",
+    title: "Search in natural language",
+    body: "Describe the kind of accommodation you want, without filling out a page of filters.",
+    example: "Find an apartment in Baku with WiFi and a balcony.",
   },
   {
     icon: SlidersHorizontal,
     tile: "tile-amber",
-    title: "Conversational refinement",
-    body: "Change one thing in your own words. City, dates and the other requirements stay as they were.",
-    example: "Only show places with a balcony.",
+    title: "Refine your search",
+    body: "Change your preferences mid-conversation. Everything you said before stays in the search.",
+    example: "Actually, I also need a kitchen.",
   },
   {
     icon: CircleHelp,
-    tile: "tile-blue",
-    title: "Listing questions",
-    body: "Ask about a listing you were shown. The answer is checked against that listing’s own data.",
-    example: "Does the first one have parking?",
+    tile: "tile-indigo",
+    title: "Ask about a listing",
+    body: "Ask a follow-up about a recommended property. The answer comes from that listing’s data, or says it couldn’t be verified.",
+    example: "Does the first apartment allow pets?",
+  },
+  {
+    icon: MessagesSquare,
+    tile: "tile-emerald",
+    title: "Understand the recommendations",
+    body: "Each result shows which of your requirements are confirmed, not confirmed or not satisfied, and why it was recommended.",
+    statuses: true,
   },
   {
     icon: ShieldQuestion,
-    tile: "tile-indigo",
-    title: "Explicit uncertainty",
-    body: "When the data does not say, the answer is “not confirmed”. Unclear requests get one short question.",
+    tile: "tile-blue",
+    title: "Clarify preferences",
+    body: "When a request is ambiguous, Booking AI asks one follow-up question instead of guessing.",
     example: "Do you mean $200 per night or for the whole stay?",
   },
+  {
+    icon: Feather,
+    tile: "tile-amber",
+    title: "Keep some wishes optional",
+    body: "Say what would only be nice to have. Optional wishes are kept apart from requirements and marked as not confirmed when the listing data is silent.",
+    example: "A quiet street would be nice.",
+  },
+];
+
+const STATUSES = [
+  { label: "Confirmed", className: "bg-ok-soft text-ok" },
+  { label: "Not confirmed", className: "bg-warn-soft text-warn" },
+  { label: "Not satisfied", className: "bg-bad-soft text-bad" },
 ];
 ---
 
-<section id="capabilities" class="section section-alt">
+<section id="capabilities" class="section">
   <div class="container-page">
-    <SectionHeader title="What Booking AI can do" subtitle={`Six things ${LIVE_DEMO ? "the live demo" : "the system"} does today, each one visible in the Decision Inspector.`} />
+    <SectionHeader title="What Booking AI can do" subtitle="Everything happens in one conversation: search, refine, ask, and see the reasoning behind each result." />
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {capabilities.map((item) => (
         <article class="card card-hover flex flex-col p-6">
@@ -60,9 +67,16 @@ const capabilities = [
           </div>
           <h3 class="text-base font-semibold text-ink">{item.title}</h3>
           <p class="mt-2 text-sm leading-relaxed text-muted">{item.body}</p>
-          <p class="mt-auto pt-4">
-            <span class="block rounded-lg border border-line bg-paper-sunk px-3 py-2 font-mono text-xs leading-relaxed text-ink-soft">{item.example}</span>
-          </p>
+          <div class="mt-auto pt-4">
+            {item.example && (
+              <p class="rounded-lg border border-line bg-paper-sunk px-3 py-2 text-[0.82rem] leading-relaxed text-ink-soft">“{item.example}”</p>
+            )}
+            {item.statuses && (
+              <div class="flex flex-wrap gap-1.5">
+                {STATUSES.map((s) => <span class:list={["rounded-md px-2 py-1 text-xs font-medium", s.className]}>{s.label}</span>)}
+              </div>
+            )}
+          </div>
         </article>
       ))}
     </div>

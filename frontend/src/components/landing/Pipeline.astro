@@ -5,41 +5,56 @@ import { budgetText, PRIORITY_TEXT, stayText } from "../../lib/present";
 import SectionHeader from "./SectionHeader.astro";
 
 // One recorded turn on the sample listings illustrates every step.
-const step = (recorded as unknown as Record<string, { request: string; response: TurnResult }[]>).search_refine_ask[0];
+const flow = (recorded as unknown as Record<string, { request: string; response: TurnResult }[]>).search_refine_ask;
+const step = flow[0];
+const refine = flow[1];
 const search = step.response.inspector.current_search!;
 const results = step.response.inspector.results;
 const card = step.response.listing_cards[0];
 
-type Kind = "Input" | "LLM" | "LLM + Deterministic" | "Deterministic";
-const TAG: Record<Kind, string> = { Input: "", LLM: "tag-llm", "LLM + Deterministic": "tag-llm", Deterministic: "tag-det" };
+type Kind = "LLM" | "LLM + Deterministic" | "Deterministic";
+const TAG: Record<Kind, string> = { LLM: "tag-llm", "LLM + Deterministic": "tag-llm", Deterministic: "tag-det" };
 
 const steps: { title: string; kind: Kind; body: string }[] = [
-  { title: "User message", kind: "Input", body: "The message arrives with the conversation state: the current search and the listings already shown." },
   {
-    title: "Intent understanding",
-    kind: "LLM + Deterministic",
-    body: "A router decides what the message is, and an LLM extracts the search. Code validates dates and asks when the budget scope is unclear.",
+    title: "Conversation Router",
+    kind: "LLM",
+    body: "Decides what each message is: a new search, a change to the current one, a question about a shown listing, or general chat. An ambiguous turn gets a clarifying question, and a reference like “the first one” is checked against the results actually shown.",
   },
   {
-    title: "Candidate retrieval",
+    title: "Intent Extraction / State Update",
+    kind: "LLM + Deterministic",
+    body: "An LLM turns a new request into a typed search, or a follow-up into a small patch to it. Code validates dates, asks when a budget could be per night or for the stay, and applies the patch, so earlier requirements are kept.",
+  },
+  {
+    title: "Retrieval",
     kind: "Deterministic",
-    body: "Listings for the city and dates come from the listing source, in the demo a bundled sample dataset. No embeddings are used.",
+    body: "Candidate listings for the city and dates come from the listing source: a bundled sample dataset in the demo, or an optional Apify-based retriever. Retrieval does not use embeddings.",
   },
-  { title: "Matching", kind: "Deterministic", body: "Requirements are checked against structured listing fields. Price, bedrooms and area are compared as numbers." },
   {
-    title: "Evidence verification",
-    kind: "LLM + Deterministic",
-    body: "Requirements no field answers go to an LLM, which must quote the listing. The quote is checked against the listing text before it counts.",
+    title: "Structured and Numeric Matching",
+    kind: "Deterministic",
+    body: "Each requirement is checked against canonical listing fields such as amenities, policies and room facilities. Price, bedrooms, bathrooms and area are compared as numbers; an area must belong to the room or apartment being booked.",
   },
-  { title: "Ranking", kind: "Deterministic", body: "Eligible listings are tiered and ordered by what is confirmed. An unconfirmed required item is never a strong match." },
+  {
+    title: "Textual Evidence Resolution",
+    kind: "LLM + Deterministic",
+    body: "Requirements no field can answer are read from the listing text. The model must quote its evidence, each quote is verified against the listing, and code turns the signals into confirmed, not confirmed or not satisfied.",
+  },
+  {
+    title: "Ranking & Selection",
+    kind: "Deterministic",
+    body: "Eligible listings are sorted into strong, partial and weak matches and the top ones are selected. A required item that is not confirmed never makes a strong match.",
+  },
   {
     title: "Response generation",
     kind: "LLM",
-    body: "An LLM words the already-decided outcome, with a deterministic fallback. Facts about a listing are rendered straight from the verdict.",
+    body: "An LLM words the already-decided outcome, with a deterministic fallback. Answers about listing facts are rendered directly from the verdict, so a decided fact is never reworded.",
   },
 ];
 
 const requirements = search.constraints.map((c) => `${c.normalized_text} · ${PRIORITY_TEXT[c.priority] ?? c.priority}`);
+const FLOW = ["Router", "Intent / state", "Retrieval", "Matching", "Evidence", "Ranking", "Response"];
 ---
 
 <section id="how-it-works" class="section section-alt">
@@ -47,8 +62,31 @@ const requirements = search.constraints.map((c) => `${c.normalized_text} · ${PR
     <SectionHeader
       level="major"
       title="How it works"
-      subtitle="Seven stages run on every search turn. Under each step, one real request shows what that stage produces."
+      subtitle="Seven stages run on every search turn. Under each one, a real request recorded on the sample dataset shows what that stage produces."
     />
+
+    <!-- How the stages connect. -->
+    <div class="mb-12 rounded-xl border border-line bg-white p-5">
+      <ol class="flex flex-wrap items-center gap-x-1.5 gap-y-2 text-xs font-medium text-ink-soft" aria-label="Search turn">
+        {FLOW.map((name, index) => (
+          <li class="flex items-center gap-1.5">
+            <span class="rounded-md border border-line bg-paper-sunk px-2 py-1">
+              <span class="mr-1 text-subtle">{index + 1}</span>{name}
+            </span>
+            {index < FLOW.length - 1 && <span class="text-subtle" aria-hidden="true">→</span>}
+          </li>
+        ))}
+      </ol>
+      <p class="mt-3 text-xs leading-relaxed text-muted">
+        A question about a shown listing takes a shorter path: Router → the shown listing it refers to → the question turned into requirements
+        (LLM) → matching and evidence for that listing → a verdict rendered directly, without the response LLM. A clarifying question can end
+        any turn before retrieval.
+      </p>
+      <p class="mt-3 flex flex-wrap gap-3 text-xs text-muted">
+        <span class="inline-flex items-center gap-1.5"><span class="tag tag-llm">LLM</span> interprets language and evidence</span>
+        <span class="inline-flex items-center gap-1.5"><span class="tag tag-det">Deterministic</span> decides state changes and verdicts</span>
+      </p>
+    </div>
 
     <ol class="relative space-y-8 before:absolute before:bottom-4 before:left-[1.125rem] before:top-4 before:w-px before:bg-line">
       {steps.map((item, index) => (
@@ -62,11 +100,16 @@ const requirements = search.constraints.map((c) => `${c.normalized_text} · ${PR
             <p class="mt-1.5 text-sm leading-relaxed text-muted">{item.body}</p>
 
             <div class="mt-3 rounded-lg border border-line bg-white px-4 py-3 text-[0.82rem] leading-relaxed text-ink-soft">
-              {index === 0 && <p class="font-mono text-xs">“{step.request}”</p>}
+              {index === 0 && (
+                <div class="space-y-1.5">
+                  <p class="font-mono text-xs">“{step.request}”</p>
+                  <p class="font-mono text-xs text-muted">→ new search · later “{refine.request}” → change to the current search</p>
+                </div>
+              )}
               {index === 1 && (
                 <div class="space-y-2">
                   <p class="font-mono text-xs text-muted">
-                    action: new search · city: {search.city} · stay: {stayText(search)} · budget: {budgetText(search)}
+                    city: {search.city} · stay: {stayText(search)} · budget: {budgetText(search)}
                   </p>
                   <ul class="flex flex-wrap gap-1.5">
                     {requirements.map((r) => <li class="rounded-md border border-line bg-paper-sunk px-2 py-0.5 text-xs">{r}</li>)}

@@ -5,8 +5,8 @@ Astro + React + Tailwind CSS. Node 22.22+ (`.nvmrc`).
 - `/` — the portfolio landing page, fully static.
 - `/demo` — the interactive demo over the FastAPI backend (`POST /api/chat`,
   see `../app/api/main.py`). It is **off in production builds** unless
-  `PUBLIC_LIVE_DEMO=1` is set at build time; then `/demo` is a redirect to
-  the recorded walkthrough and the chat client is not built at all.
+  `PUBLIC_LIVE_DEMO=1` is set at build time; otherwise `/demo` redirects to
+  the home page and the chat client is not built at all.
 
 ```bash
 npm ci
@@ -30,5 +30,4 @@ origin) for the build, and allow the site origin in `BOOKING_API_CORS_ORIGINS`.
   no matching, ranking or wording logic lives here.
 - `src/mocks/turns.json` holds responses recorded from the real backend on the sample
   listings, offline (`npm run mocks`: scripted LLM boundaries, network blocked).
-  Tests and the landing page use them. `public/walkthrough/*.jpg` are screenshots
-  of the demo replaying them (site header and replay telemetry left out of frame).
+  Tests and the landing page use them.
