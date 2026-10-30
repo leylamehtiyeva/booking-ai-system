@@ -26,6 +26,9 @@ Rules this module guarantees:
   the stay: a catalog room is used when exactly one has the offer's name,
   otherwise the offer gets a minimal Room of its own; catalog rooms without
   an offer are left out;
+- refundability (RFN/NRFN) is kept per offer on structured fields; it is
+  never stated as free cancellation and never written into listing
+  evidence text, and cancellation-policy times are kept uninterpreted;
 - HTML is reduced to plain sentences;
 - the provider's review sentiment is kept as ReviewSummary with its origin;
   nothing in matching or evidence reads it yet.
@@ -263,20 +266,15 @@ def parse_public_offer(offer: Mapping[str, Any], *, requested_currency: str | No
     public_total, currency = _public_total(offer, requested_currency)
 
     refundable_tags = [_text(_mapping(rate.get("cancellationPolicies")).get("refundableTag")) for rate in rates]
-    if refundable_tags and all(tag == "RFN" for tag in refundable_tags):
-        refundable: bool | None = True
-    elif "NRFN" in refundable_tags:
-        refundable = False
-    else:
-        refundable = None
+    refundable = {"RFN": True, "NRFN": False}.get(_single(refundable_tags))  # missing or mixed -> None
 
-    deadlines = []
-    if refundable:
-        for rate in rates:
-            for info in _items(_mapping(rate.get("cancellationPolicies")).get("cancelPolicyInfos")):
-                cancel_time = _text(info.get("cancelTime"))
-                if cancel_time:
-                    deadlines.append(" ".join(filter(None, [cancel_time, _text(info.get("timezone"))])))
+    # Kept as given, never interpreted (see PublicOffer.cancel_policy_times).
+    cancel_policy_times = [
+        " ".join(filter(None, [_text(info.get("cancelTime")), _text(info.get("timezone"))]))
+        for rate in rates
+        for info in _items(_mapping(rate.get("cancellationPolicies")).get("cancelPolicyInfos"))
+        if _text(info.get("cancelTime"))
+    ]
 
     excluded = [
         _text(tax.get("description"))
@@ -290,7 +288,7 @@ def parse_public_offer(offer: Mapping[str, Any], *, requested_currency: str | No
         board_type=_single([_text(rate.get("boardType")) for rate in rates]),
         board_name=_single([_text(rate.get("boardName")) for rate in rates]),
         refundable=refundable,
-        free_cancellation_until=min(deadlines) if deadlines else None,
+        cancel_policy_times=_unique(cancel_policy_times),
         max_occupancy=_integer(rates[0].get("maxOccupancy")) if len(rates) == 1 else None,
         public_total=public_total,
         currency=currency,
@@ -319,28 +317,24 @@ def parse_rates_response(
 
 
 def _offer_option(offer: PublicOffer) -> RoomOption:
-    choices = [offer.board_name] if offer.board_name else []
-    if offer.refundable is True:
-        choices.append(
-            f"Free cancellation until {offer.free_cancellation_until}"
-            if offer.free_cancellation_until
-            else "Free cancellation"
-        )
-    elif offer.refundable is False:
-        choices.append("Non-refundable")
-
+    """
+    Refundability is kept on the option's structured fields only, never in
+    `choices`: choices are listing evidence, and matching reads them for the
+    whole hotel. "Refundable rate" there could be read as free cancellation
+    (a false YES), and "Non-refundable rate" would mark the hotel as having
+    no free cancellation although only a few of its rates were fetched
+    (maxRatesPerHotel) - a false NO. free_cancellation is never True: a
+    refundable rate may still carry charges; a non-refundable rate is not
+    freely cancellable, so it is False there.
+    """
     return RoomOption(
         name=offer.room_name,
         price=offer.public_total,
         currency=offer.currency if offer.public_total is not None else None,
         persons=offer.max_occupancy,
-        cancellation_type=(
-            "free_cancellation" if offer.refundable is True
-            else "non_refundable" if offer.refundable is False
-            else None
-        ),
-        free_cancellation=offer.refundable,
-        choices=choices,
+        cancellation_type=offer.refundability_label,
+        free_cancellation=False if offer.refundable is False else None,
+        choices=[offer.board_name] if offer.board_name else [],
     )
 
 

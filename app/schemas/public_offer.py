@@ -25,12 +25,17 @@ class PublicOffer(BaseModel):
     board_type: str | None = None
     board_name: str | None = None
 
-    # True: every rate of the offer is refundable (RFN); False: at least one
-    # is non-refundable (NRFN); None: not stated.
+    # The provider's refundability tag for the offer: True when every rate is
+    # refundable (RFN), False when every rate is non-refundable (NRFN), None
+    # when it is missing or mixed. Refundable is NOT free cancellation: a
+    # refundable rate may still carry cancellation charges, so nothing here
+    # states that cancelling is free.
     refundable: bool | None = None
-    # Earliest cancellation deadline as stated by the provider, e.g.
-    # "2026-11-20 10:00:00 GMT". Penalty amounts are not kept.
-    free_cancellation_until: str | None = None
+    # Provider cancellation-policy times exactly as given ("2026-11-20
+    # 10:00:00 GMT"), kept uninterpreted for a later booking step: their
+    # meaning (free until / charged from) is not confirmed, so they are never
+    # turned into a deadline or into listing evidence. Amounts are not kept.
+    cancel_policy_times: list[str] = Field(default_factory=list)
     max_occupancy: int | None = None
 
     public_total: float | None = Field(default=None, gt=0)
@@ -41,6 +46,14 @@ class PublicOffer(BaseModel):
     # Taxes and fees the provider marks as not included in the price (paid
     # at the property, e.g. city tax) - descriptions only, no amounts.
     excluded_taxes_and_fees: list[str] = Field(default_factory=list)
+
+    @property
+    def refundability_label(self) -> str:
+        if self.refundable is True:
+            return "Refundable rate"
+        if self.refundable is False:
+            return "Non-refundable rate"
+        return "Unknown"
 
     @model_validator(mode="after")
     def _price_needs_currency(self) -> PublicOffer:

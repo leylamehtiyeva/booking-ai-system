@@ -344,6 +344,29 @@ async def test_unconfirmed_fact_about_a_shown_hotel_is_uncertain_not_no(llm, lit
     _assert_no_confidential_amounts(llm.fallback_prompts[0])
 
 
+async def test_free_cancellation_question_on_a_refundable_rate_is_uncertain(llm, liteapi):
+    chat = Conversation()
+
+    llm.router_steps.append(route(ConversationAction.START_SEARCH))
+    llm.intents.append(_new_search_intent())
+    search = await chat.say(NEW_SEARCH)
+    first = _shown(search)[0]
+    [offer] = next(i.listing for i in search.session.shown_result_set.items if i.result_id == first).public_offers
+    assert offer.refundable is True  # every synthetic rate here is RFN
+
+    llm.router_steps.append(ask_about(1))
+    llm.factual.append(ResultQuery(constraints=[_amenity(Field.FREE_CANCELLATION, "free cancellation")]))
+    question = await chat.say("Can I cancel the first hotel for free?")
+
+    [item] = question.inspector.listing_query
+    assert item.match.result_id == first
+    assert item.match.constraint_results[0].value.value == "UNCERTAIN"
+    # The textual check saw no cancellation or refund wording to quote.
+    [prompt] = llm.fallback_prompts
+    evidence = json.loads(json.loads(prompt)[0])["listing_evidence"]
+    assert not any("cancel" in e["text"].lower() or "refund" in e["text"].lower() for e in evidence)
+
+
 # --- failures keep the conversation state --------------------------------------------
 
 

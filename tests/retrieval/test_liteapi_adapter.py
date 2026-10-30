@@ -200,7 +200,7 @@ def test_public_offer_uses_the_suggested_selling_price_only():
     assert offer.price_basis == "total_stay"
     assert offer.board_name == "Room Only"
     assert offer.refundable is True
-    assert offer.free_cancellation_until == "2026-11-20 10:00:00 GMT"
+    assert offer.cancel_policy_times == ["2026-11-20 10:00:00 GMT"]  # kept as given
     assert offer.excluded_taxes_and_fees == ["City tax"]
     _assert_no_confidential_amounts(offer.model_dump_json())
 
@@ -250,8 +250,7 @@ def test_mixed_refundability_and_boards_are_not_merged():
     )
 
     assert offer.public_total == SSP * 2  # offer SSP == sum of the rate SSPs
-    assert offer.refundable is False
-    assert offer.free_cancellation_until is None
+    assert offer.refundable is None  # RFN and NRFN in one offer: not stated either way
     assert offer.board_name is None
     assert offer.max_occupancy is None
 
@@ -419,12 +418,14 @@ def test_offers_attach_to_matching_rooms_only():
     double = rooms["Double Room"]
     assert double.available is True
     assert [option.price for option in double.options] == [SSP]
-    assert double.options[0].choices == ["Breakfast Included", "Free cancellation until 2026-11-20 10:00:00 GMT"]
-    assert double.options[0].free_cancellation is True
+    assert double.options[0].choices == ["Breakfast Included"]
+    assert double.options[0].cancellation_type == "Refundable rate"
+    assert double.options[0].free_cancellation is None
 
     deluxe = rooms["Deluxe King"]
     assert deluxe.facilities == []  # offer-only room: no amenities invented
-    assert deluxe.options[0].choices == ["Room Only", "Non-refundable"]
+    assert deluxe.options[0].choices == ["Room Only"]
+    assert deluxe.options[0].cancellation_type == "Non-refundable rate"
     assert deluxe.options[0].free_cancellation is False
 
     assert set(rooms) == {"Double Room", "Deluxe King"}  # catalog rooms without an offer are left out
@@ -498,7 +499,8 @@ def test_an_unmatched_offer_keeps_only_what_the_offer_states():
     assert room.facilities == [] and room.bed_types == []
     assert room.available is True
     assert room.options[0].price == SSP
-    assert room.options[0].choices == ["Room Only", "Free cancellation until 2026-11-20 10:00:00 GMT"]
+    assert room.options[0].choices == ["Room Only"]
+    assert room.options[0].cancellation_type == "Refundable rate"
 
 
 def test_a_unique_name_match_keeps_the_catalog_description():
@@ -537,6 +539,116 @@ def test_every_offer_survives_normalization_without_fake_rooms():
         offer.public_total for offer in offers
     )
     assert listing.price == SSP
+
+
+# --- refundability: kept per offer, never free cancellation, never hotel evidence --
+
+
+def _evidence_texts(listing) -> str:
+    signals = " | ".join(signal.raw_text for signal in collect_listing_signals(listing))
+    return (signals + " | " + json.dumps(_prepare_listing_evidence(listing))).lower()
+
+
+def _assert_no_cancellation_claims(listing) -> None:
+    texts = _evidence_texts(listing)
+    for phrase in ("free cancellation", "refundable", "non-refundable", "cancel", "2026-11-20"):
+        assert phrase not in texts, f"{phrase!r} reached listing evidence"
+
+
+def test_rfn_is_a_refundable_rate_never_free_cancellation():
+    [offer] = _offers("Double Room")
+    listing = normalize_liteapi_listing(make_hotel(), [offer])
+
+    assert offer.refundable is True and offer.refundability_label == "Refundable rate"
+    [option] = listing.rooms[0].options
+    assert option.cancellation_type == "Refundable rate"
+    assert option.free_cancellation is None
+    assert _structured(listing, Field.FREE_CANCELLATION) == "UNCERTAIN"
+    _assert_no_cancellation_claims(listing)
+
+
+def test_nrfn_is_a_non_refundable_rate_without_a_hotel_level_no():
+    offers = _offers("Double Room", "Deluxe King", refundable_tag="NRFN")
+    listing = normalize_liteapi_listing(make_hotel(), offers)
+
+    assert all(offer.refundable is False and offer.refundability_label == "Non-refundable rate" for offer in offers)
+    options = [option for room in listing.rooms for option in room.options]
+    assert all(option.cancellation_type == "Non-refundable rate" and option.free_cancellation is False for option in options)
+    # Only a few of the hotel's rates are fetched (maxRatesPerHotel): their
+    # being non-refundable says nothing about the hotel as a whole.
+    assert _structured(listing, Field.FREE_CANCELLATION) == "UNCERTAIN"
+    _assert_no_cancellation_claims(listing)
+
+
+def test_missing_refundability_is_unknown():
+    [offer] = _offers("Double Room", refundable_tag=None)
+    listing = normalize_liteapi_listing(make_hotel(), [offer])
+
+    assert offer.refundable is None and offer.refundability_label == "Unknown"
+    [option] = listing.rooms[0].options
+    assert option.cancellation_type == "Unknown" and option.free_cancellation is None
+    assert _structured(listing, Field.FREE_CANCELLATION) == "UNCERTAIN"
+
+
+def test_rfn_and_nrfn_inside_one_offer_is_unknown_not_false():
+    offer = parse_public_offer(
+        make_offer(rates=[make_rate(refundable_tag="RFN"), make_rate(refundable_tag="NRFN")], ssp=SSP * 2),
+        requested_currency="USD",
+    )
+    listing = normalize_liteapi_listing(make_hotel(), [offer])
+
+    assert offer.refundable is None and offer.refundability_label == "Unknown"
+    [option] = listing.rooms[0].options
+    assert option.free_cancellation is None
+    assert option.price == SSP * 2
+
+
+def test_mixed_rates_in_one_hotel_keep_per_offer_status_and_no_hotel_verdict():
+    refundable = _offers("Double Room")
+    non_refundable = _offers("Double Room", refundable_tag="NRFN", ssp=SSP - 50)
+    listing = normalize_liteapi_listing(make_hotel(), refundable + non_refundable)
+
+    [room] = listing.rooms
+    assert [(o.cancellation_type, o.free_cancellation, o.price) for o in room.options] == [
+        ("Refundable rate", None, SSP),
+        ("Non-refundable rate", False, SSP - 50),
+    ]
+    assert listing.price == SSP - 50  # the cheapest offer is the non-refundable one
+    assert _structured(listing, Field.FREE_CANCELLATION) == "UNCERTAIN"
+    _assert_no_cancellation_claims(listing)
+
+
+def test_free_cancellation_request_without_proof_is_never_confirmed():
+    listing = normalize_liteapi_listing(make_hotel(), _offers("Double Room"))
+    constraint = UserConstraint(
+        raw_text="free cancellation",
+        normalized_text="free cancellation",
+        priority=ConstraintPriority.MUST,
+        category=ConstraintCategory.POLICY,
+        mapping_status=ConstraintMappingStatus.KNOWN,
+        mapped_fields=[Field.FREE_CANCELLATION],
+        evidence_strategy=EvidenceStrategy.STRUCTURED,
+    )
+    report = match_listing_structured(listing, SearchRequest(city="Barcelona", constraints=[constraint]))
+
+    assert report.matches[Field.FREE_CANCELLATION].value.value == "UNCERTAIN"
+    assert report.hard_fail_fields == []  # not rejected either
+    # The textual fallback would get no cancellation wording to quote.
+    assert not any("cancel" in item["text"].lower() or "refund" in item["text"].lower()
+                   for item in _prepare_listing_evidence(listing))
+
+
+def test_offer_level_cancellation_data_and_ssp_are_preserved():
+    offers = _offers("Double Room") + _offers("Deluxe King", refundable_tag="NRFN", ssp=SSP + 70)
+    listing = normalize_liteapi_listing(make_hotel(), offers)
+
+    assert listing.public_offers == offers
+    assert [(o.refundable, o.public_total, o.cancel_policy_times) for o in listing.public_offers] == [
+        (True, SSP, ["2026-11-20 10:00:00 GMT"]),
+        (False, SSP + 70, ["2026-11-20 10:00:00 GMT"]),
+    ]
+    assert listing.price == SSP
+    _assert_no_confidential_amounts(listing.model_dump_json())
 
 
 def test_no_confidential_amounts_in_any_serialized_form():
