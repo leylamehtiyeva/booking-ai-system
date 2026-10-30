@@ -39,6 +39,7 @@ from __future__ import annotations
 import asyncio
 import html
 import logging
+import math
 import os
 import re
 from collections.abc import Mapping
@@ -78,6 +79,11 @@ DEFAULT_SUPPORTED_CITIES = "Barcelona"
 REQUIRED_ADULTS = 2
 DEFAULT_RATES_LIMIT = 20
 DEFAULT_MAX_DETAIL_CALLS = 5
+# Whole search, retries included. The smoke search took ~1.8 s (rates ~1.0 s,
+# details 0.1-0.7 s each); without a deadline, per-request timeouts and
+# retries could add up to about two minutes.
+DEFAULT_SEARCH_DEADLINE_SECONDS = 25.0
+MAX_SEARCH_DEADLINE_SECONDS = 60.0
 
 # LiteAPI hotelType -> canonical PropertyType value. Only types whose
 # meaning is unambiguous; anything else leaves property_type unset so the
@@ -611,6 +617,7 @@ class LiteApiRetriever:
         detail_concurrency: int = 3,
         max_rates_per_hotel: int = 3,
         provider_timeout_seconds: int = 10,
+        deadline_seconds: float | str = DEFAULT_SEARCH_DEADLINE_SECONDS,
         environment: str = "sandbox",
     ) -> None:
         self._client = client
@@ -623,6 +630,7 @@ class LiteApiRetriever:
         self._detail_concurrency = max(1, detail_concurrency)
         self._max_rates_per_hotel = max(1, max_rates_per_hotel)
         self._provider_timeout_seconds = provider_timeout_seconds
+        self._deadline_seconds = _valid_deadline(deadline_seconds)
         self._environment = environment
 
     @classmethod
@@ -630,9 +638,11 @@ class LiteApiRetriever:
         """
         Retriever configured for the current live-data scope. Defaults are
         the scope validated in the sandbox smoke: Barcelona (ES), one room,
-        two adults, rates for up to 20 hotels, details for the first 5.
+        two adults, rates for up to 20 hotels, details for the first 5, and
+        25 s for the whole search.
         """
         cities = os.getenv("LITEAPI_SUPPORTED_CITIES", DEFAULT_SUPPORTED_CITIES)
+        deadline = (os.getenv("LITEAPI_SEARCH_DEADLINE_SECONDS") or "").strip()
         return cls(
             client,
             country_code=(os.getenv("LITEAPI_COUNTRY_CODE", DEFAULT_COUNTRY_CODE).strip().upper() or None),
@@ -640,6 +650,7 @@ class LiteApiRetriever:
             required_adults=REQUIRED_ADULTS,
             rates_limit=_env_int("LITEAPI_RATES_LIMIT", DEFAULT_RATES_LIMIT),
             max_detail_calls=_env_int("LITEAPI_MAX_DETAIL_CALLS", DEFAULT_MAX_DETAIL_CALLS),
+            deadline_seconds=deadline or DEFAULT_SEARCH_DEADLINE_SECONDS,  # validated in __init__
         )
 
     def _check_supported(self, req: SearchRequest) -> None:
@@ -678,24 +689,32 @@ class LiteApiRetriever:
         self._check_supported(req)
 
         currency = _request_currency(req.currency)
+        # One deadline for the whole search - rates, details and every retry
+        # inside them - so consecutive provider timeouts cannot add up.
+        deadline = asyncio.get_running_loop().time() + self._deadline_seconds
         client = self._client or LiteApiClient.from_env()
         try:
-            payload = await client.search_rates(
-                {
-                    "cityName": req.city,
-                    "countryCode": self._country_code,
-                    "checkin": req.check_in.isoformat(),
-                    "checkout": req.check_out.isoformat(),
-                    "occupancies": [{"adults": req.adults, "children": []}],
-                    "currency": currency,
-                    "guestNationality": self._guest_nationality,
-                    "maxRatesPerHotel": self._max_rates_per_hotel,
-                    "limit": min(max_items, self._rates_limit),
-                    "timeout": self._provider_timeout_seconds,
-                },
-                trace=trace,
-            )
-            if "data" not in payload and payload.get("error") is not None:
+            try:
+                async with asyncio.timeout_at(deadline):
+                    payload = await client.search_rates(
+                        {
+                            "cityName": req.city,
+                            "countryCode": self._country_code,
+                            "checkin": req.check_in.isoformat(),
+                            "checkout": req.check_out.isoformat(),
+                            "occupancies": [{"adults": req.adults, "children": []}],
+                            "currency": currency,
+                            "guestNationality": self._guest_nationality,
+                            "maxRatesPerHotel": self._max_rates_per_hotel,
+                            "limit": min(max_items, self._rates_limit),
+                            "timeout": self._provider_timeout_seconds,
+                        },
+                        trace=trace,
+                    )
+            except TimeoutError:
+                logger.warning("LiteAPI rates not received within the %ss search deadline", self._deadline_seconds)
+                raise RetrievalError("timeout") from None
+            if _is_provider_error(payload):
                 # Error object instead of results; the body is not logged.
                 raise RetrievalError("provider_error")
 
@@ -703,33 +722,18 @@ class LiteApiRetriever:
             del payload
             hotel_ids = list(offers_by_hotel)[: min(max_items, self._max_detail_calls)]
             fetched_at = datetime.now(timezone.utc)
-
-            semaphore = asyncio.Semaphore(self._detail_concurrency)
-
-            async def details(hotel_id: str) -> Mapping[str, Any] | RetrievalError:
-                async with semaphore:
-                    try:
-                        response = await client.get_hotel_details(
-                            hotel_id, timeout_seconds=self._provider_timeout_seconds, trace=trace
-                        )
-                    except RetrievalError as exc:
-                        return exc
-                return _mapping(response.get("data"))
-
-            results = await asyncio.gather(*(details(hotel_id) for hotel_id in hotel_ids))
+            results = await self._fetch_details(client, hotel_ids, deadline=deadline, trace=trace)
         finally:
             if self._client is None:
                 await client.aclose()
 
         listings: list[ListingRaw] = []
         errors: list[RetrievalError] = []
-        for hotel_id, hotel in zip(hotel_ids, results):
+        broken: list[Exception] = []
+        for hotel_id in hotel_ids:
+            hotel = results[hotel_id]
             if isinstance(hotel, RetrievalError):
-                logger.warning("LiteAPI details unavailable for hotel %s: %s", hotel_id, hotel.code)
                 errors.append(hotel)
-                continue
-            if not hotel:
-                logger.warning("LiteAPI returned no content for hotel %s; skipped", hotel_id)
                 continue
             try:
                 listings.append(
@@ -740,17 +744,116 @@ class LiteApiRetriever:
                         fetched_at=fetched_at,
                     )
                 )
-            except Exception:
+            except Exception as exc:
                 logger.exception("Failed to normalize LiteAPI hotel %s", hotel_id)
+                broken.append(exc)
 
-        if not listings and errors:
-            raise errors[0]
+        if errors:
+            logger.warning(
+                "LiteAPI details: %s of %s hotels usable; failures: %s",
+                len(listings), len(hotel_ids), ", ".join(sorted({error.code for error in errors})),
+            )
+        if not listings:
+            # Nothing usable is a failure, never an empty result: a hotel that
+            # could not be normalized surfaces its error (it may be a bug),
+            # otherwise the first provider failure (e.g. timeout) is raised.
+            if broken:
+                raise broken[0]
+            if errors:
+                raise errors[0]
         return listings
+
+    async def _fetch_details(
+        self,
+        client: LiteApiClient,
+        hotel_ids: list[str],
+        *,
+        deadline: float,
+        trace: RequestTrace | None,
+    ) -> dict[str, Mapping[str, Any] | RetrievalError]:
+        """
+        hotel_id -> its non-empty `data` object, or the RetrievalError it
+        failed with (HTTP error, error object, no usable content, timeout).
+        Details still running at the deadline are cancelled - and awaited, so
+        no request outlives the search - and reported as timeouts. Any other
+        exception is a bug and propagates.
+        """
+        semaphore = asyncio.Semaphore(self._detail_concurrency)
+
+        async def details(hotel_id: str) -> Mapping[str, Any] | RetrievalError:
+            async with semaphore:
+                try:
+                    response = await client.get_hotel_details(
+                        hotel_id, timeout_seconds=self._provider_timeout_seconds, trace=trace
+                    )
+                except RetrievalError as exc:
+                    logger.warning("LiteAPI details unavailable for hotel %s: %s", hotel_id, exc.code)
+                    return exc
+            if _is_provider_error(response):
+                logger.warning("LiteAPI details for hotel %s returned an error object", hotel_id)
+                return RetrievalError("provider_error")
+            data = _mapping(response.get("data"))
+            if not data:
+                # Rates listed this hotel as available, so a reply without
+                # usable content is a provider failure, not "no hotels".
+                logger.warning("LiteAPI details for hotel %s had no usable content", hotel_id)
+                return RetrievalError("invalid_response")
+            return data
+
+        tasks = {hotel_id: asyncio.create_task(details(hotel_id)) for hotel_id in hotel_ids}
+        try:
+            if tasks:
+                remaining = deadline - asyncio.get_running_loop().time()
+                await asyncio.wait(tasks.values(), timeout=max(0.0, remaining))
+        finally:
+            unfinished = [task for task in tasks.values() if not task.done()]
+            for task in unfinished:
+                task.cancel()
+            await asyncio.gather(*unfinished, return_exceptions=True)
+
+        if unfinished:
+            logger.warning(
+                "LiteAPI details for %s of %s hotels missed the %ss search deadline",
+                len(unfinished), len(tasks), self._deadline_seconds,
+            )
+        return {
+            hotel_id: RetrievalError("timeout") if task.cancelled() else task.result()
+            for hotel_id, task in tasks.items()
+        }
+
+
+def _is_provider_error(payload: Mapping[str, Any]) -> bool:
+    """An HTTP 200 body that carries an error object instead of data."""
+    return payload.get("error") is not None and payload.get("data") is None
 
 
 def _env_int(name: str, default: int) -> int:
     raw = os.getenv(name)
     return int(raw) if raw and raw.strip() else default
+
+
+def _valid_deadline(value: float | str) -> float:
+    """
+    Search deadline in seconds: the default when the value is not a finite
+    positive number (0, negative, nan, inf, text), at most the upper limit -
+    a bad setting must neither time out every search nor disable the limit.
+    """
+    try:
+        seconds = float(value)
+    except (TypeError, ValueError):
+        seconds = math.nan
+    if not math.isfinite(seconds) or seconds <= 0:
+        logger.warning(
+            "Invalid LiteAPI search deadline %r; using %ss", value, DEFAULT_SEARCH_DEADLINE_SECONDS
+        )
+        return DEFAULT_SEARCH_DEADLINE_SECONDS
+    if seconds > MAX_SEARCH_DEADLINE_SECONDS:
+        logger.warning(
+            "LiteAPI search deadline %ss is above the %ss limit; using the limit",
+            seconds, MAX_SEARCH_DEADLINE_SECONDS,
+        )
+        return MAX_SEARCH_DEADLINE_SECONDS
+    return seconds
 
 
 def _request_currency(value: str | None) -> str:

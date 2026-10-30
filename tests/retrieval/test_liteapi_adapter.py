@@ -9,7 +9,9 @@ caught by a plain substring check.
 
 from __future__ import annotations
 
+import asyncio
 import json
+import time
 from datetime import date
 
 import httpx
@@ -688,7 +690,12 @@ class _FakeLiteApi:
         hotel = self.hotels.get(request.url.params["hotelId"])
         if isinstance(hotel, int):
             return httpx.Response(hotel, json={"error": {"message": "synthetic"}})
+        if hotel == PROVIDER_ERROR:
+            return httpx.Response(200, json={"error": {"code": 4002, "message": "synthetic"}})
         return httpx.Response(200, json={"data": hotel} if hotel else {})
+
+
+PROVIDER_ERROR = "http-200-error-object"
 
 
 def _request(**overrides) -> SearchRequest:
@@ -780,6 +787,205 @@ async def test_retriever_refuses_occupancies_it_cannot_express(overrides):
 
     assert exc.value.code == "unsupported_request"
     assert fake.requests == []
+
+
+async def test_an_error_object_in_one_hotel_detail_skips_only_that_hotel():
+    fake = _FakeLiteApi(_rates("h1", "h2"), {"h1": PROVIDER_ERROR, "h2": make_hotel("h2")})
+
+    listings = await _retriever(fake).get_candidates(_request(), max_items=10)
+
+    assert [listing.id for listing in listings] == ["h2"]
+
+
+async def test_error_objects_in_every_hotel_detail_are_a_provider_failure_not_an_empty_result():
+    fake = _FakeLiteApi(_rates("h1", "h2"), {"h1": PROVIDER_ERROR, "h2": PROVIDER_ERROR})
+
+    with pytest.raises(RetrievalError) as exc:
+        await _retriever(fake).get_candidates(_request(), max_items=10)
+
+    assert exc.value.code == "provider_error"
+    assert "synthetic" not in str(exc.value) and exc.value.user_message is None
+
+
+async def test_a_hotel_that_cannot_be_normalized_is_not_hidden_as_an_empty_result(monkeypatch):
+    def broken(*args, **kwargs):
+        raise KeyError("bug")
+
+    monkeypatch.setattr("app.retrieval.liteapi.normalize_liteapi_listing", broken)
+    fake = _FakeLiteApi(_rates("h1"), {"h1": make_hotel("h1")})
+
+    with pytest.raises(KeyError):
+        await _retriever(fake).get_candidates(_request(), max_items=10)
+
+
+# --- one deadline for the whole search ---------------------------------------
+
+
+class _TimedLiteApi:
+    """
+    Async MockTransport handler with per-hotel delays. Records how many
+    requests are in flight and which ones were cancelled mid-request.
+    """
+
+    def __init__(
+        self,
+        *,
+        rates_delays: tuple[float, ...] = (0.0,),
+        rates_statuses: tuple[int, ...] = (200,),
+        detail_delays: dict[str, float],
+    ) -> None:
+        # Per rates attempt; the last value repeats.
+        self.rates_delays = list(rates_delays)
+        self.rates_statuses = list(rates_statuses)
+        self.detail_delays = detail_delays
+        self.rates_calls = 0
+        self.detail_calls: list[str] = []
+        self.completed: list[str] = []
+        self.cancelled: list[str] = []
+        self.in_flight = 0
+        self.max_in_flight = 0
+
+    async def __call__(self, request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/hotels/rates"):
+            attempt = self.rates_calls
+            self.rates_calls += 1
+            status = self.rates_statuses[min(attempt, len(self.rates_statuses) - 1)]
+            await asyncio.sleep(self.rates_delays[min(attempt, len(self.rates_delays) - 1)])
+            if status != 200:
+                return httpx.Response(status)
+            return httpx.Response(200, json=_rates(*self.detail_delays))
+        hotel_id = request.url.params["hotelId"]
+        self.detail_calls.append(hotel_id)
+        self.in_flight += 1
+        self.max_in_flight = max(self.max_in_flight, self.in_flight)
+        try:
+            await asyncio.sleep(self.detail_delays[hotel_id])
+        except asyncio.CancelledError:
+            self.cancelled.append(hotel_id)
+            raise
+        finally:
+            self.in_flight -= 1
+        self.completed.append(hotel_id)
+        return httpx.Response(200, json={"data": make_hotel(hotel_id)})
+
+
+def _timed_retriever(fake: _TimedLiteApi, *, deadline: float, **kwargs) -> LiteApiRetriever:
+    client = LiteApiClient("sand_test-key", transport=httpx.MockTransport(fake), retry_delay_seconds=0)
+    return LiteApiRetriever(client, country_code="ES", deadline_seconds=deadline, **kwargs)
+
+
+def _no_other_tasks_left() -> bool:
+    return asyncio.all_tasks() == {asyncio.current_task()}
+
+
+async def test_rates_past_the_deadline_is_a_timeout_and_no_details_are_requested():
+    fake = _TimedLiteApi(rates_delays=(5.0,), detail_delays={"h1": 0.0})
+    started = time.perf_counter()
+
+    with pytest.raises(RetrievalError) as exc:
+        await _timed_retriever(fake, deadline=0.2).get_candidates(_request(), max_items=10)
+
+    assert exc.value.code == "timeout"
+    assert time.perf_counter() - started < 1.0
+    assert fake.detail_calls == []
+    assert _no_other_tasks_left()
+
+
+async def test_the_deadline_covers_rate_retries():
+    # The first attempt fails fast with 503 (retried by the client); the retry hangs.
+    fake = _TimedLiteApi(rates_delays=(0.0, 5.0), rates_statuses=(503, 200), detail_delays={"h1": 0.0})
+    started = time.perf_counter()
+
+    with pytest.raises(RetrievalError) as exc:
+        await _timed_retriever(fake, deadline=0.3).get_candidates(_request(), max_items=10)
+
+    assert exc.value.code == "timeout"
+    assert fake.rates_calls == 2  # the first attempt and the cut retry
+    assert time.perf_counter() - started < 1.0
+    assert _no_other_tasks_left()
+
+
+async def test_details_finished_before_the_deadline_are_returned_and_the_rest_cancelled():
+    fake = _TimedLiteApi(detail_delays={"fast-1": 0.0, "slow": 5.0, "fast-2": 0.05})
+    started = time.perf_counter()
+
+    listings = await _timed_retriever(fake, deadline=0.4).get_candidates(_request(), max_items=10)
+
+    assert [listing.id for listing in listings] == ["fast-1", "fast-2"]  # provider order kept
+    assert fake.cancelled == ["slow"]  # the slow request was cancelled, not abandoned
+    assert time.perf_counter() - started < 1.5
+    assert _no_other_tasks_left()
+
+
+async def test_no_usable_details_by_the_deadline_is_a_timeout_not_an_empty_result():
+    fake = _TimedLiteApi(detail_delays={"h1": 5.0, "h2": 5.0})
+
+    with pytest.raises(RetrievalError) as exc:
+        await _timed_retriever(fake, deadline=0.3).get_candidates(_request(), max_items=10)
+
+    assert exc.value.code == "timeout"
+    assert sorted(fake.cancelled) == ["h1", "h2"]
+    assert fake.completed == []
+    assert _no_other_tasks_left()
+
+
+async def test_concurrency_and_call_limits_are_kept_under_the_deadline():
+    hotel_ids = [f"h{i}" for i in range(8)]
+    fake = _TimedLiteApi(detail_delays={hotel_id: 0.05 for hotel_id in hotel_ids})
+
+    listings = await _timed_retriever(fake, deadline=5.0).get_candidates(_request(), max_items=40)
+
+    assert len(fake.detail_calls) == 5  # max_detail_calls
+    assert fake.max_in_flight <= 3  # detail_concurrency
+    assert [listing.id for listing in listings] == hotel_ids[:5]
+    assert fake.rates_calls == 1
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected", "warns"),
+    [
+        (None, 25.0, False),  # unset
+        ("", 25.0, False),
+        ("   ", 25.0, False),
+        ("12.5", 12.5, False),
+        ("60", 60.0, False),
+        ("0", 25.0, True),
+        ("-5", 25.0, True),
+        ("nan", 25.0, True),
+        ("inf", 25.0, True),
+        ("-inf", 25.0, True),
+        ("abc", 25.0, True),
+        ("1e9", 60.0, True),  # capped, never effectively disabled
+    ],
+)
+def test_the_search_deadline_from_env_is_validated(monkeypatch, caplog, raw, expected, warns):
+    if raw is not None:
+        monkeypatch.setenv("LITEAPI_SEARCH_DEADLINE_SECONDS", raw)
+
+    with caplog.at_level("WARNING", logger="app.retrieval.liteapi"):
+        assert LiteApiRetriever.from_env()._deadline_seconds == expected
+
+    assert ("deadline" in caplog.text) is warns
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [(12.5, 12.5), (0, 25.0), (-5, 25.0), (float("nan"), 25.0), (float("inf"), 25.0),
+     (float("-inf"), 25.0), ("abc", 25.0), (1e9, 60.0)],
+)
+def test_the_search_deadline_passed_directly_is_validated(value, expected):
+    assert LiteApiRetriever(country_code="ES", deadline_seconds=value)._deadline_seconds == expected
+
+
+async def test_hotel_details_without_usable_content_everywhere_are_an_invalid_response():
+    # Rates listed both hotels as available; neither detail reply is usable.
+    fake = _FakeLiteApi(_rates("h1", "h2"), {"h1": None, "h2": {}})
+
+    with pytest.raises(RetrievalError) as exc:
+        await _retriever(fake).get_candidates(_request(), max_items=10)
+
+    assert exc.value.code == "invalid_response"
+    assert exc.value.user_message is None
 
 
 async def test_retriever_requires_a_country():
