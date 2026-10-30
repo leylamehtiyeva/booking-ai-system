@@ -22,8 +22,10 @@ Rules this module guarantees:
   only facts the provider states positively are emitted (policyAttributes
   booleans are not reliable as negatives);
 - hotel-level facilities go to ListingRaw.facilities, room-level amenities
-  to the matching Room; an offer is attached to a content room only when
-  the names match exactly, otherwise it gets its own Room entry;
+  to the matching Room. ListingRaw.rooms holds only rooms with an offer for
+  the stay: a catalog room is used when exactly one has the offer's name,
+  otherwise the offer gets a minimal Room of its own; catalog rooms without
+  an offer are left out;
 - HTML is reduced to plain sentences;
 - the provider's review sentiment is kept as ReviewSummary with its origin;
   nothing in matching or evidence reads it yet.
@@ -472,19 +474,35 @@ def _content_room(room: Mapping[str, Any]) -> Room:
 
 
 def _rooms_with_offers(hotel: Mapping[str, Any], offers: list[PublicOffer]) -> list[Room]:
-    rooms = [_content_room(room) for room in _items(hotel.get("rooms"))]
-    by_name = {room.name.casefold(): room for room in rooms if room.name}
+    """
+    The rooms that can be booked for the requested stay - one per offered
+    room name - in offer order. Catalog rooms without an offer are left out:
+    matching reads every room, so their amenities, views or sizes would
+    otherwise confirm a requirement for a room that is not on offer.
 
+    An offer takes a catalog room's description only when exactly one
+    catalog room has its name; with no match, or several, it gets a minimal
+    Room built from the offer alone (name, occupancy, option), so nothing
+    of another room is attributed to it.
+    """
+    catalog: dict[str, list[Room]] = {}
+    for room in (_content_room(item) for item in _items(hotel.get("rooms"))):
+        if room.name:
+            catalog.setdefault(room.name.casefold(), []).append(room)
+
+    rooms: list[Room] = []
+    by_name: dict[str, Room] = {}
     for offer in offers:
-        option = _offer_option(offer)
-        room = by_name.get(offer.room_name.casefold()) if offer.room_name else None
+        key = offer.room_name.casefold() if offer.room_name else None
+        room = by_name.get(key) if key else None
         if room is None:
-            room = Room(name=offer.room_name, persons=offer.max_occupancy)
+            matches = catalog.get(key, []) if key else []
+            room = matches[0] if len(matches) == 1 else Room(name=offer.room_name, persons=offer.max_occupancy)
             rooms.append(room)
-            if offer.room_name:
-                by_name[offer.room_name.casefold()] = room
+            if key:
+                by_name[key] = room
         room.available = True
-        room.options.append(option)
+        room.options.append(_offer_option(offer))
     return rooms
 
 

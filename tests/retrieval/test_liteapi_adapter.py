@@ -18,6 +18,7 @@ from pydantic import ValidationError
 
 from app.logic.constraint_evidence_resolution import _prepare_listing_evidence, _snippet_found
 from app.logic.listing_signals import collect_listing_signals
+from app.logic.matcher_structured import match_listing_structured
 from app.logic.numeric_filters import extract_area_candidates, extract_total_price
 from app.retrieval.errors import RetrievalError
 from app.retrieval.liteapi import (
@@ -28,6 +29,14 @@ from app.retrieval.liteapi import (
     parse_rates_response,
 )
 from app.retrieval.liteapi_client import LiteApiClient
+from app.schemas.constraints import (
+    ConstraintCategory,
+    ConstraintMappingStatus,
+    ConstraintPriority,
+    EvidenceStrategy,
+    UserConstraint,
+)
+from app.schemas.fields import Field
 from app.schemas.public_offer import PublicOffer
 from app.schemas.query import SearchRequest
 from app.schemas.shown_result_set import ShownResult, ShownResultSet
@@ -315,8 +324,12 @@ def test_description_quotes_survive_evidence_verification():
     assert _snippet_found("outdoor pool with city views", evidence)
 
 
+def _offers(*room_names: str, **kwargs) -> list[PublicOffer]:
+    return [parse_public_offer(make_offer(name=name, **kwargs), requested_currency="USD") for name in room_names]
+
+
 def test_hotel_and_room_amenities_stay_separate():
-    listing = normalize_liteapi_listing(make_hotel(), [])
+    listing = normalize_liteapi_listing(make_hotel(), _offers("Double Room"))
 
     hotel_names = {facility.name for facility in listing.facilities}
     double = next(room for room in listing.rooms if room.name == "Double Room")
@@ -331,7 +344,7 @@ def test_hotel_and_room_amenities_stay_separate():
 
 
 def test_room_sizes_are_unit_scoped_and_missing_sizes_skipped():
-    listing = normalize_liteapi_listing(make_hotel(), [])
+    listing = normalize_liteapi_listing(make_hotel(), _offers("Double Room", "Family Suite", "Unknown Size Room"))
 
     areas, _, reason = extract_area_candidates(listing)
 
@@ -342,7 +355,8 @@ def test_room_sizes_are_unit_scoped_and_missing_sizes_skipped():
 
 
 def test_false_or_missing_flags_never_become_a_stated_no():
-    listing = normalize_liteapi_listing(make_hotel(), [])
+    # The offered Double Room carries airConditioner=false and kitchen=null.
+    listing = normalize_liteapi_listing(make_hotel(), _offers("Double Room"))
     texts = " | ".join(signal.raw_text for signal in collect_listing_signals(listing)).lower()
 
     # breakfastAvailable false, petsAllowed false, fitnessCenter false, airConditioner false,
@@ -413,9 +427,116 @@ def test_offers_attach_to_matching_rooms_only():
     assert deluxe.options[0].choices == ["Room Only", "Non-refundable"]
     assert deluxe.options[0].free_cancellation is False
 
-    assert rooms["Family Suite"].available is None
-    assert rooms["Family Suite"].options == []
+    assert set(rooms) == {"Double Room", "Deluxe King"}  # catalog rooms without an offer are left out
     assert listing.price == SSP  # lowest public offer
+
+
+# --- which rooms reach matching (only offered ones, unambiguous catalog links) --
+
+
+def _catalog_room(name: str, *, amenities: list[str] = (), size: int | None = None, max_occupancy: int = 2) -> dict:
+    return {
+        "roomName": name,
+        "roomSizeSquare": size,
+        "roomSizeUnit": "m2",
+        "maxOccupancy": max_occupancy,
+        "roomAmenities": [{"amenitiesId": i, "name": a} for i, a in enumerate(amenities)],
+    }
+
+
+def _structured(listing, field: Field) -> str:
+    constraint = UserConstraint(
+        raw_text=field.value,
+        normalized_text=field.value,
+        priority=ConstraintPriority.MUST,
+        category=ConstraintCategory.AMENITY,
+        mapping_status=ConstraintMappingStatus.KNOWN,
+        mapped_fields=[field],
+        evidence_strategy=EvidenceStrategy.STRUCTURED,
+    )
+    request = SearchRequest(city="Barcelona", constraints=[constraint])
+    return match_listing_structured(listing, request).matches[field].value.value
+
+
+def test_an_unoffered_catalog_room_does_not_confirm_room_features():
+    hotel = make_hotel(rooms=[
+        _catalog_room("Standard Room", amenities=["Desk"], size=18),
+        _catalog_room("Suite", amenities=["Balcony", "Desk"], size=45, max_occupancy=4),
+    ])
+
+    listing = normalize_liteapi_listing(hotel, _offers("Standard Room"))
+
+    assert [room.name for room in listing.rooms] == ["Standard Room"]
+    assert _structured(listing, Field.BALCONY) != "YES"
+    assert extract_area_candidates(listing)[0] == [18.0]  # not the suite's 45 m²
+    assert listing.max_occupancy == 2  # not the suite's 4
+
+
+def test_an_ambiguous_room_name_gets_a_minimal_room_not_an_arbitrary_one():
+    hotel = make_hotel(rooms=[
+        _catalog_room("Double Room", amenities=["Balcony"], size=30),
+        _catalog_room("Double Room", amenities=["Desk"], size=15),
+    ])
+
+    listing = normalize_liteapi_listing(hotel, _offers("Double Room") + _offers("Double Room", board_name="Breakfast Included"))
+
+    [room] = listing.rooms  # one room for the name, no duplicates
+    assert room.name == "Double Room"
+    assert room.facilities == [] and room.bed_types == []
+    assert room.persons == 2  # from the offer itself
+    assert room.available is True
+    assert [option.choices[0] for option in room.options] == ["Room Only", "Breakfast Included"]
+    assert _structured(listing, Field.BALCONY) != "YES"
+    assert extract_area_candidates(listing)[0] == []
+
+
+def test_an_unmatched_offer_keeps_only_what_the_offer_states():
+    listing = normalize_liteapi_listing(make_hotel(), _offers("Deluxe King"))
+
+    [room] = listing.rooms
+    assert room.name == "Deluxe King"
+    assert room.facilities == [] and room.bed_types == []
+    assert room.available is True
+    assert room.options[0].price == SSP
+    assert room.options[0].choices == ["Room Only", "Free cancellation until 2026-11-20 10:00:00 GMT"]
+
+
+def test_a_unique_name_match_keeps_the_catalog_description():
+    listing = normalize_liteapi_listing(make_hotel(), _offers("Double Room"))
+
+    [room] = listing.rooms
+    names = {facility.name for facility in room.facilities}
+    assert {"Desk", "Shower", "Sea View", "Laptop-friendly workspace", "Room size: 17 m²"} <= names
+    assert room.bed_types[0].beds == ["1 x Double bed (131-150 cm wide)"]
+    assert room.available is True and len(room.options) == 1
+    assert _structured(listing, Field.BALCONY) != "YES"  # the Double Room has a sea view, not a balcony
+
+
+def test_hotel_level_facilities_do_not_depend_on_rooms():
+    for offers in ([], _offers("Deluxe King"), _offers("Double Room")):
+        listing = normalize_liteapi_listing(make_hotel(), offers)
+        assert {"Free WiFi", "Swimming pool"} <= {facility.name for facility in listing.facilities}
+        assert _structured(listing, Field.WIFI) == "YES"
+
+
+def test_every_offer_survives_normalization_without_fake_rooms():
+    offers = (
+        _offers("Double Room")
+        + _offers("Double Room", board_name="Breakfast Included", ssp=SSP + 60)
+        + _offers("Deluxe King", ssp=SSP + 120)
+        + _offers("Deluxe King", refundable_tag="NRFN", ssp=SSP + 90)
+    )
+
+    listing = normalize_liteapi_listing(make_hotel(), offers)
+
+    assert listing.public_offers == offers
+    assert sum(len(room.options) for room in listing.rooms) == len(offers)
+    assert [room.name for room in listing.rooms] == ["Double Room", "Deluxe King"]
+    assert all(room.available is True and room.options for room in listing.rooms)
+    assert sorted(option.price for room in listing.rooms for option in room.options) == sorted(
+        offer.public_total for offer in offers
+    )
+    assert listing.price == SSP
 
 
 def test_no_confidential_amounts_in_any_serialized_form():
