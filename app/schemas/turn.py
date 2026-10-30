@@ -47,7 +47,7 @@ ResponseSource = Literal["llm", "deterministic", "deterministic_fallback", "dire
 class TurnConfig(BaseModel):
     """Per-call settings; defaults reproduce the Streamlit app's previous ones."""
 
-    source: Literal["fixtures", "apify"] = SOURCE_NAME
+    source: Literal["fixtures", "apify", "liteapi"] = SOURCE_NAME
     top_n: int = TOP_N_DEFAULT
     max_items: int = MAX_ITEMS_HARD_CAP
     fallback_top_k: int = FALLBACK_TOP_K_DEFAULT

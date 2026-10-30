@@ -203,6 +203,23 @@ _RETRIEVAL_UNAVAILABLE_MESSAGE = (
     "Please try again."
 )
 
+# Retrying cannot help with these, so the answer does not suggest it.
+_RETRIEVAL_NOT_CONFIGURED_MESSAGE = (
+    "Hotel search isn't available right now. "
+    "Your current search has not been changed."
+)
+_NON_RETRYABLE_RETRIEVAL_CODES = frozenset({"configuration_error", "authentication_error"})
+
+
+def _stage_failure_answer(stage: str, code: str, user_safe_message: str | None) -> str:
+    if stage != "retrieval":
+        return _PROCESSING_UNAVAILABLE_MESSAGE
+    if user_safe_message:
+        return user_safe_message
+    if code in _NON_RETRYABLE_RETRIEVAL_CODES:
+        return _RETRIEVAL_NOT_CONFIGURED_MESSAGE
+    return _RETRIEVAL_UNAVAILABLE_MESSAGE
+
 
 def _build_stage_failure_response(
     *,
@@ -211,25 +228,24 @@ def _build_stage_failure_response(
     previous_state_json: dict[str, Any] | None,
     route_debug: dict[str, Any] | None,
     user_message: str,
+    user_safe_message: str | None = None,
 ) -> Dict[str, Any]:
     """
     A fatal stage failure (LLM provider or retrieval) - the turn did not
     complete. Mirrors routing_unavailable: the previous SearchRequest is
     returned unchanged and "shown_result_set" is left out, so neither the
     persisted search nor the stored snapshot is replaced. The answer is a
-    fixed user-safe text; stage/code are for telemetry and the UI's debug
-    view, never provider messages.
+    fixed user-safe text - the retriever's own user_message for a search it
+    cannot run (e.g. an unsupported destination), otherwise a generic one;
+    stage/code are for telemetry and the UI's debug view, never provider
+    messages.
     """
     failure = {"stage": stage, "code": code}
 
     return {
         "need_clarification": False,
         "response_type": "processing_unavailable",
-        "answer": (
-            _RETRIEVAL_UNAVAILABLE_MESSAGE
-            if stage == "retrieval"
-            else _PROCESSING_UNAVAILABLE_MESSAGE
-        ),
+        "answer": _stage_failure_answer(stage, code, user_safe_message),
         "failure": failure,
         "state": previous_state_json,
         "parsed_intent": {
@@ -963,6 +979,7 @@ async def handle_user_message(
                 previous_state_json=previous_state_json,
                 route_debug=route_debug,
                 user_message=user_message,
+                user_safe_message=exc.user_message,
             ),
             trace=trace,
             action=effective_action,

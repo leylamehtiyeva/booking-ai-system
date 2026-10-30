@@ -10,6 +10,11 @@ FALLBACK_TOP_K_DEFAULT = 5
 SOURCE_NAME = "fixtures"
 #apify/fixtures
 
+# Listing source for the local Streamlit app only ("fixtures" or "liteapi").
+# Every other caller - the public API, evaluations, tests - keeps
+# TurnConfig's default (SOURCE_NAME) unless it passes a source itself.
+RETRIEVAL_SOURCE = os.getenv("BOOKING_RETRIEVAL_SOURCE", "").strip() or SOURCE_NAME
+
 FX_BASE_CURRENCY = os.getenv("FX_BASE_CURRENCY", "USD")
 FX_CACHE_TTL_DAYS = int(os.getenv("FX_CACHE_TTL_DAYS", "10"))
 FX_CACHE_PATH = os.getenv("FX_CACHE_PATH", "app/resources/fx_rates_usd.json")

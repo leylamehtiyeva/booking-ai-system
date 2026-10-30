@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from app.schemas.public_offer import PublicOffer
 
 
 class Policy(BaseModel):
@@ -94,6 +97,34 @@ class Room(BaseModel):
     )
 
 
+class ReviewCategoryScore(BaseModel):
+    name: str
+    rating: float | None = None
+    description: str | None = None
+
+
+class ReviewSummary(BaseModel):
+    """
+    Provider-generated summary of guest reviews (guest opinion, not a
+    listing fact). Kept with its origin for later use; nothing in the
+    matching or evidence pipeline reads it yet.
+    """
+
+    source: str
+    updated_at: str | None = None
+    pros: list[str] = Field(default_factory=list)
+    cons: list[str] = Field(default_factory=list)
+    categories: list[ReviewCategoryScore] = Field(default_factory=list)
+
+
+class ListingProvenance(BaseModel):
+    """Where and when a listing's data was obtained."""
+
+    provider: str
+    environment: str | None = None
+    fetched_at: datetime
+
+
 class ListingRaw(BaseModel):
     """
     Internal listing representation used by the retrieval and
@@ -150,5 +181,19 @@ class ListingRaw(BaseModel):
     rooms: list[Room] = Field(
         default_factory=list
     )
+
+    latitude: float | None = None
+    longitude: float | None = None
+
+    review_count: int | None = None
+    review_summary: ReviewSummary | None = None
+
+    # Public part of the provider's offers for the requested stay; `price`
+    # is the lowest public_total among them (see app.schemas.public_offer).
+    public_offers: list[PublicOffer] = Field(
+        default_factory=list
+    )
+
+    provenance: ListingProvenance | None = None
 
     raw: dict[str, Any] | None = None

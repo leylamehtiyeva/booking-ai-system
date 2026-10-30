@@ -57,6 +57,7 @@ CREDENTIAL_ENV_VARS = (
     "OPENROUTER_API_KEY",
     "APIFY_TOKEN",
     "BRIGHT_DATA_API_KEY",
+    "LITEAPI_SANDBOX_KEY",
 )
 
 # Local LLM configuration that would otherwise change which model/profile
@@ -69,6 +70,15 @@ LOCAL_CONFIG_ENV_VARS = (
     "ROUTER_LLM_PROFILE",
     "CONVERSATION_RESPONSE_LLM_PROFILE",
     "LITELLM_DEV_ENV_HOT_RELOAD",
+    # Listing source and live-data scope (app.config.settings, app.retrieval.liteapi).
+    "BOOKING_RETRIEVAL_SOURCE",
+    "LITEAPI_COUNTRY_CODE",
+    "LITEAPI_SUPPORTED_CITIES",
+    "LITEAPI_RATES_LIMIT",
+    "LITEAPI_MAX_DETAIL_CALLS",
+    "LITEAPI_BASE_URL",
+    "LITEAPI_TIMEOUT_SECONDS",
+    "LITEAPI_MAX_ATTEMPTS",
 )
 
 
