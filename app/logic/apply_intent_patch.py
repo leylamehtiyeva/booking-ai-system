@@ -159,12 +159,18 @@ def _normalize_constraint_consistency(c: UserConstraint) -> UserConstraint:
 def _merge_duplicate_constraint(
     current: UserConstraint,
     incoming: UserConstraint,
+    *,
+    incoming_sets_priority: bool = False,
 ) -> UserConstraint:
     """
     Merge duplicate semantic constraints.
 
     Rules:
-    - stronger priority wins: forbidden > must > nice
+    - incoming_sets_priority (an update restating an existing constraint):
+      the incoming priority replaces the current one, stronger or weaker -
+      the user's latest explicit wording decides;
+    - otherwise (duplicates within one list) stronger priority wins:
+      forbidden > must > nice
     - newer raw wording can be preserved
     - known mapped constraint wins only if it actually has mapped_fields
     - otherwise unresolved/textual remains the honest representation
@@ -172,11 +178,14 @@ def _merge_duplicate_constraint(
     current = _normalize_constraint_consistency(current)
     incoming = _normalize_constraint_consistency(incoming)
 
-    priority = (
-        incoming.priority
-        if _priority_rank(incoming.priority) >= _priority_rank(current.priority)
-        else current.priority
-    )
+    if incoming_sets_priority:
+        priority = incoming.priority
+    else:
+        priority = (
+            incoming.priority
+            if _priority_rank(incoming.priority) >= _priority_rank(current.priority)
+            else current.priority
+        )
 
     if incoming.mapping_status == ConstraintMappingStatus.KNOWN and incoming.mapped_fields:
         mapping_status = incoming.mapping_status
@@ -219,6 +228,33 @@ def _dedupe_constraints(constraints: list[UserConstraint]) -> list[UserConstrain
         by_key[key] = _merge_duplicate_constraint(by_key[key], c)
 
     return [by_key[key] for key in order]
+
+
+def _apply_constraint_updates(
+    current: list[UserConstraint],
+    incoming: list[UserConstraint],
+) -> list[UserConstraint]:
+    """
+    Add the patch's constraints to the current ones. One that restates an
+    existing constraint (same normalized text and category) updates it in
+    place, and its priority replaces the existing priority - so "parking is
+    no longer essential, but I'd still prefer it" turns must into nice, just
+    as "I also need bright rooms" turns nice into must.
+    """
+    out = _dedupe_constraints(current)
+    position = {_semantic_constraint_key(c): i for i, c in enumerate(out)}
+
+    for c in _dedupe_constraints(incoming):
+        key = _semantic_constraint_key(c)
+        if key in position:
+            out[position[key]] = _merge_duplicate_constraint(
+                out[position[key]], c, incoming_sets_priority=True
+            )
+        else:
+            position[key] = len(out)
+            out.append(c)
+
+    return out
 
 
 
@@ -284,11 +320,8 @@ def apply_intent_patch(state: SearchRequest, patch: SearchIntentPatch) -> Search
     constraints = _remove_constraints_by_text(constraints, patch.remove_constraint_texts)
 
 
-    # direct adds from new patch API
-    constraints.extend(patch.add_constraints)
-
-
-    data.constraints = _dedupe_constraints(constraints)
+    # direct adds from new patch API; a restated constraint takes the new priority
+    data.constraints = _apply_constraint_updates(constraints, patch.add_constraints)
 
     # property types
     property_types = list(data.property_types or [])

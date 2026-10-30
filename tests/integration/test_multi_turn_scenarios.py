@@ -531,3 +531,53 @@ async def test_general_chat_between_search_turns_leaves_state_alone(llm):
     ]
     history_for_update = [m.content for m in llm.response_inputs[-1].recent_messages]
     assert history_for_update == [m.content for m in chat_turn.session.messages]
+
+
+# --- Scenario 8: changing how strongly a requirement is wanted ----------------
+
+
+def PARKING(priority: ConstraintPriority = ConstraintPriority.MUST) -> UserConstraint:
+    return _amenity(Field.PARKING, "parking").model_copy(update={"priority": priority})
+
+
+async def test_must_becomes_nice_then_is_removed_and_the_rest_of_the_search_stays(llm):
+    chat = Conversation()
+
+    llm.router_steps.append(route(ConversationAction.START_SEARCH))
+    llm.intents.append(
+        IntentRoute(
+            city="Baku",
+            check_in="2026-04-10",
+            check_out="2026-04-15",
+            property_types=["apartment"],
+            constraints=[WIFI(), PARKING()],
+        )
+    )
+    search = await chat.say("Apartment in Baku for April 10-15 with WiFi, parking is essential")
+    first = search.session.search_request
+    assert [(c.normalized_text, c.priority.value) for c in first.constraints] == [("wifi", "must"), ("parking", "must")]
+
+    llm.router_steps.append(route(ConversationAction.UPDATE_SEARCH))
+    llm.patches.append(SearchIntentPatch(add_constraints=[PARKING(ConstraintPriority.NICE)]))
+    softer = await chat.say("Parking is no longer essential, but I'd still prefer it")
+
+    assert softer.conversation_action == ConversationAction.UPDATE_SEARCH
+    assert softer.outcome_kind == "search"  # a real change: a new search ran
+    assert softer.inspector.search_status is not None
+    state = softer.session.search_request
+    assert [(c.normalized_text, c.priority.value) for c in state.constraints] == [("wifi", "must"), ("parking", "nice")]
+    assert (state.city, state.check_in, state.check_out, state.property_types) == (
+        first.city, first.check_in, first.check_out, first.property_types,
+    )
+    assert softer.session.shown_result_set.result_set_id != search.session.shown_result_set.result_set_id
+
+    llm.router_steps.append(route(ConversationAction.UPDATE_SEARCH))
+    llm.patches.append(SearchIntentPatch(remove_constraint_texts=["parking"]))
+    removed = await chat.say("Forget about parking")
+
+    assert removed.outcome_kind == "search"
+    final = removed.session.search_request
+    assert [(c.normalized_text, c.priority.value) for c in final.constraints] == [("wifi", "must")]
+    assert (final.city, final.check_in, final.check_out, final.property_types) == (
+        first.city, first.check_in, first.check_out, first.property_types,
+    )

@@ -7,6 +7,7 @@ from app.config.llm import get_gemini_model
 from google.adk.agents import Agent
 from google.adk.models.google_llm import Gemini
 
+from app.agents.constraint_priority_rules import CONSTRAINT_PRIORITY_RULES
 from app.schemas.intent_patch import SearchIntentPatch
 
 
@@ -33,7 +34,8 @@ IMPORTANT:
 
 SEMANTICS:
 - "also", "add", "with too", "include" -> add_*
-- "remove", "not needed", "no longer important" -> remove_* or clear_*
+- "remove", "not needed", "forget about" -> remove_* or clear_*
+- "no longer essential, but still nice" -> keep the constraint with priority="nice" (see PRIORITY UPDATE RULE)
 - "instead", "actually", "not X but Y", "change to" -> set_*
 - Use clear_city / clear_dates / clear_filters only when the user explicitly removes the whole slot
 - If the user changes only one slot, update only that slot
@@ -60,15 +62,22 @@ CONSTRAINTS:
 - Do NOT force uncertain meaning into the wrong field
 
 CONSTRAINT PRIORITY:
-- required / must / need / have to -> priority="must"
-- ideally / preferably / nice to have / desirable -> priority="nice"
-- no / without / do not want / avoid -> priority="forbidden"
+- priority: "must" for required constraints, "nice" for soft preferences, "forbidden" for exclusions
 
-IMPORTANT PRIORITY UPDATE RULE:
-- If the user repeats an existing constraint with stronger priority wording, this IS a state change.
-- Example: previous constraint has priority="nice", user says "I also need bright rooms" -> return add_constraints with the same normalized_text and priority="must".
+{CONSTRAINT_PRIORITY_RULES}
+
+PRIORITY UPDATE RULE:
+- If the user changes how strongly they want an existing constraint - stronger OR weaker - this IS a state change.
+- Return add_constraints with the SAME normalized_text and category as in the current state and the NEW priority.
+- The patch merge layer replaces the existing constraint's priority with the one you return.
 - Do NOT return an empty patch in this case.
-- The patch merge layer will deduplicate and promote the existing constraint.
+- Stronger: previous constraint has priority="nice", user says "I also need bright rooms" -> priority="must".
+- Weaker: previous constraint has priority="must", user says "Parking is no longer essential, but I'd still prefer it" -> priority="nice" (the user still wants it - do NOT remove it).
+- Only return a constraint that the new message actually mentions; never re-send unchanged constraints.
+
+REMOVING A CONSTRAINT:
+- When the user no longer wants a requirement at all ("forget about parking", "I don't care about parking anymore", "parking is not needed"), use remove_constraint_texts.
+- "No parking" / "avoid parking" is an exclusion (priority="forbidden"), not a removal.
 
 WHEN TO USE add_constraints:
 - for meaningful amenity / policy / location / layout / semantic requirements
@@ -160,6 +169,20 @@ Return:
 User: "kitchen is no longer required"
 Return:
 {{"remove_constraint_texts":["kitchen"]}}
+
+User: "Actually, I'd prefer a hotel with parking, but keep everything else the same."
+Return:
+{{"add_constraints":[{{"raw_text":"parking","normalized_text":"parking","priority":"nice","category":"amenity","mapping_status":"known","mapped_fields":["parking"],"evidence_strategy":"structured"}}]}}
+
+Previous state already has constraint normalized_text="parking", category="amenity", priority="must".
+User: "Parking is no longer essential, but I'd still prefer it"
+Return:
+{{"add_constraints":[{{"raw_text":"parking","normalized_text":"parking","priority":"nice","category":"amenity","mapping_status":"known","mapped_fields":["parking"],"evidence_strategy":"structured"}}]}}
+
+Previous state already has constraint normalized_text="parking", priority="must".
+User: "Forget about parking"
+Return:
+{{"remove_constraint_texts":["parking"]}}
 
 User: "now at least 3 bedrooms"
 Return:

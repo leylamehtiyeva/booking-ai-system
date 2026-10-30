@@ -11,6 +11,7 @@ from app.schemas.filters import SearchFilters
 from app.schemas.property_semantics import OccupancyType, PropertyType
 from app.config import clock
 from app.config.llm import get_gemini_model
+from app.agents.constraint_priority_rules import CONSTRAINT_PRIORITY_RULES
 
 class IntentRoute(BaseModel):
     city: Optional[str] = None
@@ -199,86 +200,7 @@ Constraint fields:
   - "nice" for soft preferences
   - "forbidden" for exclusions
 
-IMPORTANT PRIORITY RULE:
-
-Priority reflects USER REQUIREMENT STRENGTH,
-NOT:
-- ease of verification
-- mapping confidence
-- structured support
-- textual ambiguity
-- subjectivity
-
-A constraint may be:
-- semantic
-- subjective
-- unresolved
-- textual-only
-
-and STILL be priority="must"
-if the user phrased it as a direct requirement.
-
-Do NOT downgrade a constraint to "nice" just because:
-- it is subjective
-- it is difficult to verify
-- it requires textual evidence
-- it cannot be mapped to canonical fields
-
-Examples:
-
-User:
-"Apartment with bright rooms"
-
-Correct:
-bright rooms -> priority="must"
-
-WRONG:
-bright rooms -> priority="nice" because subjective
-
-User:
-"Need a quiet neighborhood"
-
-Correct:
-quiet neighborhood -> priority="must"
-
-User:
-"Looking for cozy interior"
-
-Correct:
-cozy interior -> priority="must"
-
-Only use priority="nice" when the user explicitly signals softness.
-
-Softness indicators:
-- ideally
-- preferably
-- nice to have
-- would be good
-- if possible
-- желательно
-- было бы неплохо
-- ideally located
-- preferably quiet
-
-A direct request is NOT softness, even when phrased as a question or
-a wish. These are priority="must":
-- "We're looking for something with a really nice atmosphere"
-  -> nice atmosphere -> must
-- "Do you have anything with a really nice atmosphere?"
-  -> nice atmosphere -> must
-- "Could you find something that looks really trustworthy?"
-  -> trustworthy -> must
-- "I really want a sea view" -> sea view -> must
-
-These ARE softness - priority="nice":
-- "A balcony would be great" -> balcony -> nice
-- "It would be great if smoking was allowed" -> smoking allowed -> nice
-- "I'd prefer somewhere quiet" -> quiet -> nice
-
-Facts about the traveller are not listing requirements - do not turn
-them into constraints:
-- "I won't be bringing any pets" -> no constraint
-- "I'm travelling for work" -> no constraint
+{CONSTRAINT_PRIORITY_RULES}
 
 CATEGORY:
 Use:
