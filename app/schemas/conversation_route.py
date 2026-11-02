@@ -1,7 +1,7 @@
 from __future__ import annotations
 from enum import Enum
 from typing import Any
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from app.schemas.query import SearchRequest
 
 
@@ -55,10 +55,57 @@ class ClarificationReason(str, Enum):
     AMBIGUOUS_REFERENCE = "ambiguous_reference"
 
 
+class PendingResolution(str, Enum):
+    """
+    How the latest message relates to a pending clarification. Only
+    produced on turns where one exists (see
+    PendingAwareConversationActionDecision), so there is no sentinel.
+
+    CONTINUE_PENDING: the message answers the clarification by choosing
+    one of its possible_actions for the ORIGINAL request.
+    CANCEL_PENDING: the user drops the original request.
+    UNRESOLVED: the message is about the clarification but does not
+    settle it - nothing is executed and the clarification stays pending.
+    NEW_REQUEST: the message is not an answer; it is routed on its own
+    and the original request is never applied.
+    """
+
+    CONTINUE_PENDING = "continue_pending"
+    CANCEL_PENDING = "cancel_pending"
+    UNRESOLVED = "unresolved"
+    NEW_REQUEST = "new_request"
+
+
+class PendingClarification(BaseModel):
+    """
+    Application state, never produced by the routing model: created by
+    conversation_flow.py when the router abstains, persisted on
+    ConversationSession, and given to the router as context on the next
+    turn (RouterInput.pending_clarification).
+
+    kind: why the previous turn abstained. V1 only creates
+    AMBIGUOUS_ACTION; AMBIGUOUS_REFERENCE is representable so it can be
+    supported later without a schema change.
+    original_user_message: the abstained message, verbatim - the semantic
+    requirement ("parking") lives here, not in the clarification answer.
+    possible_actions: chosen by deterministic application policy
+    (clarification_continuation.build_pending_clarification), never copied
+    from model text.
+    result_set_id: the ShownResultSet the question was asked about; a
+    listing-question answer is only executed against that same set.
+    """
+
+    kind: ClarificationReason
+    original_user_message: str = Field(min_length=1)
+    possible_actions: list[ConversationAction] = Field(min_length=1)
+    result_set_id: str | None = None
+
+
 class RouterInput(BaseModel):
     user_message: str
     current_search: SearchRequest | None = None
     latest_result_context: dict[str, Any] | None = None
+    pending_clarification: PendingClarification | None = None
 
 
 class ConversationActionDecision(BaseModel):
@@ -95,3 +142,21 @@ class ConversationActionDecision(BaseModel):
     result_scope: ResultScope
     target_result_id: str
 
+
+
+class PendingAwareConversationActionDecision(ConversationActionDecision):
+    """
+    Router-only output, used instead of ConversationActionDecision on turns
+    with a pending clarification: the same six fields plus one closed
+    enum. Everything after the routing layer receives the plain six-field
+    ConversationActionDecision (to_decision); pending_resolution only
+    drives the PendingClarification state transition. Required, like
+    every other field, for the same strict-schema reason.
+    """
+
+    pending_resolution: PendingResolution
+
+    def to_decision(self) -> ConversationActionDecision:
+        return ConversationActionDecision.model_validate(
+            self.model_dump(include=set(ConversationActionDecision.model_fields))
+        )

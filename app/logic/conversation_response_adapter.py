@@ -18,7 +18,11 @@ from app.schemas.query import SearchRequest
 from app.schemas.result_query_match import ResultQueryMatch
 from app.schemas.search_response import NormalizedSearchResponse
 
-_INFORMATIONAL_RESPONSE_TYPES = {"update_no_op", "listing_query_unsupported"}
+_INFORMATIONAL_RESPONSE_TYPES = {
+    "update_no_op",
+    "listing_query_unsupported",
+    "clarification_cancelled",
+}
 
 
 def build_conversation_response_input(

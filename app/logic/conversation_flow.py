@@ -1,7 +1,13 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any, Dict, Optional
 from app.observability.trace import RequestTrace
+from app.logic.clarification_continuation import (
+    PendingTransition,
+    build_pending_clarification,
+    resolve_pending_transition,
+)
 from app.logic.intent_router import build_search_request_adk_async
 from app.logic.intent_update import update_search_state_async
 from app.logic.date_normalization import InvalidStayDatesError
@@ -35,6 +41,9 @@ from app.schemas.conversation_route import (
     ConversationAction,
     ConversationActionDecision,
     ConversationDecisionStatus,
+    PendingAwareConversationActionDecision,
+    PendingClarification,
+    PendingResolution,
     ResultScope,
     RouterInput,
 )
@@ -43,6 +52,18 @@ import logging
 
 
 logger = logging.getLogger(__name__)
+
+@dataclass(frozen=True)
+class _ClarifiedChoice:
+    """
+    A pending AMBIGUOUS_ACTION clarification that the router judged to be
+    answered (and Python validated). original_user_message carries the
+    semantic request; clarification_reply is the answer, which may add a
+    detail to it.
+    """
+
+    original_user_message: str
+    clarification_reply: str
 
 
 def _build_state_payload(state: SearchRequest | None) -> dict[str, Any] | None:
@@ -191,6 +212,59 @@ def _build_clarification_response(
     }
 
 
+def _build_clarification_cancelled_response(
+    *,
+    previous_state_json: dict[str, Any] | None,
+    route_debug: dict[str, Any],
+    user_message: str,
+) -> Dict[str, Any]:
+    """
+    The user dropped a pending clarification ("never mind"). Resolved and
+    read-only: no "pending_clarification" (cleared) and no
+    "shown_result_set" (snapshot kept).
+    """
+    return {
+        "need_clarification": False,
+        "response_type": "clarification_cancelled",
+        "answer": "Okay, I've left your search and results as they were.",
+        "state": previous_state_json,
+        "parsed_intent": {
+            "router": route_debug,
+            "user_message": user_message,
+            "previous_state": previous_state_json,
+        },
+        "search_request": previous_state_json,
+    }
+
+
+def _build_stale_clarification_response(
+    *,
+    previous_state_json: dict[str, Any] | None,
+    route_debug: dict[str, Any],
+    user_message: str,
+) -> Dict[str, Any]:
+    """
+    The user chose to inspect the shown results, but the result set the
+    pending question was asked about is no longer the stored one. Never
+    run the old question against other listings - ask again instead.
+    """
+    return {
+        "need_clarification": True,
+        "questions": [
+            "The results I showed earlier are no longer available. "
+            "Could you ask your question again about the current results?"
+        ],
+        "state": previous_state_json,
+        "parsed_intent": {
+            "router": route_debug,
+            "user_message": user_message,
+            "previous_state": previous_state_json,
+            "clarification_reason": "stale_result_set",
+        },
+        "search_request": previous_state_json,
+    }
+
+
 _PROCESSING_UNAVAILABLE_MESSAGE = (
     "I couldn't process that message right now. "
     "Your current search has not been changed. "
@@ -203,6 +277,43 @@ _RETRIEVAL_UNAVAILABLE_MESSAGE = (
     "Please try again."
 )
 
+# Retrying cannot help with these, so the answer does not suggest it.
+_RETRIEVAL_NOT_CONFIGURED_MESSAGE = (
+    "Hotel search isn't available right now. "
+    "Your current search has not been changed."
+)
+_NON_RETRYABLE_RETRIEVAL_CODES = frozenset({"configuration_error", "authentication_error"})
+
+
+# After a pending clarification was resolved (continued or superseded) the
+# user's choice is NOT kept when execution fails, so the answer asks for
+# the complete request again instead of inviting a bare "try again".
+_REQUEST_NOT_COMPLETED_MESSAGE = (
+    "I couldn't complete that request, so your search and results have "
+    "not been changed. Please send your full request again, including "
+    "any details you added."
+)
+
+
+def _stage_failure_answer(
+    stage: str,
+    code: str,
+    user_safe_message: str | None,
+    *,
+    restate_request: bool = False,
+) -> str:
+    if restate_request:
+        if stage == "retrieval" and user_safe_message:
+            return f"{user_safe_message} {_REQUEST_NOT_COMPLETED_MESSAGE}"
+        return _REQUEST_NOT_COMPLETED_MESSAGE
+    if stage != "retrieval":
+        return _PROCESSING_UNAVAILABLE_MESSAGE
+    if user_safe_message:
+        return user_safe_message
+    if code in _NON_RETRYABLE_RETRIEVAL_CODES:
+        return _RETRIEVAL_NOT_CONFIGURED_MESSAGE
+    return _RETRIEVAL_UNAVAILABLE_MESSAGE
+
 
 def _build_stage_failure_response(
     *,
@@ -211,24 +322,26 @@ def _build_stage_failure_response(
     previous_state_json: dict[str, Any] | None,
     route_debug: dict[str, Any] | None,
     user_message: str,
+    user_safe_message: str | None = None,
+    restate_request: bool = False,
 ) -> Dict[str, Any]:
     """
     A fatal stage failure (LLM provider or retrieval) - the turn did not
     complete. Mirrors routing_unavailable: the previous SearchRequest is
     returned unchanged and "shown_result_set" is left out, so neither the
     persisted search nor the stored snapshot is replaced. The answer is a
-    fixed user-safe text; stage/code are for telemetry and the UI's debug
-    view, never provider messages.
+    fixed user-safe text - the retriever's own user_message for a search it
+    cannot run (e.g. an unsupported destination), otherwise a generic one;
+    stage/code are for telemetry and the UI's debug view, never provider
+    messages.
     """
     failure = {"stage": stage, "code": code}
 
     return {
         "need_clarification": False,
         "response_type": "processing_unavailable",
-        "answer": (
-            _RETRIEVAL_UNAVAILABLE_MESSAGE
-            if stage == "retrieval"
-            else _PROCESSING_UNAVAILABLE_MESSAGE
+        "answer": _stage_failure_answer(
+            stage, code, user_safe_message, restate_request=restate_request
         ),
         "failure": failure,
         "state": previous_state_json,
@@ -443,6 +556,8 @@ async def _answer_listing_query(
     previous_state_json: dict[str, Any] | None,
     route_debug: dict[str, Any] | None,
     trace: RequestTrace,
+    original_question: str | None = None,
+    restate_request: bool = False,
 ) -> Dict[str, Any]:
     """
     Orchestrates the already-tested LISTING_QUESTION pipeline:
@@ -492,6 +607,7 @@ async def _answer_listing_query(
             result_query = await extract_factual_constraints_async(
                 user_message,
                 trace=trace,
+                original_question=original_question,
             )
     except LlmCallError as exc:
         return _build_stage_failure_response(
@@ -500,6 +616,7 @@ async def _answer_listing_query(
             previous_state_json=previous_state_json,
             route_debug=route_debug,
             user_message=user_message,
+            restate_request=restate_request,
         )
 
     if not result_query.constraints:
@@ -619,13 +736,166 @@ async def handle_user_message(
     shown_listing: dict[str, Any] | None = None,
     shown_result_set: ShownResultSet | None = None,
     latest_result_context: dict[str, Any] | None = None,
+    pending_clarification: PendingClarification | None = None,
     trace: RequestTrace | None = None,
+) -> Dict[str, Any]:
+    """
+    One domain turn. The returned "pending_clarification" key (a dumped
+    PendingClarification) is what the caller stores for the next turn;
+    its absence clears any pending clarification.
+
+    A pending clarification is semantic input to the router
+    (RouterInput.pending_clarification). The router judges how the message
+    relates to it (pending_resolution); clarification_continuation.
+    resolve_pending_transition checks that judgement against the pending
+    state:
+
+    - CONTINUE  -> the chosen action runs on the ORIGINAL request (a
+      listing question only against the same result set, and a specific
+      listing only once its reference is valid); cleared;
+    - CANCEL    -> read-only acknowledgement; cleared;
+    - KEEP      -> the clarification is asked again, nothing runs; kept;
+    - SUPERSEDE -> the message is handled on its own and the original
+      request is never applied; cleared (or replaced by a new one if the
+      message itself is ambiguous).
+
+    Failures: if routing itself fails (no semantic decision was made) the
+    pending clarification is kept. Once a decision was made (CONTINUE or
+    SUPERSEDE), an execution failure clears it - it is never revived or
+    retried with only part of what the user said - and the answer asks
+    for the complete request again. SearchRequest/ShownResultSet stay at
+    the last accepted state either way.
+    """
+    if trace is None:
+        trace = RequestTrace()
+
+    result = await _process_message(
+        user_message,
+        previous_state,
+        source=source,
+        top_n=top_n,
+        fallback_policy=fallback_policy,
+        max_items=max_items,
+        shown_result_set=shown_result_set,
+        latest_result_context=latest_result_context,
+        pending_clarification=pending_clarification,
+        trace=trace,
+    )
+
+    if (
+        pending_clarification is not None
+        and result.get("response_type") == "routing_unavailable"
+    ):
+        result["pending_clarification"] = pending_clarification.model_dump(mode="json")
+
+    return result
+
+
+async def _apply_clarified_search_update(
+    previous_state: SearchRequest,
+    clarified: _ClarifiedChoice,
+    *,
+    trace: RequestTrace,
+) -> SearchRequest:
+    """
+    Contract between clarification continuation and Intent Update - two
+    ordinary updates, never one concatenated message:
+
+    1. the original message, flagged as a confirmed search change (the
+       user has just chosen to change the search, so a question-shaped
+       "only the ones with parking?" is a requirement);
+    2. the clarification reply itself, as a follow-up update on top of 1,
+       with the original as read-only context (so "make it optional" can
+       resolve "it") and the instruction that it is already applied.
+       Intent Update decides what the reply changes: a bare "yes, change
+       the search" yields an empty patch, while "...but make it optional"
+       restates parking, and the existing restatement rule makes it nice.
+
+    Two patches, not one: within a single patch duplicate constraints
+    merge as "stronger priority wins", so must + nice would stay must.
+    Only the final state is returned; nothing is persisted in between.
+    """
+    state = await update_search_state_async(
+        previous_state,
+        clarified.original_user_message,
+        trace=trace,
+        confirmed_search_change=True,
+    )
+
+    return await update_search_state_async(
+        state,
+        clarified.clarification_reply,
+        trace=trace,
+        answered_request=clarified.original_user_message,
+    )
+
+
+def _continuation_decision(
+    decision: ConversationActionDecision,
+) -> ConversationActionDecision:
+    """
+    The read-only reading of an ambiguous action is a question about the
+    shown set: a listing continuation without a scope gets CURRENT_RESULTS
+    (a specific target, if the router gave one, is kept and validated by
+    _resolve_target_reference as usual).
+    """
+    if (
+        decision.action == ConversationAction.LISTING_QUESTION
+        and decision.result_scope == ResultScope.NOT_APPLICABLE
+    ):
+        return decision.model_copy(
+            update={"result_scope": ResultScope.CURRENT_RESULTS, "target_result_id": ""}
+        )
+    return decision
+
+
+def _build_routing_unavailable_response(
+    *,
+    code: str,
+    previous_state_json: dict[str, Any] | None,
+    user_message: str,
+    trace: RequestTrace,
+) -> Dict[str, Any]:
+    return _finalize_response(
+        {
+            "need_clarification": False,
+            "response_type": "routing_unavailable",
+            "answer": (
+                "I couldn't process that message right now. "
+                "Your current search has not been changed. "
+                "Please try again."
+            ),
+            "state": previous_state_json,
+            "parsed_intent": {
+                "router": {
+                    "status": "failed",
+                    "error_code": code,
+                },
+                "user_message": user_message,
+                "previous_state": previous_state_json,
+            },
+            "search_request": previous_state_json,
+        },
+        trace=trace,
+    )
+
+
+async def _process_message(
+    user_message: str,
+    previous_state: Optional[SearchRequest],
+    *,
+    source: str,
+    top_n: int,
+    fallback_policy: FallbackPolicy | None,
+    max_items: int,
+    shown_result_set: ShownResultSet | None,
+    latest_result_context: dict[str, Any] | None,
+    pending_clarification: PendingClarification | None,
+    trace: RequestTrace,
 ) -> Dict[str, Any]:
     previous_state_json = _build_state_payload(
         previous_state
     )
-    if trace is None:
-        trace = RequestTrace()
 
     router_input = RouterInput(
         user_message=user_message,
@@ -635,6 +905,7 @@ async def handle_user_message(
             if latest_result_context is not None
             else _build_shown_results_router_context(shown_result_set)
         ),
+        pending_clarification=pending_clarification,
     )
 
     try:
@@ -652,26 +923,10 @@ async def handle_user_message(
             },
         )
 
-        return _finalize_response(
-            {
-                "need_clarification": False,
-                "response_type": "routing_unavailable",
-                "answer": (
-                    "I couldn't process that message right now. "
-                    "Your current search has not been changed. "
-                    "Please try again."
-                ),
-                "state": previous_state_json,
-                "parsed_intent": {
-                    "router": {
-                        "status": "failed",
-                        "error_code": exc.code,
-                    },
-                    "user_message": user_message,
-                    "previous_state": previous_state_json,
-                },
-                "search_request": previous_state_json,
-            },
+        return _build_routing_unavailable_response(
+            code=exc.code,
+            previous_state_json=previous_state_json,
+            user_message=user_message,
             trace=trace,
         )
 
@@ -679,6 +934,161 @@ async def handle_user_message(
         mode="json",
         exclude_none=True,
     )
+
+    clarified: _ClarifiedChoice | None = None
+
+    if pending_clarification is not None:
+        if not isinstance(decision, PendingAwareConversationActionDecision):
+            # Any router (Gemini via the strict output schema, or an
+            # injected adapter) must judge the pending clarification. A
+            # decision without that judgement is a contract failure, not a
+            # new request - nothing runs and the pending request is kept.
+            logger.error(
+                "Router returned no pending_resolution on a pending turn",
+                extra={"routing_error_code": "missing_pending_resolution"},
+            )
+            return _build_routing_unavailable_response(
+                code="missing_pending_resolution",
+                previous_state_json=previous_state_json,
+                user_message=user_message,
+                trace=trace,
+            )
+
+        transition = resolve_pending_transition(pending_clarification, decision)
+        resolution = decision.pending_resolution
+        # Downstream only ever sees the six-field contract.
+        decision = decision.to_decision()
+
+        route_debug["pending_clarification"] = pending_clarification.model_dump(mode="json")
+        route_debug["pending_transition"] = transition.value
+
+        if transition == PendingTransition.CANCEL:
+            return _finalize_response(
+                _build_clarification_cancelled_response(
+                    previous_state_json=previous_state_json,
+                    route_debug=route_debug,
+                    user_message=user_message,
+                ),
+                trace=trace,
+                action=ConversationAction.GENERAL_CHAT,
+            )
+
+        if transition == PendingTransition.KEEP:
+            # The user chose to look at one shown listing but the router
+            # could not tell which: ask which listing, not the original
+            # question again. The pending request itself is unchanged.
+            asks_for_reference = (
+                resolution == PendingResolution.CONTINUE_PENDING
+                and decision.decision_status == ConversationDecisionStatus.NEEDS_CLARIFICATION
+                and decision.action == ConversationAction.LISTING_QUESTION
+                and decision.result_scope == ResultScope.SPECIFIC_RESULT
+                and decision.clarification_reason == ClarificationReason.AMBIGUOUS_REFERENCE
+            )
+            response = _build_clarification_response(
+                reason=(
+                    ClarificationReason.AMBIGUOUS_REFERENCE
+                    if asks_for_reference
+                    else pending_clarification.kind
+                ),
+                shown_result_set=shown_result_set,
+                previous_state_json=previous_state_json,
+                route_debug=route_debug,
+                user_message=user_message,
+            )
+            response["pending_clarification"] = pending_clarification.model_dump(mode="json")
+            return _finalize_response(
+                response,
+                trace=trace,
+                action=decision.action,
+            )
+
+        if transition == PendingTransition.CONTINUE:
+            if decision.action == ConversationAction.LISTING_QUESTION and (
+                shown_result_set is None
+                or not shown_result_set.items
+                or shown_result_set.result_set_id != pending_clarification.result_set_id
+            ):
+                return _finalize_response(
+                    _build_stale_clarification_response(
+                        previous_state_json=previous_state_json,
+                        route_debug=route_debug,
+                        user_message=user_message,
+                    ),
+                    trace=trace,
+                    action=decision.action,
+                )
+
+            if (
+                decision.action == ConversationAction.LISTING_QUESTION
+                and decision.result_scope == ResultScope.SPECIFIC_RESULT
+                and _resolve_target_reference(decision, shown_result_set)[2]
+                != "resolved"
+            ):
+                # The user picked one listing but the reference does not
+                # match the shown set: never widen it to all results. Ask
+                # which one, keeping the original question pending.
+                response = _build_clarification_response(
+                    reason=ClarificationReason.AMBIGUOUS_REFERENCE,
+                    shown_result_set=shown_result_set,
+                    previous_state_json=previous_state_json,
+                    route_debug=route_debug,
+                    user_message=user_message,
+                )
+                response["pending_clarification"] = pending_clarification.model_dump(
+                    mode="json"
+                )
+                return _finalize_response(
+                    response,
+                    trace=trace,
+                    action=decision.action,
+                )
+
+            decision = _continuation_decision(decision)
+            clarified = _ClarifiedChoice(
+                original_user_message=pending_clarification.original_user_message,
+                clarification_reply=user_message,
+            )
+
+    return await _execute_decision(
+        decision,
+        route_debug=route_debug,
+        user_message=user_message,
+        clarified=clarified,
+        after_pending_resolution=pending_clarification is not None,
+        previous_state=previous_state,
+        previous_state_json=previous_state_json,
+        source=source,
+        top_n=top_n,
+        fallback_policy=fallback_policy,
+        max_items=max_items,
+        shown_result_set=shown_result_set,
+        trace=trace,
+    )
+
+
+async def _execute_decision(
+    decision: ConversationActionDecision,
+    *,
+    route_debug: dict[str, Any],
+    user_message: str,
+    clarified: _ClarifiedChoice | None,
+    after_pending_resolution: bool,
+    previous_state: SearchRequest | None,
+    previous_state_json: dict[str, Any] | None,
+    source: str,
+    top_n: int,
+    fallback_policy: FallbackPolicy | None,
+    max_items: int,
+    shown_result_set: ShownResultSet | None,
+    trace: RequestTrace,
+) -> Dict[str, Any]:
+    """
+    Guards and dispatch for one routing decision - the same path whether
+    or not a pending clarification was involved. clarified: the decision
+    continues a pending request (its original message drives extraction).
+    after_pending_resolution: a pending clarification was resolved this
+    turn, so an execution failure asks for the complete request again.
+    """
 
     effective_action = decision.action
 
@@ -714,14 +1124,27 @@ async def handle_user_message(
             else ClarificationReason.AMBIGUOUS_ACTION
         )
 
+        response = _build_clarification_response(
+            reason=clarification_reason,
+            shown_result_set=shown_result_set,
+            previous_state_json=previous_state_json,
+            route_debug=route_debug,
+            user_message=user_message,
+        )
+
+        # Application state, not model output: the abstained message is
+        # kept so the user's answer can be applied to it next turn.
+        pending = build_pending_clarification(
+            reason=clarification_reason,
+            user_message=user_message,
+            previous_state=previous_state,
+            shown_result_set=shown_result_set,
+        )
+        if pending is not None:
+            response["pending_clarification"] = pending.model_dump(mode="json")
+
         return _finalize_response(
-            _build_clarification_response(
-                reason=clarification_reason,
-                shown_result_set=shown_result_set,
-                previous_state_json=previous_state_json,
-                route_debug=route_debug,
-                user_message=user_message,
-            ),
+            response,
             trace=trace,
             action=effective_action,
         )
@@ -759,6 +1182,10 @@ async def handle_user_message(
             previous_state_json=previous_state_json,
             route_debug=route_debug,
             trace=trace,
+            original_question=(
+                clarified.original_user_message if clarified is not None else None
+            ),
+            restate_request=after_pending_resolution,
         )
 
         response["result_scope"] = result_scope
@@ -815,6 +1242,7 @@ async def handle_user_message(
                     previous_state_json=previous_state_json,
                     route_debug=route_debug,
                     user_message=user_message,
+                    restate_request=after_pending_resolution,
                 ),
                 trace=trace,
                 action=effective_action,
@@ -846,11 +1274,18 @@ async def handle_user_message(
 
         try:
             with trace.step("search_state_update"):
-                state = await update_search_state_async(
-                    previous_state,
-                    user_message,
-                    trace=trace,
-                )
+                if clarified is not None:
+                    state = await _apply_clarified_search_update(
+                        previous_state,
+                        clarified,
+                        trace=trace,
+                    )
+                else:
+                    state = await update_search_state_async(
+                        previous_state,
+                        user_message,
+                        trace=trace,
+                    )
         except LlmCallError as exc:
             return _finalize_response(
                 _build_stage_failure_response(
@@ -859,6 +1294,7 @@ async def handle_user_message(
                     previous_state_json=previous_state_json,
                     route_debug=route_debug,
                     user_message=user_message,
+                    restate_request=after_pending_resolution,
                 ),
                 trace=trace,
                 action=effective_action,
@@ -866,14 +1302,19 @@ async def handle_user_message(
         except InvalidStayDatesError as exc:
             # The update is rejected as a whole - the previous, valid
             # search stays in place until the user confirms the dates.
+            response = _build_invalid_dates_response(
+                exc,
+                state_json=previous_state_json,
+                route_debug=route_debug,
+                user_message=user_message,
+                previous_state_json=previous_state_json,
+            )
+            if clarified is not None:
+                # The continued request is dropped with the rejected
+                # update; say so, or its other parts would vanish silently.
+                response["questions"].append(_REQUEST_NOT_COMPLETED_MESSAGE)
             return _finalize_response(
-                _build_invalid_dates_response(
-                    exc,
-                    state_json=previous_state_json,
-                    route_debug=route_debug,
-                    user_message=user_message,
-                    previous_state_json=previous_state_json,
-                ),
+                response,
                 trace=trace,
                 action=effective_action,
             )
@@ -963,6 +1404,8 @@ async def handle_user_message(
                 previous_state_json=previous_state_json,
                 route_debug=route_debug,
                 user_message=user_message,
+                user_safe_message=exc.user_message,
+                restate_request=after_pending_resolution,
             ),
             trace=trace,
             action=effective_action,

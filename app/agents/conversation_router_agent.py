@@ -5,6 +5,7 @@ from google.adk.models.base_llm import BaseLlm
 
 from app.schemas.conversation_route import (
     ConversationActionDecision,
+    PendingAwareConversationActionDecision,
 )
 
 
@@ -344,6 +345,109 @@ and target_result_id on every response.
 """.strip()
 
 
+# Appended only on turns with a pending clarification, together with the
+# PendingAwareConversationActionDecision output schema; every other turn
+# uses CONVERSATION_ROUTER_INSTRUCTION unchanged.
+PENDING_CLARIFICATION_INSTRUCTION = """
+7) PENDING CLARIFICATION - pending_resolution
+
+This prompt includes a "Pending clarification" section: on your
+previous turn you did not act on an ambiguous request, and the user
+was asked to clarify it. The section contains:
+
+- kind: why clarification was asked. ambiguous_action means it was
+  unclear whether the user wanted to change the search or to ask a
+  question about the results already shown;
+- original_user_message: that ambiguous request, verbatim;
+- possible_actions: the only actions the original request can be
+  resolved to.
+
+The user has not seen your internal labels - they answer in their own
+words, in any language. Judge what the latest message MEANS in relation
+to the original request, never specific words or phrases. Set
+pending_resolution to exactly one of:
+
+continue_pending:
+The message answers the clarification - it chooses how to handle the
+ORIGINAL request, possibly adding a detail to it. Set action to the
+chosen entry of possible_actions and decision_status=resolved,
+clarification_reason=none. For update_search use
+result_scope=not_applicable.
+
+For listing_question, the scope follows what the reply says the
+question is about:
+- the shown results as a whole (all of them, or which of them) ->
+  result_scope=current_results, target_result_id="";
+- one shown listing that the reply identifies (by position, name or
+  another description that matches exactly one entry in shown_results)
+  -> result_scope=specific_result with that listing's
+  target_result_id;
+- one single listing that the reply does NOT identify -> the reference
+  is unresolved. Keep pending_resolution=continue_pending and set
+  result_scope=specific_result, target_result_id="",
+  decision_status=needs_clarification,
+  clarification_reason=ambiguous_reference. Never choose a listing
+  because it is first, most likely, or simply present in
+  shown_results, and never widen a question about one listing into a
+  question about all shown results.
+
+Examples - original_user_message = "Only the ones with parking?":
+- "I'd prefer you change what you're searching for" -> update_search
+- "Change the search, though parking would just be nice to have" ->
+  update_search (the added detail is applied by the application)
+- "No need to search again, just look through what you already found"
+  -> listing_question
+- "Поменяй, пожалуйста, условия поиска" -> update_search
+- "Проверь среди тех, что уже показал" -> listing_question
+
+A reply that only identifies one of the shown listings (by position or
+name) continues the original request as listing_question with
+result_scope=specific_result and that listing's target_result_id - the
+user may be answering a follow-up question about which listing they
+meant.
+
+cancel_pending:
+The user drops the original request and asks for nothing new
+("Never mind, keep everything as it is", "Ладно, ничего не меняй").
+Set action=general_chat, decision_status=resolved,
+clarification_reason=none.
+
+unresolved:
+The message responds to the clarification but does not settle it -
+the user is unsure, asks what the difference is, or answers in a way
+that fits both options ("Hmm, what would you suggest?",
+"Даже не знаю, а в чём разница?"). Set
+decision_status=needs_clarification, clarification_reason=<kind>,
+and action=your best guess among possible_actions (it will not be
+executed).
+
+new_request:
+The message is not an answer to the clarification: the user replaces
+the original request with a different one, moves on, or talks about
+something else ("Actually, make it cheaper instead",
+"Forget that - what about Rome?", "Thanks for your help"). Classify
+the latest message ON ITS OWN with all the rules above, exactly as if
+there were no pending clarification (abstain if it is itself
+ambiguous). The original request will NOT be applied.
+
+Rules:
+- An answer may share an action with a new request: "change the search"
+  as an answer is continue_pending, while "change it to be cheaper
+  instead" replaces the original request and is new_request. Decide by
+  whether the user still wants the ORIGINAL request handled.
+- If you cannot tell whether the message answers the clarification or
+  is a new request, use unresolved - never guess continue_pending.
+- Never use continue_pending with an action outside possible_actions.
+""".strip()
+
+PENDING_AWARE_CONVERSATION_ROUTER_INSTRUCTION = (
+    CONVERSATION_ROUTER_INSTRUCTION
+    + "\n\n\n"
+    + PENDING_CLARIFICATION_INSTRUCTION
+    + "\n\nAlso return pending_resolution on every response."
+)
+
+
 def build_conversation_router_agent(
     *,
     model: BaseLlm,
@@ -353,4 +457,15 @@ def build_conversation_router_agent(
         model=model,
         instruction=CONVERSATION_ROUTER_INSTRUCTION,
         output_schema=ConversationActionDecision,
+    )
+
+def build_pending_aware_conversation_router_agent(
+    *,
+    model: BaseLlm,
+) -> Agent:
+    return Agent(
+        name="conversation_router",
+        model=model,
+        instruction=PENDING_AWARE_CONVERSATION_ROUTER_INSTRUCTION,
+        output_schema=PendingAwareConversationActionDecision,
     )

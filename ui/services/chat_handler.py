@@ -13,6 +13,7 @@ from typing import Any
 
 import streamlit as st
 
+from app.config.settings import RETRIEVAL_SOURCE
 from app.schemas.turn import TurnConfig, TurnResult
 from app.services.conversation_service import process_turn
 from ui.state import (
@@ -23,7 +24,9 @@ from ui.state import (
 
 logger = logging.getLogger(__name__)
 
-STREAMLIT_TURN_CONFIG = TurnConfig(include_debug=True)
+# BOOKING_RETRIEVAL_SOURCE=liteapi switches the local app to live LiteAPI
+# sandbox data; fixtures otherwise.
+STREAMLIT_TURN_CONFIG = TurnConfig(include_debug=True, source=RETRIEVAL_SOURCE)
 
 UNEXPECTED_ERROR_MESSAGE = (
     "Something went wrong while processing your message. "

@@ -1,5 +1,7 @@
 import streamlit as st
 
+from app.config.settings import RETRIEVAL_SOURCE
+
 
 def render_header() -> None:
     st.markdown(
@@ -10,3 +12,7 @@ def render_header() -> None:
         """,
         unsafe_allow_html=True,
     )
+    if RETRIEVAL_SOURCE == "liteapi":
+        st.caption("Live data: LiteAPI sandbox · Barcelona only · one room for two adults")
+    else:
+        st.caption("Sample data (fixtures)")

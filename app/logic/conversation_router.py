@@ -23,13 +23,16 @@ from app.config.settings import (
 from google.genai.errors import APIError
 from app.schemas.conversation_route import (
     ConversationActionDecision,
+    PendingAwareConversationActionDecision,
     RouterInput,
 )
 from collections.abc import AsyncIterator
 import logging
 from app.agents.conversation_router_agent import (
     CONVERSATION_ROUTER_INSTRUCTION,
+    PENDING_AWARE_CONVERSATION_ROUTER_INSTRUCTION,
     build_conversation_router_agent,
+    build_pending_aware_conversation_router_agent,
 )
 from app.config.llm import get_llm_profile
 from app.llm.call_policy import (
@@ -162,6 +165,21 @@ def _build_router_prompt(
         indent=2,
     )
 
+    # Present only on turns with a pending clarification - the prompt of
+    # every other turn is unchanged.
+    pending = router_input.pending_clarification
+    pending_section = (
+        "Pending clarification:\n"
+        + json.dumps(
+            pending.model_dump(mode="json"),
+            ensure_ascii=False,
+            indent=2,
+        )
+        + "\n\n"
+        if pending is not None
+        else ""
+    )
+
     return f"""
 Current search:
 {state_json}
@@ -169,7 +187,7 @@ Current search:
 Latest shown result context:
 {result_json}
 
-Latest user message:
+{pending_section}Latest user message:
 {router_input.user_message}
 """.strip()
 
@@ -182,13 +200,14 @@ def _record_router_llm_call(
     response_text: str | None,
     success: bool,
     error: str | None,
+    instruction: str = CONVERSATION_ROUTER_INSTRUCTION,
 ) -> None:
     """
     Record one completed router LLM attempt.
 
     """
     estimated_input_text = (
-        f"System instruction:\n{CONVERSATION_ROUTER_INSTRUCTION}\n\n"
+        f"System instruction:\n{instruction}\n\n"
         f"User input:\n{prompt}"
     )
 
@@ -215,6 +234,8 @@ async def _run_router_attempt(
     prompt: str,
     model_name: str,
     trace: RequestTrace | None,
+    output_model: type[ConversationActionDecision] = ConversationActionDecision,
+    instruction: str = CONVERSATION_ROUTER_INSTRUCTION,
 ) -> ConversationActionDecision:
     final_text: str | None = None
     routing_success = False
@@ -241,7 +262,7 @@ async def _run_router_attempt(
         clean = _strip_json_fence(final_text)
 
         try:
-            decision = ConversationActionDecision.model_validate_json(clean)
+            decision = output_model.model_validate_json(clean)
         except Exception as exc:
             routing_error_code = "invalid_response"
 
@@ -305,6 +326,7 @@ async def _run_router_attempt(
             response_text=final_text,
             success=routing_success,
             error=routing_error_code,
+            instruction=instruction,
         )
 
 
@@ -314,14 +336,30 @@ async def route_conversation_async(
     trace: RequestTrace | None = None,
     llm_profile_name: str | None = None,
 ) -> ConversationActionDecision:
+    """
+    Returns a ConversationActionDecision. With a pending clarification in
+    router_input, the same call (one model call, same agent name) uses the
+    extended output and returns a PendingAwareConversationActionDecision -
+    a subclass, so callers that only read the six fields are unaffected.
+    """
     model_profile = get_llm_profile(
         llm_profile_name or ROUTER_LLM_PROFILE,
     )
     model = build_adk_model(model_profile)
 
-    agent = build_conversation_router_agent(
-        model=model,
-    )
+    output_model: type[ConversationActionDecision]
+    if router_input.pending_clarification is not None:
+        agent = build_pending_aware_conversation_router_agent(
+            model=model,
+        )
+        output_model = PendingAwareConversationActionDecision
+        instruction = PENDING_AWARE_CONVERSATION_ROUTER_INSTRUCTION
+    else:
+        agent = build_conversation_router_agent(
+            model=model,
+        )
+        output_model = ConversationActionDecision
+        instruction = CONVERSATION_ROUTER_INSTRUCTION
 
     session_service = InMemorySessionService()
     runner = Runner(
@@ -364,6 +402,8 @@ async def route_conversation_async(
                 prompt=prompt,
                 model_name=model_name,
                 trace=trace,
+                output_model=output_model,
+                instruction=instruction,
             )
 
         except ConversationRoutingError as exc:

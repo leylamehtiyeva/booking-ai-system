@@ -7,9 +7,10 @@ from app.schemas.query import SearchRequest
 
 from app.retrieval.fixtures import FixturesRetriever
 from app.retrieval.apify import ApifyRetriever
+from app.retrieval.liteapi import LiteApiRetriever
 from app.observability.trace import RequestTrace
 
-Source = Literal["fixtures", "apify"]
+Source = Literal["fixtures", "apify", "liteapi"]
 
 
 async def get_candidates(
@@ -22,4 +23,6 @@ async def get_candidates(
         return await FixturesRetriever().get_candidates(req, max_items=max_items)
     if source == "apify":
         return await ApifyRetriever().get_candidates(req, max_items=max_items, trace=trace)
+    if source == "liteapi":
+        return await LiteApiRetriever.from_env().get_candidates(req, max_items=max_items, trace=trace)
     raise ValueError(f"Unknown source={source}")

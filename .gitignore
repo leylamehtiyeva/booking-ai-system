@@ -31,6 +31,7 @@ evaluation.zip
 evaluation/outputs/*.json
 evaluation/outputs/*.jsonl
 !evaluation/outputs/.gitkeep
+evaluation/outputs/clarification_continuity/
 
 # IDE
 .vscode/

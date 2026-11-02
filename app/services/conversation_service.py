@@ -35,6 +35,7 @@ from app.schemas.conversation_response import (
 )
 from app.schemas.conversation_route import ConversationAction, ConversationActionDecision
 from app.schemas.fallback_policy import FallbackPolicy
+from app.schemas.conversation_route import PendingClarification
 from app.schemas.query import SearchRequest
 from app.schemas.session import MAX_SESSION_MESSAGES, ConversationSession
 from app.schemas.shown_result_set import ShownResultSet
@@ -116,6 +117,7 @@ async def process_turn(
         fallback_policy=FallbackPolicy(enabled=True, top_k=config.fallback_top_k),
         max_items=config.max_items,
         shown_result_set=session.shown_result_set,
+        pending_clarification=session.pending_clarification,
         trace=trace,
     )
 
@@ -206,7 +208,10 @@ def _build_updated_session(
       the previous one for read-only/failed turns, the domain-approved
       partial one for a START_SEARCH clarification;
     - ShownResultSet is replaced only when "shown_result_set" is present,
-      i.e. a search actually ran and produced the shown snapshot.
+      i.e. a search actually ran and produced the shown snapshot;
+    - PendingClarification lives for one turn: it is whatever
+      handle_user_message returned as "pending_clarification" (created,
+      kept or restored on failure there), and cleared when absent.
     """
     state = result.get("state")
 
@@ -214,6 +219,12 @@ def _build_updated_session(
         ShownResultSet.model_validate(result["shown_result_set"])
         if "shown_result_set" in result
         else session.shown_result_set
+    )
+
+    pending_clarification = (
+        PendingClarification.model_validate(result["pending_clarification"])
+        if result.get("pending_clarification") is not None
+        else None
     )
 
     messages = [
@@ -227,6 +238,7 @@ def _build_updated_session(
         search_request=SearchRequest.model_validate(state) if state is not None else None,
         shown_result_set=shown_result_set,
         messages=messages,
+        pending_clarification=pending_clarification,
     )
 
 

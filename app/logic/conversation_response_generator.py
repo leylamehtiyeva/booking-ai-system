@@ -18,6 +18,9 @@ _INFORMATIONAL_MESSAGES = {
     "listing_query_unsupported": (
         "I can't check that from the information in the shown listings."
     ),
+    "clarification_cancelled": (
+        "Okay, I've left your search and results as they were."
+    ),
 }
 
 

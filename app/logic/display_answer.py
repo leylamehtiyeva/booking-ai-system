@@ -48,6 +48,7 @@ _DIRECT_RESPONSE_TYPES = {
     # Was missing: every UPDATE_SEARCH no-op turn fell through to
     # NormalizedSearchResponse.model_validate and crashed the Streamlit turn.
     "update_no_op",
+    "clarification_cancelled",
 }
 
 
