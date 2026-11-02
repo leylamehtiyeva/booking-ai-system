@@ -49,7 +49,37 @@ def _strip_json_fence(text: str) -> str:
 
 
 
-def _build_update_prompt(previous_state: SearchRequest, user_message: str) -> str:
+def _build_update_prompt(
+    previous_state: SearchRequest,
+    user_message: str,
+    *,
+    confirmed_search_change: bool = False,
+    answered_request: str | None = None,
+) -> str:
+    # Set only when the user has just answered a clarification by choosing
+    # to change the search: the message may be worded as a question ("only
+    # the ones with parking?") but must be read as a requirement.
+    confirmation = (
+        "\nThe user has explicitly confirmed that this message is a change to the "
+        "search, not a question about results already shown. Express its "
+        "requirements as patch changes.\n"
+        if confirmed_search_change
+        else ""
+    )
+    # Set only for the clarification reply, applied after the request it
+    # answers: that request is context for references ("make it
+    # optional"), not something to apply again.
+    if answered_request is not None:
+        confirmation += (
+            "\nThis message answers a clarification about an earlier request:\n"
+            f"{json.dumps(answered_request, ensure_ascii=False)}\n"
+            "That earlier request has ALREADY been applied to the state above. "
+            "Do not restate or re-add its requirements. Return only the changes "
+            "this message itself expresses: if it changes how strongly a "
+            "requirement from the earlier request is wanted, restate only that "
+            "requirement with the new priority. If the message only confirms "
+            "the choice, return an empty patch.\n"
+        )
     state_json = json.dumps(
         previous_state.model_dump(mode="json", exclude_none=True),
         ensure_ascii=False,
@@ -63,7 +93,7 @@ Current structured search state (source of truth):
 
 New user message:
 {user_message}
-
+{confirmation}
 Task:
 Return ONLY a JSON patch describing the changes caused by the new user message.
 
@@ -124,10 +154,17 @@ async def route_intent_update_patch_async(
     user_message: str,
     *,
     trace: RequestTrace | None = None,
+    confirmed_search_change: bool = False,
+    answered_request: str | None = None,
 ) -> SearchIntentPatch:
     _ensure_gemini_key()
     model_name = get_gemini_model()
-    prompt = _build_update_prompt(previous_state, user_message)
+    prompt = _build_update_prompt(
+        previous_state,
+        user_message,
+        confirmed_search_change=confirmed_search_change,
+        answered_request=answered_request,
+    )
 
     async def attempt() -> SearchIntentPatch:
         agent = build_intent_update_agent()
@@ -214,11 +251,15 @@ async def update_search_state_async(
     user_message: str,
     *,
     trace: RequestTrace | None = None,
+    confirmed_search_change: bool = False,
+    answered_request: str | None = None,
 ) -> SearchRequest:
     patch = await route_intent_update_patch_async(
         previous_state,
         user_message,
         trace=trace,
+        confirmed_search_change=confirmed_search_change,
+        answered_request=answered_request,
     )
 
 

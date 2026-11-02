@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import uuid
 from typing import Optional
@@ -35,10 +36,40 @@ def _strip_json_fence(text: str) -> str:
     return t
 
 
+def _build_factual_question_message(
+    user_message: str,
+    original_question: str | None,
+) -> str:
+    """
+    The extractor input. Without original_question it is the user's
+    message verbatim (unchanged behaviour). With it, the turn answers a
+    clarification about an earlier question: both texts are passed as
+    separately labelled inputs, never concatenated, so the facts of the
+    original question are kept and the reply can add more.
+    """
+    if original_question is None:
+        return user_message
+
+    return f"""
+The user asked a question that needed clarification, then answered the
+clarification. Return every fact the user is asking about across BOTH
+messages: the facts of the original question, plus any facts the reply
+adds. A reply that only says how to handle the question (for example, to
+look at the shown results) adds no facts. Return each fact once.
+
+Original question:
+{json.dumps(original_question, ensure_ascii=False)}
+
+Clarification reply:
+{json.dumps(user_message, ensure_ascii=False)}
+""".strip()
+
+
 async def extract_factual_constraints_async(
     user_message: str,
     *,
     trace: RequestTrace | None = None,
+    original_question: str | None = None,
 ) -> ResultQuery:
     """
     user_message -> ResultQuery (transient, never persisted). Structurally
@@ -52,6 +83,7 @@ async def extract_factual_constraints_async(
     """
     _ensure_gemini_key()
     model_name = get_gemini_model()
+    message_text = _build_factual_question_message(user_message, original_question)
 
     async def attempt() -> ResultQuery:
         agent = build_factual_question_agent()
@@ -65,7 +97,7 @@ async def extract_factual_constraints_async(
             session_id=session_id,
         )
 
-        msg = Content(role="user", parts=[Part.from_text(text=user_message)])
+        msg = Content(role="user", parts=[Part.from_text(text=message_text)])
         cfg = RunConfig(response_modalities=["TEXT"])
 
         final_text: Optional[str] = None
@@ -98,7 +130,7 @@ async def extract_factual_constraints_async(
             trace=trace,
             step=FACTUAL_EXTRACTION_STEP,
             model=model_name,
-            prompt_text=user_message,
+            prompt_text=message_text,
             response_text=final_text,
             success=True,
         )

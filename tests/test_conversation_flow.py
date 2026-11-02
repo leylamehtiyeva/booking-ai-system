@@ -323,7 +323,7 @@ def _patch_route(monkeypatch, decision: ConversationActionDecision) -> None:
 
 
 def _patch_extraction(monkeypatch, result_query: ResultQuery, spy: list | None = None) -> None:
-    async def _fake_extract(user_message, *, trace=None):
+    async def _fake_extract(user_message, *, trace=None, **kwargs):
         if spy is not None:
             spy.append(user_message)
         return result_query

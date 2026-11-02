@@ -69,7 +69,7 @@ class InformationalConversationOutcome(BaseModel):
     """
 
     kind: Literal["informational"] = "informational"
-    code: Literal["update_no_op", "listing_query_unsupported"]
+    code: Literal["update_no_op", "listing_query_unsupported", "clarification_cancelled"]
 
 
 class ConversationFailureOutcome(BaseModel):
