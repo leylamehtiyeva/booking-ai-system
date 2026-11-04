@@ -54,6 +54,9 @@ class TurnConfig(BaseModel):
     history_limit: int = 8
     persist_telemetry: bool = True
     include_debug: bool = False
+    # Experiment: structured discourse context (open reference questions,
+    # last answered listing question). Off = previous behaviour exactly.
+    discourse_context: bool = False
 
 
 class TurnFailure(BaseModel):

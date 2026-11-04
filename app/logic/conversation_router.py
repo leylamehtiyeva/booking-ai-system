@@ -22,6 +22,7 @@ from app.config.settings import (
 )
 from google.genai.errors import APIError
 from app.schemas.conversation_route import (
+    ClarificationReason,
     ConversationActionDecision,
     PendingAwareConversationActionDecision,
     RouterInput,
@@ -29,8 +30,11 @@ from app.schemas.conversation_route import (
 from collections.abc import AsyncIterator
 import logging
 from app.agents.conversation_router_agent import (
+    CONTEXT_AWARE_CONVERSATION_ROUTER_INSTRUCTION,
+    CONTEXT_AWARE_PENDING_ROUTER_INSTRUCTION,
     CONVERSATION_ROUTER_INSTRUCTION,
     PENDING_AWARE_CONVERSATION_ROUTER_INSTRUCTION,
+    build_context_aware_conversation_router_agent,
     build_conversation_router_agent,
     build_pending_aware_conversation_router_agent,
 )
@@ -165,6 +169,16 @@ def _build_router_prompt(
         indent=2,
     )
 
+    # Present only with structured discourse context (experiment).
+    context = router_input.discourse_context
+    context_section = (
+        "Conversation context:\n"
+        + json.dumps(context.router_view(), ensure_ascii=False, indent=2)
+        + "\n\n"
+        if context is not None
+        else ""
+    )
+
     # Present only on turns with a pending clarification - the prompt of
     # every other turn is unchanged.
     pending = router_input.pending_clarification
@@ -187,7 +201,7 @@ Current search:
 Latest shown result context:
 {result_json}
 
-{pending_section}Latest user message:
+{context_section}{pending_section}Latest user message:
 {router_input.user_message}
 """.strip()
 
@@ -348,7 +362,28 @@ async def route_conversation_async(
     model = build_adk_model(model_profile)
 
     output_model: type[ConversationActionDecision]
-    if router_input.pending_clarification is not None:
+    pending = router_input.pending_clarification
+    uses_context = router_input.discourse_context is not None or (
+        pending is not None and pending.kind == ClarificationReason.AMBIGUOUS_REFERENCE
+    )
+    if uses_context:
+        # Discourse-context experiment: same output contracts, plus the
+        # conversation-context instruction section.
+        agent = build_context_aware_conversation_router_agent(
+            model=model,
+            pending_aware=pending is not None,
+        )
+        output_model = (
+            PendingAwareConversationActionDecision
+            if pending is not None
+            else ConversationActionDecision
+        )
+        instruction = (
+            CONTEXT_AWARE_PENDING_ROUTER_INSTRUCTION
+            if pending is not None
+            else CONTEXT_AWARE_CONVERSATION_ROUTER_INSTRUCTION
+        )
+    elif router_input.pending_clarification is not None:
         agent = build_pending_aware_conversation_router_agent(
             model=model,
         )

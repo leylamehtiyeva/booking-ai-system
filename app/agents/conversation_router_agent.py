@@ -440,6 +440,40 @@ Rules:
 - Never use continue_pending with an action outside possible_actions.
 """.strip()
 
+# Discourse-context experiment (TurnConfig.discourse_context): appended
+# only when the prompt carries a "Conversation context" section or an open
+# ambiguous_reference question. Every other turn keeps the instructions
+# above unchanged.
+DISCOURSE_CONTEXT_INSTRUCTION = """
+8) CONVERSATION CONTEXT
+
+The prompt may include a "Conversation context" section with the last
+question about the shown results that was answered: which facts it asked
+about (asked_about) and which shown results it was about (result_scope,
+result_ids from shown_results).
+
+Use it only to interpret a message that is incomplete on its own:
+- a message that only changes which listing(s) it is about keeps the
+  same question: listing_question with the new target or scope;
+- a message that asks about something else without saying which listing
+  is about the same listing(s): listing_question with the context's
+  result_scope and, for one listing, its result_id;
+- a singular pronoun refers to the context's listing when the context
+  names exactly one.
+A message that is complete on its own, starts a different task, or
+changes the search is classified exactly as if there were no context.
+Use only result_ids that appear in shown_results. If the context does not
+settle which listing is meant, abstain with ambiguous_reference as usual.
+
+A pending clarification with kind ambiguous_reference means the user
+asked about one shown listing without saying which, and was asked which
+one; possible_actions is [listing_question]. A reply that identifies one
+shown listing is continue_pending with result_scope=specific_result and
+its target_result_id; a reply meaning all of them is continue_pending
+with result_scope=current_results; a reply that still does not identify
+a listing is unresolved.
+""".strip()
+
 PENDING_AWARE_CONVERSATION_ROUTER_INSTRUCTION = (
     CONVERSATION_ROUTER_INSTRUCTION
     + "\n\n\n"
@@ -468,4 +502,34 @@ def build_pending_aware_conversation_router_agent(
         model=model,
         instruction=PENDING_AWARE_CONVERSATION_ROUTER_INSTRUCTION,
         output_schema=PendingAwareConversationActionDecision,
+    )
+
+
+CONTEXT_AWARE_CONVERSATION_ROUTER_INSTRUCTION = (
+    CONVERSATION_ROUTER_INSTRUCTION + "\n\n\n" + DISCOURSE_CONTEXT_INSTRUCTION
+)
+CONTEXT_AWARE_PENDING_ROUTER_INSTRUCTION = (
+    PENDING_AWARE_CONVERSATION_ROUTER_INSTRUCTION + "\n\n\n" + DISCOURSE_CONTEXT_INSTRUCTION
+)
+
+
+def build_context_aware_conversation_router_agent(
+    *,
+    model: BaseLlm,
+    pending_aware: bool,
+) -> Agent:
+    """Discourse-context experiment only; same contracts as above."""
+    return Agent(
+        name="conversation_router",
+        model=model,
+        instruction=(
+            CONTEXT_AWARE_PENDING_ROUTER_INSTRUCTION
+            if pending_aware
+            else CONTEXT_AWARE_CONVERSATION_ROUTER_INSTRUCTION
+        ),
+        output_schema=(
+            PendingAwareConversationActionDecision
+            if pending_aware
+            else ConversationActionDecision
+        ),
     )

@@ -7,6 +7,7 @@ from app.logic.clarification_continuation import (
     PendingTransition,
     build_pending_clarification,
     resolve_pending_transition,
+    resolve_reference_transition,
 )
 from app.logic.intent_router import build_search_request_adk_async
 from app.logic.intent_update import update_search_state_async
@@ -41,6 +42,7 @@ from app.schemas.conversation_route import (
     ConversationAction,
     ConversationActionDecision,
     ConversationDecisionStatus,
+    DiscourseContext,
     PendingAwareConversationActionDecision,
     PendingClarification,
     PendingResolution,
@@ -558,6 +560,7 @@ async def _answer_listing_query(
     trace: RequestTrace,
     original_question: str | None = None,
     restate_request: bool = False,
+    previous_facts: list[str] | None = None,
 ) -> Dict[str, Any]:
     """
     Orchestrates the already-tested LISTING_QUESTION pipeline:
@@ -608,6 +611,8 @@ async def _answer_listing_query(
                 user_message,
                 trace=trace,
                 original_question=original_question,
+                # Only with discourse context, so the call is unchanged otherwise.
+                **({"previous_facts": previous_facts} if previous_facts else {}),
             )
     except LlmCallError as exc:
         return _build_stage_failure_response(
@@ -737,6 +742,8 @@ async def handle_user_message(
     shown_result_set: ShownResultSet | None = None,
     latest_result_context: dict[str, Any] | None = None,
     pending_clarification: PendingClarification | None = None,
+    discourse_context: DiscourseContext | None = None,
+    discourse_enabled: bool = False,
     trace: RequestTrace | None = None,
 ) -> Dict[str, Any]:
     """
@@ -769,6 +776,13 @@ async def handle_user_message(
     if trace is None:
         trace = RequestTrace()
 
+    # Discourse-context experiment: off -> no context reaches any stage.
+    valid_context = (
+        _valid_discourse_context(discourse_context, shown_result_set)
+        if discourse_enabled
+        else None
+    )
+
     result = await _process_message(
         user_message,
         previous_state,
@@ -779,6 +793,8 @@ async def handle_user_message(
         shown_result_set=shown_result_set,
         latest_result_context=latest_result_context,
         pending_clarification=pending_clarification,
+        discourse_enabled=discourse_enabled,
+        discourse_context=valid_context,
         trace=trace,
     )
 
@@ -788,7 +804,92 @@ async def handle_user_message(
     ):
         result["pending_clarification"] = pending_clarification.model_dump(mode="json")
 
+    if discourse_enabled:
+        next_context = _next_discourse_context(
+            result,
+            previous=valid_context,
+            shown_result_set=shown_result_set,
+            previous_state_json=_build_state_payload(previous_state),
+        )
+        result["discourse_context"] = (
+            next_context.model_dump(mode="json") if next_context is not None else None
+        )
+
     return result
+
+
+def _valid_discourse_context(
+    context: DiscourseContext | None,
+    shown_result_set: ShownResultSet | None,
+) -> DiscourseContext | None:
+    """
+    Context is only usable for the exact result set it was built on, and
+    only if every listing it names is still in that set. Anything else is
+    stale and is dropped, never repaired or re-pointed.
+    """
+    if context is None or shown_result_set is None:
+        return None
+    if context.result_set_id != shown_result_set.result_set_id:
+        return None
+    shown_ids = {item.result_id for item in shown_result_set.items}
+    if not set(context.result_ids) <= shown_ids:
+        return None
+    return context
+
+
+def _next_discourse_context(
+    result: Dict[str, Any],
+    *,
+    previous: DiscourseContext | None,
+    shown_result_set: ShownResultSet | None,
+    previous_state_json: dict[str, Any] | None,
+) -> DiscourseContext | None:
+    """
+    Lifecycle, from what actually happened this turn:
+
+    - an answered question about shown listings becomes the context;
+    - a failed turn, a clarification or an unsupported question that left
+      search and results untouched keeps the previous context;
+    - anything else (search change, new search, chat, cancellation) clears
+      it, so a new task never inherits the previous question.
+    """
+    response_type = result.get("response_type")
+
+    if response_type in {"routing_unavailable", "processing_unavailable"}:
+        return previous
+
+    if response_type == "listing_query_result" and shown_result_set is not None:
+        payload = result.get("listing_query_result") or {}
+        facts = [
+            c["normalized_text"]
+            for c in (payload.get("query") or {}).get("constraints", [])
+            if c.get("normalized_text")
+        ]
+        result_ids = [m["result_id"] for m in payload.get("matches", [])]
+        scope = result.get("result_scope")
+        if facts and result_ids and scope in {
+            ResultScope.CURRENT_RESULTS.value,
+            ResultScope.SPECIFIC_RESULT.value,
+        }:
+            return DiscourseContext(
+                result_set_id=shown_result_set.result_set_id,
+                result_scope=ResultScope(scope),
+                result_ids=result_ids,
+                asked_about=list(dict.fromkeys(facts)),
+            )
+        return previous
+
+    read_only = (
+        "shown_result_set" not in result
+        and result.get("state") == previous_state_json
+    )
+    if read_only and (
+        result.get("need_clarification")
+        or response_type == "listing_query_unsupported"
+    ):
+        return previous
+
+    return None
 
 
 async def _apply_clarified_search_update(
@@ -892,6 +993,8 @@ async def _process_message(
     latest_result_context: dict[str, Any] | None,
     pending_clarification: PendingClarification | None,
     trace: RequestTrace,
+    discourse_enabled: bool = False,
+    discourse_context: DiscourseContext | None = None,
 ) -> Dict[str, Any]:
     previous_state_json = _build_state_payload(
         previous_state
@@ -906,6 +1009,7 @@ async def _process_message(
             else _build_shown_results_router_context(shown_result_set)
         ),
         pending_clarification=pending_clarification,
+        discourse_context=discourse_context,
     )
 
     try:
@@ -954,7 +1058,12 @@ async def _process_message(
                 trace=trace,
             )
 
-        transition = resolve_pending_transition(pending_clarification, decision)
+        transition = (
+            resolve_reference_transition(pending_clarification, decision)
+            if discourse_enabled
+            and pending_clarification.kind == ClarificationReason.AMBIGUOUS_REFERENCE
+            else resolve_pending_transition(pending_clarification, decision)
+        )
         resolution = decision.pending_resolution
         # Downstream only ever sees the six-field contract.
         decision = decision.to_decision()
@@ -1055,6 +1164,8 @@ async def _process_message(
         user_message=user_message,
         clarified=clarified,
         after_pending_resolution=pending_clarification is not None,
+        discourse_enabled=discourse_enabled,
+        discourse_context=discourse_context,
         previous_state=previous_state,
         previous_state_json=previous_state_json,
         source=source,
@@ -1073,6 +1184,8 @@ async def _execute_decision(
     user_message: str,
     clarified: _ClarifiedChoice | None,
     after_pending_resolution: bool,
+    discourse_enabled: bool = False,
+    discourse_context: DiscourseContext | None = None,
     previous_state: SearchRequest | None,
     previous_state_json: dict[str, Any] | None,
     source: str,
@@ -1139,6 +1252,10 @@ async def _execute_decision(
             user_message=user_message,
             previous_state=previous_state,
             shown_result_set=shown_result_set,
+            include_reference=(
+                discourse_enabled
+                and effective_action == ConversationAction.LISTING_QUESTION
+            ),
         )
         if pending is not None:
             response["pending_clarification"] = pending.model_dump(mode="json")
@@ -1162,14 +1279,26 @@ async def _execute_decision(
         # target_result_id). Never substitute the nearest/first result -
         # fall back to the same read-only clarification turn as source A.
         if reference_resolution_status == "invalid_reference":
+            response = _build_clarification_response(
+                reason=ClarificationReason.AMBIGUOUS_REFERENCE,
+                shown_result_set=shown_result_set,
+                previous_state_json=previous_state_json,
+                route_debug=route_debug,
+                user_message=user_message,
+            )
+            # Discourse-context experiment: the question stays open so the
+            # user's "which one" answer can resume it.
+            pending = build_pending_clarification(
+                reason=ClarificationReason.AMBIGUOUS_REFERENCE,
+                user_message=user_message,
+                previous_state=previous_state,
+                shown_result_set=shown_result_set,
+                include_reference=discourse_enabled and clarified is None,
+            )
+            if pending is not None:
+                response["pending_clarification"] = pending.model_dump(mode="json")
             return _finalize_response(
-                _build_clarification_response(
-                    reason=ClarificationReason.AMBIGUOUS_REFERENCE,
-                    shown_result_set=shown_result_set,
-                    previous_state_json=previous_state_json,
-                    route_debug=route_debug,
-                    user_message=user_message,
-                ),
+                response,
                 trace=trace,
                 action=effective_action,
             )
@@ -1186,6 +1315,9 @@ async def _execute_decision(
                 clarified.original_user_message if clarified is not None else None
             ),
             restate_request=after_pending_resolution,
+            previous_facts=(
+                discourse_context.asked_about if discourse_context is not None else None
+            ),
         )
 
         response["result_scope"] = result_scope

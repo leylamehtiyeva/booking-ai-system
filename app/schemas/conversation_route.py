@@ -101,11 +101,41 @@ class PendingClarification(BaseModel):
     result_set_id: str | None = None
 
 
+class DiscourseContext(BaseModel):
+    """
+    Structured discourse context (experimental; TurnConfig.discourse_context).
+    Application state built by Python from the last answered question about
+    shown listings - never by the model, never a transcript. It is only
+    valid for the ShownResultSet it names: conversation_flow drops it when
+    that set is replaced or when the referenced results are not in it.
+
+    result_scope: CURRENT_RESULTS (the whole shown set) or SPECIFIC_RESULT.
+    result_ids: the listings the question was answered for.
+    asked_about: normalized facts of that question ("breakfast").
+    """
+
+    result_set_id: str = Field(min_length=1)
+    result_scope: ResultScope
+    result_ids: list[str] = Field(min_length=1)
+    asked_about: list[str] = Field(min_length=1)
+
+    def router_view(self) -> dict[str, Any]:
+        """What the router sees: no ids of other result sets, no internals."""
+        return {
+            "last_answered_question": {
+                "asked_about": self.asked_about,
+                "result_scope": self.result_scope.value,
+                "result_ids": self.result_ids,
+            }
+        }
+
+
 class RouterInput(BaseModel):
     user_message: str
     current_search: SearchRequest | None = None
     latest_result_context: dict[str, Any] | None = None
     pending_clarification: PendingClarification | None = None
+    discourse_context: DiscourseContext | None = None
 
 
 class ConversationActionDecision(BaseModel):

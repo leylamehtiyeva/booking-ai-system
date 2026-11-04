@@ -24,6 +24,7 @@ from app.schemas.conversation_route import (
     PendingAwareConversationActionDecision,
     PendingClarification,
     PendingResolution,
+    ResultScope,
 )
 from app.schemas.query import SearchRequest
 from app.schemas.shown_result_set import ShownResultSet
@@ -46,14 +47,29 @@ def build_pending_clarification(
     user_message: str,
     previous_state: SearchRequest | None,
     shown_result_set: ShownResultSet | None,
+    include_reference: bool = False,
 ) -> PendingClarification | None:
     """
-    V1 policy: only AMBIGUOUS_ACTION creates pending state, and only when
-    both readings can actually run - an existing search to update AND a
+    V1 policy: AMBIGUOUS_ACTION creates pending state only when both
+    readings can actually run - an existing search to update AND a
     non-empty shown result set to inspect. With only one reading possible
     the clarification is still asked, but nothing is carried over (the
     pre-V1 behaviour).
+
+    include_reference (discourse-context experiment only): a question
+    about one shown listing that did not say which one becomes an open
+    question too, so the answer ("the second one") can resume it.
     """
+    if reason == ClarificationReason.AMBIGUOUS_REFERENCE and include_reference:
+        if not user_message.strip() or shown_result_set is None or not shown_result_set.items:
+            return None
+        return PendingClarification(
+            kind=ClarificationReason.AMBIGUOUS_REFERENCE,
+            original_user_message=user_message,
+            possible_actions=[ConversationAction.LISTING_QUESTION],
+            result_set_id=shown_result_set.result_set_id,
+        )
+
     if reason != ClarificationReason.AMBIGUOUS_ACTION:
         return None
 
@@ -114,6 +130,47 @@ def resolve_pending_transition(
     if (
         decision.decision_status != ConversationDecisionStatus.RESOLVED
         or decision.action not in pending.possible_actions
+    ):
+        return PendingTransition.KEEP
+
+    return PendingTransition.CONTINUE
+
+
+_REFERENCE_SCOPES = frozenset({ResultScope.SPECIFIC_RESULT, ResultScope.CURRENT_RESULTS})
+
+
+def resolve_reference_transition(
+    pending: PendingClarification,
+    decision: PendingAwareConversationActionDecision,
+) -> PendingTransition:
+    """
+    Transition for an open AMBIGUOUS_REFERENCE question (experiment only).
+    Same rules as resolve_pending_transition, except that a continuation
+    must name which listing(s): a resolved listing_question with a
+    specific result or the whole shown set. The target itself is validated
+    against the shown result set by conversation_flow, as everywhere.
+    """
+    resolution = decision.pending_resolution
+
+    if resolution == PendingResolution.NEW_REQUEST:
+        return PendingTransition.SUPERSEDE
+
+    if resolution == PendingResolution.CANCEL_PENDING:
+        if (
+            decision.action == ConversationAction.GENERAL_CHAT
+            and decision.decision_status == ConversationDecisionStatus.RESOLVED
+        ):
+            return PendingTransition.CANCEL
+        return PendingTransition.KEEP
+
+    if resolution == PendingResolution.UNRESOLVED:
+        return PendingTransition.KEEP
+
+    if (
+        pending.kind != ClarificationReason.AMBIGUOUS_REFERENCE
+        or decision.decision_status != ConversationDecisionStatus.RESOLVED
+        or decision.action not in pending.possible_actions
+        or decision.result_scope not in _REFERENCE_SCOPES
     ):
         return PendingTransition.KEEP
 

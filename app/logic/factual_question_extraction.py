@@ -39,6 +39,7 @@ def _strip_json_fence(text: str) -> str:
 def _build_factual_question_message(
     user_message: str,
     original_question: str | None,
+    previous_facts: list[str] | None = None,
 ) -> str:
     """
     The extractor input. Without original_question it is the user's
@@ -47,8 +48,31 @@ def _build_factual_question_message(
     separately labelled inputs, never concatenated, so the facts of the
     original question are kept and the reply can add more.
     """
-    if original_question is None:
+    if original_question is None and not previous_facts:
         return user_message
+
+    # previous_facts (discourse-context experiment): the facts of the last
+    # answered question, for a follow-up that only changes the listing.
+    earlier = (
+        f"""
+Earlier question, already answered, asked about:
+{json.dumps(previous_facts, ensure_ascii=False)}
+Use it only if the user's current question names no fact of its own (it
+only changes which listing it is about); then it asks about those same
+facts. If the current question names facts, return only the facts it
+asks about.
+"""
+        if previous_facts
+        else ""
+    )
+
+    if original_question is None:
+        return f"""
+{earlier.strip()}
+
+Current question:
+{json.dumps(user_message, ensure_ascii=False)}
+""".strip()
 
     return f"""
 The user asked a question that needed clarification, then answered the
@@ -56,7 +80,7 @@ clarification. Return every fact the user is asking about across BOTH
 messages: the facts of the original question, plus any facts the reply
 adds. A reply that only says how to handle the question (for example, to
 look at the shown results) adds no facts. Return each fact once.
-
+{earlier}
 Original question:
 {json.dumps(original_question, ensure_ascii=False)}
 
@@ -70,6 +94,7 @@ async def extract_factual_constraints_async(
     *,
     trace: RequestTrace | None = None,
     original_question: str | None = None,
+    previous_facts: list[str] | None = None,
 ) -> ResultQuery:
     """
     user_message -> ResultQuery (transient, never persisted). Structurally
@@ -83,7 +108,7 @@ async def extract_factual_constraints_async(
     """
     _ensure_gemini_key()
     model_name = get_gemini_model()
-    message_text = _build_factual_question_message(user_message, original_question)
+    message_text = _build_factual_question_message(user_message, original_question, previous_facts)
 
     async def attempt() -> ResultQuery:
         agent = build_factual_question_agent()
