@@ -5,7 +5,7 @@ import uuid
 from pydantic import BaseModel, Field
 
 from app.schemas.conversation_response import ConversationMessage
-from app.schemas.conversation_route import PendingClarification
+from app.schemas.conversation_route import DiscourseContext, PendingClarification
 from app.schemas.query import SearchRequest
 from app.schemas.shown_result_set import ShownResultSet
 
@@ -31,3 +31,5 @@ class ConversationSession(BaseModel):
     shown_result_set: ShownResultSet | None = None
     messages: list[ConversationMessage] = Field(default_factory=list)
     pending_clarification: PendingClarification | None = None
+    # Only set when TurnConfig.discourse_context is enabled (experiment).
+    discourse_context: DiscourseContext | None = None

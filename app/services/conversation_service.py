@@ -35,7 +35,7 @@ from app.schemas.conversation_response import (
 )
 from app.schemas.conversation_route import ConversationAction, ConversationActionDecision
 from app.schemas.fallback_policy import FallbackPolicy
-from app.schemas.conversation_route import PendingClarification
+from app.schemas.conversation_route import DiscourseContext, PendingClarification
 from app.schemas.query import SearchRequest
 from app.schemas.session import MAX_SESSION_MESSAGES, ConversationSession
 from app.schemas.shown_result_set import ShownResultSet
@@ -118,6 +118,8 @@ async def process_turn(
         max_items=config.max_items,
         shown_result_set=session.shown_result_set,
         pending_clarification=session.pending_clarification,
+        discourse_context=session.discourse_context if config.discourse_context else None,
+        discourse_enabled=config.discourse_context,
         trace=trace,
     )
 
@@ -160,6 +162,7 @@ async def process_turn(
         result=result,
         user_message=user_message,
         assistant_message=assistant_message,
+        discourse_enabled=config.discourse_context,
     )
 
     return TurnResult(
@@ -201,6 +204,7 @@ def _build_updated_session(
     result: dict[str, Any],
     user_message: str,
     assistant_message: str,
+    discourse_enabled: bool = False,
 ) -> ConversationSession:
     """
     Commit rules (unchanged from the Streamlit handler):
@@ -211,7 +215,10 @@ def _build_updated_session(
       i.e. a search actually ran and produced the shown snapshot;
     - PendingClarification lives for one turn: it is whatever
       handle_user_message returned as "pending_clarification" (created,
-      kept or restored on failure there), and cleared when absent.
+      kept or restored on failure there), and cleared when absent;
+    - DiscourseContext (experiment, TurnConfig.discourse_context) is
+      whatever handle_user_message returned; with the flag off it is
+      never stored.
     """
     state = result.get("state")
 
@@ -227,6 +234,12 @@ def _build_updated_session(
         else None
     )
 
+    discourse_context = (
+        DiscourseContext.model_validate(result["discourse_context"])
+        if discourse_enabled and result.get("discourse_context") is not None
+        else None
+    )
+
     messages = [
         *session.messages,
         ConversationMessage(role="user", content=user_message),
@@ -239,6 +252,7 @@ def _build_updated_session(
         shown_result_set=shown_result_set,
         messages=messages,
         pending_clarification=pending_clarification,
+        discourse_context=discourse_context,
     )
 
 

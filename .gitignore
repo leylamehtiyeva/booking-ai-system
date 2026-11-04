@@ -32,6 +32,8 @@ evaluation/outputs/*.json
 evaluation/outputs/*.jsonl
 !evaluation/outputs/.gitkeep
 evaluation/outputs/clarification_continuity/
+evaluation/outputs/discourse_context/
+evaluation/outputs/discourse_context_holdout/
 
 # IDE
 .vscode/
