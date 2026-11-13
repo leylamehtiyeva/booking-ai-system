@@ -234,10 +234,11 @@ async def test_listing_question_specific_result_resolves_valid_id(
 @pytest.mark.asyncio
 async def test_router_abstains_on_ambiguous_reference(monkeypatch):
     """
-    "Does it have parking?" with two shown results and no other context -
-    the router itself abstains (decision_status=needs_clarification)
-    instead of guessing. Must produce a read-only clarification turn
-    naming both shown hotels, not a listing_question answer.
+    "Does it have parking?" with more shown results than safe scope widening
+    covers (> SAFE_SCOPE_WIDENING_MAX_RESULTS) - the router abstains instead
+    of guessing and the turn stays a read-only clarification naming the
+    shown hotels, not a listing_question answer. (With 1..5 shown results the
+    same abstention is answered for all of them - see test_conversation_service.)
     """
     monkeypatch.setattr(
         conversation_flow,
@@ -253,11 +254,12 @@ async def test_router_abstains_on_ambiguous_reference(monkeypatch):
         ),
     )
 
+    many = [("H1", "Hilton Baku"), ("H2", "Marriott Baku")] + [
+        (f"H{i}", f"Hotel {i}") for i in range(3, conversation_flow.SAFE_SCOPE_WIDENING_MAX_RESULTS + 2)
+    ]
     result = await conversation_flow.handle_user_message(
         "Does it have parking?",
-        shown_result_set=make_shown_result_set(
-            ("H1", "Hilton Baku"), ("H2", "Marriott Baku")
-        ),
+        shown_result_set=make_shown_result_set(*many),
     )
 
     assert result["need_clarification"] is True
@@ -337,10 +339,10 @@ async def test_abstention_is_read_only(monkeypatch):
         fake_route(
             make_decision(
                 action=ConversationAction.LISTING_QUESTION,
-                reason="Ambiguous pronoun.",
+                reason="Search change or question about the shown results?",
                 decision_status=ConversationDecisionStatus.NEEDS_CLARIFICATION,
-                clarification_reason=ClarificationReason.AMBIGUOUS_REFERENCE,
-                result_scope=ResultScope.SPECIFIC_RESULT,
+                clarification_reason=ClarificationReason.AMBIGUOUS_ACTION,
+                result_scope=ResultScope.NOT_APPLICABLE,
             )
         ),
     )

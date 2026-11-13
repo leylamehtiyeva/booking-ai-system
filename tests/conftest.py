@@ -70,6 +70,9 @@ LOCAL_CONFIG_ENV_VARS = (
     "ROUTER_LLM_PROFILE",
     "CONVERSATION_RESPONSE_LLM_PROFILE",
     "LITELLM_DEV_ENV_HOT_RELOAD",
+    # Structured discourse context flag (app.config.settings): the suite
+    # checks the code default, not the developer's shell setting.
+    "BOOKING_DISCOURSE_CONTEXT",
     # Listing source and live-data scope (app.config.settings, app.retrieval.liteapi).
     "BOOKING_RETRIEVAL_SOURCE",
     "LITEAPI_COUNTRY_CODE",

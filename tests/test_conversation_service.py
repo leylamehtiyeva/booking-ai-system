@@ -298,13 +298,39 @@ async def test_router_abstention_is_clarification_and_read_only(fake_llm):
         _decision(
             ConversationAction.LISTING_QUESTION,
             status=ConversationDecisionStatus.NEEDS_CLARIFICATION,
-            reason=ClarificationReason.AMBIGUOUS_REFERENCE,
+            reason=ClarificationReason.AMBIGUOUS_ACTION,
         )
     )
 
-    turn = await _turn(session, "what about that one?")
+    turn = await _turn(session, "only the ones with parking?")
 
     assert turn.outcome_kind == "clarification"
+    assert turn.session.search_request == session.search_request
+    assert turn.session.shown_result_set == session.shown_result_set
+
+
+async def test_unidentified_reference_is_answered_for_all_shown_results(fake_llm):
+    # Safe scope widening: no "which one?" question, no guessed listing,
+    # no search change - the question is answered for every shown listing.
+    session = await _searched_session(fake_llm)
+    fake_llm.route(
+        _decision(
+            ConversationAction.LISTING_QUESTION,
+            scope=ResultScope.SPECIFIC_RESULT,
+            status=ConversationDecisionStatus.NEEDS_CLARIFICATION,
+            reason=ClarificationReason.AMBIGUOUS_REFERENCE,
+        )
+    )
+    fake_llm.factual(ResultQuery(constraints=[_wifi()]))
+
+    turn = await _turn(session, "does it have WiFi?")
+
+    assert turn.outcome_kind == "listing_query"
+    shown_ids = [item.result_id for item in session.shown_result_set.items]
+    assert [i.match.result_id for i in turn.inspector.listing_query] == shown_ids
+    # The inspector keeps the router's own decision; the widening is application policy.
+    assert turn.inspector.routing.decision_status == ConversationDecisionStatus.NEEDS_CLARIFICATION
+    assert turn.session.pending_clarification is None
     assert turn.session.search_request == session.search_request
     assert turn.session.shown_result_set == session.shown_result_set
 

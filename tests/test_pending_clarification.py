@@ -299,9 +299,9 @@ def fakes(monkeypatch) -> Fakes:
     return Fakes(monkeypatch)
 
 
-async def _turn(session: ConversationSession, message: str) -> TurnResult:
+async def _turn(session: ConversationSession, message: str, config: TurnConfig = CONFIG) -> TurnResult:
     with clock.use_reference_date(TODAY):
-        return await process_turn(session, message, config=CONFIG)
+        return await process_turn(session, message, config=config)
 
 
 async def _searched_session(fakes: Fakes) -> ConversationSession:
@@ -371,19 +371,23 @@ async def test_ambiguous_action_creates_pending_clarification(fakes):
 
 
 async def test_ambiguous_reference_does_not_create_pending(fakes):
+    # Without the discourse feature (now on by default, so switched off here) a
+    # "which one?" clarification (here from a target that is not shown - an
+    # ambiguous_reference abstention is answered for all shown results under
+    # safe scope widening) opens nothing. With the feature on it opens an
+    # ambiguous_reference question: tests/test_discourse_context.py.
     session = await _searched_session(fakes)
     message = "Does it have parking?"
     fakes.route(
         message,
         _decision(
             ConversationAction.LISTING_QUESTION,
-            status=NEEDS,
-            reason=ClarificationReason.AMBIGUOUS_REFERENCE,
             scope=ResultScope.SPECIFIC_RESULT,
+            target="not-shown",
         ),
     )
 
-    turn = await _turn(session, message)
+    turn = await _turn(session, message, config=CONFIG.model_copy(update={"discourse_context": False}))
 
     assert turn.outcome_kind == "clarification"
     assert turn.session.pending_clarification is None

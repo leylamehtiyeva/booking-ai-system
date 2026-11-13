@@ -65,7 +65,7 @@ from app.services.conversation_service import process_turn
 
 TODAY = date(2026, 11, 2)
 ON = TurnConfig(persist_telemetry=False, include_debug=True, discourse_context=True)
-OFF = TurnConfig(persist_telemetry=False, include_debug=True)
+OFF = TurnConfig(persist_telemetry=False, include_debug=True, discourse_context=False)
 
 _FIXTURES = {
     row["id"]: row
@@ -122,7 +122,12 @@ def _ask(target=FIRST):
 
 
 ALL = _decision(ConversationAction.LISTING_QUESTION, scope=ResultScope.CURRENT_RESULTS)
-WHICH = _decision(
+# A turn that opens a "which one?" question. Under safe scope widening an
+# ambiguous_reference abstention is answered for all shown listings, so the
+# question is opened by the other source: a target the router claims but that
+# is not shown (conversation_flow never guesses, it asks).
+WHICH = _ask("not-shown")
+ABSTAIN_WHICH = _decision(
     ConversationAction.LISTING_QUESTION,
     status=ConversationDecisionStatus.NEEDS_CLARIFICATION,
     reason=ClarificationReason.AMBIGUOUS_REFERENCE,
@@ -314,6 +319,20 @@ async def test_unidentified_listing_opens_a_question_that_the_answer_resumes(fak
     assert fakes.checked[-1] == [FIRST]
     assert turn.session.pending_clarification is None
     assert turn.session.discourse_context.asked_about == ["gym"]
+    _read_only(session, turn.session)
+
+
+async def test_ambiguous_reference_abstention_is_answered_for_all_shown(fakes):
+    session = _session()
+    fakes.routes["Does it have a gym?"] = ABSTAIN_WHICH
+    fakes.facts["Does it have a gym?"] = ["gym"]
+
+    turn = await _turn(session, "Does it have a gym?")
+
+    assert turn.outcome_kind == "listing_query"
+    assert turn.session.pending_clarification is None
+    assert fakes.checked[-1] == list(NAMES)
+    assert turn.session.discourse_context.result_scope == ResultScope.CURRENT_RESULTS
     _read_only(session, turn.session)
 
 
@@ -609,3 +628,121 @@ REFERENCE_PENDING = PendingClarification(
 )
 def test_reference_transition_rules(decision, expected):
     assert resolve_reference_transition(REFERENCE_PENDING, decision) == expected
+
+
+# --- default on (owner decision, router V1.3) ------------------------------------------------
+#
+# These turns use the DEFAULT TurnConfig (no discourse flag passed), so they check that
+# production has the feature on. The router is still faked: they check that the
+# Gemini router prompt receives the structured context, and what the application
+# does with the decision - not language understanding (that is the router golden
+# set's job).
+
+import os
+import subprocess
+import sys
+
+DEFAULT = TurnConfig(persist_telemetry=False, include_debug=True)
+EXPLICIT_CHANGE_RULE = "never turns an explicit change of the search"
+
+
+def _assert_router_prompt_carries_context(router_input: RouterInput) -> None:
+    prompt = conversation_router._build_router_prompt(router_input=router_input)
+    section = prompt.split("Conversation context:\n", 1)[1].split("\n\nLatest user message:", 1)[0]
+    assert json.loads(section) == router_input.discourse_context.router_view()
+
+
+def test_discourse_context_is_on_by_default_and_can_be_switched_off():
+    assert TurnConfig().discourse_context is True
+    code = "from app.schemas.turn import TurnConfig; print(TurnConfig().discourse_context)"
+    for value, expected in (("0", "False"), ("off", "False"), ("1", "True"), ("", "True")):
+        env = {**os.environ, "BOOKING_DISCOURSE_CONTEXT": value}
+        out = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True, check=True,
+                             cwd=Path(__file__).resolve().parents[1])
+        assert out.stdout.strip() == expected, value
+    assert TurnConfig(discourse_context=False).discourse_context is False
+
+
+async def test_default_restaurant_then_gym_continues_the_question_for_all_shown(fakes):
+    session = _session()
+    first, follow_up = "Can we have dinner at either hotel, any restaurants?", "And a gym?"
+    fakes.routes[first], fakes.facts[first] = ALL, ["restaurant"]
+    fakes.routes[follow_up], fakes.facts[follow_up] = ALL, ["gym"]
+
+    answered = await _turn(session, first, DEFAULT)
+    turn = await _turn(answered.session, follow_up, DEFAULT)
+
+    seen = fakes.router_inputs[-1]
+    assert seen.discourse_context == DiscourseContext(
+        result_set_id="rs-baku", result_scope=ResultScope.CURRENT_RESULTS, result_ids=[FIRST, SECOND],
+        asked_about=["restaurant"])
+    _assert_router_prompt_carries_context(seen)
+    assert turn.conversation_action == ConversationAction.LISTING_QUESTION
+    assert turn.outcome_kind == "listing_query"
+    assert fakes.checked[-1] == [FIRST, SECOND]
+    assert fakes.factual_calls[-1][1].get("previous_facts") == ["restaurant"]
+    _read_only(session, turn.session)
+    assert turn.session.discourse_context.asked_about == ["gym"]
+
+
+async def test_default_follow_up_keeps_the_specific_result(fakes):
+    session = _session()
+    first, follow_up = "Does the second one have breakfast?", "And parking?"
+    fakes.routes[first] = _ask(SECOND)
+    fakes.routes[follow_up], fakes.facts[follow_up] = _ask(SECOND), ["parking"]
+
+    answered = await _turn(session, first, DEFAULT)
+    turn = await _turn(answered.session, follow_up, DEFAULT)
+
+    seen = fakes.router_inputs[-1]
+    assert seen.discourse_context.result_scope == ResultScope.SPECIFIC_RESULT
+    assert seen.discourse_context.result_ids == [SECOND]
+    _assert_router_prompt_carries_context(seen)
+    assert fakes.checked[-1] == [SECOND]
+    assert turn.session.discourse_context.result_scope == ResultScope.SPECIFIC_RESULT
+    assert turn.session.discourse_context.result_ids == [SECOND]
+
+
+@pytest.mark.parametrize("kind", ["update_search", "start_search"])
+async def test_default_new_search_or_changed_criteria_clears_the_old_context(fakes, monkeypatch, kind):
+    session = await _answered(fakes)  # answered under the default config
+    assert session.discourse_context is not None
+    if kind == "update_search":
+        message = "Only hotels with a gym"
+        fakes.routes[message] = _decision(ConversationAction.UPDATE_SEARCH)
+        fakes.patches[message] = SearchIntentPatch(add_constraints=[_fact("gym")])
+    else:
+        message = "Start over: a hotel in Tbilisi"
+        fakes.routes[message] = _decision(ConversationAction.START_SEARCH)
+
+        async def intent(user_text, **kwargs):
+            return IntentRoute(city="Tbilisi")
+
+        monkeypatch.setattr(intent_router, "route_intent_adk_async", intent)
+
+    turn = await _turn(session, message, DEFAULT)
+    assert turn.session.discourse_context is None
+
+    fakes.routes["And parking?"] = ALL
+    await _turn(turn.session, "And parking?", DEFAULT)
+    assert fakes.router_inputs[-1].discourse_context is None
+
+
+async def test_default_explicit_update_is_not_turned_into_a_listing_question(fakes):
+    session = await _answered(fakes, message="Do any of them have a gym?", decision=ALL, facts=("gym",))
+    message = "A gym is a must for us"
+    fakes.routes[message] = _decision(ConversationAction.UPDATE_SEARCH)
+    fakes.patches[message] = SearchIntentPatch(add_constraints=[_fact("gym")])
+    checked_before = len(fakes.checked)
+
+    turn = await _turn(session, message, DEFAULT)
+
+    seen = fakes.router_inputs[-1]
+    assert seen.discourse_context is not None  # the router saw the context...
+    assert turn.conversation_action == ConversationAction.UPDATE_SEARCH  # ...and its update is executed as is
+    assert fakes.searched and len(fakes.checked) == checked_before  # searched again; no listing check
+    assert turn.session.shown_result_set.result_set_id == "rs-new"
+    assert turn.session.discourse_context is None
+    # The router is told the context never overrides an explicit change of the search.
+    assert EXPLICIT_CHANGE_RULE in router_agent_module.CONTEXT_AWARE_CONVERSATION_ROUTER_INSTRUCTION
+    assert EXPLICIT_CHANGE_RULE in router_agent_module.CONTEXT_AWARE_PENDING_ROUTER_INSTRUCTION

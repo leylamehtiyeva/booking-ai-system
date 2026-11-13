@@ -15,6 +15,14 @@ SOURCE_NAME = "fixtures"
 # TurnConfig's default (SOURCE_NAME) unless it passes a source itself.
 RETRIEVAL_SOURCE = os.getenv("BOOKING_RETRIEVAL_SOURCE", "").strip() or SOURCE_NAME
 
+# Structured discourse context (last answered question about the shown
+# listings): on by default for every caller of TurnConfig (Streamlit, API,
+# evaluations). BOOKING_DISCOURSE_CONTEXT=0 (or false/off/no) turns it off;
+# a caller can also pass TurnConfig(discourse_context=False).
+DISCOURSE_CONTEXT_ENABLED = os.getenv("BOOKING_DISCOURSE_CONTEXT", "1").strip().lower() not in {
+    "0", "false", "off", "no",
+}
+
 FX_BASE_CURRENCY = os.getenv("FX_BASE_CURRENCY", "USD")
 FX_CACHE_TTL_DAYS = int(os.getenv("FX_CACHE_TTL_DAYS", "10"))
 FX_CACHE_PATH = os.getenv("FX_CACHE_PATH", "app/resources/fx_rates_usd.json")

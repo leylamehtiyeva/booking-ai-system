@@ -52,6 +52,10 @@ from app.schemas.conversation_route import (
 from app.schemas.shown_result_set import ShownResultSet
 import logging
 
+# Largest shown set that safe scope widening answers for as a whole
+# (production shows top_n=5; the policy is for a small set only).
+SAFE_SCOPE_WIDENING_MAX_RESULTS = 5
+
 
 logger = logging.getLogger(__name__)
 
@@ -1221,6 +1225,29 @@ async def _execute_decision(
             "update_search cannot be executed "
             "without an existing search"
         )
+
+    # Safe scope widening (product policy): a read-only question about one
+    # shown listing that the router could not identify is answered for every
+    # shown listing instead of asking "which one?". Deterministic and shared
+    # by every router; never on a pending turn, never guesses a listing,
+    # never touches the search.
+    if (
+        not after_pending_resolution
+        and decision.decision_status == ConversationDecisionStatus.NEEDS_CLARIFICATION
+        and decision.clarification_reason == ClarificationReason.AMBIGUOUS_REFERENCE
+        and effective_action == ConversationAction.LISTING_QUESTION
+        and shown_result_set is not None
+        and 0 < len(shown_result_set.items) <= SAFE_SCOPE_WIDENING_MAX_RESULTS
+    ):
+        decision = decision.model_copy(
+            update={
+                "decision_status": ConversationDecisionStatus.RESOLVED,
+                "clarification_reason": ClarificationReason.NONE,
+                "result_scope": ResultScope.CURRENT_RESULTS,
+                "target_result_id": "",
+            }
+        )
+        route_debug["safe_scope_widening"] = True
 
     # Abstention gate: the router is not required to always resolve
     # action/reference. This must run before any action-specific branch -
