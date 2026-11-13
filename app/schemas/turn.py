@@ -21,6 +21,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 from app.config.settings import (
+    DISCOURSE_CONTEXT_ENABLED,
     FALLBACK_TOP_K_DEFAULT,
     MAX_ITEMS_HARD_CAP,
     SOURCE_NAME,
@@ -54,9 +55,11 @@ class TurnConfig(BaseModel):
     history_limit: int = 8
     persist_telemetry: bool = True
     include_debug: bool = False
-    # Experiment: structured discourse context (open reference questions,
-    # last answered listing question). Off = previous behaviour exactly.
-    discourse_context: bool = False
+    # Structured discourse context (open reference questions, last answered
+    # listing question). On by default (owner decision, router V1.3);
+    # BOOKING_DISCOURSE_CONTEXT=0 or discourse_context=False turns it off,
+    # which reproduces the previous behaviour exactly.
+    discourse_context: bool = DISCOURSE_CONTEXT_ENABLED
 
 
 class TurnFailure(BaseModel):

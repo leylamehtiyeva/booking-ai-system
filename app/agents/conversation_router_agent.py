@@ -155,6 +155,36 @@ this wrong for the second kind of message is a serious error: it
 would silently turn a one-off question into a permanent search
 requirement.
 
+SHORT FOLLOW-UP QUESTIONS ABOUT SHOWN RESULTS:
+
+When results are shown, a short or elliptical question that only
+names a facility, feature, policy or room detail - with no request
+to change, add to or redo the search - is a question about the shown
+results: listing_question. It is resolved, not ambiguous.
+
+- "Room service?" -> listing_question / current_results
+- "And a sauna?" -> listing_question / current_results
+- "Airport shuttle included?" -> listing_question / current_results
+- "Breakfast in the price?" -> listing_question / current_results
+
+Scope: current_results, unless the message itself names one shown
+listing, or the conversation context (section 8, if present) says the
+last question was about one listing.
+
+Judge meaning, not punctuation: a question mark does not make a
+search change a question, and a missing one does not make a question
+a requirement. These stay update_search even when results are shown:
+
+- a request for other or more options: "Can you find ones with a
+  sauna instead?", "Do you have anything cheaper?";
+- a stated requirement: "A sauna is a must for us",
+  "Add room service as a requirement", "Only hotels with a sauna".
+
+When a current search exists but NO results are shown yet (the
+application is still asking for a required detail such as the
+dates), there is nothing to ask a question about: a facility or
+requirement the user mentions is update_search.
+
 RESULT_SCOPE AND TARGET_RESULT_ID:
 
 When action is listing_question, also set result_scope and, when
@@ -262,6 +292,15 @@ Example - shown_results = [Hilton Baku, Marriott Baku]:
   settle it -> decision_status=needs_clarification,
   clarification_reason=ambiguous_action.
 
+Use ambiguous_action only when the message itself points to BOTH
+readings - it asks for a different set of results AND refers to the
+shown ones - and nothing in the input settles which one is meant.
+That a message could in theory be read as a requirement is not
+enough: a short question that only names a feature after results are
+shown is listing_question (see SHORT FOLLOW-UP QUESTIONS ABOUT SHOWN
+RESULTS), and a clear request for other options or a stated
+requirement is update_search.
+
 Do NOT abstain on clear cases - the bar is genuine ambiguity, not
 mere uncertainty:
 
@@ -315,20 +354,32 @@ the same way you judge any other classification in this prompt, from
 the full meaning of the message.
 
 
-Decision priorities:
+Decision priorities (the first one that applies decides):
 
 - A search request with no current search is start_search.
-- A modification of an existing search is update_search.
 - An explicit reset followed by a new search intent is
   start_search.
+- An explicit change of the existing search is update_search, even
+  when shown results exist and even when it is phrased as a
+  question: a stated requirement ("only with X", "must have X",
+  "add X"), a changed parameter, or a request for other or more
+  options. A message that wants the search changed AND names a
+  shown listing ("like the second one but cheaper") is
+  update_search.
+- A question about one shown listing (position, name, or a
+  reference resolved by the message or the conversation context)
+  is listing_question / specific_result.
+- A question about the shown results - explicit ("which of these")
+  or a short follow-up that only names a feature - is
+  listing_question / current_results (or the conversation
+  context's scope).
+- With a current search and no shown results, a mentioned
+  requirement is update_search.
+- Genuine ambiguity between a search change and a question about
+  the shown results is needs_clarification / ambiguous_action
+  (see ABSTAINING).
 - Cancellation or pause without a new search intent is
   general_chat.
-- A question about a shown accommodation is listing_question.
-- When shown results exist, resolve contextual references
-  such as "it", "this one", or "this booking" in that context.
-- A bare requirement statement ("only with X", "must have X") is
-  update_search even when shown results exist - it changes the
-  search, it is not a question about what was shown.
 - Greetings, acknowledgements, capability questions, and
   unrelated conversation are general_chat.
 - A shown listing's title being mentioned is not by itself a
@@ -462,6 +513,9 @@ Use it only to interpret a message that is incomplete on its own:
   names exactly one.
 A message that is complete on its own, starts a different task, or
 changes the search is classified exactly as if there were no context.
+The context never turns an explicit change of the search (a stated
+requirement, even about the fact that was just asked about, or a
+request for other options) into a question about the shown results.
 Use only result_ids that appear in shown_results. If the context does not
 settle which listing is meant, abstain with ambiguous_reference as usual.
 

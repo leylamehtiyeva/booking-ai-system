@@ -17,20 +17,30 @@ import logging
 import os
 from contextlib import asynccontextmanager
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-from app.api.session_store import InMemorySessionStore, SessionNotFoundError
-from app.api.usage_limits import (
+# Load .env before any app module reads its settings at import time
+# (app.config.settings: discourse context flag, router and response LLM
+# profiles), as ui/streamlit_app.py does. Without this, .env only reaches the
+# process later, through litellm's own import-time load_dotenv, and the API
+# silently runs with the code defaults while Streamlit uses the .env values.
+# Variables already set in the environment (e.g. by the hosting platform)
+# keep precedence (override=False).
+load_dotenv()
+
+from app.api.session_store import InMemorySessionStore, SessionNotFoundError  # noqa: E402
+from app.api.usage_limits import (  # noqa: E402
     ConcurrencyGate,
     UsageLedger,
     UsageLimitConfig,
     client_address,
     run_in_thread,
 )
-from app.schemas.turn import TurnConfig, TurnResult
-from app.services.conversation_service import process_turn
+from app.schemas.turn import TurnConfig, TurnResult  # noqa: E402
+from app.services.conversation_service import process_turn  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
